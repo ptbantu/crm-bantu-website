@@ -1,0 +1,198 @@
+/**
+ * API 客户端
+ * 封装 fetch 请求，统一处理错误、认证等
+ */
+import { API_CONFIG } from './config'
+import { ApiResult } from './types'
+import { storage } from '@/utils/storage'
+
+// 自定义错误类
+export class ApiError extends Error {
+  constructor(
+    public code: number,
+    public message: string,
+    public data?: any
+  ) {
+    super(message)
+    this.name = 'ApiError'
+  }
+}
+
+/**
+ * 创建完整的请求URL
+ */
+const createUrl = (path: string): string => {
+  // 如果路径已经是完整URL，直接返回
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path
+  }
+  // 如果基础URL为空（开发环境使用代理），直接返回路径（相对路径）
+  // 相对路径会被 Vite 代理拦截并转发到 https://www.bantu.sbs
+  if (!API_CONFIG.BASE_URL || API_CONFIG.BASE_URL.trim() === '') {
+    console.log('[API Client] 使用相对路径（通过 Vite 代理）:', path)
+    return path
+  }
+  // 拼接基础URL和路径（生产环境必须使用完整URL）
+  const baseUrl = API_CONFIG.BASE_URL.replace(/\/$/, '')
+  const apiPath = path.startsWith('/') ? path : `/${path}`
+  const fullUrl = `${baseUrl}${apiPath}`
+  
+  // 开发时输出URL信息（便于调试）
+  if (import.meta.env.DEV) {
+    console.log('[API Client] 使用完整URL:', fullUrl)
+  }
+  
+  return fullUrl
+}
+
+/**
+ * 请求选项
+ */
+interface RequestOptions extends RequestInit {
+  skipAuth?: boolean // 是否跳过认证（用于登录等公开接口）
+  timeout?: number // 请求超时时间（毫秒）
+}
+
+/**
+ * 发送HTTP请求
+ */
+export async function request<T = any>(
+  path: string,
+  options: RequestOptions = {}
+): Promise<ApiResult<T>> {
+  const {
+    skipAuth = false,
+    timeout = API_CONFIG.TIMEOUT,
+    headers = {},
+    ...restOptions
+  } = options
+
+  // 构建请求头
+  const requestHeaders: HeadersInit = {
+    'Content-Type': 'application/json',
+    ...headers,
+  }
+
+  // 添加认证Token（如果需要）
+  if (!skipAuth) {
+    const token = storage.getToken()
+    if (token) {
+      requestHeaders['Authorization'] = `Bearer ${token}`
+    }
+  }
+
+  // 创建AbortController用于超时控制
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), timeout)
+
+  try {
+    const url = createUrl(path)
+    const response = await fetch(url, {
+      ...restOptions,
+      method: restOptions.method || 'GET',
+      headers: requestHeaders,
+      signal: controller.signal,
+      mode: 'cors', // 明确指定 CORS 模式
+      credentials: 'omit', // 不使用 credentials（与后端配置一致）
+    })
+
+    // 清除超时定时器
+    clearTimeout(timeoutId)
+
+    // 检查HTTP状态码
+    if (!response.ok) {
+      // 尝试解析错误响应
+      let errorData: any = null
+      try {
+        errorData = await response.json()
+      } catch {
+        // 如果无法解析JSON，使用默认错误信息
+      }
+
+      throw new ApiError(
+        errorData?.code || response.status,
+        errorData?.message || `HTTP ${response.status}: ${response.statusText}`,
+        errorData?.data
+      )
+    }
+
+    // 解析响应
+    const result: ApiResult<T> = await response.json()
+
+    // 检查业务状态码
+    if (result.code !== 200) {
+      throw new ApiError(result.code, result.message, result.data)
+    }
+
+    return result
+  } catch (error) {
+    clearTimeout(timeoutId)
+
+    // 处理AbortError（超时）
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new ApiError(408, '请求超时，请稍后重试')
+    }
+
+    // 如果是ApiError，直接抛出
+    if (error instanceof ApiError) {
+      throw error
+    }
+
+    // 其他错误
+    throw new ApiError(
+      500,
+      error instanceof Error ? error.message : '网络错误，请稍后重试'
+    )
+  }
+}
+
+/**
+ * GET 请求
+ */
+export function get<T = any>(path: string, options?: RequestOptions): Promise<ApiResult<T>> {
+  return request<T>(path, {
+    ...options,
+    method: 'GET',
+  })
+}
+
+/**
+ * POST 请求
+ */
+export function post<T = any>(
+  path: string,
+  data?: any,
+  options?: RequestOptions
+): Promise<ApiResult<T>> {
+  return request<T>(path, {
+    ...options,
+    method: 'POST',
+    body: data ? JSON.stringify(data) : undefined,
+  })
+}
+
+/**
+ * PUT 请求
+ */
+export function put<T = any>(
+  path: string,
+  data?: any,
+  options?: RequestOptions
+): Promise<ApiResult<T>> {
+  return request<T>(path, {
+    ...options,
+    method: 'PUT',
+    body: data ? JSON.stringify(data) : undefined,
+  })
+}
+
+/**
+ * DELETE 请求
+ */
+export function del<T = any>(path: string, options?: RequestOptions): Promise<ApiResult<T>> {
+  return request<T>(path, {
+    ...options,
+    method: 'DELETE',
+  })
+}
+

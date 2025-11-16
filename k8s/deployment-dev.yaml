@@ -35,6 +35,8 @@ spec:
           value: "development"
         - name: CHOKIDAR_USEPOLLING
           value: "true"
+        - name: VITE_API_BASE_URL
+          value: ""  # 使用空字符串，通过Vite代理转发
         resources:
           requests:
             memory: "512Mi"

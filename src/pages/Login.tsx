@@ -1,20 +1,39 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
+import { login } from '@/api/auth'
+import { ApiError } from '@/api/client'
 
 const Login = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: '',
     remember: false,
   })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: 实现登录逻辑，对接后台
-    console.log('Login:', formData)
-    // 暂时显示提示，不跳转
-    alert(t('login.successMessage') || '登录成功！后台功能开发中...')
+    setError(null)
+    setLoading(true)
+
+    try {
+      await login(formData.email, formData.password)
+      // 登录成功，跳转到仪表板
+      navigate('/dashboard')
+    } catch (err) {
+      // 处理错误
+      if (err instanceof ApiError) {
+        setError(err.message || '登录失败，请检查邮箱和密码')
+      } else {
+        setError('网络错误，请稍后重试')
+      }
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleChange = (
@@ -44,19 +63,24 @@ const Login = () => {
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          {error && (
+            <div className="rounded-xl bg-red-50 border border-red-200 p-4">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          )}
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="username" className="sr-only">
-                {t('login.username')}
+              <label htmlFor="email" className="sr-only">
+                {t('login.email')}
               </label>
               <input
-                id="username"
-                name="username"
-                type="text"
+                id="email"
+                name="email"
+                type="email"
                 required
-                value={formData.username}
+                value={formData.email}
                 onChange={handleChange}
-                placeholder={t('login.usernamePlaceholder')}
+                placeholder={t('login.emailPlaceholder')}
                 className="appearance-none rounded-t-xl relative block w-full px-4 py-3 border border-gray-200 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm bg-white"
               />
             </div>
@@ -108,9 +132,10 @@ const Login = () => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 shadow-sm hover:shadow-md transition-all"
+              disabled={loading}
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 shadow-sm hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {t('login.submit')}
+              {loading ? t('login.submitting') || '登录中...' : t('login.submit')}
             </button>
           </div>
         </form>

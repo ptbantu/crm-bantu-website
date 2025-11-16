@@ -27,6 +27,15 @@ export default defineConfig({
     watch: {
       usePolling: true, // 在 Docker 中启用文件监听
     },
+    // 代理配置（开发环境处理跨域和SSL证书问题）
+    proxy: {
+      '/api': {
+        target: 'https://www.bantu.sbs',
+        changeOrigin: true,
+        secure: false, // 忽略SSL证书验证（仅开发环境）
+        // rewrite: (path) => path, // 不需要重写路径
+      },
+    },
   },
   preview: {
     host: '0.0.0.0',

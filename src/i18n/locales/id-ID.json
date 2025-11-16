@@ -257,11 +257,14 @@
   "login": {
     "backendTitle": "Backend Bantu",
     "title": "Masuk",
+    "email": "Email",
     "username": "Nama Pengguna",
     "password": "Kata Sandi",
     "remember": "Ingat Saya",
     "forgot": "Lupa Kata Sandi?",
     "submit": "Masuk",
+    "submitting": "Masuk...",
+    "emailPlaceholder": "Masukkan email",
     "usernamePlaceholder": "Masukkan nama pengguna",
     "passwordPlaceholder": "Masukkan kata sandi",
     "successMessage": "Login berhasil! Fitur backend sedang dikembangkan..."

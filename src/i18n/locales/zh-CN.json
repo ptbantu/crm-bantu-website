@@ -257,11 +257,14 @@
   "login": {
     "backendTitle": "班兔的后台",
     "title": "登录",
+    "email": "邮箱",
     "username": "用户名",
     "password": "密码",
     "remember": "记住我",
     "forgot": "忘记密码？",
     "submit": "登录",
+    "submitting": "登录中...",
+    "emailPlaceholder": "请输入邮箱",
     "usernamePlaceholder": "请输入用户名",
     "passwordPlaceholder": "请输入密码",
     "successMessage": "登录成功！后台功能开发中..."
