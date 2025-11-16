@@ -11,8 +11,26 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3000,
-    open: true,
+    host: '0.0.0.0', // 允许外部访问
+    port: 5173, // Vite 默认端口
+    strictPort: false,
+    // Vite 6.0.9+ 支持 allowedHosts
+    allowedHosts: [
+      'www.crmbantu.space',
+      'crmbantu.space',
+      'localhost',
+    ],
+    hmr: {
+      clientPort: 443,
+      protocol: 'wss',
+    },
+    watch: {
+      usePolling: true, // 在 Docker 中启用文件监听
+    },
+  },
+  preview: {
+    host: '0.0.0.0',
+    port: 4173,
   },
 })
 

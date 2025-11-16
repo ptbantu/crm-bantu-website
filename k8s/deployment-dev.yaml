@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crm-bantu-website-dev
+  namespace: default
+  labels:
+    app: crm-bantu-website-dev
+    version: dev
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: crm-bantu-website-dev
+  template:
+    metadata:
+      labels:
+        app: crm-bantu-website-dev
+        version: dev
+    spec:
+      containers:
+      - name: website
+        image: crm-bantu-website:dev
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5173
+          name: http
+          protocol: TCP
+        env:
+        - name: NODE_ENV
+          value: "development"
+        - name: CHOKIDAR_USEPOLLING
+          value: "true"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "200m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        volumeMounts:
+        - name: source-code
+          mountPath: /app/src
+          readOnly: false
+        - name: source-code-config
+          mountPath: /app/public
+          readOnly: false
+      volumes:
+      - name: source-code
+        hostPath:
+          path: /home/bantu/crm-bantu-website/src
+          type: Directory
+      - name: source-code-config
+        hostPath:
+          path: /home/bantu/crm-bantu-website/public
+          type: Directory
+

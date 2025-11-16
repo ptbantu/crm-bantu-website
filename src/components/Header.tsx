@@ -21,44 +21,44 @@ const Header = () => {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-      <div className="container mx-auto px-4">
+    <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/80">
+      <div className="container mx-auto px-6">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-3">
             <img
               src="/pics/logo.png"
               alt="Bantu Logo"
-              className="h-10 w-auto"
+              className="h-9 w-auto"
             />
-            <span className="text-xl font-bold text-gray-900">
+            <span className="text-lg font-semibold text-gray-900 tracking-tight">
               {t('header.title')}
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
+          <nav className="hidden md:flex items-center space-x-8">
             <Link
               to="/"
-              className="text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors"
+              className="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors"
             >
               {t('header.nav.home')}
             </Link>
             <Link
               to="/about"
-              className="text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors"
+              className="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors"
             >
               {t('header.nav.about')}
             </Link>
             <Link
               to="/services"
-              className="text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors"
+              className="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors"
             >
               {t('header.nav.services')}
             </Link>
             <Link
               to="/contact"
-              className="text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors"
+              className="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors"
             >
               {t('header.nav.contact')}
             </Link>
@@ -73,17 +73,17 @@ const Header = () => {
             <div className="relative">
               <button
                 onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-                className="flex items-center space-x-1 text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors"
+                className="flex items-center space-x-1.5 text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors"
               >
                 <Globe className="h-4 w-4" />
                 <span>{currentLang === 'zh-CN' ? '中文' : 'ID'}</span>
               </button>
               {isLangMenuOpen && (
-                <div className="absolute right-0 mt-2 w-32 rounded-md bg-white shadow-lg border">
+                <div className="absolute right-0 mt-2 w-32 rounded-xl bg-white shadow-lg border border-gray-100 overflow-hidden">
                   <button
                     onClick={() => handleLanguageChange('zh-CN')}
                     className={cn(
-                      'w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors',
+                      'w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors',
                       currentLang === 'zh-CN' && 'bg-primary-50 text-primary-600'
                     )}
                   >
@@ -92,7 +92,7 @@ const Header = () => {
                   <button
                     onClick={() => handleLanguageChange('id-ID')}
                     className={cn(
-                      'w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors',
+                      'w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors',
                       currentLang === 'id-ID' && 'bg-primary-50 text-primary-600'
                     )}
                   >
@@ -107,13 +107,13 @@ const Header = () => {
           <div className="flex items-center space-x-2 md:hidden">
             <button
               onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-              className="p-2 text-gray-700"
+              className="p-2 text-gray-600 hover:text-primary-600 transition-colors"
             >
               <Globe className="h-5 w-5" />
             </button>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 text-gray-700"
+              className="p-2 text-gray-600 hover:text-primary-600 transition-colors"
             >
               {isMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -126,39 +126,39 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <nav className="md:hidden py-4 space-y-2 border-t">
+          <nav className="md:hidden py-4 space-y-1 border-t border-gray-100">
             <Link
               to="/"
               onClick={handleNavClick}
-              className="block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+              className="block px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-xl transition-colors"
             >
               {t('header.nav.home')}
             </Link>
             <Link
               to="/about"
               onClick={handleNavClick}
-              className="block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+              className="block px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-xl transition-colors"
             >
               {t('header.nav.about')}
             </Link>
             <Link
               to="/services"
               onClick={handleNavClick}
-              className="block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+              className="block px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-xl transition-colors"
             >
               {t('header.nav.services')}
             </Link>
             <Link
               to="/contact"
               onClick={handleNavClick}
-              className="block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+              className="block px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-xl transition-colors"
             >
               {t('header.nav.contact')}
             </Link>
             <Link
               to="/dashboard"
               onClick={handleNavClick}
-              className="block px-4 py-2 text-sm font-medium text-primary-600 hover:bg-primary-50 rounded-md"
+              className="block px-4 py-3 text-sm font-medium text-primary-600 hover:bg-primary-50 rounded-xl transition-colors"
             >
               {t('header.nav.dashboard')}
             </Link>
@@ -170,7 +170,7 @@ const Header = () => {
                     setIsMenuOpen(false)
                   }}
                   className={cn(
-                    'w-full text-left px-4 py-2 text-sm rounded-md hover:bg-gray-100',
+                    'w-full text-left px-4 py-3 text-sm rounded-xl hover:bg-gray-50 transition-colors',
                     currentLang === 'zh-CN' && 'bg-primary-50 text-primary-600'
                   )}
                 >
@@ -182,7 +182,7 @@ const Header = () => {
                     setIsMenuOpen(false)
                   }}
                   className={cn(
-                    'w-full text-left px-4 py-2 text-sm rounded-md hover:bg-gray-100',
+                    'w-full text-left px-4 py-3 text-sm rounded-xl hover:bg-gray-50 transition-colors',
                     currentLang === 'id-ID' && 'bg-primary-50 text-primary-600'
                   )}
                 >

@@ -38,11 +38,11 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="container mx-auto max-w-7xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+        <div className="mb-10">
+          <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">
             {t('dashboard.welcome')}
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-gray-500 mt-2">
             {t('dashboard.title')}
           </p>
         </div>
@@ -54,18 +54,18 @@ const Dashboard = () => {
             return (
               <div
                 key={index}
-                className="bg-white rounded-lg shadow p-6 border border-gray-200"
+                className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-all"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">
+                    <p className="text-sm font-medium text-gray-500">
                       {stat.label}
                     </p>
-                    <p className="text-2xl font-bold text-gray-900 mt-2">
+                    <p className="text-2xl font-semibold text-gray-900 mt-2 tracking-tight">
                       {stat.value}
                     </p>
                   </div>
-                  <div className="bg-primary-100 w-12 h-12 rounded-lg flex items-center justify-center">
+                  <div className="bg-primary-50 w-12 h-12 rounded-xl flex items-center justify-center">
                     <Icon className="h-6 w-6 text-primary-600" />
                   </div>
                 </div>
@@ -90,27 +90,27 @@ const Dashboard = () => {
 
         {/* Additional Dashboard Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4 tracking-tight">
               Recent Activity
             </h2>
-            <p className="text-gray-600">
+            <p className="text-gray-500">
               {/* TODO: 添加活动列表 */}
               No recent activity
             </p>
           </div>
-          <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4 tracking-tight">
               Quick Actions
             </h2>
             <div className="space-y-2">
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
+              <button className="w-full text-left px-4 py-3 text-sm text-gray-600 hover:bg-gray-50 rounded-xl transition-colors">
                 Add New Customer
               </button>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
+              <button className="w-full text-left px-4 py-3 text-sm text-gray-600 hover:bg-gray-50 rounded-xl transition-colors">
                 Create Order
               </button>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
+              <button className="w-full text-left px-4 py-3 text-sm text-gray-600 hover:bg-gray-50 rounded-xl transition-colors">
                 Generate Report
               </button>
             </div>

@@ -36,6 +36,6 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # 暴露端口
 EXPOSE 80
 
-# 启动 Nginx
+# 启动 Nginx（生产模式）
 CMD ["nginx", "-g", "daemon off;"]
 

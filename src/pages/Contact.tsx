@@ -28,13 +28,13 @@ const Contact = () => {
   }
 
   return (
-    <div className="min-h-screen py-20 px-4">
+    <div className="min-h-screen py-24 px-4 bg-white">
       <div className="container mx-auto max-w-6xl">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-4 tracking-tight">
             {t('contact.title')}
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-gray-500">
             {t('contact.subtitle')}
           </p>
         </div>
@@ -42,30 +42,30 @@ const Contact = () => {
           {/* Contact Info */}
           <div className="space-y-6">
             <div className="flex items-start space-x-4">
-              <div className="bg-primary-100 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0">
+              <div className="bg-primary-50 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
                 <Mail className="h-6 w-6 text-primary-600" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
-                <p className="text-gray-600">info@bantu.sbs</p>
+                <h3 className="font-semibold text-gray-900 mb-1 tracking-tight">Email</h3>
+                <p className="text-gray-500">info@bantu.sbs</p>
               </div>
             </div>
             <div className="flex items-start space-x-4">
-              <div className="bg-primary-100 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0">
+              <div className="bg-primary-50 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
                 <Phone className="h-6 w-6 text-primary-600" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Phone</h3>
-                <p className="text-gray-600">+62 XXX XXX XXXX</p>
+                <h3 className="font-semibold text-gray-900 mb-1 tracking-tight">Phone</h3>
+                <p className="text-gray-500">+62 XXX XXX XXXX</p>
               </div>
             </div>
             <div className="flex items-start space-x-4">
-              <div className="bg-primary-100 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0">
+              <div className="bg-primary-50 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
                 <MapPin className="h-6 w-6 text-primary-600" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Address</h3>
-                <p className="text-gray-600">Jakarta, Indonesia</p>
+                <h3 className="font-semibold text-gray-900 mb-1 tracking-tight">Address</h3>
+                <p className="text-gray-500">Jakarta, Indonesia</p>
               </div>
             </div>
           </div>
@@ -87,7 +87,7 @@ const Contact = () => {
                 onChange={handleChange}
                 placeholder={t('contact.form.namePlaceholder')}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white"
               />
             </div>
             <div>
@@ -105,7 +105,7 @@ const Contact = () => {
                 onChange={handleChange}
                 placeholder={t('contact.form.emailPlaceholder')}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white"
               />
             </div>
             <div>
@@ -122,7 +122,7 @@ const Contact = () => {
                 value={formData.phone}
                 onChange={handleChange}
                 placeholder={t('contact.form.phonePlaceholder')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white"
               />
             </div>
             <div>
@@ -140,12 +140,12 @@ const Contact = () => {
                 placeholder={t('contact.form.messagePlaceholder')}
                 required
                 rows={5}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white resize-none"
               />
             </div>
             <button
               type="submit"
-              className="w-full bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+              className="w-full bg-primary-600 text-white px-6 py-3.5 rounded-xl font-medium hover:bg-primary-700 transition-all shadow-sm hover:shadow-md"
             >
               {t('contact.form.submit')}
             </button>
