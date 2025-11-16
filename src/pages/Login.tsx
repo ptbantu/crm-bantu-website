@@ -2,35 +2,33 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { login } from '@/api/auth'
-import { ApiError } from '@/api/client'
+import { useToast } from '@/components/ToastContainer'
 
 const Login = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { showSuccess, showError } = useToast()
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     remember: false,
   })
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError(null)
     setLoading(true)
 
     try {
       await login(formData.email, formData.password)
-      // 登录成功，跳转到仪表板
-      navigate('/dashboard')
+      // 登录成功，显示成功提示并跳转
+      showSuccess(t('login.success') || '登录成功')
+      setTimeout(() => {
+        navigate('/dashboard')
+      }, 500) // 延迟跳转，让用户看到提示
     } catch (err) {
-      // 处理错误
-      if (err instanceof ApiError) {
-        setError(err.message || '登录失败，请检查邮箱和密码')
-      } else {
-        setError('网络错误，请稍后重试')
-      }
+      // 处理错误：只显示账号密码错误
+      showError(t('login.error.invalidCredentials') || '账号或密码错误')
     } finally {
       setLoading(false)
     }
@@ -63,11 +61,6 @@ const Login = () => {
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="rounded-xl bg-red-50 border border-red-200 p-4">
-              <p className="text-sm text-red-600">{error}</p>
-            </div>
-          )}
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email" className="sr-only">

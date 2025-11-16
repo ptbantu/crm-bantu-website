@@ -255,7 +255,7 @@
     }
   },
   "login": {
-    "backendTitle": "Backend Bantu",
+    "backendTitle": "Bantu CRM Backend Management",
     "title": "Masuk",
     "email": "Email",
     "username": "Nama Pengguna",
@@ -267,7 +267,10 @@
     "emailPlaceholder": "Masukkan email",
     "usernamePlaceholder": "Masukkan nama pengguna",
     "passwordPlaceholder": "Masukkan kata sandi",
-    "successMessage": "Login berhasil! Fitur backend sedang dikembangkan..."
+    "success": "Login berhasil",
+    "error": {
+      "invalidCredentials": "Email atau kata sandi salah"
+    }
   },
   "footer": {
     "beijingOffice": {
