@@ -32,6 +32,7 @@
     "features": {
       "title": "Layanan Inti",
       "subtitle": "Memberikan solusi layanan perusahaan one-stop untuk Anda",
+      "description": "Menyediakan produk layanan one-stop sesuai urutan pendaratan perusahaan. Memahami kebijakan dan peraturan pasar Indonesia, secara akurat memahami kebutuhan klien, menyediakan layanan one-stop.",
       "companyRegistration": {
         "title": "Pendaftaran Perusahaan",
         "description": "Bantuan profesional untuk perusahaan China menyelesaikan pendaftaran perusahaan di Indonesia, termasuk PT, perwakilan, dan berbagai bentuk lainnya, menyediakan layanan pengurusan penuh"
@@ -59,15 +60,54 @@
     },
     "customers": {
       "title": "Klien yang Telah Bekerja Sama dengan Kami",
-      "subtitle": "Banyak perusahaan memilih Bantu Enterprise Services untuk bersama-sama mengembangkan pasar Indonesia"
+      "subtitle": "Banyak perusahaan terkenal dunia memilih Bantu, bersama-sama mengembangkan pasar Indonesia",
+      "list": "Huawei, China Railway, China Construction, China Communications, Power Construction, Energy Construction, Hisense, Midea, Mixue, Yanjin Shop, Weilong, Wallace, J&T, dll."
     },
     "about": {
-      "title": "Tentang Bantu Enterprise Services",
-      "subtitle": "Penyedia Layanan Lokalisasi Indonesia Profesional",
+      "title": "Tentang Kami",
+      "subtitle": "Pemimpin Layanan One-Stop Ekspansi Perusahaan ke Asia Tenggara",
       "description": "Bantu Enterprise Services adalah platform profesional yang fokus pada penyediaan layanan lokalisasi Indonesia untuk perusahaan China. Kami memiliki pengalaman pasar Indonesia yang kaya dan tim layanan profesional, berkomitmen untuk membantu perusahaan China memasuki pasar Indonesia dengan lancar dan mencapai ekspansi bisnis.",
+      "stats": {
+        "title": "Pencapaian Kami",
+        "years": "3 Tahun Ekspansi di Indonesia",
+        "companies": "Total Melayani",
+        "services": "Layanan Tersedia",
+        "team": "Anggota Tim"
+      },
+      "offices": {
+        "title": "Kantor Kami",
+        "beijing": {
+          "title": "Kantor Pusat Beijing",
+          "type": "Pusat R&D Teknologi"
+        },
+        "wuhan": {
+          "title": "Wuhan",
+          "type": "Pusat Keuangan dan Administrasi"
+        },
+        "jakarta1": {
+          "title": "Kantor Jakarta 1",
+          "address": "SOHO CAPITAL, 36th Floor Unit 08 (sc-36.08) (BANTU Business Serve), Jl. S.Parman Kav, 28, Podomoro City, Jakarta Barat"
+        },
+        "jakarta2": {
+          "title": "Kantor Jakarta 2",
+          "address": "Ruko Garden Shopping Arcade, Letjen S. Parman (Unit C Number 009AC), Kel. Tj. Duren Selatan Kec. Grogol Petamburan, Jakarta Barat, DKI Jakarta"
+        }
+      },
       "mission": {
         "title": "Misi Kami",
-        "content": "Mempermudah perusahaan China melakukan ekspansi ke Indonesia, melalui layanan lokalisasi profesional, menurunkan ambang batas memasuki pasar Indonesia, membantu perusahaan cepat mendarat dan mencapai pembangunan berkelanjutan."
+        "content": "Membuat ekspansi perusahaan ke luar negeri tidak lagi menjadi masalah"
+      },
+      "vision": {
+        "title": "Visi Kami",
+        "content": "Mempromosikan pertukaran ekonomi dan perdagangan antara China dan negara-negara 'Belt and Road', memperkenalkan modal, teknologi, dan talenta China ke Indonesia untuk mencapai pembangunan bersama dan saling menguntungkan"
+      },
+      "goal": {
+        "title": "Tujuan Kami",
+        "content": "Platform layanan one-stop untuk ekspansi perusahaan ke Indonesia"
+      },
+      "slogan": {
+        "title": "Slogan Kami",
+        "content": "Pilih Bantu untuk Indonesia, ekspansi menjadi mulus"
       },
       "values": {
         "title": "Nilai-Nilai Kami",
@@ -177,6 +217,10 @@
     "title": "Hubungi Kami",
     "subtitle": "Kami berharap dapat bekerja sama dengan Anda, membantu pengembangan bisnis Indonesia Anda",
     "description": "Jika Anda memiliki pertanyaan tentang layanan perusahaan Indonesia, jangan ragu untuk menghubungi kami. Tim profesional kami akan memberikan konsultasi dan solusi yang detail.",
+    "map": {
+      "title": "Lokasi Kantor Kami",
+      "address": "SOHO CAPITAL 36th floor, unit 08. Jl. Tanjung Duren Raya No.1 3, RT.3/RW.5, Tj. Duren Sel., Kec. Grogol petamburan,Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11470."
+    },
     "form": {
       "name": "Nama",
       "email": "Email",
@@ -211,6 +255,7 @@
     }
   },
   "login": {
+    "backendTitle": "Backend Bantu",
     "title": "Masuk",
     "username": "Nama Pengguna",
     "password": "Kata Sandi",
@@ -218,7 +263,8 @@
     "forgot": "Lupa Kata Sandi?",
     "submit": "Masuk",
     "usernamePlaceholder": "Masukkan nama pengguna",
-    "passwordPlaceholder": "Masukkan kata sandi"
+    "passwordPlaceholder": "Masukkan kata sandi",
+    "successMessage": "Login berhasil! Fitur backend sedang dikembangkan..."
   },
   "footer": {
     "beijingOffice": {

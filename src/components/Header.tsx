@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Menu, X, Globe } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { cn } from '@/utils/cn'
 
 const Header = () => {
@@ -63,7 +63,7 @@ const Header = () => {
               {t('header.nav.contact')}
             </Link>
             <Link
-              to="/dashboard"
+              to="/login"
               className="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
             >
               {t('header.nav.dashboard')}
@@ -73,30 +73,34 @@ const Header = () => {
             <div className="relative">
               <button
                 onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-                className="flex items-center space-x-1.5 text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors"
+                className="flex items-center space-x-2 text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors"
               >
-                <Globe className="h-4 w-4" />
+                <span className="text-lg">
+                  {currentLang === 'zh-CN' ? '🇨🇳' : '🇮🇩'}
+                </span>
                 <span>{currentLang === 'zh-CN' ? '中文' : 'ID'}</span>
               </button>
               {isLangMenuOpen && (
-                <div className="absolute right-0 mt-2 w-32 rounded-xl bg-white shadow-lg border border-gray-100 overflow-hidden">
+                <div className="absolute right-0 mt-2 w-36 rounded-xl bg-white shadow-lg border border-gray-100 overflow-hidden">
                   <button
                     onClick={() => handleLanguageChange('zh-CN')}
                     className={cn(
-                      'w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors',
+                      'w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors flex items-center space-x-2',
                       currentLang === 'zh-CN' && 'bg-primary-50 text-primary-600'
                     )}
                   >
-                    {t('common.chinese')}
+                    <span className="text-lg">🇨🇳</span>
+                    <span>{t('common.chinese')}</span>
                   </button>
                   <button
                     onClick={() => handleLanguageChange('id-ID')}
                     className={cn(
-                      'w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors',
+                      'w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors flex items-center space-x-2',
                       currentLang === 'id-ID' && 'bg-primary-50 text-primary-600'
                     )}
                   >
-                    {t('common.indonesian')}
+                    <span className="text-lg">🇮🇩</span>
+                    <span>{t('common.indonesian')}</span>
                   </button>
                 </div>
               )}
@@ -107,9 +111,9 @@ const Header = () => {
           <div className="flex items-center space-x-2 md:hidden">
             <button
               onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-              className="p-2 text-gray-600 hover:text-primary-600 transition-colors"
+              className="p-2 text-gray-600 hover:text-primary-600 transition-colors text-xl"
             >
-              <Globe className="h-5 w-5" />
+              {currentLang === 'zh-CN' ? '🇨🇳' : '🇮🇩'}
             </button>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -156,7 +160,7 @@ const Header = () => {
               {t('header.nav.contact')}
             </Link>
             <Link
-              to="/dashboard"
+              to="/login"
               onClick={handleNavClick}
               className="block px-4 py-3 text-sm font-medium text-primary-600 hover:bg-primary-50 rounded-xl transition-colors"
             >
@@ -170,11 +174,12 @@ const Header = () => {
                     setIsMenuOpen(false)
                   }}
                   className={cn(
-                    'w-full text-left px-4 py-3 text-sm rounded-xl hover:bg-gray-50 transition-colors',
+                    'w-full text-left px-4 py-3 text-sm rounded-xl hover:bg-gray-50 transition-colors flex items-center space-x-2',
                     currentLang === 'zh-CN' && 'bg-primary-50 text-primary-600'
                   )}
                 >
-                  {t('common.chinese')}
+                  <span className="text-lg">🇨🇳</span>
+                  <span>{t('common.chinese')}</span>
                 </button>
                 <button
                   onClick={() => {
@@ -182,11 +187,12 @@ const Header = () => {
                     setIsMenuOpen(false)
                   }}
                   className={cn(
-                    'w-full text-left px-4 py-3 text-sm rounded-xl hover:bg-gray-50 transition-colors',
+                    'w-full text-left px-4 py-3 text-sm rounded-xl hover:bg-gray-50 transition-colors flex items-center space-x-2',
                     currentLang === 'id-ID' && 'bg-primary-50 text-primary-600'
                   )}
                 >
-                  {t('common.indonesian')}
+                  <span className="text-lg">🇮🇩</span>
+                  <span>{t('common.indonesian')}</span>
                 </button>
               </div>
             )}

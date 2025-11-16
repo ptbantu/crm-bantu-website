@@ -1,10 +1,8 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
 const Login = () => {
   const { t } = useTranslation()
-  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -13,10 +11,10 @@ const Login = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: 实现登录逻辑
+    // TODO: 实现登录逻辑，对接后台
     console.log('Login:', formData)
-    // 登录成功后跳转到仪表板
-    navigate('/dashboard')
+    // 暂时显示提示，不跳转
+    alert(t('login.successMessage') || '登录成功！后台功能开发中...')
   }
 
   const handleChange = (
@@ -38,9 +36,12 @@ const Login = () => {
             alt="Bantu Logo"
             className="mx-auto h-16 w-auto"
           />
-          <h2 className="mt-6 text-3xl font-semibold text-gray-900 tracking-tight">
-            {t('login.title')}
+          <h2 className="mt-4 text-2xl font-semibold text-gray-900 tracking-tight">
+            {t('login.backendTitle')}
           </h2>
+          <p className="mt-2 text-sm text-gray-500">
+            {t('login.title')}
+          </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">

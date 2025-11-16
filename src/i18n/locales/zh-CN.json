@@ -13,7 +13,7 @@
     "welcome": "欢迎"
   },
   "header": {
-    "title": "斑兔企服",
+    "title": "班兔企服",
     "nav": {
       "home": "首页",
       "about": "关于我们",
@@ -26,12 +26,13 @@
     "hero": {
       "title": "让出海印尼更轻松",
       "subtitle": "印尼一站式本地企业服务平台",
-      "description": "斑兔企服专注于为中国企业提供印尼本地化服务，涵盖公司注册、签证办理、财税筹划、人事外包、资质认证、知识产权等全方位企业服务解决方案。",
+      "description": "班兔企服专注于为中国企业提供印尼本地化服务，涵盖公司注册、签证办理、财税筹划、人事外包、资质认证、知识产权等全方位企业服务解决方案。",
       "cta": "了解更多"
     },
     "features": {
       "title": "核心服务",
       "subtitle": "为您提供一站式企业服务解决方案",
+      "description": "按照企业落地顺序提供一站式服务产品。洞悉印尼市场政策、法规，精准把握客户需求，提供一站式服务。",
       "companyRegistration": {
         "title": "公司注册",
         "description": "专业协助中国企业在印尼完成公司注册，包括PT公司、代表处等多种形式，提供全程代办服务"
@@ -59,15 +60,54 @@
     },
     "customers": {
       "title": "我们合作过的客户",
-      "subtitle": "众多企业选择斑兔企服，共同开拓印尼市场"
+      "subtitle": "众多世界知名企业选择班兔，共同开拓印尼市场",
+      "list": "华为、中铁、中建、中交、电建、能建、海信、美的、蜜雪、盐津铺子、卫龙、华莱士、J&T等"
     },
     "about": {
-      "title": "关于斑兔企服",
-      "subtitle": "专业的印尼本地化服务提供商",
-      "description": "斑兔企服是一家专注于为中国企业提供印尼本地化服务的专业平台。我们拥有丰富的印尼市场经验和专业的服务团队，致力于帮助中国企业顺利进入印尼市场，实现业务拓展。",
+      "title": "关于我们",
+      "subtitle": "东南亚一站式企业出海落地服务领航者",
+      "description": "班兔企服是一家专注于为中国企业提供印尼本地化服务的专业平台。我们拥有丰富的印尼市场经验和专业的服务团队，致力于帮助中国企业顺利进入印尼市场，实现业务拓展。",
+      "stats": {
+        "title": "我们的成就",
+        "years": "印尼布局三年",
+        "companies": "总服务出海中企",
+        "services": "提供服务",
+        "team": "团队成员"
+      },
+      "offices": {
+        "title": "我们的办公室",
+        "beijing": {
+          "title": "北京总部",
+          "type": "技术研发中心"
+        },
+        "wuhan": {
+          "title": "武汉",
+          "type": "财务行政中心"
+        },
+        "jakarta1": {
+          "title": "雅加达办公室1",
+          "address": "SOHO CAPITAL, 36th Floor Unit 08 (sc-36.08) (BANTU Business Serve), Jl. S.Parman Kav, 28, Podomoro City, Jakarta Barat"
+        },
+        "jakarta2": {
+          "title": "雅加达办公室2",
+          "address": "Ruko Garden Shopping Arcade, Letjen S. Parman (Unit C Number 009AC), Kel. Tj. Duren Selatan Kec. Grogol Petamburan, Jakarta Barat, DKI Jakarta"
+        }
+      },
       "mission": {
         "title": "我们的使命",
-        "content": "让中国企业出海印尼更轻松，通过专业的本地化服务，降低进入印尼市场的门槛，助力企业快速落地并实现可持续发展。"
+        "content": "让企业出海不再是难题"
+      },
+      "vision": {
+        "title": "我们的愿景",
+        "content": "促进中国和\"一带一路\"国家经贸交往，为印尼引进中国的资本、技术、人才实现共同发展、互利共赢"
+      },
+      "goal": {
+        "title": "我们的目标",
+        "content": "企业出海印尼\"一站式\"服务平台"
+      },
+      "slogan": {
+        "title": "我们的口号",
+        "content": "印尼选择班兔，出海皆是坦途"
       },
       "values": {
         "title": "我们的价值观",
@@ -177,6 +217,10 @@
     "title": "联系我们",
     "subtitle": "我们期待与您合作，助力您的印尼业务发展",
     "description": "如果您有任何关于印尼企业服务的问题，欢迎随时联系我们。我们的专业团队将为您提供详细的咨询和解决方案。",
+    "map": {
+      "title": "我们的办公室位置",
+      "address": "SOHO CAPITAL 36th floor, unit 08. Jl. Tanjung Duren Raya No.1 3, RT.3/RW.5, Tj. Duren Sel., Kec. Grogol petamburan,Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11470."
+    },
     "form": {
       "name": "姓名",
       "email": "邮箱",
@@ -211,6 +255,7 @@
     }
   },
   "login": {
+    "backendTitle": "班兔的后台",
     "title": "登录",
     "username": "用户名",
     "password": "密码",
@@ -218,7 +263,8 @@
     "forgot": "忘记密码？",
     "submit": "登录",
     "usernamePlaceholder": "请输入用户名",
-    "passwordPlaceholder": "请输入密码"
+    "passwordPlaceholder": "请输入密码",
+    "successMessage": "登录成功！后台功能开发中..."
   },
   "footer": {
     "beijingOffice": {
@@ -233,7 +279,7 @@
       "email": "邮箱",
       "whatsapp": "WhatsApp"
     },
-    "copyright": "© 2025 斑兔企服 BANTUQIFU. 保留所有权利。",
+    "copyright": "© 2025 班兔企服 BANTUQIFU. 保留所有权利。",
     "icp": "京ICP备2025140917号-1"
   }
 }

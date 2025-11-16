@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Mail, Phone, MapPin } from 'lucide-react'
+import { Mail, MessageCircle, MapPin } from 'lucide-react'
 
 const Contact = () => {
   const { t } = useTranslation()
@@ -57,18 +57,30 @@ const Contact = () => {
                 <h4 className="font-semibold text-gray-900 mb-1 tracking-tight">
                   {t('contact.info.email')}
                 </h4>
-                <p className="text-gray-500">info@bantu.sbs</p>
+                <a
+                  href="mailto:lily@bantuqifu.com"
+                  className="text-gray-500 hover:text-primary-600 transition-colors"
+                >
+                  lily@bantuqifu.com
+                </a>
               </div>
             </div>
             <div className="flex items-start space-x-4">
               <div className="bg-primary-50 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Phone className="h-6 w-6 text-primary-600" />
+                <MessageCircle className="h-6 w-6 text-primary-600" />
               </div>
               <div>
                 <h4 className="font-semibold text-gray-900 mb-1 tracking-tight">
-                  {t('contact.info.phone')}
+                  {t('footer.contact.whatsapp')}
                 </h4>
-                <p className="text-gray-500">+62 XXX XXX XXXX</p>
+                <a
+                  href="https://wa.me/6282327758858"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-500 hover:text-primary-600 transition-colors underline"
+                >
+                  +62 823-2775-8858
+                </a>
               </div>
             </div>
             <div className="flex items-start space-x-4">
