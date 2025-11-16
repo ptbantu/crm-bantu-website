@@ -24,83 +24,180 @@
   },
   "home": {
     "hero": {
-      "title": "Selamat Datang di Bantu Enterprise Services",
-      "subtitle": "Penyedia Solusi Layanan Perusahaan Profesional",
-      "description": "Kami berkomitmen untuk menyediakan layanan perusahaan komprehensif untuk bisnis Indonesia, termasuk sistem CRM, manajemen proses bisnis, manajemen keuangan, dan layanan profesional lainnya.",
+      "title": "Mempermudah Ekspansi ke Indonesia",
+      "subtitle": "Platform Layanan Perusahaan Lokal Indonesia One-Stop",
+      "description": "Bantu Enterprise Services fokus pada penyediaan layanan lokalisasi Indonesia untuk perusahaan China, mencakup pendaftaran perusahaan, pengurusan visa, perencanaan keuangan dan pajak, outsourcing SDM, sertifikasi kualifikasi, hak kekayaan intelektual, dan solusi layanan perusahaan komprehensif lainnya.",
       "cta": "Pelajari Lebih Lanjut"
     },
     "features": {
       "title": "Layanan Inti",
       "subtitle": "Memberikan solusi layanan perusahaan one-stop untuk Anda",
-      "crm": {
-        "title": "CRM Manajemen Hubungan Pelanggan",
-        "description": "Sistem manajemen hubungan pelanggan yang komprehensif untuk membantu Anda mengelola informasi pelanggan dan hubungan bisnis dengan lebih baik"
+      "companyRegistration": {
+        "title": "Pendaftaran Perusahaan",
+        "description": "Bantuan profesional untuk perusahaan China menyelesaikan pendaftaran perusahaan di Indonesia, termasuk PT, perwakilan, dan berbagai bentuk lainnya, menyediakan layanan pengurusan penuh"
       },
-      "workflow": {
-        "title": "Manajemen Alur Kerja",
-        "description": "Mesin alur kerja yang fleksibel untuk mengoptimalkan proses bisnis Anda dan meningkatkan efisiensi kerja"
+      "visaService": {
+        "title": "Pengurusan Visa",
+        "description": "Menyediakan layanan aplikasi visa Indonesia berbagai jenis, termasuk visa kerja, visa investasi, visa bisnis, profesional dan efisien"
       },
-      "finance": {
-        "title": "Manajemen Keuangan",
-        "description": "Sistem manajemen keuangan yang sempurna untuk real-time monitoring dan analisis data keuangan"
+      "financeTax": {
+        "title": "Perencanaan Keuangan dan Pajak",
+        "description": "Layanan konsultasi keuangan dan pajak profesional, membantu perusahaan beroperasi sesuai peraturan, mengoptimalkan struktur pajak, mengurangi biaya pajak"
       },
-      "integration": {
-        "title": "Integrasi Sistem",
-        "description": "Mendukung berbagai integrasi sistem untuk mencapai pertukaran data dan kolaborasi bisnis"
+      "hrOutsourcing": {
+        "title": "Outsourcing SDM",
+        "description": "Menyediakan layanan SDM komprehensif termasuk rekrutmen karyawan, manajemen gaji, pembayaran asuransi sosial, membantu perusahaan fokus pada bisnis inti"
+      },
+      "certification": {
+        "title": "Sertifikasi Kualifikasi",
+        "description": "Membantu perusahaan mengurus berbagai sertifikasi kualifikasi industri, memastikan operasi sesuai peraturan, cepat memasuki pasar Indonesia"
+      },
+      "intellectualProperty": {
+        "title": "Hak Kekayaan Intelektual",
+        "description": "Menyediakan layanan hak kekayaan intelektual termasuk pendaftaran merek, aplikasi paten, perlindungan hak cipta, melindungi hasil inovasi perusahaan"
       }
+    },
+    "customers": {
+      "title": "Klien yang Telah Bekerja Sama dengan Kami",
+      "subtitle": "Banyak perusahaan memilih Bantu Enterprise Services untuk bersama-sama mengembangkan pasar Indonesia"
     },
     "about": {
       "title": "Tentang Bantu Enterprise Services",
-      "description": "Bantu Enterprise Services adalah perusahaan teknologi yang fokus pada penyediaan layanan perusahaan profesional untuk bisnis Indonesia. Kami memiliki pengalaman industri yang kaya dan tim teknis profesional, berkomitmen untuk membantu perusahaan mencapai transformasi digital."
+      "subtitle": "Penyedia Layanan Lokalisasi Indonesia Profesional",
+      "description": "Bantu Enterprise Services adalah platform profesional yang fokus pada penyediaan layanan lokalisasi Indonesia untuk perusahaan China. Kami memiliki pengalaman pasar Indonesia yang kaya dan tim layanan profesional, berkomitmen untuk membantu perusahaan China memasuki pasar Indonesia dengan lancar dan mencapai ekspansi bisnis.",
+      "mission": {
+        "title": "Misi Kami",
+        "content": "Mempermudah perusahaan China melakukan ekspansi ke Indonesia, melalui layanan lokalisasi profesional, menurunkan ambang batas memasuki pasar Indonesia, membantu perusahaan cepat mendarat dan mencapai pembangunan berkelanjutan."
+      },
+      "values": {
+        "title": "Nilai-Nilai Kami",
+        "professional": {
+          "title": "Profesional",
+          "content": "Memiliki pengalaman pasar Indonesia yang kaya dan tim layanan profesional"
+        },
+        "efficient": {
+          "title": "Efisien",
+          "content": "Menyediakan layanan respons cepat, membantu klien menghemat waktu dan biaya"
+        },
+        "reliable": {
+          "title": "Terpercaya",
+          "content": "Sangat mematuhi hukum dan peraturan, memastikan layanan sesuai peraturan dan dapat diandalkan"
+        },
+        "customer": {
+          "title": "Pelanggan Utama",
+          "content": "Berfokus pada kebutuhan pelanggan, menyediakan layanan kustomisasi pribadi"
+        }
+      },
+      "why": {
+        "title": "Mengapa Memilih Kami",
+        "experience": "Pengalaman pasar Indonesia yang kaya, akrab dengan hukum dan peraturan lokal",
+        "team": "Tim layanan profesional, menyediakan solusi one-stop",
+        "network": "Jaringan sumber daya lokal yang luas, respons cepat terhadap kebutuhan klien",
+        "success": "Berhasil melayani ratusan perusahaan, reputasi baik"
+      }
     }
   },
   "services": {
     "title": "Pengenalan Layanan",
     "subtitle": "Layanan profesional yang kami sediakan",
-    "crm": {
-      "title": "Sistem Manajemen Hubungan Pelanggan CRM",
-      "description": "Solusi manajemen hubungan pelanggan yang komprehensif, termasuk manajemen informasi pelanggan, manajemen penjualan, otomatisasi pemasaran, dan lainnya.",
+    "companyRegistration": {
+      "title": "Layanan Pendaftaran Perusahaan",
+      "description": "Bantuan profesional untuk perusahaan China menyelesaikan pendaftaran perusahaan di Indonesia, termasuk PT, perwakilan, dan berbagai bentuk lainnya, menyediakan layanan pengurusan penuh, menyelesaikan proses pendaftaran dengan cepat dan efisien.",
       "features": [
-        "Manajemen informasi pelanggan terpusat",
-        "Pelacakan proses penjualan",
-        "Manajemen aktivitas pemasaran",
-        "Analisis data dan laporan"
+        "Pendaftaran PT (Perseroan Terbatas)",
+        "Pendirian Perwakilan",
+        "Pendaftaran Perusahaan Asing",
+        "Penyediaan Alamat Registrasi",
+        "Penyusunan Anggaran Dasar Perusahaan",
+        "Layanan Pengurusan Penuh"
       ]
     },
-    "workflow": {
-      "title": "Sistem Manajemen Alur Kerja",
-      "description": "Mesin alur kerja yang fleksibel, mendukung desain proses bisnis yang kompleks dan eksekusi otomatis.",
+    "visaService": {
+      "title": "Layanan Pengurusan Visa",
+      "description": "Menyediakan layanan aplikasi visa Indonesia berbagai jenis, termasuk visa kerja, visa investasi, visa bisnis, tim profesional membantu menyiapkan dokumen, meningkatkan tingkat keberhasilan visa.",
       "features": [
-        "Desain proses visual",
-        "Proses persetujuan otomatis",
-        "Penugasan dan pelacakan tugas",
-        "Monitoring dan analisis proses"
+        "Aplikasi Visa Kerja (KITAS)",
+        "Pengurusan Visa Investasi",
+        "Layanan Visa Bisnis",
+        "Pengurusan Visa Keluarga",
+        "Layanan Perpanjangan Visa",
+        "Panduan Persiapan Dokumen Profesional"
       ]
     },
-    "finance": {
-      "title": "Sistem Manajemen Keuangan",
-      "description": "Solusi manajemen keuangan yang sempurna, mencakup akuntansi, laporan keuangan, kontrol biaya, dan lainnya.",
+    "financeTax": {
+      "title": "Layanan Perencanaan Keuangan dan Pajak",
+      "description": "Layanan konsultasi keuangan dan pajak profesional, membantu perusahaan beroperasi sesuai peraturan, mengoptimalkan struktur pajak, mengurangi biaya pajak, menyediakan rencana perencanaan keuangan komprehensif.",
       "features": [
-        "Manajemen akuntansi",
-        "Generasi laporan keuangan",
-        "Analisis dan kontrol biaya",
-        "Manajemen anggaran"
+        "Perencanaan dan Optimasi Pajak",
+        "Penyusunan Laporan Keuangan",
+        "Layanan Pelaporan Pajak",
+        "Konsultasi Kepatuhan Keuangan",
+        "Analisis Kontrol Biaya",
+        "Bantuan Audit Tahunan"
+      ]
+    },
+    "hrOutsourcing": {
+      "title": "Layanan Outsourcing SDM",
+      "description": "Menyediakan layanan SDM komprehensif termasuk rekrutmen karyawan, manajemen gaji, pembayaran asuransi sosial, membantu perusahaan fokus pada bisnis inti, mengurangi biaya manajemen SDM.",
+      "features": [
+        "Layanan Rekrutmen Karyawan",
+        "Desain Sistem Penggajian",
+        "Pembayaran Asuransi dan Tabungan",
+        "Manajemen Kontrak Kerja",
+        "Layanan Pelatihan Karyawan",
+        "Manajemen Arsip SDM"
+      ]
+    },
+    "certification": {
+      "title": "Layanan Sertifikasi Kualifikasi",
+      "description": "Membantu perusahaan mengurus berbagai sertifikasi kualifikasi industri, memastikan operasi sesuai peraturan, cepat memasuki pasar Indonesia, menyediakan panduan penuh untuk aplikasi sertifikasi.",
+      "features": [
+        "Sertifikasi Kualifikasi Industri",
+        "Layanan Sertifikasi ISO",
+        "Aplikasi Sertifikasi Produk",
+        "Pengurusan Izin Impor",
+        "Layanan Sertifikasi Lingkungan",
+        "Layanan Perpanjangan Sertifikasi"
+      ]
+    },
+    "intellectualProperty": {
+      "title": "Layanan Hak Kekayaan Intelektual",
+      "description": "Menyediakan layanan hak kekayaan intelektual termasuk pendaftaran merek, aplikasi paten, perlindungan hak cipta, melindungi hasil inovasi perusahaan, mempertahankan hak merek.",
+      "features": [
+        "Aplikasi Pendaftaran Merek",
+        "Layanan Aplikasi Paten",
+        "Perlindungan Pendaftaran Hak Cipta",
+        "Perlindungan Hak Kekayaan Intelektual",
+        "Konsultasi Perlindungan Merek",
+        "Penanganan Sengketa Pelanggaran"
       ]
     }
   },
   "contact": {
     "title": "Hubungi Kami",
-    "subtitle": "Kami berharap dapat bekerja sama dengan Anda",
+    "subtitle": "Kami berharap dapat bekerja sama dengan Anda, membantu pengembangan bisnis Indonesia Anda",
+    "description": "Jika Anda memiliki pertanyaan tentang layanan perusahaan Indonesia, jangan ragu untuk menghubungi kami. Tim profesional kami akan memberikan konsultasi dan solusi yang detail.",
     "form": {
       "name": "Nama",
       "email": "Email",
       "phone": "Telepon",
+      "company": "Nama Perusahaan",
+      "service": "Layanan yang Dikonsultasikan",
       "message": "Pesan",
       "submit": "Kirim",
       "namePlaceholder": "Masukkan nama Anda",
       "emailPlaceholder": "Masukkan email Anda",
       "phonePlaceholder": "Masukkan nomor telepon Anda",
-      "messagePlaceholder": "Masukkan pesan Anda"
+      "companyPlaceholder": "Masukkan nama perusahaan Anda",
+      "servicePlaceholder": "Pilih layanan yang ingin dikonsultasikan",
+      "messagePlaceholder": "Jelaskan kebutuhan Anda secara detail"
+    },
+    "info": {
+      "title": "Informasi Kontak",
+      "email": "Email",
+      "phone": "Telepon",
+      "address": "Alamat",
+      "workingHours": "Jam Kerja"
     }
   },
   "dashboard": {
@@ -122,6 +219,22 @@
     "submit": "Masuk",
     "usernamePlaceholder": "Masukkan nama pengguna",
     "passwordPlaceholder": "Masukkan kata sandi"
+  },
+  "footer": {
+    "beijingOffice": {
+      "title": "Kantor Beijing",
+      "address": "北京市朝阳区红军营南路15号院2号楼1层102室"
+    },
+    "jakartaOffice": {
+      "title": "Kantor Jakarta",
+      "address": "SOHO CAPITAL 36th floor, unit 08. Jl. Tanjung Duren Raya No.1 3, RT.3/RW.5, Tj. Duren Sel., Kec. Grogol petamburan,Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11470."
+    },
+    "contact": {
+      "email": "Email",
+      "whatsapp": "WhatsApp"
+    },
+    "copyright": "© 2025 Bantu Enterprise Services BANTUQIFU. Hak Cipta Dilindungi.",
+    "icp": "京ICP备2025140917号-1"
   }
 }
 

@@ -8,6 +8,8 @@ const Contact = () => {
     name: '',
     email: '',
     phone: '',
+    company: '',
+    service: '',
     message: '',
   })
 
@@ -19,7 +21,7 @@ const Contact = () => {
   }
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     setFormData({
       ...formData,
@@ -34,19 +36,27 @@ const Contact = () => {
           <h1 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-4 tracking-tight">
             {t('contact.title')}
           </h1>
-          <p className="text-lg text-gray-500">
+          <p className="text-lg text-gray-500 mb-2">
             {t('contact.subtitle')}
+          </p>
+          <p className="text-base text-gray-400 max-w-2xl mx-auto">
+            {t('contact.description')}
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Contact Info */}
           <div className="space-y-6">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4 tracking-tight">
+              {t('contact.info.title')}
+            </h3>
             <div className="flex items-start space-x-4">
               <div className="bg-primary-50 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
                 <Mail className="h-6 w-6 text-primary-600" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1 tracking-tight">Email</h3>
+                <h4 className="font-semibold text-gray-900 mb-1 tracking-tight">
+                  {t('contact.info.email')}
+                </h4>
                 <p className="text-gray-500">info@bantu.sbs</p>
               </div>
             </div>
@@ -55,7 +65,9 @@ const Contact = () => {
                 <Phone className="h-6 w-6 text-primary-600" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1 tracking-tight">Phone</h3>
+                <h4 className="font-semibold text-gray-900 mb-1 tracking-tight">
+                  {t('contact.info.phone')}
+                </h4>
                 <p className="text-gray-500">+62 XXX XXX XXXX</p>
               </div>
             </div>
@@ -64,9 +76,16 @@ const Contact = () => {
                 <MapPin className="h-6 w-6 text-primary-600" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1 tracking-tight">Address</h3>
+                <h4 className="font-semibold text-gray-900 mb-1 tracking-tight">
+                  {t('contact.info.address')}
+                </h4>
                 <p className="text-gray-500">Jakarta, Indonesia</p>
               </div>
+            </div>
+            <div className="pt-4 border-t border-gray-200">
+              <p className="text-sm text-gray-500">
+                <span className="font-medium">{t('contact.info.workingHours')}:</span> Mon-Fri 9:00-18:00 (WIB)
+              </p>
             </div>
           </div>
 
@@ -124,6 +143,47 @@ const Contact = () => {
                 placeholder={t('contact.form.phonePlaceholder')}
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white"
               />
+            </div>
+            <div>
+              <label
+                htmlFor="company"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                {t('contact.form.company')}
+              </label>
+              <input
+                type="text"
+                id="company"
+                name="company"
+                value={formData.company}
+                onChange={handleChange}
+                placeholder={t('contact.form.companyPlaceholder')}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="service"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                {t('contact.form.service')}
+              </label>
+              <select
+                id="service"
+                name="service"
+                value={formData.service}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all bg-white"
+              >
+                <option value="">{t('contact.form.servicePlaceholder')}</option>
+                <option value="companyRegistration">{t('home.features.companyRegistration.title')}</option>
+                <option value="visaService">{t('home.features.visaService.title')}</option>
+                <option value="financeTax">{t('home.features.financeTax.title')}</option>
+                <option value="hrOutsourcing">{t('home.features.hrOutsourcing.title')}</option>
+                <option value="certification">{t('home.features.certification.title')}</option>
+                <option value="intellectualProperty">{t('home.features.intellectualProperty.title')}</option>
+                <option value="other">其他服务</option>
+              </select>
             </div>
             <div>
               <label

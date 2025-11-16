@@ -1,41 +1,86 @@
 import { useTranslation } from 'react-i18next'
-import { Users, Workflow, DollarSign } from 'lucide-react'
+import { Building2, FileText, Calculator, Users, Award, Copyright } from 'lucide-react'
 
 const Services = () => {
   const { t } = useTranslation()
 
   const services = [
     {
+      icon: Building2,
+      title: t('services.companyRegistration.title'),
+      description: t('services.companyRegistration.description'),
+      features: [
+        t('services.companyRegistration.features.0'),
+        t('services.companyRegistration.features.1'),
+        t('services.companyRegistration.features.2'),
+        t('services.companyRegistration.features.3'),
+        t('services.companyRegistration.features.4'),
+        t('services.companyRegistration.features.5'),
+      ],
+    },
+    {
+      icon: FileText,
+      title: t('services.visaService.title'),
+      description: t('services.visaService.description'),
+      features: [
+        t('services.visaService.features.0'),
+        t('services.visaService.features.1'),
+        t('services.visaService.features.2'),
+        t('services.visaService.features.3'),
+        t('services.visaService.features.4'),
+        t('services.visaService.features.5'),
+      ],
+    },
+    {
+      icon: Calculator,
+      title: t('services.financeTax.title'),
+      description: t('services.financeTax.description'),
+      features: [
+        t('services.financeTax.features.0'),
+        t('services.financeTax.features.1'),
+        t('services.financeTax.features.2'),
+        t('services.financeTax.features.3'),
+        t('services.financeTax.features.4'),
+        t('services.financeTax.features.5'),
+      ],
+    },
+    {
       icon: Users,
-      title: t('services.crm.title'),
-      description: t('services.crm.description'),
+      title: t('services.hrOutsourcing.title'),
+      description: t('services.hrOutsourcing.description'),
       features: [
-        t('services.crm.features.0'),
-        t('services.crm.features.1'),
-        t('services.crm.features.2'),
-        t('services.crm.features.3'),
+        t('services.hrOutsourcing.features.0'),
+        t('services.hrOutsourcing.features.1'),
+        t('services.hrOutsourcing.features.2'),
+        t('services.hrOutsourcing.features.3'),
+        t('services.hrOutsourcing.features.4'),
+        t('services.hrOutsourcing.features.5'),
       ],
     },
     {
-      icon: Workflow,
-      title: t('services.workflow.title'),
-      description: t('services.workflow.description'),
+      icon: Award,
+      title: t('services.certification.title'),
+      description: t('services.certification.description'),
       features: [
-        t('services.workflow.features.0'),
-        t('services.workflow.features.1'),
-        t('services.workflow.features.2'),
-        t('services.workflow.features.3'),
+        t('services.certification.features.0'),
+        t('services.certification.features.1'),
+        t('services.certification.features.2'),
+        t('services.certification.features.3'),
+        t('services.certification.features.4'),
+        t('services.certification.features.5'),
       ],
     },
     {
-      icon: DollarSign,
-      title: t('services.finance.title'),
-      description: t('services.finance.description'),
+      icon: Copyright,
+      title: t('services.intellectualProperty.title'),
+      description: t('services.intellectualProperty.description'),
       features: [
-        t('services.finance.features.0'),
-        t('services.finance.features.1'),
-        t('services.finance.features.2'),
-        t('services.finance.features.3'),
+        t('services.intellectualProperty.features.0'),
+        t('services.intellectualProperty.features.1'),
+        t('services.intellectualProperty.features.2'),
+        t('services.intellectualProperty.features.3'),
+        t('services.intellectualProperty.features.4'),
+        t('services.intellectualProperty.features.5'),
       ],
     },
   ]

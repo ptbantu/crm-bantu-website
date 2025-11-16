@@ -13,7 +13,7 @@
     "welcome": "欢迎"
   },
   "header": {
-    "title": "班兔企服",
+    "title": "斑兔企服",
     "nav": {
       "home": "首页",
       "about": "关于我们",
@@ -24,83 +24,180 @@
   },
   "home": {
     "hero": {
-      "title": "欢迎来到班兔企服",
-      "subtitle": "专业的企业服务解决方案提供商",
-      "description": "我们致力于为印尼企业提供全方位的企业服务，包括CRM系统、业务流程管理、财务管理和更多专业服务。",
+      "title": "让出海印尼更轻松",
+      "subtitle": "印尼一站式本地企业服务平台",
+      "description": "斑兔企服专注于为中国企业提供印尼本地化服务，涵盖公司注册、签证办理、财税筹划、人事外包、资质认证、知识产权等全方位企业服务解决方案。",
       "cta": "了解更多"
     },
     "features": {
       "title": "核心服务",
       "subtitle": "为您提供一站式企业服务解决方案",
-      "crm": {
-        "title": "CRM客户关系管理",
-        "description": "全面的客户关系管理系统，帮助您更好地管理客户信息和业务关系"
+      "companyRegistration": {
+        "title": "公司注册",
+        "description": "专业协助中国企业在印尼完成公司注册，包括PT公司、代表处等多种形式，提供全程代办服务"
       },
-      "workflow": {
-        "title": "工作流管理",
-        "description": "灵活的工作流引擎，优化您的业务流程，提高工作效率"
+      "visaService": {
+        "title": "签证办理",
+        "description": "提供工作签证、投资签证、商务签证等各类印尼签证申请服务，专业高效"
       },
-      "finance": {
-        "title": "财务管理",
-        "description": "完善的财务管理系统，实现财务数据的实时监控和分析"
+      "financeTax": {
+        "title": "财税筹划",
+        "description": "专业的财税咨询服务，帮助企业合规经营，优化税务结构，降低税务成本"
       },
-      "integration": {
-        "title": "系统集成",
-        "description": "支持多种系统集成，实现数据互通和业务协同"
+      "hrOutsourcing": {
+        "title": "人事外包",
+        "description": "提供员工招聘、薪酬管理、社保缴纳等全方位人事服务，助力企业专注核心业务"
+      },
+      "certification": {
+        "title": "资质认证",
+        "description": "协助企业办理各类行业资质认证，确保合规经营，快速进入印尼市场"
+      },
+      "intellectualProperty": {
+        "title": "知识产权",
+        "description": "提供商标注册、专利申请、版权保护等知识产权服务，保护企业创新成果"
       }
     },
+    "customers": {
+      "title": "我们合作过的客户",
+      "subtitle": "众多企业选择斑兔企服，共同开拓印尼市场"
+    },
     "about": {
-      "title": "关于班兔企服",
-      "description": "班兔企服是一家专注于为印尼企业提供专业企业服务的技术公司。我们拥有丰富的行业经验和专业的技术团队，致力于帮助企业实现数字化转型。"
+      "title": "关于斑兔企服",
+      "subtitle": "专业的印尼本地化服务提供商",
+      "description": "斑兔企服是一家专注于为中国企业提供印尼本地化服务的专业平台。我们拥有丰富的印尼市场经验和专业的服务团队，致力于帮助中国企业顺利进入印尼市场，实现业务拓展。",
+      "mission": {
+        "title": "我们的使命",
+        "content": "让中国企业出海印尼更轻松，通过专业的本地化服务，降低进入印尼市场的门槛，助力企业快速落地并实现可持续发展。"
+      },
+      "values": {
+        "title": "我们的价值观",
+        "professional": {
+          "title": "专业",
+          "content": "拥有丰富的印尼市场经验和专业的服务团队"
+        },
+        "efficient": {
+          "title": "高效",
+          "content": "提供快速响应的服务，帮助客户节省时间和成本"
+        },
+        "reliable": {
+          "title": "可靠",
+          "content": "严格遵守法律法规，确保服务合规可靠"
+        },
+        "customer": {
+          "title": "客户至上",
+          "content": "以客户需求为中心，提供个性化定制服务"
+        }
+      },
+      "why": {
+        "title": "为什么选择我们",
+        "experience": "丰富的印尼市场经验，熟悉当地法律法规",
+        "team": "专业的服务团队，提供一站式解决方案",
+        "network": "广泛的本地资源网络，快速响应客户需求",
+        "success": "成功服务数百家企业，口碑良好"
+      }
     }
   },
   "services": {
     "title": "服务介绍",
     "subtitle": "我们提供的专业服务",
-    "crm": {
-      "title": "CRM客户关系管理系统",
-      "description": "全面的客户关系管理解决方案，包括客户信息管理、销售管理、营销自动化等功能。",
+    "companyRegistration": {
+      "title": "公司注册服务",
+      "description": "专业协助中国企业在印尼完成公司注册，包括PT公司、代表处等多种形式，提供全程代办服务，快速高效完成注册流程。",
       "features": [
-        "客户信息集中管理",
-        "销售流程跟踪",
-        "营销活动管理",
-        "数据分析与报表"
+        "PT公司注册（有限责任公司）",
+        "代表处设立",
+        "外资公司注册",
+        "注册地址提供",
+        "公司章程起草",
+        "全程代办服务"
       ]
     },
-    "workflow": {
-      "title": "工作流管理系统",
-      "description": "灵活的工作流引擎，支持复杂的业务流程设计和自动化执行。",
+    "visaService": {
+      "title": "签证办理服务",
+      "description": "提供工作签证、投资签证、商务签证等各类印尼签证申请服务，专业团队协助准备材料，提高签证通过率。",
       "features": [
-        "可视化流程设计",
-        "自动化审批流程",
-        "任务分配与跟踪",
-        "流程监控与分析"
+        "工作签证（KITAS）申请",
+        "投资签证办理",
+        "商务签证服务",
+        "家属签证办理",
+        "签证延期服务",
+        "专业材料准备指导"
       ]
     },
-    "finance": {
-      "title": "财务管理系统",
-      "description": "完善的财务管理解决方案，涵盖会计核算、财务报表、成本控制等功能。",
+    "financeTax": {
+      "title": "财税筹划服务",
+      "description": "专业的财税咨询服务，帮助企业合规经营，优化税务结构，降低税务成本，提供全面的财务规划方案。",
       "features": [
-        "会计核算管理",
-        "财务报表生成",
-        "成本分析与控制",
-        "预算管理"
+        "税务筹划与优化",
+        "财务报表编制",
+        "税务申报服务",
+        "财务合规咨询",
+        "成本控制分析",
+        "年度审计协助"
+      ]
+    },
+    "hrOutsourcing": {
+      "title": "人事外包服务",
+      "description": "提供员工招聘、薪酬管理、社保缴纳等全方位人事服务，助力企业专注核心业务，降低人事管理成本。",
+      "features": [
+        "员工招聘服务",
+        "薪酬体系设计",
+        "社保公积金代缴",
+        "劳动合同管理",
+        "员工培训服务",
+        "人事档案管理"
+      ]
+    },
+    "certification": {
+      "title": "资质认证服务",
+      "description": "协助企业办理各类行业资质认证，确保合规经营，快速进入印尼市场，提供认证申请全程指导。",
+      "features": [
+        "行业资质认证",
+        "ISO认证服务",
+        "产品认证申请",
+        "进口许可证办理",
+        "环保认证服务",
+        "认证续期服务"
+      ]
+    },
+    "intellectualProperty": {
+      "title": "知识产权服务",
+      "description": "提供商标注册、专利申请、版权保护等知识产权服务，保护企业创新成果，维护品牌权益。",
+      "features": [
+        "商标注册申请",
+        "专利申请服务",
+        "版权登记保护",
+        "知识产权维权",
+        "品牌保护咨询",
+        "侵权纠纷处理"
       ]
     }
   },
   "contact": {
     "title": "联系我们",
-    "subtitle": "我们期待与您合作",
+    "subtitle": "我们期待与您合作，助力您的印尼业务发展",
+    "description": "如果您有任何关于印尼企业服务的问题，欢迎随时联系我们。我们的专业团队将为您提供详细的咨询和解决方案。",
     "form": {
       "name": "姓名",
       "email": "邮箱",
       "phone": "电话",
+      "company": "公司名称",
+      "service": "咨询业务",
       "message": "留言",
       "submit": "提交",
       "namePlaceholder": "请输入您的姓名",
       "emailPlaceholder": "请输入您的邮箱",
       "phonePlaceholder": "请输入您的电话",
-      "messagePlaceholder": "请输入您的留言"
+      "companyPlaceholder": "请输入您的公司名称",
+      "servicePlaceholder": "请选择您要咨询的业务",
+      "messagePlaceholder": "请详细描述您的需求"
+    },
+    "info": {
+      "title": "联系方式",
+      "email": "邮箱",
+      "phone": "电话",
+      "address": "地址",
+      "workingHours": "工作时间"
     }
   },
   "dashboard": {
@@ -122,6 +219,22 @@
     "submit": "登录",
     "usernamePlaceholder": "请输入用户名",
     "passwordPlaceholder": "请输入密码"
+  },
+  "footer": {
+    "beijingOffice": {
+      "title": "北京办公室",
+      "address": "北京市朝阳区红军营南路15号院2号楼1层102室"
+    },
+    "jakartaOffice": {
+      "title": "雅加达办公室",
+      "address": "SOHO CAPITAL 36th floor, unit 08. Jl. Tanjung Duren Raya No.1 3, RT.3/RW.5, Tj. Duren Sel., Kec. Grogol petamburan,Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11470."
+    },
+    "contact": {
+      "email": "邮箱",
+      "whatsapp": "WhatsApp"
+    },
+    "copyright": "© 2025 斑兔企服 BANTUQIFU. 保留所有权利。",
+    "icp": "京ICP备2025140917号-1"
   }
 }
 
