@@ -1,0 +1,127 @@
+{
+  "common": {
+    "language": "语言",
+    "chinese": "中文",
+    "indonesian": "印尼语",
+    "login": "登录",
+    "logout": "退出",
+    "home": "首页",
+    "about": "关于我们",
+    "services": "服务介绍",
+    "contact": "联系我们",
+    "dashboard": "仪表板",
+    "welcome": "欢迎"
+  },
+  "header": {
+    "title": "班兔企服",
+    "nav": {
+      "home": "首页",
+      "about": "关于我们",
+      "services": "服务介绍",
+      "contact": "联系我们",
+      "dashboard": "管理后台"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "欢迎来到班兔企服",
+      "subtitle": "专业的企业服务解决方案提供商",
+      "description": "我们致力于为印尼企业提供全方位的企业服务，包括CRM系统、业务流程管理、财务管理和更多专业服务。",
+      "cta": "了解更多"
+    },
+    "features": {
+      "title": "核心服务",
+      "subtitle": "为您提供一站式企业服务解决方案",
+      "crm": {
+        "title": "CRM客户关系管理",
+        "description": "全面的客户关系管理系统，帮助您更好地管理客户信息和业务关系"
+      },
+      "workflow": {
+        "title": "工作流管理",
+        "description": "灵活的工作流引擎，优化您的业务流程，提高工作效率"
+      },
+      "finance": {
+        "title": "财务管理",
+        "description": "完善的财务管理系统，实现财务数据的实时监控和分析"
+      },
+      "integration": {
+        "title": "系统集成",
+        "description": "支持多种系统集成，实现数据互通和业务协同"
+      }
+    },
+    "about": {
+      "title": "关于班兔企服",
+      "description": "班兔企服是一家专注于为印尼企业提供专业企业服务的技术公司。我们拥有丰富的行业经验和专业的技术团队，致力于帮助企业实现数字化转型。"
+    }
+  },
+  "services": {
+    "title": "服务介绍",
+    "subtitle": "我们提供的专业服务",
+    "crm": {
+      "title": "CRM客户关系管理系统",
+      "description": "全面的客户关系管理解决方案，包括客户信息管理、销售管理、营销自动化等功能。",
+      "features": [
+        "客户信息集中管理",
+        "销售流程跟踪",
+        "营销活动管理",
+        "数据分析与报表"
+      ]
+    },
+    "workflow": {
+      "title": "工作流管理系统",
+      "description": "灵活的工作流引擎，支持复杂的业务流程设计和自动化执行。",
+      "features": [
+        "可视化流程设计",
+        "自动化审批流程",
+        "任务分配与跟踪",
+        "流程监控与分析"
+      ]
+    },
+    "finance": {
+      "title": "财务管理系统",
+      "description": "完善的财务管理解决方案，涵盖会计核算、财务报表、成本控制等功能。",
+      "features": [
+        "会计核算管理",
+        "财务报表生成",
+        "成本分析与控制",
+        "预算管理"
+      ]
+    }
+  },
+  "contact": {
+    "title": "联系我们",
+    "subtitle": "我们期待与您合作",
+    "form": {
+      "name": "姓名",
+      "email": "邮箱",
+      "phone": "电话",
+      "message": "留言",
+      "submit": "提交",
+      "namePlaceholder": "请输入您的姓名",
+      "emailPlaceholder": "请输入您的邮箱",
+      "phonePlaceholder": "请输入您的电话",
+      "messagePlaceholder": "请输入您的留言"
+    }
+  },
+  "dashboard": {
+    "title": "管理后台",
+    "welcome": "欢迎回来",
+    "stats": {
+      "customers": "客户总数",
+      "orders": "订单总数",
+      "revenue": "总收入",
+      "growth": "增长率"
+    }
+  },
+  "login": {
+    "title": "登录",
+    "username": "用户名",
+    "password": "密码",
+    "remember": "记住我",
+    "forgot": "忘记密码？",
+    "submit": "登录",
+    "usernamePlaceholder": "请输入用户名",
+    "passwordPlaceholder": "请输入密码"
+  }
+}
+

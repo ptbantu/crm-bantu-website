@@ -1,0 +1,127 @@
+{
+  "common": {
+    "language": "Bahasa",
+    "chinese": "Bahasa Cina",
+    "indonesian": "Bahasa Indonesia",
+    "login": "Masuk",
+    "logout": "Keluar",
+    "home": "Beranda",
+    "about": "Tentang Kami",
+    "services": "Layanan",
+    "contact": "Hubungi Kami",
+    "dashboard": "Dashboard",
+    "welcome": "Selamat Datang"
+  },
+  "header": {
+    "title": "Bantu Enterprise Services",
+    "nav": {
+      "home": "Beranda",
+      "about": "Tentang Kami",
+      "services": "Layanan",
+      "contact": "Hubungi Kami",
+      "dashboard": "Dashboard Admin"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "Selamat Datang di Bantu Enterprise Services",
+      "subtitle": "Penyedia Solusi Layanan Perusahaan Profesional",
+      "description": "Kami berkomitmen untuk menyediakan layanan perusahaan komprehensif untuk bisnis Indonesia, termasuk sistem CRM, manajemen proses bisnis, manajemen keuangan, dan layanan profesional lainnya.",
+      "cta": "Pelajari Lebih Lanjut"
+    },
+    "features": {
+      "title": "Layanan Inti",
+      "subtitle": "Memberikan solusi layanan perusahaan one-stop untuk Anda",
+      "crm": {
+        "title": "CRM Manajemen Hubungan Pelanggan",
+        "description": "Sistem manajemen hubungan pelanggan yang komprehensif untuk membantu Anda mengelola informasi pelanggan dan hubungan bisnis dengan lebih baik"
+      },
+      "workflow": {
+        "title": "Manajemen Alur Kerja",
+        "description": "Mesin alur kerja yang fleksibel untuk mengoptimalkan proses bisnis Anda dan meningkatkan efisiensi kerja"
+      },
+      "finance": {
+        "title": "Manajemen Keuangan",
+        "description": "Sistem manajemen keuangan yang sempurna untuk real-time monitoring dan analisis data keuangan"
+      },
+      "integration": {
+        "title": "Integrasi Sistem",
+        "description": "Mendukung berbagai integrasi sistem untuk mencapai pertukaran data dan kolaborasi bisnis"
+      }
+    },
+    "about": {
+      "title": "Tentang Bantu Enterprise Services",
+      "description": "Bantu Enterprise Services adalah perusahaan teknologi yang fokus pada penyediaan layanan perusahaan profesional untuk bisnis Indonesia. Kami memiliki pengalaman industri yang kaya dan tim teknis profesional, berkomitmen untuk membantu perusahaan mencapai transformasi digital."
+    }
+  },
+  "services": {
+    "title": "Pengenalan Layanan",
+    "subtitle": "Layanan profesional yang kami sediakan",
+    "crm": {
+      "title": "Sistem Manajemen Hubungan Pelanggan CRM",
+      "description": "Solusi manajemen hubungan pelanggan yang komprehensif, termasuk manajemen informasi pelanggan, manajemen penjualan, otomatisasi pemasaran, dan lainnya.",
+      "features": [
+        "Manajemen informasi pelanggan terpusat",
+        "Pelacakan proses penjualan",
+        "Manajemen aktivitas pemasaran",
+        "Analisis data dan laporan"
+      ]
+    },
+    "workflow": {
+      "title": "Sistem Manajemen Alur Kerja",
+      "description": "Mesin alur kerja yang fleksibel, mendukung desain proses bisnis yang kompleks dan eksekusi otomatis.",
+      "features": [
+        "Desain proses visual",
+        "Proses persetujuan otomatis",
+        "Penugasan dan pelacakan tugas",
+        "Monitoring dan analisis proses"
+      ]
+    },
+    "finance": {
+      "title": "Sistem Manajemen Keuangan",
+      "description": "Solusi manajemen keuangan yang sempurna, mencakup akuntansi, laporan keuangan, kontrol biaya, dan lainnya.",
+      "features": [
+        "Manajemen akuntansi",
+        "Generasi laporan keuangan",
+        "Analisis dan kontrol biaya",
+        "Manajemen anggaran"
+      ]
+    }
+  },
+  "contact": {
+    "title": "Hubungi Kami",
+    "subtitle": "Kami berharap dapat bekerja sama dengan Anda",
+    "form": {
+      "name": "Nama",
+      "email": "Email",
+      "phone": "Telepon",
+      "message": "Pesan",
+      "submit": "Kirim",
+      "namePlaceholder": "Masukkan nama Anda",
+      "emailPlaceholder": "Masukkan email Anda",
+      "phonePlaceholder": "Masukkan nomor telepon Anda",
+      "messagePlaceholder": "Masukkan pesan Anda"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard Admin",
+    "welcome": "Selamat Datang Kembali",
+    "stats": {
+      "customers": "Total Pelanggan",
+      "orders": "Total Pesanan",
+      "revenue": "Total Pendapatan",
+      "growth": "Tingkat Pertumbuhan"
+    }
+  },
+  "login": {
+    "title": "Masuk",
+    "username": "Nama Pengguna",
+    "password": "Kata Sandi",
+    "remember": "Ingat Saya",
+    "forgot": "Lupa Kata Sandi?",
+    "submit": "Masuk",
+    "usernamePlaceholder": "Masukkan nama pengguna",
+    "passwordPlaceholder": "Masukkan kata sandi"
+  }
+}
+

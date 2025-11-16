@@ -1,0 +1,23 @@
+# HTTP 版本的 Ingress（如果还没有配置 cert-manager，可以先使用这个）
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: crm-bantu-website-http
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: www.crmbantu.space
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: crm-bantu-website
+            port:
+              number: 80
+
