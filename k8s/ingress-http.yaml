@@ -1,14 +1,15 @@
-# HTTPS 版本的 Ingress（使用 Traefik 内置 Let's Encrypt 支持）
+# HTTPS 版本的 Ingress（使用 cert-manager 自动管理 Let's Encrypt 证书）
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: crm-bantu-website-http
   namespace: default
   annotations:
-    # Traefik Ingress Controller 配置 - 使用 Let's Encrypt 自动申请证书
+    # 使用 cert-manager 自动管理 SSL 证书
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    # Traefik Ingress Controller 配置
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
 spec:
   ingressClassName: traefik
   tls:

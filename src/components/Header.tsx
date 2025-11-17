@@ -25,15 +25,12 @@ const Header = () => {
       <div className="container mx-auto px-6">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3">
+          <Link to="/" className="flex items-center">
             <img
-              src="/pics/logo.png"
+              src="/pics/bantu/bantu_logo.png"
               alt="Bantu Logo"
               className="h-9 w-auto"
             />
-            <span className="text-lg font-semibold text-gray-900 tracking-tight">
-              {t('header.title')}
-            </span>
           </Link>
 
           {/* Desktop Navigation */}
