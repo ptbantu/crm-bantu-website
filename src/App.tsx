@@ -13,6 +13,11 @@ import Services from './pages/Services'
 import Contact from './pages/Contact'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
+import EmployeeList from './pages/admin/EmployeeList'
+import EmployeeManagement from './pages/admin/EmployeeManagement'
+import Organizations from './pages/admin/Organizations'
+import UserInfo from './pages/admin/UserInfo'
+import SystemStatus from './pages/admin/SystemStatus'
 
 const AppContent = () => {
   const location = useLocation()
@@ -42,43 +47,55 @@ const AppContent = () => {
             }
           />
           
-          {/* 基础管理模块 */}
+          {/* 用户管理模块（仅 ADMIN） */}
           <Route
-            path="/admin/foundation/organizations"
-            element={
-              <AdminLayout>
-                <PermissionGuard permission={Permission.ORG_READ}>
-                  <div>组织管理页面（待实现）</div>
-                </PermissionGuard>
-              </AdminLayout>
-            }
-          />
-          <Route
-            path="/admin/foundation/users"
-            element={
-              <AdminLayout>
-                <PermissionGuard permission={Permission.USER_READ}>
-                  <div>用户管理页面（待实现）</div>
-                </PermissionGuard>
-              </AdminLayout>
-            }
-          />
-          <Route
-            path="/admin/foundation/roles"
-            element={
-              <AdminLayout>
-                <PermissionGuard permission={Permission.USER_READ}>
-                  <div>角色管理页面（待实现）</div>
-                </PermissionGuard>
-              </AdminLayout>
-            }
-          />
-          <Route
-            path="/admin/foundation/settings"
+            path="/admin/user-management/employee-list"
             element={
               <AdminLayout>
                 <PermissionGuard role="ADMIN">
-                  <div>系统设置页面（待实现）</div>
+                  <EmployeeList />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/user-management/employee-management"
+            element={
+              <AdminLayout>
+                <PermissionGuard role="ADMIN">
+                  <EmployeeManagement />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/user-management/organizations"
+            element={
+              <AdminLayout>
+                <PermissionGuard role="ADMIN">
+                  <Organizations />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          
+          {/* 系统管理模块（仅 ADMIN） */}
+          <Route
+            path="/admin/system-management/user-info"
+            element={
+              <AdminLayout>
+                <PermissionGuard role="ADMIN">
+                  <UserInfo />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/system-management/system-status"
+            element={
+              <AdminLayout>
+                <PermissionGuard role="ADMIN">
+                  <SystemStatus />
                 </PermissionGuard>
               </AdminLayout>
             }

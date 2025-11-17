@@ -16,10 +16,32 @@ export const Breadcrumb = () => {
     return null
   }
 
+  // 路径到翻译 key 的映射
+  const pathToKeyMap: Record<string, string> = {
+    'admin': 'menu.admin',
+    'user-management': 'menu.user-management',
+    'employee-list': 'menu.employeeList',
+    'employee-management': 'menu.employeeManagement',
+    'employees': 'menu.employees',
+    'organizations': 'menu.organizations',
+    'system-management': 'menu.systemManagement',
+    'user-info': 'menu.userInfo',
+    'system-status': 'menu.systemStatus',
+    'customer': 'menu.customer',
+    'customers': 'menu.customers',
+    'contacts': 'menu.contacts',
+    'order': 'menu.order',
+    'product': 'menu.product',
+    'finance': 'menu.finance',
+    'agent': 'menu.agent',
+    'dashboard': 'menu.dashboard',
+  }
+
   const breadcrumbItems = paths.map((path, index) => {
     const isLast = index === paths.length - 1
     const pathTo = '/' + paths.slice(0, index + 1).join('/')
-    const label = t(`menu.${path}`) || path
+    const translationKey = pathToKeyMap[path] || `menu.${path}`
+    const label = t(translationKey) || path
 
     return {
       label,

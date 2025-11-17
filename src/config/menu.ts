@@ -11,10 +11,11 @@ import {
   ShoppingCart,
   Package,
   DollarSign,
-  Truck,
   Network,
   Settings,
   Contact2,
+  User,
+  Activity,
 } from 'lucide-react'
 import { ComponentType } from 'react'
 
@@ -38,39 +39,55 @@ export const adminMenuItems: MenuItem[] = [
     // 所有登录用户都可以访问
   },
   {
-    key: 'foundation',
-    label: 'menu.foundation',
-    icon: Building2,
-    path: '/admin/foundation',
-    permission: [Permission.ORG_READ, Permission.USER_READ], // 需要任一权限
+    key: 'user-management',
+    label: 'menu.userManagement',
+    icon: Users,
+    path: '/admin/user-management',
+    role: Role.ADMIN, // 仅管理员可见
     children: [
+      {
+        key: 'employeeList',
+        label: 'menu.employeeList',
+        icon: Users,
+        path: '/admin/user-management/employee-list',
+        role: Role.ADMIN,
+      },
+      {
+        key: 'employeeManagement',
+        label: 'menu.employeeManagement',
+        icon: UserCog,
+        path: '/admin/user-management/employee-management',
+        role: Role.ADMIN,
+      },
       {
         key: 'organizations',
         label: 'menu.organizations',
         icon: Building2,
-        path: '/admin/foundation/organizations',
-        permission: Permission.ORG_READ,
+        path: '/admin/user-management/organizations',
+        role: Role.ADMIN,
+      },
+    ],
+  },
+  {
+    key: 'system-management',
+    label: 'menu.systemManagement',
+    icon: Settings,
+    path: '/admin/system-management',
+    role: Role.ADMIN, // 仅管理员可见
+    children: [
+      {
+        key: 'userInfo',
+        label: 'menu.userInfo',
+        icon: User,
+        path: '/admin/system-management/user-info',
+        role: Role.ADMIN,
       },
       {
-        key: 'users',
-        label: 'menu.users',
-        icon: Users,
-        path: '/admin/foundation/users',
-        permission: Permission.USER_READ,
-      },
-      {
-        key: 'roles',
-        label: 'menu.roles',
-        icon: UserCog,
-        path: '/admin/foundation/roles',
-        permission: Permission.USER_READ, // 角色管理需要用户管理权限
-      },
-      {
-        key: 'settings',
-        label: 'menu.settings',
-        icon: Settings,
-        path: '/admin/foundation/settings',
-        role: Role.ADMIN, // 仅管理员
+        key: 'systemStatus',
+        label: 'menu.systemStatus',
+        icon: Activity,
+        path: '/admin/system-management/system-status',
+        role: Role.ADMIN,
       },
     ],
   },
@@ -118,13 +135,6 @@ export const adminMenuItems: MenuItem[] = [
     path: '/admin/finance',
     permission: Permission.FINANCE_READ,
     role: [Role.FINANCE, Role.ADMIN], // 仅财务和管理员
-  },
-  {
-    key: 'vendor',
-    label: 'menu.vendor',
-    icon: Truck,
-    path: '/admin/vendor',
-    permission: Permission.VENDOR_READ,
   },
   {
     key: 'agent',

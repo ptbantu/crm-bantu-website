@@ -288,20 +288,302 @@
     "copyright": "© 2025 Bantu Enterprise Services BANTUQIFU. Hak Cipta Dilindungi.",
     "icp": "京ICP备2025140917号-1"
   },
+  "employeeList": {
+    "title": "Daftar Karyawan",
+    "subtitle": "Lihat informasi pengguna dan karyawan sistem",
+    "search": {
+      "username": "Nama Pengguna",
+      "usernamePlaceholder": "Masukkan nama pengguna",
+      "email": "Email",
+      "emailPlaceholder": "Masukkan email",
+      "organization": "Organisasi",
+      "role": "Peran",
+      "status": "Status",
+      "allStatus": "Semua Status",
+      "active": "Aktif",
+      "inactive": "Tidak Aktif",
+      "allOrganizations": "Semua Organisasi",
+      "allRoles": "Semua Peran",
+      "showAdvanced": "Filter Lanjutan",
+      "hideAdvanced": "Sembunyikan Filter",
+      "search": "Cari",
+      "reset": "Reset"
+    },
+    "table": {
+      "actions": "Aksi",
+      "detail": "Detail",
+      "username": "Nama Pengguna",
+      "displayName": "Nama Tampilan",
+      "email": "Email",
+      "organization": "Organisasi",
+      "status": "Status",
+      "active": "Aktif",
+      "inactive": "Tidak Aktif",
+      "createdAt": "Waktu Dibuat"
+    },
+    "pagination": {
+      "total": "Total {{total}} item",
+      "page": "Halaman {{current}} / {{total}}",
+      "prev": "Sebelumnya",
+      "next": "Selanjutnya"
+    },
+    "loading": "Memuat...",
+    "noData": "Tidak ada data",
+    "error": {
+      "loadFailed": "Gagal memuat",
+      "loadOptions": "Gagal memuat opsi"
+    }
+  },
+  "employeeManagement": {
+    "title": "Manajemen Karyawan",
+    "subtitle": "Kelola informasi pengguna dan karyawan sistem, dukungan CRUD",
+    "create": "Tambah Karyawan",
+    "edit": "Edit",
+    "delete": "Hapus",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "search": {
+      "username": "Nama Pengguna",
+      "usernamePlaceholder": "Masukkan nama pengguna",
+      "email": "Email",
+      "emailPlaceholder": "Masukkan email",
+      "organization": "Organisasi",
+      "status": "Status",
+      "allStatus": "Semua Status",
+      "active": "Aktif",
+      "inactive": "Tidak Aktif",
+      "allOrganizations": "Semua Organisasi",
+      "search": "Cari",
+      "reset": "Reset"
+    },
+    "table": {
+      "username": "Nama Pengguna",
+      "displayName": "Nama Tampilan",
+      "email": "Email",
+      "organization": "Organisasi",
+      "status": "Status",
+      "active": "Aktif",
+      "inactive": "Tidak Aktif",
+      "actions": "Aksi"
+    },
+    "form": {
+      "username": "Nama Pengguna",
+      "usernamePlaceholder": "Kosongkan untuk generate otomatis",
+      "password": "Kata Sandi",
+      "passwordPlaceholder": "Kosongkan untuk generate otomatis",
+      "email": "Email",
+      "displayName": "Nama Tampilan",
+      "organization": "Organisasi",
+      "selectOrganization": "Pilih Organisasi",
+      "currentOrganization": "Organisasi Saat Ini",
+      "organizationHint": "Anggota baru akan otomatis ditambahkan ke organisasi saat ini",
+      "roles": "Peran",
+      "isActive": "Aktif",
+      "optional": "Opsional"
+    },
+    "validation": {
+      "usernameRequired": "Nama pengguna tidak boleh kosong",
+      "passwordRequired": "Kata sandi tidak boleh kosong",
+      "usernameOrEmailRequired": "Nama pengguna atau email harus diisi minimal satu"
+    },
+    "confirm": {
+      "delete": "Apakah Anda yakin ingin menghapus pengguna {{name}}?"
+    },
+    "success": {
+      "create": "Berhasil dibuat",
+      "update": "Berhasil diperbarui",
+      "delete": "Berhasil dihapus"
+    },
+    "error": {
+      "loadFailed": "Gagal memuat",
+      "loadOptions": "Gagal memuat opsi",
+      "loadDetailFailed": "Gagal memuat detail",
+      "saveFailed": "Gagal menyimpan",
+      "deleteFailed": "Gagal menghapus",
+      "noOrganization": "Pengguna saat ini tidak memiliki organisasi yang terkait, tidak dapat melakukan operasi"
+    },
+    "pagination": {
+      "total": "Total {{total}} item",
+      "page": "Halaman {{current}} / {{total}}",
+      "prev": "Sebelumnya",
+      "next": "Selanjutnya"
+    },
+    "loading": "Memuat...",
+    "noData": "Tidak ada data"
+  },
+  "employees": {
+    "title": "Manajemen Karyawan",
+    "subtitle": "Kelola informasi pengguna dan karyawan sistem",
+    "search": {
+      "username": "Nama Pengguna",
+      "usernamePlaceholder": "Masukkan nama pengguna",
+      "email": "Email",
+      "emailPlaceholder": "Masukkan email",
+      "organization": "Organisasi",
+      "role": "Peran",
+      "status": "Status",
+      "allStatus": "Semua Status",
+      "active": "Aktif",
+      "inactive": "Tidak Aktif",
+      "allOrganizations": "Semua Organisasi",
+      "allRoles": "Semua Peran",
+      "showAdvanced": "Filter Lanjutan",
+      "hideAdvanced": "Sembunyikan Filter",
+      "search": "Cari",
+      "reset": "Reset"
+    },
+    "table": {
+      "actions": "Aksi",
+      "detail": "Detail",
+      "username": "Nama Pengguna",
+      "displayName": "Nama Tampilan",
+      "email": "Email",
+      "organization": "Organisasi",
+      "status": "Status",
+      "active": "Aktif",
+      "inactive": "Tidak Aktif",
+      "createdAt": "Waktu Dibuat"
+    },
+    "detail": {
+      "title": "Detail Pengguna",
+      "close": "Tutup",
+      "basicInfo": "Informasi Dasar",
+      "organizationInfo": "Informasi Organisasi",
+      "contactInfo": "Informasi Kontak",
+      "timeInfo": "Informasi Waktu",
+      "username": "Nama Pengguna",
+      "displayName": "Nama Tampilan",
+      "email": "Email",
+      "phone": "Telepon",
+      "status": "Status",
+      "gender": "Jenis Kelamin",
+      "organization": "Organisasi",
+      "roles": "Peran",
+      "contactPhone": "Telepon Kontak",
+      "whatsapp": "WhatsApp",
+      "wechat": "WeChat",
+      "address": "Alamat",
+      "bio": "Biografi",
+      "createdAt": "Waktu Dibuat",
+      "updatedAt": "Waktu Diperbarui",
+      "lastLoginAt": "Waktu Login Terakhir"
+    },
+    "pagination": {
+      "total": "Total {{total}} item",
+      "page": "Halaman {{current}} / {{total}}",
+      "prev": "Sebelumnya",
+      "next": "Selanjutnya"
+    },
+    "loading": "Memuat...",
+    "noData": "Tidak ada data",
+    "error": {
+      "loadFailed": "Gagal memuat",
+      "loadOptions": "Gagal memuat opsi",
+      "loadDetailFailed": "Gagal memuat detail"
+    }
+  },
+  "organizations": {
+    "title": "Manajemen Organisasi",
+    "subtitle": "Kelola organisasi sistem, mendukung tiga jenis: internal, vendor, dan agent",
+    "create": "Tambah Organisasi",
+    "edit": "Edit",
+    "delete": "Hapus",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "type": {
+      "internal": "Organisasi Internal",
+      "vendor": "Vendor",
+      "agent": "Agen Saluran"
+    },
+    "search": {
+      "name": "Nama Organisasi",
+      "namePlaceholder": "Masukkan nama organisasi",
+      "code": "Kode Organisasi",
+      "codePlaceholder": "Masukkan kode organisasi",
+      "type": "Jenis Organisasi",
+      "status": "Status",
+      "allTypes": "Semua Jenis",
+      "allStatus": "Semua Status",
+      "active": "Aktif",
+      "inactive": "Tidak Aktif",
+      "search": "Cari",
+      "reset": "Reset"
+    },
+    "table": {
+      "name": "Nama Organisasi",
+      "code": "Kode Organisasi",
+      "type": "Jenis Organisasi",
+      "email": "Email",
+      "phone": "Telepon",
+      "website": "Website",
+      "employees": "Jumlah Karyawan",
+      "status": "Status",
+      "active": "Aktif",
+      "inactive": "Tidak Aktif",
+      "locked": "Terkunci",
+      "verified": "Terverifikasi",
+      "actions": "Aksi"
+    },
+    "detail": {
+      "title": "Detail Organisasi",
+      "basicInfo": "Informasi Dasar",
+      "contactInfo": "Informasi Kontak",
+      "statusInfo": "Informasi Status",
+      "timeInfo": "Informasi Waktu",
+      "description": "Deskripsi",
+      "createdAt": "Waktu Dibuat",
+      "updatedAt": "Waktu Diperbarui"
+    },
+    "form": {
+      "name": "Nama Organisasi",
+      "code": "Kode Organisasi",
+      "type": "Jenis Organisasi",
+      "email": "Email",
+      "phone": "Telepon",
+      "isActive": "Aktif"
+    },
+    "validation": {
+      "nameRequired": "Nama organisasi tidak boleh kosong"
+    },
+    "confirm": {
+      "delete": "Apakah Anda yakin ingin menghapus organisasi {{name}}?"
+    },
+    "success": {
+      "create": "Berhasil dibuat",
+      "update": "Berhasil diperbarui",
+      "delete": "Berhasil dihapus"
+    },
+    "error": {
+      "loadFailed": "Gagal memuat",
+      "loadDetailFailed": "Gagal memuat detail",
+      "saveFailed": "Gagal menyimpan",
+      "deleteFailed": "Gagal menghapus"
+    },
+    "pagination": {
+      "total": "Total {{total}} item",
+      "page": "Halaman {{current}} / {{total}}",
+      "prev": "Sebelumnya",
+      "next": "Selanjutnya"
+    },
+    "loading": "Memuat...",
+    "noData": "Tidak ada data"
+  },
   "menu": {
     "dashboard": "Dashboard",
-    "foundation": "Manajemen Dasar",
+    "admin": "Manajemen Backend",
+    "userManagement": "Manajemen Pengguna",
+    "user-management": "Manajemen Pengguna",
+    "employeeList": "Daftar Karyawan",
+    "employeeManagement": "Manajemen Karyawan",
+    "employees": "Manajemen Karyawan",
     "organizations": "Manajemen Organisasi",
-    "users": "Manajemen Pengguna",
-    "roles": "Manajemen Peran",
-    "settings": "Pengaturan Sistem",
+    "vendors": "Manajemen Vendor",
     "customer": "Manajemen Pelanggan",
     "customers": "Daftar Pelanggan",
     "contacts": "Kontak",
     "order": "Manajemen Pesanan",
     "product": "Manajemen Produk",
     "finance": "Manajemen Keuangan",
-    "vendor": "Manajemen Vendor",
     "agent": "Agen Saluran"
   },
   "admin": {
