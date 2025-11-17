@@ -287,6 +287,27 @@
     },
     "copyright": "© 2025 班兔企服 BANTUQIFU. 保留所有权利。",
     "icp": "京ICP备2025140917号-1"
+  },
+  "menu": {
+    "dashboard": "仪表盘",
+    "foundation": "基础管理",
+    "organizations": "组织管理",
+    "users": "用户管理",
+    "roles": "角色管理",
+    "settings": "系统设置",
+    "customer": "客户管理",
+    "customers": "客户列表",
+    "contacts": "联系人",
+    "order": "订单管理",
+    "product": "产品管理",
+    "finance": "财务管理",
+    "vendor": "供应商管理",
+    "agent": "渠道代理"
+  },
+  "admin": {
+    "title": "班兔 CRM 后台管理",
+    "logout": "退出登录",
+    "welcome": "欢迎回来"
   }
 }
 

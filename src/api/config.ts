@@ -75,6 +75,7 @@ export const API_PATHS = {
   // 认证
   AUTH: {
     LOGIN: '/api/foundation/auth/login',
+    USER_INFO: '/api/foundation/auth/user-info',
   },
   // 用户
   USERS: {

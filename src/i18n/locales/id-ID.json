@@ -287,6 +287,27 @@
     },
     "copyright": "© 2025 Bantu Enterprise Services BANTUQIFU. Hak Cipta Dilindungi.",
     "icp": "京ICP备2025140917号-1"
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "foundation": "Manajemen Dasar",
+    "organizations": "Manajemen Organisasi",
+    "users": "Manajemen Pengguna",
+    "roles": "Manajemen Peran",
+    "settings": "Pengaturan Sistem",
+    "customer": "Manajemen Pelanggan",
+    "customers": "Daftar Pelanggan",
+    "contacts": "Kontak",
+    "order": "Manajemen Pesanan",
+    "product": "Manajemen Produk",
+    "finance": "Manajemen Keuangan",
+    "vendor": "Manajemen Vendor",
+    "agent": "Agen Saluran"
+  },
+  "admin": {
+    "title": "Bantu CRM Backend Management",
+    "logout": "Keluar",
+    "welcome": "Selamat Datang Kembali"
   }
 }
 

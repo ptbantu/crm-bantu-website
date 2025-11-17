@@ -4,11 +4,13 @@ import { useNavigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import { login } from '@/api/auth'
 import { useToast } from '@/components/ToastContainer'
+import { useAuth } from '@/hooks/useAuth'
 
 const Login = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { showSuccess, showError } = useToast()
+  const { login: authLogin } = useAuth()
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -22,7 +24,9 @@ const Login = () => {
     setLoading(true)
 
     try {
-      await login(formData.email, formData.password)
+      const response = await login(formData.email, formData.password)
+      // 更新 AuthContext
+      authLogin(response.token, response.user)
       // 登录成功，显示成功提示并跳转
       showSuccess(t('login.success') || '登录成功')
       setTimeout(() => {

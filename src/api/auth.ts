@@ -50,3 +50,13 @@ export function getCurrentUser() {
   return storage.getUserInfo()
 }
 
+/**
+ * 获取用户信息（从 API）
+ */
+export async function getUserInfo(): Promise<UserInfo> {
+  const { get } = await import('./client')
+  const { API_PATHS } = await import('./config')
+  const result = await get<UserInfo>(API_PATHS.AUTH.USER_INFO)
+  return result.data!
+}
+
