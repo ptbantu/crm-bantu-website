@@ -308,76 +308,76 @@ const EmployeeManagement = () => {
 
   return (
     <div className="w-full">
-        {/* 页面标题 */}
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
-              {t('employeeManagement.title')}
-            </h1>
-            <p className="text-sm text-gray-500 font-medium">
-              {t('employeeManagement.subtitle')}
-            </p>
-          </div>
-          <button
-            onClick={handleCreate}
-            className="inline-flex items-center space-x-1.5 px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
-          >
-            <Plus className="h-4 w-4" />
-            <span>{t('employeeManagement.create')}</span>
-          </button>
+      {/* 页面标题 */}
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
+            {t('employeeManagement.title')}
+          </h1>
+          <p className="text-sm text-gray-500 font-medium">
+            {t('employeeManagement.subtitle')}
+          </p>
         </div>
+        <button
+          onClick={handleCreate}
+          className="inline-flex items-center space-x-1.5 px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
+        >
+          <Plus className="h-4 w-4" />
+          <span>{t('employeeManagement.create')}</span>
+        </button>
+      </div>
 
-        {/* 查询表单 */}
-        <div className="bg-white rounded-xl border border-gray-200 p-2 mb-2">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                {t('employeeManagement.search.username')}
-              </label>
-              <div className="relative">
-                <User className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-                <input
-                  type="text"
-                  value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  placeholder={t('employeeManagement.search.usernamePlaceholder')}
-                  className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                {t('employeeManagement.search.email')}
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder={t('employeeManagement.search.emailPlaceholder')}
-                  className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                {t('employeeManagement.search.status')}
-              </label>
-              <select
-                value={formData.is_active}
-                onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
-                className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-              >
-                <option value="">{t('employeeManagement.search.allStatus')}</option>
-                <option value="true">{t('employeeManagement.search.active')}</option>
-                <option value="false">{t('employeeManagement.search.inactive')}</option>
-              </select>
+      {/* 查询表单 */}
+      <div className="bg-white rounded-xl border border-gray-200 p-2 mb-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('employeeManagement.search.username')}
+            </label>
+            <div className="relative">
+              <User className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+              <input
+                type="text"
+                value={formData.username}
+                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                placeholder={t('employeeManagement.search.usernamePlaceholder')}
+                className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+              />
             </div>
           </div>
-          <div className="flex items-center justify-end space-x-2">
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('employeeManagement.search.email')}
+            </label>
+            <div className="relative">
+              <Mail className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder={t('employeeManagement.search.emailPlaceholder')}
+                className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('employeeManagement.search.status')}
+            </label>
+            <select
+              value={formData.is_active}
+              onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
+              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
+            >
+              <option value="">{t('employeeManagement.search.allStatus')}</option>
+              <option value="true">{t('employeeManagement.search.active')}</option>
+              <option value="false">{t('employeeManagement.search.inactive')}</option>
+            </select>
+          </div>
+        </div>
+        <div className="flex items-center justify-end space-x-2">
             <button
               onClick={handleReset}
               className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
@@ -393,11 +393,11 @@ const EmployeeManagement = () => {
               <span>{t('employeeManagement.search.search')}</span>
             </button>
           </div>
-        </div>
+      </div>
 
-        {/* 用户列表 */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          {loading ? (
+      {/* 用户列表 */}
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        {loading ? (
             <div className="p-6 text-center">
               <div className="text-sm text-gray-500">{t('employeeManagement.loading')}</div>
             </div>
@@ -521,7 +521,6 @@ const EmployeeManagement = () => {
             </>
           )}
         </div>
-      </div>
 
       {/* 创建/编辑弹窗 */}
       {showModal && (

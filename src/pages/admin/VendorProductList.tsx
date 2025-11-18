@@ -244,252 +244,251 @@ const VendorProductList = () => {
 
   return (
     <div className="w-full">
-        {/* 页面标题 */}
-        <div className="mb-4 flex items-center justify-between">
+      {/* 页面标题 */}
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
+            {t('vendorProductList.title')}
+          </h1>
+          <p className="text-sm text-gray-500 font-medium">
+            {t('vendorProductList.subtitle')}
+          </p>
+        </div>
+        <button
+          onClick={handleCreate}
+          disabled={!formData.vendor_id}
+          className="inline-flex items-center space-x-1.5 px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Plus className="h-4 w-4" />
+          <span>{t('vendorProductList.create')}</span>
+        </button>
+      </div>
+
+      {/* 查询表单 */}
+      <div className="bg-white rounded-xl border border-gray-200 p-2 mb-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
           <div>
-            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
-              {t('vendorProductList.title')}
-            </h1>
-            <p className="text-sm text-gray-500 font-medium">
-              {t('vendorProductList.subtitle')}
-            </p>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('vendorProductList.search.vendor')}
+            </label>
+            <div className="relative">
+              <Building2 className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+              <select
+                value={formData.vendor_id}
+                onChange={(e) => {
+                  setFormData({ ...formData, vendor_id: e.target.value })
+                  setQueryParams({ ...queryParams, vendor_id: e.target.value, page: 1 })
+                }}
+                className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
+              >
+                <option value="">{t('vendorProductList.search.selectVendor')}</option>
+                {vendors.map((vendor) => (
+                  <option key={vendor.id} value={vendor.id}>
+                    {vendor.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('vendorProductList.search.available')}
+            </label>
+            <select
+              value={formData.is_available}
+              onChange={(e) => setFormData({ ...formData, is_available: e.target.value as '' | 'true' | 'false' })}
+              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
+            >
+              <option value="">{t('vendorProductList.search.allStatus')}</option>
+              <option value="true">{t('vendorProductList.search.available')}</option>
+              <option value="false">{t('vendorProductList.search.unavailable')}</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('vendorProductList.search.primary')}
+            </label>
+            <select
+              value={formData.is_primary}
+              onChange={(e) => setFormData({ ...formData, is_primary: e.target.value as '' | 'true' | 'false' })}
+              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
+            >
+              <option value="">{t('vendorProductList.search.all')}</option>
+              <option value="true">{t('vendorProductList.search.primary')}</option>
+              <option value="false">{t('vendorProductList.search.secondary')}</option>
+            </select>
+          </div>
+        </div>
+        <div className="flex items-center justify-end space-x-2">
           <button
-            onClick={handleCreate}
-            disabled={!formData.vendor_id}
-            className="inline-flex items-center space-x-1.5 px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={handleReset}
+            className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
           >
-            <Plus className="h-4 w-4" />
-            <span>{t('vendorProductList.create')}</span>
+            {t('vendorProductList.search.reset')}
+          </button>
+          <button
+            onClick={handleSearch}
+            disabled={loading || !formData.vendor_id}
+            className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
+          >
+            <Search className="h-3.5 w-3.5" />
+            <span>{t('vendorProductList.search.search')}</span>
           </button>
         </div>
+      </div>
 
-        {/* 查询表单 */}
-        <div className="bg-white rounded-xl border border-gray-200 p-2 mb-2">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                {t('vendorProductList.search.vendor')}
-              </label>
-              <div className="relative">
-                <Building2 className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-                <select
-                  value={formData.vendor_id}
-                  onChange={(e) => {
-                    setFormData({ ...formData, vendor_id: e.target.value })
-                    setQueryParams({ ...queryParams, vendor_id: e.target.value, page: 1 })
-                  }}
-                  className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-                >
-                  <option value="">{t('vendorProductList.search.selectVendor')}</option>
-                  {vendors.map((vendor) => (
-                    <option key={vendor.id} value={vendor.id}>
-                      {vendor.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                {t('vendorProductList.search.available')}
-              </label>
-              <select
-                value={formData.is_available}
-                onChange={(e) => setFormData({ ...formData, is_available: e.target.value as '' | 'true' | 'false' })}
-                className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-              >
-                <option value="">{t('vendorProductList.search.allStatus')}</option>
-                <option value="true">{t('vendorProductList.search.available')}</option>
-                <option value="false">{t('vendorProductList.search.unavailable')}</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                {t('vendorProductList.search.primary')}
-              </label>
-              <select
-                value={formData.is_primary}
-                onChange={(e) => setFormData({ ...formData, is_primary: e.target.value as '' | 'true' | 'false' })}
-                className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-              >
-                <option value="">{t('vendorProductList.search.all')}</option>
-                <option value="true">{t('vendorProductList.search.primary')}</option>
-                <option value="false">{t('vendorProductList.search.secondary')}</option>
-              </select>
-            </div>
+      {/* 服务列表 */}
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        {!formData.vendor_id ? (
+          <div className="p-6 text-center">
+            <div className="text-sm text-gray-500">{t('vendorProductList.pleaseSelectVendor')}</div>
           </div>
-          <div className="flex items-center justify-end space-x-2">
-            <button
-              onClick={handleReset}
-              className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              {t('vendorProductList.search.reset')}
-            </button>
-            <button
-              onClick={handleSearch}
-              disabled={loading || !formData.vendor_id}
-              className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
-            >
-              <Search className="h-3.5 w-3.5" />
-              <span>{t('vendorProductList.search.search')}</span>
-            </button>
+        ) : loading ? (
+          <div className="p-6 text-center">
+            <div className="text-sm text-gray-500">{t('vendorProductList.loading')}</div>
           </div>
-        </div>
-
-        {/* 服务列表 */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          {!formData.vendor_id ? (
-            <div className="p-6 text-center">
-              <div className="text-sm text-gray-500">{t('vendorProductList.pleaseSelectVendor')}</div>
-            </div>
-          ) : loading ? (
-            <div className="p-6 text-center">
-              <div className="text-sm text-gray-500">{t('vendorProductList.loading')}</div>
-            </div>
-          ) : products.length === 0 ? (
-            <div className="p-6 text-center">
-              <div className="text-sm text-gray-500">{t('vendorProductList.noData')}</div>
-            </div>
-          ) : (
-            <>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('vendorProductList.table.name')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('vendorProductList.table.code')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('vendorProductList.table.category')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('vendorProductList.table.serviceType')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('vendorProductList.table.price')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('vendorProductList.table.status')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900 w-20">
-                        {t('vendorProductList.table.actions')}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {products.map((product) => (
-                      <tr
-                        key={product.id}
-                        className="hover:bg-gray-50 transition-colors"
-                      >
-                        <td className="px-1 py-1 text-sm text-gray-900 font-medium">
-                          {product.name}
-                        </td>
-                        <td className="px-1 py-1 text-sm text-gray-700">
-                          {product.code || '-'}
-                        </td>
-                        <td className="px-1 py-1 text-sm text-gray-700">
-                          {product.category_name || '-'}
-                        </td>
-                        <td className="px-1 py-1 text-sm text-gray-700">
-                          <div className="flex items-center space-x-1.5">
-                            <Tag className="h-3.5 w-3.5 text-gray-400" />
-                            <span>{product.service_type || '-'}</span>
-                            {product.service_subtype && (
-                              <span className="text-xs text-gray-500">({product.service_subtype})</span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-1 py-1 text-sm text-gray-700">
-                          <div className="flex flex-col space-y-0.5">
-                            {product.price_direct_idr && (
-                              <div className="flex items-center space-x-1.5">
-                                <DollarSign className="h-3.5 w-3.5 text-gray-400" />
-                                <span className="text-xs">{formatPrice(product.price_direct_idr, 'IDR')}</span>
-                              </div>
-                            )}
-                            {product.price_direct_cny && (
-                              <div className="flex items-center space-x-1.5">
-                                <DollarSign className="h-3.5 w-3.5 text-gray-400" />
-                                <span className="text-xs">{formatPrice(product.price_direct_cny, 'CNY')}</span>
-                              </div>
-                            )}
-                            {!product.price_direct_idr && !product.price_direct_cny && '-'}
-                          </div>
-                        </td>
-                        <td className="px-1 py-1">
-                          {product.is_active ? (
-                            <span className="inline-flex items-center space-x-1 text-xs text-green-600">
-                              <CheckCircle2 className="h-3.5 w-3.5" />
-                              <span>{t('vendorProductList.table.active')}</span>
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center space-x-1 text-xs text-red-600">
-                              <XCircle className="h-3.5 w-3.5" />
-                              <span>{t('vendorProductList.table.inactive')}</span>
-                            </span>
+        ) : products.length === 0 ? (
+          <div className="p-6 text-center">
+            <div className="text-sm text-gray-500">{t('vendorProductList.noData')}</div>
+          </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
+                      {t('vendorProductList.table.name')}
+                    </th>
+                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
+                      {t('vendorProductList.table.code')}
+                    </th>
+                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
+                      {t('vendorProductList.table.category')}
+                    </th>
+                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
+                      {t('vendorProductList.table.serviceType')}
+                    </th>
+                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
+                      {t('vendorProductList.table.price')}
+                    </th>
+                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
+                      {t('vendorProductList.table.status')}
+                    </th>
+                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900 w-20">
+                      {t('vendorProductList.table.actions')}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {products.map((product) => (
+                    <tr
+                      key={product.id}
+                      className="hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="px-1 py-1 text-sm text-gray-900 font-medium">
+                        {product.name}
+                      </td>
+                      <td className="px-1 py-1 text-sm text-gray-700">
+                        {product.code || '-'}
+                      </td>
+                      <td className="px-1 py-1 text-sm text-gray-700">
+                        {product.category_name || '-'}
+                      </td>
+                      <td className="px-1 py-1 text-sm text-gray-700">
+                        <div className="flex items-center space-x-1.5">
+                          <Tag className="h-3.5 w-3.5 text-gray-400" />
+                          <span>{product.service_type || '-'}</span>
+                          {product.service_subtype && (
+                            <span className="text-xs text-gray-500">({product.service_subtype})</span>
                           )}
-                        </td>
-                        <td className="px-1 py-1">
-                          <div className="flex items-center space-x-1">
-                            <button
-                              onClick={() => handleEdit(product)}
-                              className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
-                              title={t('vendorProductList.edit')}
-                            >
-                              <Edit className="h-3.5 w-3.5" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(product)}
-                              className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-                              title={t('vendorProductList.delete')}
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                        </div>
+                      </td>
+                      <td className="px-1 py-1 text-sm text-gray-700">
+                        <div className="flex flex-col space-y-0.5">
+                          {product.price_direct_idr && (
+                            <div className="flex items-center space-x-1.5">
+                              <DollarSign className="h-3.5 w-3.5 text-gray-400" />
+                              <span className="text-xs">{formatPrice(product.price_direct_idr, 'IDR')}</span>
+                            </div>
+                          )}
+                          {product.price_direct_cny && (
+                            <div className="flex items-center space-x-1.5">
+                              <DollarSign className="h-3.5 w-3.5 text-gray-400" />
+                              <span className="text-xs">{formatPrice(product.price_direct_cny, 'CNY')}</span>
+                            </div>
+                          )}
+                          {!product.price_direct_idr && !product.price_direct_cny && '-'}
+                        </div>
+                      </td>
+                      <td className="px-1 py-1">
+                        {product.is_active ? (
+                          <span className="inline-flex items-center space-x-1 text-xs text-green-600">
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                            <span>{t('vendorProductList.table.active')}</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center space-x-1 text-xs text-red-600">
+                            <XCircle className="h-3.5 w-3.5" />
+                            <span>{t('vendorProductList.table.inactive')}</span>
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-1 py-1">
+                        <div className="flex items-center space-x-1">
+                          <button
+                            onClick={() => handleEdit(product)}
+                            className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
+                            title={t('vendorProductList.edit')}
+                          >
+                            <Edit className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(product)}
+                            className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
+                            title={t('vendorProductList.delete')}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-              {/* 分页 */}
-              {pages > 1 && (
-                <div className="px-1 py-1 border-t border-gray-200 flex items-center justify-between">
-                  <div className="text-xs text-gray-600">
-                    {t('vendorProductList.pagination.total').replace('{{total}}', total.toString())}
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      {t('vendorProductList.pagination.prev')}
-                    </button>
-                    <div className="text-xs text-gray-700">
-                      {t('vendorProductList.pagination.page')
-                        .replace('{{current}}', currentPage.toString())
-                        .replace('{{total}}', pages.toString())}
-                    </div>
-                    <button
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === pages}
-                      className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      {t('vendorProductList.pagination.next')}
-                    </button>
-                  </div>
+            {/* 分页 */}
+            {pages > 1 && (
+              <div className="px-1 py-1 border-t border-gray-200 flex items-center justify-between">
+                <div className="text-xs text-gray-600">
+                  {t('vendorProductList.pagination.total').replace('{{total}}', total.toString())}
                 </div>
-              )}
-            </>
-          )}
-        </div>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {t('vendorProductList.pagination.prev')}
+                  </button>
+                  <div className="text-xs text-gray-700">
+                    {t('vendorProductList.pagination.page')
+                      .replace('{{current}}', currentPage.toString())
+                      .replace('{{total}}', pages.toString())}
+                  </div>
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === pages}
+                    className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {t('vendorProductList.pagination.next')}
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* 创建/编辑弹窗 */}

@@ -428,7 +428,6 @@ const EmployeeList = () => {
             </>
           )}
         </div>
-      </div>
 
       {/* 详情弹窗 */}
       {showDetailModal && (

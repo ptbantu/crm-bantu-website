@@ -287,290 +287,289 @@ const Organizations = () => {
 
   return (
     <div className="w-full">
-        {/* 页面标题 */}
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
-              {t('organizations.title')}
-            </h1>
-            <p className="text-sm text-gray-500 font-medium">
-              {t('organizations.subtitle')}
-            </p>
-          </div>
-          <button
-            onClick={handleCreate}
-            className="inline-flex items-center space-x-1.5 px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
-          >
-            <Plus className="h-4 w-4" />
-            <span>{t('organizations.create')}</span>
-          </button>
+      {/* 页面标题 */}
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
+            {t('organizations.title')}
+          </h1>
+          <p className="text-sm text-gray-500 font-medium">
+            {t('organizations.subtitle')}
+          </p>
         </div>
+        <button
+          onClick={handleCreate}
+          className="inline-flex items-center space-x-1.5 px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
+        >
+          <Plus className="h-4 w-4" />
+          <span>{t('organizations.create')}</span>
+        </button>
+      </div>
 
-        {/* 查询表单 */}
-        <div className="bg-white rounded-xl border border-gray-200 p-3 mb-3">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                {t('organizations.search.name')}
-              </label>
-              <div className="relative">
-                <Building2 className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder={t('organizations.search.namePlaceholder')}
-                  className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                {t('organizations.search.code')}
-              </label>
+      {/* 查询表单 */}
+      <div className="bg-white rounded-xl border border-gray-200 p-3 mb-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('organizations.search.name')}
+            </label>
+            <div className="relative">
+              <Building2 className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
               <input
                 type="text"
-                value={formData.code}
-                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                placeholder={t('organizations.search.codePlaceholder')}
-                className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder={t('organizations.search.namePlaceholder')}
+                className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
             </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                {t('organizations.search.type')}
-              </label>
-              <select
-                value={formData.organization_type}
-                onChange={(e) => setFormData({ ...formData, organization_type: e.target.value as '' | 'internal' | 'vendor' | 'agent' })}
-                className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-              >
-                <option value="">{t('organizations.search.allTypes')}</option>
-                <option value="internal">{t('organizations.type.internal')}</option>
-                <option value="vendor">{t('organizations.type.vendor')}</option>
-                <option value="agent">{t('organizations.type.agent')}</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                {t('organizations.search.status')}
-              </label>
-              <select
-                value={formData.is_active}
-                onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
-                className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-              >
-                <option value="">{t('organizations.search.allStatus')}</option>
-                <option value="true">{t('organizations.search.active')}</option>
-                <option value="false">{t('organizations.search.inactive')}</option>
-              </select>
-            </div>
           </div>
-          <div className="flex items-center justify-end space-x-2">
-            <button
-              onClick={handleReset}
-              className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('organizations.search.code')}
+            </label>
+            <input
+              type="text"
+              value={formData.code}
+              onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+              placeholder={t('organizations.search.codePlaceholder')}
+              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('organizations.search.type')}
+            </label>
+            <select
+              value={formData.organization_type}
+              onChange={(e) => setFormData({ ...formData, organization_type: e.target.value as '' | 'internal' | 'vendor' | 'agent' })}
+              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
             >
-              {t('organizations.search.reset')}
-            </button>
-            <button
-              onClick={handleSearch}
-              disabled={loading}
-              className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
+              <option value="">{t('organizations.search.allTypes')}</option>
+              <option value="internal">{t('organizations.type.internal')}</option>
+              <option value="vendor">{t('organizations.type.vendor')}</option>
+              <option value="agent">{t('organizations.type.agent')}</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('organizations.search.status')}
+            </label>
+            <select
+              value={formData.is_active}
+              onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
+              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
             >
-              <Search className="h-3.5 w-3.5" />
-              <span>{t('organizations.search.search')}</span>
-            </button>
+              <option value="">{t('organizations.search.allStatus')}</option>
+              <option value="true">{t('organizations.search.active')}</option>
+              <option value="false">{t('organizations.search.inactive')}</option>
+            </select>
           </div>
         </div>
+        <div className="flex items-center justify-end space-x-2">
+          <button
+            onClick={handleReset}
+            className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            {t('organizations.search.reset')}
+          </button>
+          <button
+            onClick={handleSearch}
+            disabled={loading}
+            className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
+          >
+            <Search className="h-3.5 w-3.5" />
+            <span>{t('organizations.search.search')}</span>
+          </button>
+        </div>
+      </div>
 
-        {/* 组织列表 */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          {loading ? (
-            <div className="p-6 text-center">
-              <div className="text-sm text-gray-500">{t('organizations.loading')}</div>
-            </div>
-          ) : organizations.length === 0 ? (
-            <div className="p-6 text-center">
-              <div className="text-sm text-gray-500">{t('organizations.noData')}</div>
-            </div>
-          ) : (
-            <>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
-                        {t('organizations.table.name')}
-                      </th>
-                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
-                        {t('organizations.table.code')}
-                      </th>
-                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
-                        {t('organizations.table.type')}
-                      </th>
-                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
-                        {t('organizations.table.email')}
-                      </th>
-                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
-                        {t('organizations.table.phone')}
-                      </th>
-                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
-                        {t('organizations.table.website')}
-                      </th>
-                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
-                        {t('organizations.table.employees')}
-                      </th>
-                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
-                        {t('organizations.table.status')}
-                      </th>
-                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900 w-20">
-                        {t('organizations.table.actions')}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {organizations.map((org) => (
-                      <tr
-                        key={org.id}
-                        className="hover:bg-gray-50 transition-colors"
-                      >
-                        <td className="px-2 py-1.5 text-sm text-gray-900 font-medium">
-                          {org.name}
-                        </td>
-                        <td className="px-2 py-1.5 text-sm text-gray-700">
-                          {org.code || '-'}
-                        </td>
-                        <td className="px-2 py-1.5">
-                          <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded ${getOrganizationTypeColor(org.organization_type)}`}>
-                            {getOrganizationTypeLabel(org.organization_type)}
-                          </span>
-                        </td>
-                        <td className="px-2 py-1.5 text-sm text-gray-700">
-                          <div className="flex items-center space-x-1.5">
-                            <Mail className="h-3.5 w-3.5 text-gray-400" />
-                            <span>{org.email || '-'}</span>
-                          </div>
-                        </td>
-                        <td className="px-2 py-1.5 text-sm text-gray-700">
-                          <div className="flex items-center space-x-1.5">
-                            <Phone className="h-3.5 w-3.5 text-gray-400" />
-                            <span>{org.phone || '-'}</span>
-                          </div>
-                        </td>
-                        <td className="px-2 py-1.5 text-sm text-gray-700">
-                          {org.website ? (
-                            <a
-                              href={org.website}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center space-x-1.5 text-primary-600 hover:text-primary-700"
-                            >
-                              <Globe className="h-3.5 w-3.5" />
-                              <span className="truncate max-w-xs">{org.website}</span>
-                            </a>
+      {/* 组织列表 */}
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        {loading ? (
+          <div className="p-6 text-center">
+            <div className="text-sm text-gray-500">{t('organizations.loading')}</div>
+          </div>
+        ) : organizations.length === 0 ? (
+          <div className="p-6 text-center">
+            <div className="text-sm text-gray-500">{t('organizations.noData')}</div>
+          </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
+                      {t('organizations.table.name')}
+                    </th>
+                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
+                      {t('organizations.table.code')}
+                    </th>
+                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
+                      {t('organizations.table.type')}
+                    </th>
+                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
+                      {t('organizations.table.email')}
+                    </th>
+                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
+                      {t('organizations.table.phone')}
+                    </th>
+                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
+                      {t('organizations.table.website')}
+                    </th>
+                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
+                      {t('organizations.table.employees')}
+                    </th>
+                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
+                      {t('organizations.table.status')}
+                    </th>
+                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900 w-20">
+                      {t('organizations.table.actions')}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {organizations.map((org) => (
+                    <tr
+                      key={org.id}
+                      className="hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="px-2 py-1.5 text-sm text-gray-900 font-medium">
+                        {org.name}
+                      </td>
+                      <td className="px-2 py-1.5 text-sm text-gray-700">
+                        {org.code || '-'}
+                      </td>
+                      <td className="px-2 py-1.5">
+                        <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded ${getOrganizationTypeColor(org.organization_type)}`}>
+                          {getOrganizationTypeLabel(org.organization_type)}
+                        </span>
+                      </td>
+                      <td className="px-2 py-1.5 text-sm text-gray-700">
+                        <div className="flex items-center space-x-1.5">
+                          <Mail className="h-3.5 w-3.5 text-gray-400" />
+                          <span>{org.email || '-'}</span>
+                        </div>
+                      </td>
+                      <td className="px-2 py-1.5 text-sm text-gray-700">
+                        <div className="flex items-center space-x-1.5">
+                          <Phone className="h-3.5 w-3.5 text-gray-400" />
+                          <span>{org.phone || '-'}</span>
+                        </div>
+                      </td>
+                      <td className="px-2 py-1.5 text-sm text-gray-700">
+                        {org.website ? (
+                          <a
+                            href={org.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center space-x-1.5 text-primary-600 hover:text-primary-700"
+                          >
+                            <Globe className="h-3.5 w-3.5" />
+                            <span className="truncate max-w-xs">{org.website}</span>
+                          </a>
+                        ) : (
+                          '-'
+                        )}
+                      </td>
+                      <td className="px-2 py-1.5 text-sm text-gray-700">
+                        <div className="flex items-center space-x-1.5">
+                          <Users className="h-3.5 w-3.5 text-gray-400" />
+                          <span>{org.employees_count ?? 0}</span>
+                        </div>
+                      </td>
+                      <td className="px-2 py-1.5">
+                        <div className="flex flex-col space-y-0.5">
+                          {org.is_active ? (
+                            <span className="inline-flex items-center space-x-1 text-xs text-green-600">
+                              <CheckCircle2 className="h-3.5 w-3.5" />
+                              <span>{t('organizations.table.active')}</span>
+                            </span>
                           ) : (
-                            '-'
+                            <span className="inline-flex items-center space-x-1 text-xs text-red-600">
+                              <XCircle className="h-3.5 w-3.5" />
+                              <span>{t('organizations.table.inactive')}</span>
+                            </span>
                           )}
-                        </td>
-                        <td className="px-2 py-1.5 text-sm text-gray-700">
-                          <div className="flex items-center space-x-1.5">
-                            <Users className="h-3.5 w-3.5 text-gray-400" />
-                            <span>{org.employees_count ?? 0}</span>
-                          </div>
-                        </td>
-                        <td className="px-2 py-1.5">
-                          <div className="flex flex-col space-y-0.5">
-                            {org.is_active ? (
-                              <span className="inline-flex items-center space-x-1 text-xs text-green-600">
-                                <CheckCircle2 className="h-3.5 w-3.5" />
-                                <span>{t('organizations.table.active')}</span>
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center space-x-1 text-xs text-red-600">
-                                <XCircle className="h-3.5 w-3.5" />
-                                <span>{t('organizations.table.inactive')}</span>
-                              </span>
-                            )}
-                            {org.is_locked && (
-                              <span className="inline-flex items-center space-x-1 text-xs text-orange-600">
-                                <Lock className="h-3 w-3" />
-                                <span>{t('organizations.table.locked')}</span>
-                              </span>
-                            )}
-                            {org.is_verified && (
-                              <span className="inline-flex items-center space-x-1 text-xs text-blue-600">
-                                <Shield className="h-3 w-3" />
-                                <span>{t('organizations.table.verified')}</span>
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-2 py-1.5">
-                          <div className="flex items-center space-x-1">
-                            <button
-                              onClick={() => handleViewDetail(org.id)}
-                              className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
-                              title={t('organizations.detail.title')}
-                            >
-                              <Eye className="h-3.5 w-3.5" />
-                            </button>
-                            <button
-                              onClick={() => handleEdit(org)}
-                              className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
-                              title={t('organizations.edit')}
-                            >
-                              <Edit className="h-3.5 w-3.5" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(org)}
-                              className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-                              title={t('organizations.delete')}
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                          {org.is_locked && (
+                            <span className="inline-flex items-center space-x-1 text-xs text-orange-600">
+                              <Lock className="h-3 w-3" />
+                              <span>{t('organizations.table.locked')}</span>
+                            </span>
+                          )}
+                          {org.is_verified && (
+                            <span className="inline-flex items-center space-x-1 text-xs text-blue-600">
+                              <Shield className="h-3 w-3" />
+                              <span>{t('organizations.table.verified')}</span>
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-2 py-1.5">
+                        <div className="flex items-center space-x-1">
+                          <button
+                            onClick={() => handleViewDetail(org.id)}
+                            className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
+                            title={t('organizations.detail.title')}
+                          >
+                            <Eye className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleEdit(org)}
+                            className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
+                            title={t('organizations.edit')}
+                          >
+                            <Edit className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(org)}
+                            className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
+                            title={t('organizations.delete')}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-              {/* 分页 */}
-              {pages > 1 && (
-                <div className="px-2 py-1.5 border-t border-gray-200 flex items-center justify-between">
-                  <div className="text-xs text-gray-600">
-                    {t('organizations.pagination.total').replace('{{total}}', total.toString())}
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      {t('organizations.pagination.prev')}
-                    </button>
-                    <div className="text-xs text-gray-700">
-                      {t('organizations.pagination.page')
-                        .replace('{{current}}', currentPage.toString())
-                        .replace('{{total}}', pages.toString())}
-                    </div>
-                    <button
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === pages}
-                      className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      {t('organizations.pagination.next')}
-                    </button>
-                  </div>
+            {/* 分页 */}
+            {pages > 1 && (
+              <div className="px-2 py-1.5 border-t border-gray-200 flex items-center justify-between">
+                <div className="text-xs text-gray-600">
+                  {t('organizations.pagination.total').replace('{{total}}', total.toString())}
                 </div>
-              )}
-            </>
-          )}
-        </div>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {t('organizations.pagination.prev')}
+                  </button>
+                  <div className="text-xs text-gray-700">
+                    {t('organizations.pagination.page')
+                      .replace('{{current}}', currentPage.toString())
+                      .replace('{{total}}', pages.toString())}
+                  </div>
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === pages}
+                    className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {t('organizations.pagination.next')}
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* 创建/编辑弹窗 */}

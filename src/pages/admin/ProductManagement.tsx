@@ -335,263 +335,262 @@ const ProductManagement = () => {
 
   return (
     <div className="w-full">
-        {/* 页面标题 */}
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
-              {t('productManagement.title')}
-            </h1>
-            <p className="text-sm text-gray-500 font-medium">
-              {t('productManagement.subtitle')}
-            </p>
-          </div>
-          <button
-            onClick={handleCreate}
-            className="inline-flex items-center space-x-1.5 px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
-          >
-            <Plus className="h-4 w-4" />
-            <span>{t('productManagement.create')}</span>
-          </button>
+      {/* 页面标题 */}
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
+            {t('productManagement.title')}
+          </h1>
+          <p className="text-sm text-gray-500 font-medium">
+            {t('productManagement.subtitle')}
+          </p>
         </div>
+        <button
+          onClick={handleCreate}
+          className="inline-flex items-center space-x-1.5 px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
+        >
+          <Plus className="h-4 w-4" />
+          <span>{t('productManagement.create')}</span>
+        </button>
+      </div>
 
-        {/* 查询表单 */}
-        <div className="bg-white rounded-xl border border-gray-200 p-2 mb-2">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                {t('productManagement.search.name')}
-              </label>
-              <div className="relative">
-                <Package className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder={t('productManagement.search.namePlaceholder')}
-                  className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                {t('productManagement.search.code')}
-              </label>
+      {/* 查询表单 */}
+      <div className="bg-white rounded-xl border border-gray-200 p-2 mb-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('productManagement.search.name')}
+            </label>
+            <div className="relative">
+              <Package className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
               <input
                 type="text"
-                value={formData.code}
-                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                placeholder={t('productManagement.search.codePlaceholder')}
-                className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder={t('productManagement.search.namePlaceholder')}
+                className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
             </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                {t('productManagement.search.category')}
-              </label>
-              <select
-                value={formData.category_id}
-                onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-              >
-                <option value="">{t('productManagement.search.allCategories')}</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                {t('productManagement.search.status')}
-              </label>
-              <select
-                value={formData.is_active}
-                onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
-                className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-              >
-                <option value="">{t('productManagement.search.allStatus')}</option>
-                <option value="true">{t('productManagement.search.active')}</option>
-                <option value="false">{t('productManagement.search.inactive')}</option>
-              </select>
-            </div>
           </div>
-          <div className="flex items-center justify-end space-x-2">
-            <button
-              onClick={handleReset}
-              className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('productManagement.search.code')}
+            </label>
+            <input
+              type="text"
+              value={formData.code}
+              onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+              placeholder={t('productManagement.search.codePlaceholder')}
+              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('productManagement.search.category')}
+            </label>
+            <select
+              value={formData.category_id}
+              onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
             >
-              {t('productManagement.search.reset')}
-            </button>
-            <button
-              onClick={handleSearch}
-              disabled={loading}
-              className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
+              <option value="">{t('productManagement.search.allCategories')}</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('productManagement.search.status')}
+            </label>
+            <select
+              value={formData.is_active}
+              onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
+              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
             >
-              <Search className="h-3.5 w-3.5" />
-              <span>{t('productManagement.search.search')}</span>
-            </button>
+              <option value="">{t('productManagement.search.allStatus')}</option>
+              <option value="true">{t('productManagement.search.active')}</option>
+              <option value="false">{t('productManagement.search.inactive')}</option>
+            </select>
           </div>
         </div>
+        <div className="flex items-center justify-end space-x-2">
+          <button
+            onClick={handleReset}
+            className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            {t('productManagement.search.reset')}
+          </button>
+          <button
+            onClick={handleSearch}
+            disabled={loading}
+            className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
+          >
+            <Search className="h-3.5 w-3.5" />
+            <span>{t('productManagement.search.search')}</span>
+          </button>
+        </div>
+      </div>
 
-        {/* 产品列表 */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          {loading ? (
-            <div className="p-6 text-center">
-              <div className="text-sm text-gray-500">{t('productManagement.loading')}</div>
-            </div>
-          ) : products.length === 0 ? (
-            <div className="p-6 text-center">
-              <div className="text-sm text-gray-500">{t('productManagement.noData')}</div>
-            </div>
-          ) : (
-            <>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('productManagement.table.name')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('productManagement.table.code')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('productManagement.table.category')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('productManagement.table.serviceType')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('productManagement.table.price')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('productManagement.table.status')}
-                      </th>
-                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900 w-20">
-                        {t('productManagement.table.actions')}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {products.map((product) => (
-                      <tr
-                        key={product.id}
-                        className="hover:bg-gray-50 transition-colors"
-                      >
-                        <td className="px-1 py-1 text-sm text-gray-900 font-medium">
-                          {product.name}
-                        </td>
-                        <td className="px-1 py-1 text-sm text-gray-700">
-                          {product.code || '-'}
-                        </td>
-                        <td className="px-1 py-1 text-sm text-gray-700">
-                          {product.category_name || '-'}
-                        </td>
-                        <td className="px-1 py-1 text-sm text-gray-700">
-                          <div className="flex items-center space-x-1.5">
-                            <Tag className="h-3.5 w-3.5 text-gray-400" />
-                            <span>{product.service_type || '-'}</span>
-                            {product.service_subtype && (
-                              <span className="text-xs text-gray-500">({product.service_subtype})</span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-1 py-1 text-sm text-gray-700">
-                          <div className="flex flex-col space-y-0.5">
-                            {product.price_direct_idr && (
-                              <div className="flex items-center space-x-1.5">
-                                <DollarSign className="h-3.5 w-3.5 text-gray-400" />
-                                <span className="text-xs">{formatPrice(product.price_direct_idr, 'IDR')}</span>
-                              </div>
-                            )}
-                            {product.price_direct_cny && (
-                              <div className="flex items-center space-x-1.5">
-                                <DollarSign className="h-3.5 w-3.5 text-gray-400" />
-                                <span className="text-xs">{formatPrice(product.price_direct_cny, 'CNY')}</span>
-                              </div>
-                            )}
-                            {!product.price_direct_idr && !product.price_direct_cny && '-'}
-                          </div>
-                        </td>
-                        <td className="px-1 py-1">
-                          {product.is_active ? (
-                            <span className="inline-flex items-center space-x-1 text-xs text-green-600">
-                              <CheckCircle2 className="h-3.5 w-3.5" />
-                              <span>{t('productManagement.table.active')}</span>
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center space-x-1 text-xs text-red-600">
-                              <XCircle className="h-3.5 w-3.5" />
-                              <span>{t('productManagement.table.inactive')}</span>
-                            </span>
+      {/* 产品列表 */}
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        {loading ? (
+          <div className="p-6 text-center">
+            <div className="text-sm text-gray-500">{t('productManagement.loading')}</div>
+          </div>
+        ) : products.length === 0 ? (
+          <div className="p-6 text-center">
+            <div className="text-sm text-gray-500">{t('productManagement.noData')}</div>
+          </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
+                      {t('productManagement.table.name')}
+                    </th>
+                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
+                      {t('productManagement.table.code')}
+                    </th>
+                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
+                      {t('productManagement.table.category')}
+                    </th>
+                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
+                      {t('productManagement.table.serviceType')}
+                    </th>
+                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
+                      {t('productManagement.table.price')}
+                    </th>
+                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
+                      {t('productManagement.table.status')}
+                    </th>
+                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900 w-20">
+                      {t('productManagement.table.actions')}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {products.map((product) => (
+                    <tr
+                      key={product.id}
+                      className="hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="px-1 py-1 text-sm text-gray-900 font-medium">
+                        {product.name}
+                      </td>
+                      <td className="px-1 py-1 text-sm text-gray-700">
+                        {product.code || '-'}
+                      </td>
+                      <td className="px-1 py-1 text-sm text-gray-700">
+                        {product.category_name || '-'}
+                      </td>
+                      <td className="px-1 py-1 text-sm text-gray-700">
+                        <div className="flex items-center space-x-1.5">
+                          <Tag className="h-3.5 w-3.5 text-gray-400" />
+                          <span>{product.service_type || '-'}</span>
+                          {product.service_subtype && (
+                            <span className="text-xs text-gray-500">({product.service_subtype})</span>
                           )}
-                        </td>
-                        <td className="px-1 py-1">
-                          <div className="flex items-center space-x-1">
-                            <button
-                              onClick={() => handleViewDetail(product.id)}
-                              className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
-                              title={t('productManagement.viewDetail')}
-                            >
-                              <Eye className="h-3.5 w-3.5" />
-                            </button>
-                            <button
-                              onClick={() => handleEdit(product)}
-                              className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
-                              title={t('productManagement.edit')}
-                            >
-                              <Edit className="h-3.5 w-3.5" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(product)}
-                              className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-                              title={t('productManagement.delete')}
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                        </div>
+                      </td>
+                      <td className="px-1 py-1 text-sm text-gray-700">
+                        <div className="flex flex-col space-y-0.5">
+                          {product.price_direct_idr && (
+                            <div className="flex items-center space-x-1.5">
+                              <DollarSign className="h-3.5 w-3.5 text-gray-400" />
+                              <span className="text-xs">{formatPrice(product.price_direct_idr, 'IDR')}</span>
+                            </div>
+                          )}
+                          {product.price_direct_cny && (
+                            <div className="flex items-center space-x-1.5">
+                              <DollarSign className="h-3.5 w-3.5 text-gray-400" />
+                              <span className="text-xs">{formatPrice(product.price_direct_cny, 'CNY')}</span>
+                            </div>
+                          )}
+                          {!product.price_direct_idr && !product.price_direct_cny && '-'}
+                        </div>
+                      </td>
+                      <td className="px-1 py-1">
+                        {product.is_active ? (
+                          <span className="inline-flex items-center space-x-1 text-xs text-green-600">
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                            <span>{t('productManagement.table.active')}</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center space-x-1 text-xs text-red-600">
+                            <XCircle className="h-3.5 w-3.5" />
+                            <span>{t('productManagement.table.inactive')}</span>
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-1 py-1">
+                        <div className="flex items-center space-x-1">
+                          <button
+                            onClick={() => handleViewDetail(product.id)}
+                            className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
+                            title={t('productManagement.viewDetail')}
+                          >
+                            <Eye className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleEdit(product)}
+                            className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
+                            title={t('productManagement.edit')}
+                          >
+                            <Edit className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(product)}
+                            className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
+                            title={t('productManagement.delete')}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-              {/* 分页 */}
-              {pages > 1 && (
-                <div className="px-1 py-1 border-t border-gray-200 flex items-center justify-between">
-                  <div className="text-xs text-gray-600">
-                    {t('productManagement.pagination.total').replace('{{total}}', total.toString())}
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      {t('productManagement.pagination.prev')}
-                    </button>
-                    <div className="text-xs text-gray-700">
-                      {t('productManagement.pagination.page')
-                        .replace('{{current}}', currentPage.toString())
-                        .replace('{{total}}', pages.toString())}
-                    </div>
-                    <button
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === pages}
-                      className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      {t('productManagement.pagination.next')}
-                    </button>
-                  </div>
+            {/* 分页 */}
+            {pages > 1 && (
+              <div className="px-1 py-1 border-t border-gray-200 flex items-center justify-between">
+                <div className="text-xs text-gray-600">
+                  {t('productManagement.pagination.total').replace('{{total}}', total.toString())}
                 </div>
-              )}
-            </>
-          )}
-        </div>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {t('productManagement.pagination.prev')}
+                  </button>
+                  <div className="text-xs text-gray-700">
+                    {t('productManagement.pagination.page')
+                      .replace('{{current}}', currentPage.toString())
+                      .replace('{{total}}', pages.toString())}
+                  </div>
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === pages}
+                    className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {t('productManagement.pagination.next')}
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* 创建/编辑弹窗 */}

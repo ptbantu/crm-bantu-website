@@ -219,21 +219,21 @@ const CategoryManagement = () => {
     <div className="w-full">
       {/* 页面标题 */}
       <div className="mb-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
-              {t('categoryManagement.title')}
-            </h1>
-            <p className="text-sm text-gray-500 font-medium">
-              {t('categoryManagement.subtitle')}
-            </p>
-          </div>
-          <button
-            onClick={handleCreate}
-            className="inline-flex items-center space-x-1.5 px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
-          >
-            <Plus className="h-4 w-4" />
-            <span>{t('categoryManagement.create')}</span>
-          </button>
+        <div>
+          <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
+            {t('categoryManagement.title')}
+          </h1>
+          <p className="text-sm text-gray-500 font-medium">
+            {t('categoryManagement.subtitle')}
+          </p>
+        </div>
+        <button
+          onClick={handleCreate}
+          className="inline-flex items-center space-x-1.5 px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
+        >
+          <Plus className="h-4 w-4" />
+          <span>{t('categoryManagement.create')}</span>
+        </button>
       </div>
 
       {/* 查询表单 */}
@@ -317,8 +317,8 @@ const CategoryManagement = () => {
             <Search className="h-3.5 w-3.5" />
             <span>{t('categoryManagement.search.search')}</span>
           </button>
-          </div>
         </div>
+      </div>
 
       {/* 分类列表 */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -428,9 +428,9 @@ const CategoryManagement = () => {
                 </div>
               </div>
             )}
-            </>
-          )}
-        </div>
+          </>
+        )}
+      </div>
 
       {/* 创建/编辑弹窗 */}
       {showModal && (
