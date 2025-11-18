@@ -16,7 +16,7 @@ import { useToast } from '@/components/ToastContainer'
 
 const VendorProductList = () => {
   const { t } = useTranslation()
-  const { showToast } = useToast()
+  const { showError } = useToast()
 
   // 查询参数
   const [queryParams, setQueryParams] = useState<VendorProductListParams>({
@@ -102,10 +102,7 @@ const VendorProductList = () => {
       setCurrentPage(result.current)
       setPages(result.pages)
     } catch (error: any) {
-      showToast(
-        error.message || t('vendorProductList.error.loadFailed'),
-        'error'
-      )
+      showError(error.message || t('vendorProductList.error.loadFailed'))
     } finally {
       setLoading(false)
     }
@@ -151,7 +148,7 @@ const VendorProductList = () => {
   // 创建
   const handleCreate = () => {
     if (!formData.vendor_id) {
-      showToast(t('vendorProductList.error.selectVendor'), 'error')
+      showError(t('vendorProductList.error.selectVendor'))
       return
     }
     setModalFormData({
@@ -189,20 +186,17 @@ const VendorProductList = () => {
     try {
       // TODO: 等待后端API实现
       // await deleteVendorProduct(queryParams.vendor_id, product.id)
-      showToast(t('vendorProductList.error.apiNotImplemented'), 'error')
+      showError(t('vendorProductList.error.apiNotImplemented'))
       // loadVendorProducts(queryParams)
     } catch (error: any) {
-      showToast(
-        error.message || t('vendorProductList.error.deleteFailed'),
-        'error'
-      )
+      showError(error.message || t('vendorProductList.error.deleteFailed'))
     }
   }
 
   // 提交表单
   const handleSubmit = async () => {
     if (!modalFormData.product_id) {
-      showToast(t('vendorProductList.error.selectProduct'), 'error')
+      showError(t('vendorProductList.error.selectProduct'))
       return
     }
 
@@ -230,14 +224,11 @@ const VendorProductList = () => {
       //     is_available: modalFormData.is_available,
       //   })
       // }
-      showToast(t('vendorProductList.error.apiNotImplemented'), 'error')
+      showError(t('vendorProductList.error.apiNotImplemented'))
       // setShowModal(false)
       // loadVendorProducts(queryParams)
     } catch (error: any) {
-      showToast(
-        error.message || t('vendorProductList.error.saveFailed'),
-        'error'
-      )
+      showError(error.message || t('vendorProductList.error.saveFailed'))
     } finally {
       setSubmitting(false)
     }
@@ -252,8 +243,7 @@ const VendorProductList = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="w-full py-2 px-1">
+    <div className="w-full">
         {/* 页面标题 */}
         <div className="mb-4 flex items-center justify-between">
           <div>

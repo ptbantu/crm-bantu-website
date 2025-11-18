@@ -16,6 +16,7 @@ import {
   Contact2,
   User,
   Activity,
+  Folder,
 } from 'lucide-react'
 import { ComponentType } from 'react'
 
@@ -64,29 +65,6 @@ export const adminMenuItems: MenuItem[] = [
         label: 'menu.organizations',
         icon: Building2,
         path: '/admin/user-management/organizations',
-        role: Role.ADMIN,
-      },
-    ],
-  },
-  {
-    key: 'system-management',
-    label: 'menu.systemManagement',
-    icon: Settings,
-    path: '/admin/system-management',
-    role: Role.ADMIN, // 仅管理员可见
-    children: [
-      {
-        key: 'userInfo',
-        label: 'menu.userInfo',
-        icon: User,
-        path: '/admin/system-management/user-info',
-        role: Role.ADMIN,
-      },
-      {
-        key: 'systemStatus',
-        label: 'menu.systemStatus',
-        icon: Activity,
-        path: '/admin/system-management/system-status',
         role: Role.ADMIN,
       },
     ],
@@ -142,6 +120,13 @@ export const adminMenuItems: MenuItem[] = [
         path: '/admin/product/vendor-list',
         role: Role.ADMIN,
       },
+      {
+        key: 'categoryManagement',
+        label: 'menu.categoryManagement',
+        icon: Folder,
+        path: '/admin/product/category-management',
+        role: Role.ADMIN,
+      },
     ],
   },
   {
@@ -159,6 +144,29 @@ export const adminMenuItems: MenuItem[] = [
     path: '/admin/agent',
     permission: Permission.AGENT_READ,
     role: [Role.AGENT, Role.ADMIN], // 仅代理和管理员
+  },
+  {
+    key: 'system-management',
+    label: 'menu.systemManagement',
+    icon: Settings,
+    path: '/admin/system-management',
+    role: Role.ADMIN, // 仅管理员可见
+    children: [
+      {
+        key: 'userInfo',
+        label: 'menu.userInfo',
+        icon: User,
+        path: '/admin/system-management/user-info',
+        role: Role.ADMIN,
+      },
+      {
+        key: 'systemStatus',
+        label: 'menu.systemStatus',
+        icon: Activity,
+        path: '/admin/system-management/system-status',
+        role: Role.ADMIN,
+      },
+    ],
   },
 ]
 

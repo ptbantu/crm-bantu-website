@@ -3,6 +3,10 @@
     "language": "Bahasa",
     "chinese": "Bahasa Cina",
     "indonesian": "Bahasa Indonesia",
+    "sidebar": {
+      "collapse": "Ciutkan Sidebar",
+      "expand": "Perluas Sidebar"
+    },
     "login": "Masuk",
     "logout": "Keluar",
     "home": "Beranda",
@@ -255,7 +259,48 @@
       "customers": "Total Pelanggan",
       "orders": "Total Pesanan",
       "revenue": "Total Pendapatan",
-      "growth": "Tingkat Pertumbuhan"
+      "growth": "Tingkat Pertumbuhan",
+      "services": "Jumlah Layanan",
+      "vendors": "Jumlah Vendor",
+      "vsLastMonth": "vs Bulan Lalu"
+    },
+    "revenueTrend": {
+      "title": "Tren Pendapatan (7 Hari Terakhir)"
+    },
+    "activities": {
+      "title": "Aktivitas Terbaru",
+      "newOrder": "Pesanan Baru",
+      "newCustomer": "Pelanggan Baru",
+      "paymentReceived": "Pembayaran Diterima",
+      "systemUpdate": "Pembaruan Sistem",
+      "orderCompleted": "Pesanan Selesai"
+    },
+    "todos": {
+      "title": "Tugas yang Harus Dilakukan",
+      "reviewOrders": "Tinjau Pesanan Tertunda",
+      "updatePrices": "Perbarui Harga Layanan",
+      "contactVendor": "Hubungi Vendor",
+      "generateReport": "Buat Laporan Bulanan",
+      "priority": {
+        "high": "Tinggi",
+        "medium": "Sedang",
+        "low": "Rendah"
+      }
+    },
+    "recentOrders": {
+      "title": "Pesanan Terbaru",
+      "status": {
+        "pending": "Tertunda",
+        "processing": "Sedang Diproses",
+        "completed": "Selesai"
+      }
+    },
+    "systemStatus": {
+      "title": "Ringkasan Status Sistem",
+      "allServices": "Semua Layanan",
+      "apiRequests": "Request API",
+      "activeUsers": "Pengguna Aktif",
+      "uptime": "Waktu Operasi"
     }
   },
   "login": {
@@ -581,6 +626,9 @@
     "employeeManagement": "Manajemen Karyawan",
     "employees": "Manajemen Karyawan",
     "organizations": "Manajemen Organisasi",
+    "systemManagement": "Manajemen Sistem",
+    "userInfo": "Informasi Pengguna",
+    "systemStatus": "Status Sistem",
     "vendors": "Manajemen Vendor",
     "customer": "Manajemen Pelanggan",
     "customers": "Daftar Pelanggan",
@@ -589,6 +637,7 @@
     "product": "Manajemen Produk",
     "productManagement": "Manajemen Layanan",
     "vendorProductList": "Daftar Layanan Vendor",
+    "categoryManagement": "Manajemen Kategori Layanan",
     "finance": "Manajemen Keuangan",
     "agent": "Agen Saluran"
   },
@@ -596,6 +645,84 @@
     "title": "Bantu CRM Backend Management",
     "logout": "Keluar",
     "welcome": "Selamat Datang Kembali"
+  },
+  "systemStatus": {
+    "title": "Status Sistem",
+    "subtitle": "Pantau status operasi berbagai layanan sistem secara real-time",
+    "systemInfo": {
+      "uptime": "Waktu Operasi Sistem",
+      "version": "Versi Sistem"
+    },
+    "performance": {
+      "cpu": "Penggunaan CPU",
+      "memory": "Penggunaan Memori",
+      "disk": "Penggunaan Disk",
+      "dbConnections": "Koneksi Database",
+      "maxConnections": "Koneksi Maksimum"
+    },
+    "services": {
+      "title": "Status Layanan",
+      "backend": "Layanan Backend",
+      "log": "Layanan Log",
+      "backendService": "Layanan Backend"
+    },
+    "status": {
+      "normal": "Layanan Normal",
+      "warning": "Peringatan Layanan",
+      "error": "Layanan Abnormal"
+    },
+    "stats": {
+      "apiRequests": "Jumlah Request API",
+      "today": "Hari Ini",
+      "activeUsers": "Pengguna Aktif",
+      "currentOnline": "Sedang Online",
+      "network": "Status Jaringan",
+      "latency": "Latensi"
+    },
+    "overview": {
+      "title": "Ringkasan Sistem",
+      "totalServices": "Total Layanan",
+      "normalServices": "Layanan Normal",
+      "warningServices": "Layanan Peringatan",
+      "errorServices": "Layanan Abnormal"
+    }
+  },
+  "userInfo": {
+    "title": "Informasi Pengguna",
+    "subtitle": "Lihat dan kelola informasi detail pengguna yang sedang login",
+    "loading": "Memuat...",
+    "basicInfo": {
+      "title": "Informasi Dasar",
+      "username": "Nama Pengguna",
+      "email": "Email",
+      "displayName": "Nama Tampilan",
+      "phone": "Nomor Telepon",
+      "status": "Status",
+      "active": "Aktif",
+      "inactive": "Tidak Aktif",
+      "organization": "Organisasi"
+    },
+    "roles": {
+      "title": "Peran dan Izin"
+    },
+    "contact": {
+      "title": "Informasi Kontak",
+      "contactPhone": "Telepon Kontak",
+      "whatsapp": "WhatsApp",
+      "wechat": "WeChat",
+      "address": "Alamat"
+    },
+    "timeline": {
+      "title": "Informasi Waktu",
+      "createdAt": "Waktu Dibuat",
+      "updatedAt": "Waktu Diperbarui",
+      "lastLoginAt": "Waktu Login Terakhir"
+    },
+    "error": {
+      "noUser": "Informasi pengguna tidak ditemukan",
+      "loadFailed": "Gagal memuat informasi pengguna",
+      "noData": "Tidak ada data"
+    }
   },
   "productManagement": {
     "title": "Manajemen Layanan",
@@ -752,6 +879,82 @@
       "selectVendor": "Silakan pilih vendor terlebih dahulu",
       "selectProduct": "Pilih layanan",
       "apiNotImplemented": "API belum diimplementasikan, harap tunggu pengembangan backend"
+    },
+    "pagination": {
+      "total": "Total {{total}} item",
+      "page": "Halaman {{current}} / {{total}}",
+      "prev": "Sebelumnya",
+      "next": "Selanjutnya"
+    },
+    "loading": "Memuat...",
+    "noData": "Tidak ada data"
+  },
+  "categoryManagement": {
+    "title": "Manajemen Kategori Layanan",
+    "subtitle": "Kelola kategori layanan sistem, mendukung struktur kategori multi-level",
+    "create": "Tambah Kategori",
+    "edit": "Edit",
+    "delete": "Hapus",
+    "search": {
+      "code": "Kode Kategori",
+      "codePlaceholder": "Masukkan kode kategori",
+      "name": "Nama Kategori",
+      "namePlaceholder": "Masukkan nama kategori",
+      "parent": "Kategori Induk",
+      "status": "Status",
+      "allCategories": "Semua Kategori",
+      "allStatus": "Semua Status",
+      "active": "Aktif",
+      "inactive": "Tidak Aktif",
+      "search": "Cari",
+      "reset": "Reset"
+    },
+    "table": {
+      "code": "Kode Kategori",
+      "name": "Nama Kategori",
+      "parent": "Kategori Induk",
+      "displayOrder": "Urutan Tampilan",
+      "status": "Status",
+      "active": "Aktif",
+      "inactive": "Tidak Aktif",
+      "actions": "Aksi"
+    },
+    "modal": {
+      "createTitle": "Tambah Kategori",
+      "editTitle": "Edit Kategori",
+      "code": "Kode Kategori",
+      "codePlaceholder": "Masukkan kode kategori (contoh: VISA_SERVICE)",
+      "name": "Nama Kategori",
+      "namePlaceholder": "Masukkan nama kategori",
+      "description": "Deskripsi",
+      "descriptionPlaceholder": "Masukkan deskripsi kategori",
+      "parent": "Kategori Induk",
+      "noParent": "Tidak ada (Kategori Top Level)",
+      "displayOrder": "Urutan Tampilan",
+      "isActive": "Status Aktif",
+      "active": "Aktif",
+      "inactive": "Tidak Aktif",
+      "save": "Simpan",
+      "saving": "Menyimpan...",
+      "cancel": "Batal"
+    },
+    "validation": {
+      "codeRequired": "Kode kategori tidak boleh kosong",
+      "nameRequired": "Nama kategori tidak boleh kosong"
+    },
+    "confirm": {
+      "delete": "Apakah Anda yakin ingin menghapus kategori {{name}}?"
+    },
+    "success": {
+      "create": "Berhasil dibuat",
+      "update": "Berhasil diperbarui",
+      "delete": "Berhasil dihapus"
+    },
+    "error": {
+      "loadFailed": "Gagal memuat",
+      "loadDetailFailed": "Gagal memuat detail",
+      "saveFailed": "Gagal menyimpan",
+      "deleteFailed": "Gagal menghapus"
     },
     "pagination": {
       "total": "Total {{total}} item",

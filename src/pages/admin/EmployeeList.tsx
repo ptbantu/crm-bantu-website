@@ -11,7 +11,7 @@ import { useToast } from '@/components/ToastContainer'
 
 const EmployeeList = () => {
   const { t } = useTranslation()
-  const { showToast } = useToast()
+  const { showError } = useToast()
 
   // 查询参数
   const [queryParams, setQueryParams] = useState<UserListParams>({
@@ -57,11 +57,11 @@ const EmployeeList = () => {
         setOrganizations(orgs)
         setRoles(roleList)
       } catch (error: any) {
-        showToast(t('employeeList.error.loadOptions'), 'error')
+        showError(t('employeeList.error.loadOptions'))
       }
     }
     loadOptions()
-  }, [t, showToast])
+  }, [t, showError])
 
   // 加载用户列表
   const loadUsers = async (params: UserListParams) => {
@@ -73,10 +73,7 @@ const EmployeeList = () => {
       setCurrentPage(result.current)
       setPages(result.pages)
     } catch (error: any) {
-      showToast(
-        error.message || t('employeeList.error.loadFailed'),
-        'error'
-      )
+      showError(error.message || t('employeeList.error.loadFailed'))
     } finally {
       setLoading(false)
     }
@@ -124,10 +121,7 @@ const EmployeeList = () => {
       const detail = await getUserDetail(userId)
       setUserDetail(detail)
     } catch (error: any) {
-      showToast(
-        error.message || t('employees.error.loadDetailFailed'),
-        'error'
-      )
+      showError(error.message || t('employees.error.loadDetailFailed'))
       setShowDetailModal(false)
     } finally {
       setLoadingDetail(false)
@@ -166,8 +160,7 @@ const EmployeeList = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="w-full py-2 px-1">
+    <div className="w-full">
         {/* 页面标题 */}
         <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">

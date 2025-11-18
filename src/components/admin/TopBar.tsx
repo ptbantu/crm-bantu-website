@@ -5,14 +5,16 @@
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
-import { LogOut, User, Globe } from 'lucide-react'
+import { LogOut, User, Globe, Menu, X } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/utils/cn'
+import { useSidebar } from '@/contexts/SidebarContext'
 
 export const TopBar = () => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const { user, logout } = useAuth()
+  const { isCollapsed, toggleCollapse } = useSidebar()
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showLangMenu, setShowLangMenu] = useState(false)
 
@@ -31,7 +33,18 @@ export const TopBar = () => {
   return (
     <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
       <div className="flex items-center space-x-4">
-        {/* 可以在这里添加面包屑或其他内容 */}
+        {/* 侧边栏折叠按钮 */}
+        <button
+          onClick={toggleCollapse}
+          className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+          title={isCollapsed ? t('common.sidebar.expand') : t('common.sidebar.collapse')}
+        >
+          {isCollapsed ? (
+            <Menu className="h-5 w-5" />
+          ) : (
+            <X className="h-5 w-5" />
+          )}
+        </button>
       </div>
 
       <div className="flex items-center space-x-4">

@@ -19,7 +19,7 @@ import { useToast } from '@/components/ToastContainer'
 
 const Organizations = () => {
   const { t } = useTranslation()
-  const { showToast } = useToast()
+  const { showSuccess, showError } = useToast()
 
   // 查询参数
   const [queryParams, setQueryParams] = useState<OrganizationListParams>({
@@ -71,10 +71,7 @@ const Organizations = () => {
       setCurrentPage(result.current)
       setPages(result.pages)
     } catch (error: any) {
-      showToast(
-        error.message || t('organizations.error.loadFailed'),
-        'error'
-      )
+      showError(error.message || t('organizations.error.loadFailed'))
     } finally {
       setLoading(false)
     }
@@ -162,10 +159,7 @@ const Organizations = () => {
       })
       setShowModal(true)
     } catch (error: any) {
-      showToast(
-        error.message || t('organizations.error.loadDetailFailed'),
-        'error'
-      )
+      showError(error.message || t('organizations.error.loadDetailFailed'))
     }
   }
 
@@ -186,7 +180,7 @@ const Organizations = () => {
   // 提交表单
   const handleSubmit = async () => {
     if (!modalFormData.name.trim()) {
-      showToast(t('organizations.validation.nameRequired'), 'error')
+      showError(t('organizations.validation.nameRequired'))
       return
     }
 
@@ -202,7 +196,7 @@ const Organizations = () => {
           is_active: modalFormData.is_active,
         }
         await updateOrganization(editingOrg.id, updateData)
-        showToast(t('organizations.success.update'), 'success')
+        showSuccess(t('organizations.success.update'))
       } else {
         // 创建组织
         const createData: CreateOrganizationRequest = {
@@ -214,15 +208,12 @@ const Organizations = () => {
           is_active: modalFormData.is_active,
         }
         await createOrganization(createData)
-        showToast(t('organizations.success.create'), 'success')
+        showSuccess(t('organizations.success.create'))
       }
       handleCloseModal()
       loadOrganizations(queryParams)
     } catch (error: any) {
-      showToast(
-        error.message || t('organizations.error.saveFailed'),
-        'error'
-      )
+      showError(error.message || t('organizations.error.saveFailed'))
     } finally {
       setSubmitting(false)
     }
@@ -236,13 +227,10 @@ const Organizations = () => {
 
     try {
       await deleteOrganization(org.id)
-      showToast(t('organizations.success.delete'), 'success')
+      showSuccess(t('organizations.success.delete'))
       loadOrganizations(queryParams)
     } catch (error: any) {
-      showToast(
-        error.message || t('organizations.error.deleteFailed'),
-        'error'
-      )
+      showError(error.message || t('organizations.error.deleteFailed'))
     }
   }
 
@@ -255,10 +243,7 @@ const Organizations = () => {
       const detail = await getOrganizationDetail(orgId)
       setOrgDetail(detail)
     } catch (error: any) {
-      showToast(
-        error.message || t('organizations.error.loadDetailFailed'),
-        'error'
-      )
+      showError(error.message || t('organizations.error.loadDetailFailed'))
       setShowDetailModal(false)
     } finally {
       setLoadingDetail(false)
@@ -301,8 +286,7 @@ const Organizations = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="w-full py-3 px-2">
+    <div className="w-full">
         {/* 页面标题 */}
         <div className="mb-4 flex items-center justify-between">
           <div>

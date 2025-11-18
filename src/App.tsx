@@ -20,6 +20,7 @@ import UserInfo from './pages/admin/UserInfo'
 import SystemStatus from './pages/admin/SystemStatus'
 import ProductManagement from './pages/admin/ProductManagement'
 import VendorProductList from './pages/admin/VendorProductList'
+import CategoryManagement from './pages/admin/CategoryManagement'
 
 const AppContent = () => {
   const location = useLocation()
@@ -122,6 +123,18 @@ const AppContent = () => {
               <AdminLayout>
                 <PermissionGuard role="ADMIN">
                   <VendorProductList />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          
+          {/* 服务分类管理（仅 ADMIN） */}
+          <Route
+            path="/admin/product/category-management"
+            element={
+              <AdminLayout>
+                <PermissionGuard role="ADMIN">
+                  <CategoryManagement />
                 </PermissionGuard>
               </AdminLayout>
             }

@@ -3,6 +3,10 @@
     "language": "语言",
     "chinese": "中文",
     "indonesian": "印尼语",
+    "sidebar": {
+      "collapse": "折叠侧边栏",
+      "expand": "展开侧边栏"
+    },
     "login": "登录",
     "logout": "退出",
     "home": "首页",
@@ -255,7 +259,48 @@
       "customers": "客户总数",
       "orders": "订单总数",
       "revenue": "总收入",
-      "growth": "增长率"
+      "growth": "增长率",
+      "services": "服务数量",
+      "vendors": "供应商数",
+      "vsLastMonth": "较上月"
+    },
+    "revenueTrend": {
+      "title": "收入趋势（最近7天）"
+    },
+    "activities": {
+      "title": "最近活动",
+      "newOrder": "新订单",
+      "newCustomer": "新客户",
+      "paymentReceived": "收到付款",
+      "systemUpdate": "系统更新",
+      "orderCompleted": "订单完成"
+    },
+    "todos": {
+      "title": "待办事项",
+      "reviewOrders": "审核待处理订单",
+      "updatePrices": "更新服务价格",
+      "contactVendor": "联系供应商",
+      "generateReport": "生成月度报告",
+      "priority": {
+        "high": "高",
+        "medium": "中",
+        "low": "低"
+      }
+    },
+    "recentOrders": {
+      "title": "最近订单",
+      "status": {
+        "pending": "待处理",
+        "processing": "处理中",
+        "completed": "已完成"
+      }
+    },
+    "systemStatus": {
+      "title": "系统状态概览",
+      "allServices": "所有服务",
+      "apiRequests": "API请求",
+      "activeUsers": "活跃用户",
+      "uptime": "运行时间"
     }
   },
   "login": {
@@ -591,6 +636,7 @@
     "product": "产品管理",
     "productManagement": "服务管理",
     "vendorProductList": "供应商服务列表",
+    "categoryManagement": "服务分类管理",
     "finance": "财务管理",
     "agent": "渠道代理"
   },
@@ -609,6 +655,84 @@
       "title": "系统状态",
       "subtitle": "查看系统运行状态和性能指标",
       "placeholder": "功能开发中..."
+    }
+  },
+  "systemStatus": {
+    "title": "系统状态",
+    "subtitle": "实时监控系统各项服务的运行状态",
+    "systemInfo": {
+      "uptime": "系统运行时间",
+      "version": "系统版本"
+    },
+    "performance": {
+      "cpu": "CPU使用率",
+      "memory": "内存使用率",
+      "disk": "磁盘使用率",
+      "dbConnections": "数据库连接",
+      "maxConnections": "最大连接数"
+    },
+    "services": {
+      "title": "服务状态",
+      "backend": "后台服务",
+      "log": "日志服务",
+      "backendService": "后端服务"
+    },
+    "status": {
+      "normal": "服务正常",
+      "warning": "服务警告",
+      "error": "服务异常"
+    },
+    "stats": {
+      "apiRequests": "API请求数",
+      "today": "今日",
+      "activeUsers": "活跃用户",
+      "currentOnline": "当前在线",
+      "network": "网络状态",
+      "latency": "延迟"
+    },
+    "overview": {
+      "title": "系统概览",
+      "totalServices": "总服务数",
+      "normalServices": "正常服务",
+      "warningServices": "警告服务",
+      "errorServices": "异常服务"
+    }
+  },
+  "userInfo": {
+    "title": "用户信息",
+    "subtitle": "查看和管理当前登录用户的详细信息",
+    "loading": "加载中...",
+    "basicInfo": {
+      "title": "基本信息",
+      "username": "用户名",
+      "email": "邮箱",
+      "displayName": "显示名称",
+      "phone": "手机号",
+      "status": "状态",
+      "active": "启用",
+      "inactive": "禁用",
+      "organization": "所属组织"
+    },
+    "roles": {
+      "title": "角色权限"
+    },
+    "contact": {
+      "title": "联系信息",
+      "contactPhone": "联系电话",
+      "whatsapp": "WhatsApp",
+      "wechat": "微信",
+      "address": "地址"
+    },
+    "timeline": {
+      "title": "时间信息",
+      "createdAt": "创建时间",
+      "updatedAt": "更新时间",
+      "lastLoginAt": "最后登录时间"
+    },
+    "error": {
+      "noUser": "未找到用户信息",
+      "loadFailed": "加载用户信息失败",
+      "noData": "暂无数据"
     }
   },
   "productManagement": {
@@ -766,6 +890,82 @@
       "selectVendor": "请先选择供应商",
       "selectProduct": "请选择服务",
       "apiNotImplemented": "API接口尚未实现，请等待后端开发"
+    },
+    "pagination": {
+      "total": "共 {{total}} 条",
+      "page": "第 {{current}} / {{total}} 页",
+      "prev": "上一页",
+      "next": "下一页"
+    },
+    "loading": "加载中...",
+    "noData": "暂无数据"
+  },
+  "categoryManagement": {
+    "title": "服务分类管理",
+    "subtitle": "管理系统服务分类，支持多级分类结构",
+    "create": "新增分类",
+    "edit": "编辑",
+    "delete": "删除",
+    "search": {
+      "code": "分类编码",
+      "codePlaceholder": "请输入分类编码",
+      "name": "分类名称",
+      "namePlaceholder": "请输入分类名称",
+      "parent": "父分类",
+      "status": "状态",
+      "allCategories": "全部分类",
+      "allStatus": "全部状态",
+      "active": "启用",
+      "inactive": "禁用",
+      "search": "查询",
+      "reset": "重置"
+    },
+    "table": {
+      "code": "分类编码",
+      "name": "分类名称",
+      "parent": "父分类",
+      "displayOrder": "显示顺序",
+      "status": "状态",
+      "active": "启用",
+      "inactive": "禁用",
+      "actions": "操作"
+    },
+    "modal": {
+      "createTitle": "新增分类",
+      "editTitle": "编辑分类",
+      "code": "分类编码",
+      "codePlaceholder": "请输入分类编码（如：VISA_SERVICE）",
+      "name": "分类名称",
+      "namePlaceholder": "请输入分类名称",
+      "description": "描述",
+      "descriptionPlaceholder": "请输入分类描述",
+      "parent": "父分类",
+      "noParent": "无（顶级分类）",
+      "displayOrder": "显示顺序",
+      "isActive": "启用状态",
+      "active": "启用",
+      "inactive": "禁用",
+      "save": "保存",
+      "saving": "保存中...",
+      "cancel": "取消"
+    },
+    "validation": {
+      "codeRequired": "分类编码不能为空",
+      "nameRequired": "分类名称不能为空"
+    },
+    "confirm": {
+      "delete": "确定要删除分类 {{name}} 吗？"
+    },
+    "success": {
+      "create": "创建成功",
+      "update": "更新成功",
+      "delete": "删除成功"
+    },
+    "error": {
+      "loadFailed": "加载失败",
+      "loadDetailFailed": "加载详情失败",
+      "saveFailed": "保存失败",
+      "deleteFailed": "删除失败"
     },
     "pagination": {
       "total": "共 {{total}} 条",

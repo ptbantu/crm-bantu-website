@@ -22,7 +22,7 @@ import { useAuth } from '@/contexts/AuthContext'
 
 const EmployeeManagement = () => {
   const { t } = useTranslation()
-  const { showToast } = useToast()
+  const { showSuccess, showError } = useToast()
   const { user } = useAuth()
   
   // 当前用户的组织ID
@@ -77,11 +77,11 @@ const EmployeeManagement = () => {
         setOrganizations(orgs)
         setRoles(roleList)
       } catch (error: any) {
-        showToast(t('employeeManagement.error.loadOptions'), 'error')
+        showError(t('employeeManagement.error.loadOptions'))
       }
     }
     loadOptions()
-  }, [t, showToast])
+  }, [t, showError])
 
   // 加载用户列表
   const loadUsers = async (params: UserListParams) => {
@@ -98,10 +98,7 @@ const EmployeeManagement = () => {
       setCurrentPage(result.current)
       setPages(result.pages)
     } catch (error: any) {
-      showToast(
-        error.message || t('employeeManagement.error.loadFailed'),
-        'error'
-      )
+      showError(error.message || t('employeeManagement.error.loadFailed'))
     } finally {
       setLoading(false)
     }
@@ -175,7 +172,7 @@ const EmployeeManagement = () => {
   // 打开创建弹窗
   const handleCreate = () => {
     if (!currentUserOrganizationId) {
-      showToast(t('employeeManagement.error.noOrganization'), 'error')
+      showError(t('employeeManagement.error.noOrganization'))
       return
     }
     setEditingUser(null)
@@ -194,7 +191,7 @@ const EmployeeManagement = () => {
   // 打开编辑弹窗
   const handleEdit = async (user: UserListItem) => {
     if (!currentUserOrganizationId) {
-      showToast(t('employeeManagement.error.noOrganization'), 'error')
+      showError(t('employeeManagement.error.noOrganization'))
       return
     }
     setEditingUser(user)
@@ -212,10 +209,7 @@ const EmployeeManagement = () => {
       })
       setShowModal(true)
     } catch (error: any) {
-      showToast(
-        error.message || t('employeeManagement.error.loadDetailFailed'),
-        'error'
-      )
+      showError(error.message || t('employeeManagement.error.loadDetailFailed'))
     }
   }
 
@@ -240,14 +234,14 @@ const EmployeeManagement = () => {
     // 但创建时至少需要用户名或邮箱
     if (!editingUser) {
       if (!modalFormData.username.trim() && !modalFormData.email.trim()) {
-        showToast(t('employeeManagement.validation.usernameOrEmailRequired'), 'error')
+        showError(t('employeeManagement.validation.usernameOrEmailRequired'))
         return
       }
     }
 
     // 确保组织ID是当前用户组织
     if (!currentUserOrganizationId) {
-      showToast(t('employeeManagement.error.noOrganization'), 'error')
+      showError(t('employeeManagement.error.noOrganization'))
       return
     }
 
@@ -263,7 +257,7 @@ const EmployeeManagement = () => {
           is_active: modalFormData.is_active,
         }
         await updateUser(editingUser.id, updateData)
-        showToast(t('employeeManagement.success.update'), 'success')
+        showSuccess(t('employeeManagement.success.update'))
       } else {
         // 创建用户
         const createData: CreateUserRequest = {
@@ -276,15 +270,12 @@ const EmployeeManagement = () => {
           is_active: modalFormData.is_active,
         }
         await createUser(createData)
-        showToast(t('employeeManagement.success.create'), 'success')
+        showSuccess(t('employeeManagement.success.create'))
       }
       handleCloseModal()
       loadUsers(queryParams)
     } catch (error: any) {
-      showToast(
-        error.message || t('employeeManagement.error.saveFailed'),
-        'error'
-      )
+      showError(error.message || t('employeeManagement.error.saveFailed'))
     } finally {
       setSubmitting(false)
     }
@@ -298,13 +289,10 @@ const EmployeeManagement = () => {
 
     try {
       await deleteUser(user.id)
-      showToast(t('employeeManagement.success.delete'), 'success')
+      showSuccess(t('employeeManagement.success.delete'))
       loadUsers(queryParams)
     } catch (error: any) {
-      showToast(
-        error.message || t('employeeManagement.error.deleteFailed'),
-        'error'
-      )
+      showError(error.message || t('employeeManagement.error.deleteFailed'))
     }
   }
 
@@ -319,8 +307,7 @@ const EmployeeManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="w-full py-2 px-1">
+    <div className="w-full">
         {/* 页面标题 */}
         <div className="mb-4 flex items-center justify-between">
           <div>

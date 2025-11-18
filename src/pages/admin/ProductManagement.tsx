@@ -20,7 +20,7 @@ import { useToast } from '@/components/ToastContainer'
 
 const ProductManagement = () => {
   const { t } = useTranslation()
-  const { showToast } = useToast()
+  const { showSuccess, showError } = useToast()
 
   // 查询参数
   const [queryParams, setQueryParams] = useState<ProductListParams>({
@@ -95,10 +95,7 @@ const ProductManagement = () => {
       setCurrentPage(result.current)
       setPages(result.pages)
     } catch (error: any) {
-      showToast(
-        error.message || t('productManagement.error.loadFailed'),
-        'error'
-      )
+      showError(error.message || t('productManagement.error.loadFailed'))
     } finally {
       setLoading(false)
     }
@@ -207,10 +204,7 @@ const ProductManagement = () => {
       })
       setShowModal(true)
     } catch (error: any) {
-      showToast(
-        error.message || t('productManagement.error.loadDetailFailed'),
-        'error'
-      )
+      showError(error.message || t('productManagement.error.loadDetailFailed'))
     }
   }
 
@@ -238,7 +232,7 @@ const ProductManagement = () => {
   // 提交表单
   const handleSubmit = async () => {
     if (!modalFormData.name.trim()) {
-      showToast(t('productManagement.validation.nameRequired'), 'error')
+      showError(t('productManagement.validation.nameRequired'))
       return
     }
 
@@ -262,7 +256,7 @@ const ProductManagement = () => {
           is_active: modalFormData.is_active,
         }
         await updateProduct(editingProduct.id, updateData)
-        showToast(t('productManagement.success.update'), 'success')
+        showSuccess(t('productManagement.success.update'))
       } else {
         // 创建产品
         const createData: CreateProductRequest = {
@@ -281,15 +275,12 @@ const ProductManagement = () => {
           is_active: modalFormData.is_active,
         }
         await createProduct(createData)
-        showToast(t('productManagement.success.create'), 'success')
+        showSuccess(t('productManagement.success.create'))
       }
       handleCloseModal()
       loadProducts(queryParams)
     } catch (error: any) {
-      showToast(
-        error.message || t('productManagement.error.saveFailed'),
-        'error'
-      )
+      showError(error.message || t('productManagement.error.saveFailed'))
     } finally {
       setSubmitting(false)
     }
@@ -303,13 +294,10 @@ const ProductManagement = () => {
 
     try {
       await deleteProduct(product.id)
-      showToast(t('productManagement.success.delete'), 'success')
+      showSuccess(t('productManagement.success.delete'))
       loadProducts(queryParams)
     } catch (error: any) {
-      showToast(
-        error.message || t('productManagement.error.deleteFailed'),
-        'error'
-      )
+      showError(error.message || t('productManagement.error.deleteFailed'))
     }
   }
 
@@ -322,10 +310,7 @@ const ProductManagement = () => {
       const detail = await getProductDetail(productId)
       setProductDetail(detail)
     } catch (error: any) {
-      showToast(
-        error.message || t('productManagement.error.loadDetailFailed'),
-        'error'
-      )
+      showError(error.message || t('productManagement.error.loadDetailFailed'))
       setShowDetailModal(false)
     } finally {
       setLoadingDetail(false)
@@ -349,8 +334,7 @@ const ProductManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="w-full py-2 px-1">
+    <div className="w-full">
         {/* 页面标题 */}
         <div className="mb-4 flex items-center justify-between">
           <div>

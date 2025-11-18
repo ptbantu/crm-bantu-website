@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { Sidebar } from '@/components/admin/Sidebar'
 import { TopBar } from '@/components/admin/TopBar'
 import { Breadcrumb } from '@/components/admin/Breadcrumb'
+import { SidebarProvider } from '@/contexts/SidebarContext'
 
 interface AdminLayoutProps {
   children: ReactNode
@@ -29,18 +30,20 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar />
-        <div className="flex-1 overflow-y-auto">
-          <div className="container mx-auto px-6 py-6 max-w-7xl">
-            <Breadcrumb />
-            {children}
+    <SidebarProvider>
+      <div className="flex h-screen bg-gray-50 overflow-hidden">
+        <Sidebar />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <TopBar />
+          <div className="flex-1 overflow-y-auto">
+            <div className="w-full px-2 py-2">
+              <Breadcrumb />
+              {children}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </SidebarProvider>
   )
 }
 
