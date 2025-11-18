@@ -103,5 +103,22 @@ export const API_PATHS = {
     BY_ID: (id: string) => `/api/service-management/products/${id}`,
     BY_VENDOR: (vendorId: string) => `/api/service-management/products/vendors/${vendorId}`,
   },
+  // 服务管理 - 客户
+  CUSTOMERS: {
+    BASE: '/api/service-management/customers',
+    BY_ID: (id: string) => `/api/service-management/customers/${id}`,
+  },
+  // 服务管理 - 联系人
+  CONTACTS: {
+    BASE: '/api/service-management/contacts',
+    BY_ID: (id: string) => `/api/service-management/contacts/${id}`,
+    BY_CUSTOMER: (customerId: string) => `/api/service-management/contacts/customers/${customerId}/contacts`,
+  },
+  // 服务管理 - 服务记录
+  SERVICE_RECORDS: {
+    BASE: '/api/service-management/service-records',
+    BY_ID: (id: string) => `/api/service-management/service-records/${id}`,
+    BY_CUSTOMER: (customerId: string) => `/api/service-management/service-records/customers/${customerId}/service-records`,
+  },
 } as const
 

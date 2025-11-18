@@ -11,6 +11,12 @@ export const useMenu = () => {
   const { permissions, roles } = useAuth()
 
   const filteredMenu = useMemo(() => {
+    // 调试信息（开发环境）
+    if (import.meta.env.DEV) {
+      console.log('[useMenu] Current roles:', roles)
+      console.log('[useMenu] Current permissions:', permissions)
+    }
+
     const filterMenuItems = (items: MenuItem[]): MenuItem[] => {
       return items
         .filter(item => {
@@ -23,7 +29,15 @@ export const useMenu = () => {
           
           // 检查角色
           if (item.role) {
-            if (!checkRole(roles, item.role)) {
+            // 将枚举值转换为字符串（Role.ADMIN -> 'ADMIN'）
+            const roleValue = Array.isArray(item.role) 
+              ? item.role.map(r => String(r))
+              : String(item.role)
+            
+            if (!checkRole(roles, roleValue)) {
+              if (import.meta.env.DEV) {
+                console.log(`[useMenu] Filtered out menu item: ${item.key}, required role:`, roleValue, 'user roles:', roles)
+              }
               return false
             }
           }

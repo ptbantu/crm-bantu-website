@@ -283,3 +283,148 @@ export interface ProductPrice {
   updated_at?: string
 }
 
+// ==================== 客户管理相关类型 ====================
+
+// 客户
+export interface Customer {
+  id: string
+  name: string
+  code?: string | null
+  customer_type: 'individual' | 'organization'
+  customer_source_type: 'own' | 'agent'
+  parent_customer_id?: string | null
+  parent_customer_name?: string | null
+  owner_user_id?: string | null
+  owner_user_name?: string | null
+  agent_user_id?: string | null
+  agent_id?: string | null
+  agent_name?: string | null
+  source_id?: string | null
+  source_name?: string | null
+  channel_id?: string | null
+  channel_name?: string | null
+  level?: string | null
+  industry?: string | null
+  description?: string | null
+  tags?: string[]
+  is_locked?: boolean
+  customer_requirements?: string | null
+  created_at: string
+  updated_at: string
+}
+
+// 客户列表查询参数
+export interface CustomerListParams {
+  page?: number
+  size?: number
+  name?: string
+  code?: string
+  customer_type?: 'individual' | 'organization'
+  customer_source_type?: 'own' | 'agent'
+  parent_customer_id?: string
+  owner_user_id?: string
+  agent_id?: string
+  source_id?: string
+  channel_id?: string
+  is_locked?: boolean
+}
+
+// 联系人
+export interface Contact {
+  id: string
+  customer_id: string
+  customer_name?: string | null
+  first_name: string
+  last_name: string
+  full_name?: string | null
+  email?: string | null
+  phone?: string | null
+  mobile?: string | null
+  wechat_id?: string | null
+  position?: string | null
+  department?: string | null
+  contact_role?: string | null
+  is_primary: boolean
+  is_decision_maker: boolean
+  address?: string | null
+  city?: string | null
+  province?: string | null
+  country?: string | null
+  postal_code?: string | null
+  preferred_contact_method?: string | null
+  is_active: boolean
+  notes?: string | null
+  created_at: string
+  updated_at: string
+}
+
+// 联系人列表查询参数
+export interface ContactListParams {
+  page?: number
+  size?: number
+  customer_id?: string
+  is_primary?: boolean
+  is_active?: boolean
+}
+
+// 服务记录
+export interface ServiceRecord {
+  id: string
+  customer_id: string
+  customer_name?: string | null
+  service_type_id?: string | null
+  service_type_name?: string | null
+  product_id?: string | null
+  product_name?: string | null
+  product_code?: string | null
+  service_name?: string | null
+  service_description?: string | null
+  service_code?: string | null
+  contact_id?: string | null
+  contact_name?: string | null
+  sales_user_id?: string | null
+  sales_username?: string | null
+  referral_customer_id?: string | null
+  referral_customer_name?: string | null
+  status: 'pending' | 'in_progress' | 'completed' | 'cancelled' | 'on_hold'
+  priority: 'low' | 'normal' | 'high' | 'urgent'
+  status_description?: string | null
+  expected_start_date?: string | null
+  expected_completion_date?: string | null
+  actual_start_date?: string | null
+  actual_completion_date?: string | null
+  deadline?: string | null
+  estimated_price?: number | null
+  final_price?: number | null
+  currency_code: string
+  price_notes?: string | null
+  quantity: number
+  unit?: string | null
+  requirements?: string | null
+  customer_requirements?: string | null
+  internal_notes?: string | null
+  customer_notes?: string | null
+  required_documents?: string | null
+  attachments?: string[]
+  last_follow_up_at?: string | null
+  next_follow_up_at?: string | null
+  follow_up_notes?: string | null
+  tags?: string[]
+  created_at: string
+  updated_at: string
+}
+
+// 服务记录列表查询参数
+export interface ServiceRecordListParams {
+  page?: number
+  size?: number
+  customer_id?: string
+  service_type_id?: string
+  product_id?: string
+  contact_id?: string
+  sales_user_id?: string
+  status?: 'pending' | 'in_progress' | 'completed' | 'cancelled' | 'on_hold'
+  priority?: 'low' | 'normal' | 'high' | 'urgent'
+  referral_customer_id?: string
+}
+

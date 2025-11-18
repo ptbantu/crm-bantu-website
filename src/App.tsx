@@ -21,6 +21,8 @@ import SystemStatus from './pages/admin/SystemStatus'
 import ProductManagement from './pages/admin/ProductManagement'
 import VendorProductList from './pages/admin/VendorProductList'
 import CategoryManagement from './pages/admin/CategoryManagement'
+import CustomerList from './pages/admin/CustomerList'
+import ContactList from './pages/admin/ContactList'
 
 const AppContent = () => {
   const location = useLocation()
@@ -135,6 +137,28 @@ const AppContent = () => {
               <AdminLayout>
                 <PermissionGuard role="ADMIN">
                   <CategoryManagement />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          
+          {/* 客户管理模块（仅 ADMIN） */}
+          <Route
+            path="/admin/customer/list"
+            element={
+              <AdminLayout>
+                <PermissionGuard role="ADMIN">
+                  <CustomerList />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/customer/contacts"
+            element={
+              <AdminLayout>
+                <PermissionGuard role="ADMIN">
+                  <ContactList />
                 </PermissionGuard>
               </AdminLayout>
             }

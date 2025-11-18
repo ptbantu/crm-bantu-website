@@ -74,21 +74,21 @@ export const adminMenuItems: MenuItem[] = [
     label: 'menu.customer',
     icon: Users,
     path: '/admin/customer',
-    permission: Permission.CUSTOMER_READ,
+    role: Role.ADMIN, // 仅管理员可见
     children: [
       {
         key: 'customers',
         label: 'menu.customers',
         icon: Users,
         path: '/admin/customer/list',
-        permission: Permission.CUSTOMER_READ,
+        role: Role.ADMIN,
       },
       {
         key: 'contacts',
-        label: 'menu.contacts',
+        label: 'menu.contactList',
         icon: Contact2,
         path: '/admin/customer/contacts',
-        permission: Permission.CUSTOMER_READ,
+        role: Role.ADMIN,
       },
     ],
   },
