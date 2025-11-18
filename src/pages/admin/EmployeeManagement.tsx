@@ -320,69 +320,69 @@ const EmployeeManagement = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="container mx-auto max-w-7xl py-8 px-6">
+      <div className="w-full py-2 px-1">
         {/* 页面标题 */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-4 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-3 tracking-tight">
+            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
               {t('employeeManagement.title')}
             </h1>
-            <p className="text-lg text-gray-500 font-medium">
+            <p className="text-sm text-gray-500 font-medium">
               {t('employeeManagement.subtitle')}
             </p>
           </div>
           <button
             onClick={handleCreate}
-            className="inline-flex items-center space-x-2 px-6 py-3 text-base font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
+            className="inline-flex items-center space-x-1.5 px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
           >
-            <Plus className="h-5 w-5" />
+            <Plus className="h-4 w-4" />
             <span>{t('employeeManagement.create')}</span>
           </button>
         </div>
 
         {/* 查询表单 */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-2 mb-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs font-medium text-gray-700 mb-1">
                 {t('employeeManagement.search.username')}
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <User className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
                 <input
                   type="text"
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                   placeholder={t('employeeManagement.search.usernamePlaceholder')}
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base"
+                  className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs font-medium text-gray-700 mb-1">
                 {t('employeeManagement.search.email')}
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Mail className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder={t('employeeManagement.search.emailPlaceholder')}
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base"
+                  className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs font-medium text-gray-700 mb-1">
                 {t('employeeManagement.search.status')}
               </label>
               <select
                 value={formData.is_active}
                 onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base bg-white"
+                className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
               >
                 <option value="">{t('employeeManagement.search.allStatus')}</option>
                 <option value="true">{t('employeeManagement.search.active')}</option>
@@ -390,19 +390,19 @@ const EmployeeManagement = () => {
               </select>
             </div>
           </div>
-          <div className="flex items-center justify-end space-x-3">
+          <div className="flex items-center justify-end space-x-2">
             <button
               onClick={handleReset}
-              className="px-4 py-2.5 text-base font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
             >
               {t('employeeManagement.search.reset')}
             </button>
             <button
               onClick={handleSearch}
               disabled={loading}
-              className="px-6 py-2.5 text-base font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
             >
-              <Search className="h-4 w-4" />
+              <Search className="h-3.5 w-3.5" />
               <span>{t('employeeManagement.search.search')}</span>
             </button>
           </div>
@@ -411,12 +411,12 @@ const EmployeeManagement = () => {
         {/* 用户列表 */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           {loading ? (
-            <div className="p-12 text-center">
-              <div className="text-gray-500">{t('employeeManagement.loading')}</div>
+            <div className="p-6 text-center">
+              <div className="text-sm text-gray-500">{t('employeeManagement.loading')}</div>
             </div>
           ) : users.length === 0 ? (
-            <div className="p-12 text-center">
-              <div className="text-gray-500">{t('employeeManagement.noData')}</div>
+            <div className="p-6 text-center">
+              <div className="text-sm text-gray-500">{t('employeeManagement.noData')}</div>
             </div>
           ) : (
             <>
@@ -424,22 +424,22 @@ const EmployeeManagement = () => {
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
                         {t('employeeManagement.table.username')}
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
                         {t('employeeManagement.table.displayName')}
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
                         {t('employeeManagement.table.email')}
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
                         {t('employeeManagement.table.organization')}
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
                         {t('employeeManagement.table.status')}
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 w-32">
+                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900 w-20">
                         {t('employeeManagement.table.actions')}
                       </th>
                     </tr>
@@ -450,49 +450,49 @@ const EmployeeManagement = () => {
                         key={user.id}
                         className="hover:bg-gray-50 transition-colors"
                       >
-                        <td className="px-6 py-4 text-base text-gray-900 font-medium">
+                        <td className="px-1 py-1 text-sm text-gray-900 font-medium">
                           {user.username}
                         </td>
-                        <td className="px-6 py-4 text-base text-gray-700">
+                        <td className="px-1 py-1 text-sm text-gray-700">
                           {user.display_name || '-'}
                         </td>
-                        <td className="px-6 py-4 text-base text-gray-700">
+                        <td className="px-1 py-1 text-sm text-gray-700">
                           {user.email || '-'}
                         </td>
-                        <td className="px-6 py-4 text-base text-gray-700">
-                          <div className="flex items-center space-x-2">
-                            <Building2 className="h-4 w-4 text-gray-400" />
+                        <td className="px-1 py-1 text-sm text-gray-700">
+                          <div className="flex items-center space-x-1.5">
+                            <Building2 className="h-3.5 w-3.5 text-gray-400" />
                             <span>{user.primary_organization_name || '-'}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-2 py-1.5">
                           {user.is_active ? (
-                            <span className="inline-flex items-center space-x-1 text-sm text-green-600">
-                              <CheckCircle2 className="h-4 w-4" />
+                            <span className="inline-flex items-center space-x-1 text-xs text-green-600">
+                              <CheckCircle2 className="h-3.5 w-3.5" />
                               <span>{t('employeeManagement.table.active')}</span>
                             </span>
                           ) : (
-                            <span className="inline-flex items-center space-x-1 text-sm text-red-600">
-                              <XCircle className="h-4 w-4" />
+                            <span className="inline-flex items-center space-x-1 text-xs text-red-600">
+                              <XCircle className="h-3.5 w-3.5" />
                               <span>{t('employeeManagement.table.inactive')}</span>
                             </span>
                           )}
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center space-x-2">
+                        <td className="px-2 py-1.5">
+                          <div className="flex items-center space-x-1">
                             <button
                               onClick={() => handleEdit(user)}
-                              className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                              className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
                               title={t('employeeManagement.edit')}
                             >
-                              <Edit className="h-4 w-4" />
+                              <Edit className="h-3.5 w-3.5" />
                             </button>
                             <button
                               onClick={() => handleDelete(user)}
-                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
                               title={t('employeeManagement.delete')}
                             >
-                              <Trash2 className="h-4 w-4" />
+                              <Trash2 className="h-3.5 w-3.5" />
                             </button>
                           </div>
                         </td>
@@ -504,19 +504,19 @@ const EmployeeManagement = () => {
 
               {/* 分页 */}
               {pages > 1 && (
-                <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                  <div className="text-sm text-gray-600">
+                <div className="px-2 py-1.5 border-t border-gray-200 flex items-center justify-between">
+                  <div className="text-xs text-gray-600">
                     {t('employeeManagement.pagination.total').replace('{{total}}', total.toString())}
                   </div>
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage === 1}
-                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       {t('employeeManagement.pagination.prev')}
                     </button>
-                    <div className="text-sm text-gray-700">
+                    <div className="text-xs text-gray-700">
                       {t('employeeManagement.pagination.page')
                         .replace('{{current}}', currentPage.toString())
                         .replace('{{total}}', pages.toString())}
@@ -524,7 +524,7 @@ const EmployeeManagement = () => {
                     <button
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === pages}
-                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       {t('employeeManagement.pagination.next')}
                     </button>
@@ -544,117 +544,117 @@ const EmployeeManagement = () => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* 弹窗头部 */}
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-2.5 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900 tracking-tight">
                 {editingUser ? t('employeeManagement.edit') : t('employeeManagement.create')}
               </h2>
               <button
                 onClick={handleCloseModal}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
               >
-                <X className="h-6 w-6" />
+                <X className="h-4 w-4" />
               </button>
             </div>
 
             {/* 弹窗内容 */}
-            <div className="p-6">
-              <div className="space-y-4">
+            <div className="p-4">
+              <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     {t('employeeManagement.form.username')}
-                    {!editingUser && <span className="text-gray-400 text-xs ml-2">({t('employeeManagement.form.optional')})</span>}
+                    {!editingUser && <span className="text-gray-400 text-xs ml-1.5">({t('employeeManagement.form.optional')})</span>}
                   </label>
                   <input
                     type="text"
                     value={modalFormData.username}
                     onChange={(e) => setModalFormData({ ...modalFormData, username: e.target.value })}
                     disabled={!!editingUser}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base disabled:bg-gray-100"
+                    className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm disabled:bg-gray-100"
                   />
                 </div>
                 {!editingUser && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
                       {t('employeeManagement.form.password')}
-                      <span className="text-gray-400 text-xs ml-2">({t('employeeManagement.form.optional')})</span>
+                      <span className="text-gray-400 text-xs ml-1.5">({t('employeeManagement.form.optional')})</span>
                     </label>
                     <input
                       type="password"
                       value={modalFormData.password}
                       onChange={(e) => setModalFormData({ ...modalFormData, password: e.target.value })}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base"
+                      className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
                     />
                   </div>
                 )}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     {t('employeeManagement.form.email')}
                   </label>
                   <input
                     type="email"
                     value={modalFormData.email}
                     onChange={(e) => setModalFormData({ ...modalFormData, email: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base"
+                    className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     {t('employeeManagement.form.displayName')}
                   </label>
                   <input
                     type="text"
                     value={modalFormData.display_name}
                     onChange={(e) => setModalFormData({ ...modalFormData, display_name: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base"
+                    className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     {t('employeeManagement.form.organization')}
                   </label>
                   <div className="relative">
-                    <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Building2 className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
                     <input
                       type="text"
                       value={user?.primary_organization_name || t('employeeManagement.form.currentOrganization')}
                       disabled
-                      className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-600 text-base cursor-not-allowed"
+                      className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-600 text-sm cursor-not-allowed"
                     />
                   </div>
-                  <p className="mt-1 text-xs text-gray-500">
+                  <p className="mt-0.5 text-xs text-gray-500">
                     {t('employeeManagement.form.organizationHint')}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     {t('employeeManagement.form.roles')}
                   </label>
-                  <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border border-gray-200 rounded-lg p-3">
+                  <div className="grid grid-cols-2 gap-1.5 max-h-32 overflow-y-auto border border-gray-200 rounded-lg p-2">
                     {roles.map((role) => (
                       <label
                         key={role.id}
-                        className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
+                        className="flex items-center space-x-1.5 cursor-pointer hover:bg-gray-50 p-1.5 rounded"
                       >
                         <input
                           type="checkbox"
                           checked={modalFormData.role_ids.includes(role.id)}
                           onChange={() => toggleRole(role.id)}
-                          className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                          className="w-3.5 h-3.5 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
                         />
-                        <span className="text-sm text-gray-700">{role.name}</span>
+                        <span className="text-xs text-gray-700">{role.name}</span>
                       </label>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <label className="flex items-center space-x-2 cursor-pointer">
+                  <label className="flex items-center space-x-1.5 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={modalFormData.is_active}
                       onChange={(e) => setModalFormData({ ...modalFormData, is_active: e.target.checked })}
-                      className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                      className="w-3.5 h-3.5 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
                     />
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className="text-xs font-medium text-gray-700">
                       {t('employeeManagement.form.isActive')}
                     </span>
                   </label>
@@ -663,19 +663,19 @@ const EmployeeManagement = () => {
             </div>
 
             {/* 弹窗底部 */}
-            <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-end space-x-3">
+            <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-4 py-2.5 flex justify-end space-x-2">
               <button
                 onClick={handleCloseModal}
-                className="px-6 py-2.5 text-base font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-4 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 {t('employeeManagement.cancel')}
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="px-6 py-2.5 text-base font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
               >
-                <Save className="h-4 w-4" />
+                <Save className="h-3.5 w-3.5" />
                 <span>{t('employeeManagement.save')}</span>
               </button>
             </div>

@@ -242,6 +242,10 @@
       "phone": "电话",
       "address": "地址",
       "workingHours": "工作时间"
+    },
+    "qrcode": {
+      "alt": "联系二维码",
+      "description": "扫描二维码联系我们"
     }
   },
   "dashboard": {
@@ -585,6 +589,8 @@
     "contacts": "联系人",
     "order": "订单管理",
     "product": "产品管理",
+    "productManagement": "服务管理",
+    "vendorProductList": "供应商服务列表",
     "finance": "财务管理",
     "agent": "渠道代理"
   },
@@ -604,6 +610,171 @@
       "subtitle": "查看系统运行状态和性能指标",
       "placeholder": "功能开发中..."
     }
+  },
+  "productManagement": {
+    "title": "服务管理",
+    "subtitle": "管理系统服务，支持服务列表、供应商关联、价格管理",
+    "create": "新增服务",
+    "edit": "编辑",
+    "delete": "删除",
+    "viewDetail": "详情",
+    "save": "保存",
+    "cancel": "取消",
+    "search": {
+      "name": "服务名称",
+      "namePlaceholder": "请输入服务名称",
+      "code": "服务编码",
+      "codePlaceholder": "请输入服务编码",
+      "category": "分类",
+      "status": "状态",
+      "allCategories": "全部分类",
+      "allStatus": "全部状态",
+      "active": "启用",
+      "inactive": "禁用",
+      "search": "查询",
+      "reset": "重置"
+    },
+    "table": {
+      "name": "服务名称",
+      "code": "服务编码",
+      "category": "分类",
+      "serviceType": "服务类型",
+      "price": "价格",
+      "status": "状态",
+      "active": "启用",
+      "inactive": "禁用",
+      "actions": "操作"
+    },
+    "form": {
+      "name": "服务名称",
+      "code": "服务编码",
+      "category": "分类",
+      "selectCategory": "请选择分类",
+      "serviceType": "服务类型",
+      "serviceTypePlaceholder": "如：visa",
+      "serviceSubtype": "服务子类型",
+      "serviceSubtypePlaceholder": "如：B211",
+      "processingDays": "处理天数",
+      "processingTimeText": "处理时间文本",
+      "processingTimeTextPlaceholder": "如：5个工作日",
+      "priceDirectIdr": "直客价 (IDR)",
+      "priceDirectCny": "直客价 (CNY)",
+      "priceListIdr": "列表价 (IDR)",
+      "priceListCny": "列表价 (CNY)",
+      "status": "状态",
+      "statusActive": "激活",
+      "statusSuspended": "暂停",
+      "statusDiscontinued": "已停用",
+      "isActive": "启用"
+    },
+    "validation": {
+      "nameRequired": "服务名称不能为空"
+    },
+    "confirm": {
+      "delete": "确定要删除服务 {{name}} 吗？"
+    },
+    "success": {
+      "create": "创建成功",
+      "update": "更新成功",
+      "delete": "删除成功"
+    },
+    "error": {
+      "loadFailed": "加载失败",
+      "loadDetailFailed": "加载详情失败",
+      "saveFailed": "保存失败",
+      "deleteFailed": "删除失败"
+    },
+    "pagination": {
+      "total": "共 {{total}} 条",
+      "page": "第 {{current}} / {{total}} 页",
+      "prev": "上一页",
+      "next": "下一页"
+    },
+    "loading": "加载中...",
+    "noData": "暂无数据",
+    "detail": {
+      "title": "服务详情",
+      "basicInfo": "基本信息",
+      "priceInfo": "价格信息",
+      "statusInfo": "状态信息",
+      "otherInfo": "其他信息",
+      "costPrice": "成本价",
+      "channelPrice": "渠道价",
+      "directPrice": "直客价",
+      "listPrice": "列表价",
+      "requiredDocuments": "所需资料",
+      "notes": "备注",
+      "days": "天"
+    }
+  },
+  "vendorProductList": {
+    "title": "供应商服务列表",
+    "subtitle": "管理供应商提供的服务，支持增删改查",
+    "create": "新增服务",
+    "edit": "编辑",
+    "delete": "删除",
+    "pleaseSelectVendor": "请先选择供应商",
+    "search": {
+      "vendor": "供应商",
+      "selectVendor": "请选择供应商",
+      "available": "可用性",
+      "primary": "主要供应商",
+      "allStatus": "全部状态",
+      "all": "全部",
+      "unavailable": "不可用",
+      "secondary": "次要供应商",
+      "search": "查询",
+      "reset": "重置"
+    },
+    "table": {
+      "name": "服务名称",
+      "code": "服务编码",
+      "category": "分类",
+      "serviceType": "服务类型",
+      "price": "价格",
+      "status": "状态",
+      "active": "启用",
+      "inactive": "禁用",
+      "actions": "操作"
+    },
+    "modal": {
+      "title": "供应商服务",
+      "product": "服务",
+      "selectProduct": "请选择服务",
+      "isPrimary": "主要供应商",
+      "priority": "优先级",
+      "costPriceIdr": "成本价 (IDR)",
+      "costPriceCny": "成本价 (CNY)",
+      "processingDays": "处理天数",
+      "isAvailable": "可用",
+      "save": "保存",
+      "saving": "保存中...",
+      "cancel": "取消"
+    },
+    "confirm": {
+      "delete": "确定要删除该服务关联吗？"
+    },
+    "success": {
+      "create": "创建成功",
+      "update": "更新成功",
+      "delete": "删除成功"
+    },
+    "error": {
+      "loadFailed": "加载失败",
+      "saveFailed": "保存失败",
+      "deleteFailed": "删除失败",
+      "selectVendor": "请先选择供应商",
+      "selectProduct": "请选择服务",
+      "apiNotImplemented": "API接口尚未实现，请等待后端开发"
+    },
+    "pagination": {
+      "total": "共 {{total}} 条",
+      "page": "第 {{current}} / {{total}} 页",
+      "prev": "上一页",
+      "next": "下一页"
+    },
+    "loading": "加载中...",
+    "noData": "暂无数据"
   }
 }
 

@@ -242,6 +242,10 @@
       "phone": "Telepon",
       "address": "Alamat",
       "workingHours": "Jam Kerja"
+    },
+    "qrcode": {
+      "alt": "QR Code Kontak",
+      "description": "Scan QR code untuk menghubungi kami"
     }
   },
   "dashboard": {
@@ -583,6 +587,8 @@
     "contacts": "Kontak",
     "order": "Manajemen Pesanan",
     "product": "Manajemen Produk",
+    "productManagement": "Manajemen Layanan",
+    "vendorProductList": "Daftar Layanan Vendor",
     "finance": "Manajemen Keuangan",
     "agent": "Agen Saluran"
   },
@@ -590,6 +596,171 @@
     "title": "Bantu CRM Backend Management",
     "logout": "Keluar",
     "welcome": "Selamat Datang Kembali"
+  },
+  "productManagement": {
+    "title": "Manajemen Layanan",
+    "subtitle": "Kelola layanan sistem, mendukung daftar layanan, asosiasi vendor, dan manajemen harga",
+    "create": "Tambah Layanan",
+    "edit": "Edit",
+    "delete": "Hapus",
+    "viewDetail": "Detail",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "search": {
+      "name": "Nama Layanan",
+      "namePlaceholder": "Masukkan nama layanan",
+      "code": "Kode Layanan",
+      "codePlaceholder": "Masukkan kode layanan",
+      "category": "Kategori",
+      "status": "Status",
+      "allCategories": "Semua Kategori",
+      "allStatus": "Semua Status",
+      "active": "Aktif",
+      "inactive": "Tidak Aktif",
+      "search": "Cari",
+      "reset": "Reset"
+    },
+    "table": {
+      "name": "Nama Layanan",
+      "code": "Kode Layanan",
+      "category": "Kategori",
+      "serviceType": "Jenis Layanan",
+      "price": "Harga",
+      "status": "Status",
+      "active": "Aktif",
+      "inactive": "Tidak Aktif",
+      "actions": "Aksi"
+    },
+    "form": {
+      "name": "Nama Layanan",
+      "code": "Kode Layanan",
+      "category": "Kategori",
+      "selectCategory": "Pilih Kategori",
+      "serviceType": "Jenis Layanan",
+      "serviceTypePlaceholder": "Contoh: visa",
+      "serviceSubtype": "Subtipe Layanan",
+      "serviceSubtypePlaceholder": "Contoh: B211",
+      "processingDays": "Hari Pemrosesan",
+      "processingTimeText": "Teks Waktu Pemrosesan",
+      "processingTimeTextPlaceholder": "Contoh: 5 hari kerja",
+      "priceDirectIdr": "Harga Langsung (IDR)",
+      "priceDirectCny": "Harga Langsung (CNY)",
+      "priceListIdr": "Harga Daftar (IDR)",
+      "priceListCny": "Harga Daftar (CNY)",
+      "status": "Status",
+      "statusActive": "Aktif",
+      "statusSuspended": "Ditangguhkan",
+      "statusDiscontinued": "Dihentikan",
+      "isActive": "Aktif"
+    },
+    "validation": {
+      "nameRequired": "Nama layanan tidak boleh kosong"
+    },
+    "confirm": {
+      "delete": "Apakah Anda yakin ingin menghapus layanan {{name}}?"
+    },
+    "success": {
+      "create": "Berhasil dibuat",
+      "update": "Berhasil diperbarui",
+      "delete": "Berhasil dihapus"
+    },
+    "error": {
+      "loadFailed": "Gagal memuat",
+      "loadDetailFailed": "Gagal memuat detail",
+      "saveFailed": "Gagal menyimpan",
+      "deleteFailed": "Gagal menghapus"
+    },
+    "pagination": {
+      "total": "Total {{total}} item",
+      "page": "Halaman {{current}} / {{total}}",
+      "prev": "Sebelumnya",
+      "next": "Selanjutnya"
+    },
+    "loading": "Memuat...",
+    "noData": "Tidak ada data",
+    "detail": {
+      "title": "Detail Layanan",
+      "basicInfo": "Informasi Dasar",
+      "priceInfo": "Informasi Harga",
+      "statusInfo": "Informasi Status",
+      "otherInfo": "Informasi Lainnya",
+      "costPrice": "Harga Biaya",
+      "channelPrice": "Harga Saluran",
+      "directPrice": "Harga Langsung",
+      "listPrice": "Harga Daftar",
+      "requiredDocuments": "Dokumen yang Diperlukan",
+      "notes": "Catatan",
+      "days": "hari"
+    }
+  },
+  "vendorProductList": {
+    "title": "Daftar Layanan Vendor",
+    "subtitle": "Kelola layanan yang disediakan oleh vendor, mendukung penambahan, penghapusan, pengeditan, dan pencarian",
+    "create": "Tambah Layanan",
+    "edit": "Edit",
+    "delete": "Hapus",
+    "pleaseSelectVendor": "Silakan pilih vendor terlebih dahulu",
+    "search": {
+      "vendor": "Vendor",
+      "selectVendor": "Pilih Vendor",
+      "available": "Ketersediaan",
+      "primary": "Vendor Utama",
+      "allStatus": "Semua Status",
+      "all": "Semua",
+      "unavailable": "Tidak Tersedia",
+      "secondary": "Vendor Sekunder",
+      "search": "Cari",
+      "reset": "Reset"
+    },
+    "table": {
+      "name": "Nama Layanan",
+      "code": "Kode Layanan",
+      "category": "Kategori",
+      "serviceType": "Jenis Layanan",
+      "price": "Harga",
+      "status": "Status",
+      "active": "Aktif",
+      "inactive": "Tidak Aktif",
+      "actions": "Aksi"
+    },
+    "modal": {
+      "title": "Layanan Vendor",
+      "product": "Layanan",
+      "selectProduct": "Pilih Layanan",
+      "isPrimary": "Vendor Utama",
+      "priority": "Prioritas",
+      "costPriceIdr": "Harga Biaya (IDR)",
+      "costPriceCny": "Harga Biaya (CNY)",
+      "processingDays": "Hari Pemrosesan",
+      "isAvailable": "Tersedia",
+      "save": "Simpan",
+      "saving": "Menyimpan...",
+      "cancel": "Batal"
+    },
+    "confirm": {
+      "delete": "Apakah Anda yakin ingin menghapus asosiasi layanan ini?"
+    },
+    "success": {
+      "create": "Berhasil dibuat",
+      "update": "Berhasil diperbarui",
+      "delete": "Berhasil dihapus"
+    },
+    "error": {
+      "loadFailed": "Gagal memuat",
+      "saveFailed": "Gagal menyimpan",
+      "deleteFailed": "Gagal menghapus",
+      "selectVendor": "Silakan pilih vendor terlebih dahulu",
+      "selectProduct": "Pilih layanan",
+      "apiNotImplemented": "API belum diimplementasikan, harap tunggu pengembangan backend"
+    },
+    "pagination": {
+      "total": "Total {{total}} item",
+      "page": "Halaman {{current}} / {{total}}",
+      "prev": "Sebelumnya",
+      "next": "Selanjutnya"
+    },
+    "loading": "Memuat...",
+    "noData": "Tidak ada data"
   }
 }
 

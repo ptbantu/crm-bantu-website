@@ -334,6 +334,20 @@ const Home = () => {
                 </div>
               </div>
 
+              {/* QR Code */}
+              <div className="pt-6 border-t border-gray-200">
+                <div className="flex items-center justify-center">
+                  <img
+                    src="/pics/contact.png"
+                    alt={t('contact.qrcode.alt')}
+                    className="w-80 h-80 md:w-96 md:h-96 object-contain rounded-lg"
+                  />
+                </div>
+                <p className="text-center text-sm text-gray-500 mt-3">
+                  {t('contact.qrcode.description')}
+                </p>
+              </div>
+
               <div className="pt-4">
                 <Link
                   to="/contact"

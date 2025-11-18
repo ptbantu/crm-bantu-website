@@ -126,7 +126,23 @@ export const adminMenuItems: MenuItem[] = [
     label: 'menu.product',
     icon: Package,
     path: '/admin/product',
-    permission: Permission.PRODUCT_READ,
+    role: Role.ADMIN, // 仅管理员可见
+    children: [
+      {
+        key: 'productManagement',
+        label: 'menu.productManagement',
+        icon: Package,
+        path: '/admin/product/management',
+        role: Role.ADMIN,
+      },
+      {
+        key: 'vendorProductList',
+        label: 'menu.vendorProductList',
+        icon: Building2,
+        path: '/admin/product/vendor-list',
+        role: Role.ADMIN,
+      },
+    ],
   },
   {
     key: 'finance',

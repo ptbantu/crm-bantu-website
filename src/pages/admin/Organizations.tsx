@@ -302,47 +302,47 @@ const Organizations = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="container mx-auto max-w-7xl py-8 px-6">
+      <div className="w-full py-3 px-2">
         {/* 页面标题 */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-4 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-3 tracking-tight">
+            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
               {t('organizations.title')}
             </h1>
-            <p className="text-lg text-gray-500 font-medium">
+            <p className="text-sm text-gray-500 font-medium">
               {t('organizations.subtitle')}
             </p>
           </div>
           <button
             onClick={handleCreate}
-            className="inline-flex items-center space-x-2 px-6 py-3 text-base font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
+            className="inline-flex items-center space-x-1.5 px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
           >
-            <Plus className="h-5 w-5" />
+            <Plus className="h-4 w-4" />
             <span>{t('organizations.create')}</span>
           </button>
         </div>
 
         {/* 查询表单 */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-3 mb-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs font-medium text-gray-700 mb-1">
                 {t('organizations.search.name')}
               </label>
               <div className="relative">
-                <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Building2 className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder={t('organizations.search.namePlaceholder')}
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base"
+                  className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs font-medium text-gray-700 mb-1">
                 {t('organizations.search.code')}
               </label>
               <input
@@ -350,18 +350,18 @@ const Organizations = () => {
                 value={formData.code}
                 onChange={(e) => setFormData({ ...formData, code: e.target.value })}
                 placeholder={t('organizations.search.codePlaceholder')}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base"
+                className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs font-medium text-gray-700 mb-1">
                 {t('organizations.search.type')}
               </label>
               <select
                 value={formData.organization_type}
                 onChange={(e) => setFormData({ ...formData, organization_type: e.target.value as '' | 'internal' | 'vendor' | 'agent' })}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base bg-white"
+                className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
               >
                 <option value="">{t('organizations.search.allTypes')}</option>
                 <option value="internal">{t('organizations.type.internal')}</option>
@@ -370,13 +370,13 @@ const Organizations = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs font-medium text-gray-700 mb-1">
                 {t('organizations.search.status')}
               </label>
               <select
                 value={formData.is_active}
                 onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base bg-white"
+                className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
               >
                 <option value="">{t('organizations.search.allStatus')}</option>
                 <option value="true">{t('organizations.search.active')}</option>
@@ -384,19 +384,19 @@ const Organizations = () => {
               </select>
             </div>
           </div>
-          <div className="flex items-center justify-end space-x-3">
+          <div className="flex items-center justify-end space-x-2">
             <button
               onClick={handleReset}
-              className="px-4 py-2.5 text-base font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
             >
               {t('organizations.search.reset')}
             </button>
             <button
               onClick={handleSearch}
               disabled={loading}
-              className="px-6 py-2.5 text-base font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
             >
-              <Search className="h-4 w-4" />
+              <Search className="h-3.5 w-3.5" />
               <span>{t('organizations.search.search')}</span>
             </button>
           </div>
@@ -405,12 +405,12 @@ const Organizations = () => {
         {/* 组织列表 */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           {loading ? (
-            <div className="p-12 text-center">
-              <div className="text-gray-500">{t('organizations.loading')}</div>
+            <div className="p-6 text-center">
+              <div className="text-sm text-gray-500">{t('organizations.loading')}</div>
             </div>
           ) : organizations.length === 0 ? (
-            <div className="p-12 text-center">
-              <div className="text-gray-500">{t('organizations.noData')}</div>
+            <div className="p-6 text-center">
+              <div className="text-sm text-gray-500">{t('organizations.noData')}</div>
             </div>
           ) : (
             <>
@@ -418,31 +418,31 @@ const Organizations = () => {
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
                         {t('organizations.table.name')}
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
                         {t('organizations.table.code')}
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
                         {t('organizations.table.type')}
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
                         {t('organizations.table.email')}
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
                         {t('organizations.table.phone')}
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
                         {t('organizations.table.website')}
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
                         {t('organizations.table.employees')}
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
                         {t('organizations.table.status')}
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 w-32">
+                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900 w-20">
                         {t('organizations.table.actions')}
                       </th>
                     </tr>
@@ -453,60 +453,60 @@ const Organizations = () => {
                         key={org.id}
                         className="hover:bg-gray-50 transition-colors"
                       >
-                        <td className="px-6 py-4 text-base text-gray-900 font-medium">
+                        <td className="px-2 py-1.5 text-sm text-gray-900 font-medium">
                           {org.name}
                         </td>
-                        <td className="px-6 py-4 text-base text-gray-700">
+                        <td className="px-2 py-1.5 text-sm text-gray-700">
                           {org.code || '-'}
                         </td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex items-center px-3 py-1 text-sm font-medium rounded-lg ${getOrganizationTypeColor(org.organization_type)}`}>
+                        <td className="px-2 py-1.5">
+                          <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded ${getOrganizationTypeColor(org.organization_type)}`}>
                             {getOrganizationTypeLabel(org.organization_type)}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-base text-gray-700">
-                          <div className="flex items-center space-x-2">
-                            <Mail className="h-4 w-4 text-gray-400" />
+                        <td className="px-2 py-1.5 text-sm text-gray-700">
+                          <div className="flex items-center space-x-1.5">
+                            <Mail className="h-3.5 w-3.5 text-gray-400" />
                             <span>{org.email || '-'}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-base text-gray-700">
-                          <div className="flex items-center space-x-2">
-                            <Phone className="h-4 w-4 text-gray-400" />
+                        <td className="px-2 py-1.5 text-sm text-gray-700">
+                          <div className="flex items-center space-x-1.5">
+                            <Phone className="h-3.5 w-3.5 text-gray-400" />
                             <span>{org.phone || '-'}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-base text-gray-700">
+                        <td className="px-2 py-1.5 text-sm text-gray-700">
                           {org.website ? (
                             <a
                               href={org.website}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center space-x-2 text-primary-600 hover:text-primary-700"
+                              className="flex items-center space-x-1.5 text-primary-600 hover:text-primary-700"
                             >
-                              <Globe className="h-4 w-4" />
+                              <Globe className="h-3.5 w-3.5" />
                               <span className="truncate max-w-xs">{org.website}</span>
                             </a>
                           ) : (
                             '-'
                           )}
                         </td>
-                        <td className="px-6 py-4 text-base text-gray-700">
-                          <div className="flex items-center space-x-2">
-                            <Users className="h-4 w-4 text-gray-400" />
+                        <td className="px-2 py-1.5 text-sm text-gray-700">
+                          <div className="flex items-center space-x-1.5">
+                            <Users className="h-3.5 w-3.5 text-gray-400" />
                             <span>{org.employees_count ?? 0}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="flex flex-col space-y-1">
+                        <td className="px-2 py-1.5">
+                          <div className="flex flex-col space-y-0.5">
                             {org.is_active ? (
-                              <span className="inline-flex items-center space-x-1 text-sm text-green-600">
-                                <CheckCircle2 className="h-4 w-4" />
+                              <span className="inline-flex items-center space-x-1 text-xs text-green-600">
+                                <CheckCircle2 className="h-3.5 w-3.5" />
                                 <span>{t('organizations.table.active')}</span>
                               </span>
                             ) : (
-                              <span className="inline-flex items-center space-x-1 text-sm text-red-600">
-                                <XCircle className="h-4 w-4" />
+                              <span className="inline-flex items-center space-x-1 text-xs text-red-600">
+                                <XCircle className="h-3.5 w-3.5" />
                                 <span>{t('organizations.table.inactive')}</span>
                               </span>
                             )}
@@ -524,28 +524,28 @@ const Organizations = () => {
                             )}
                           </div>
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center space-x-2">
+                        <td className="px-2 py-1.5">
+                          <div className="flex items-center space-x-1">
                             <button
                               onClick={() => handleViewDetail(org.id)}
-                              className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                              className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
                               title={t('organizations.detail.title')}
                             >
-                              <Eye className="h-4 w-4" />
+                              <Eye className="h-3.5 w-3.5" />
                             </button>
                             <button
                               onClick={() => handleEdit(org)}
-                              className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                              className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
                               title={t('organizations.edit')}
                             >
-                              <Edit className="h-4 w-4" />
+                              <Edit className="h-3.5 w-3.5" />
                             </button>
                             <button
                               onClick={() => handleDelete(org)}
-                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
                               title={t('organizations.delete')}
                             >
-                              <Trash2 className="h-4 w-4" />
+                              <Trash2 className="h-3.5 w-3.5" />
                             </button>
                           </div>
                         </td>
@@ -557,19 +557,19 @@ const Organizations = () => {
 
               {/* 分页 */}
               {pages > 1 && (
-                <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                  <div className="text-sm text-gray-600">
+                <div className="px-2 py-1.5 border-t border-gray-200 flex items-center justify-between">
+                  <div className="text-xs text-gray-600">
                     {t('organizations.pagination.total').replace('{{total}}', total.toString())}
                   </div>
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage === 1}
-                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       {t('organizations.pagination.prev')}
                     </button>
-                    <div className="text-sm text-gray-700">
+                    <div className="text-xs text-gray-700">
                       {t('organizations.pagination.page')
                         .replace('{{current}}', currentPage.toString())
                         .replace('{{total}}', pages.toString())}
@@ -577,7 +577,7 @@ const Organizations = () => {
                     <button
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === pages}
-                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       {t('organizations.pagination.next')}
                     </button>
@@ -597,52 +597,52 @@ const Organizations = () => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* 弹窗头部 */}
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-2.5 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900 tracking-tight">
                 {editingOrg ? t('organizations.edit') : t('organizations.create')}
               </h2>
               <button
                 onClick={handleCloseModal}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
               >
-                <X className="h-6 w-6" />
+                <X className="h-4 w-4" />
               </button>
             </div>
 
             {/* 弹窗内容 */}
-            <div className="p-6">
-              <div className="space-y-4">
+            <div className="p-4">
+              <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     {t('organizations.form.name')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={modalFormData.name}
                     onChange={(e) => setModalFormData({ ...modalFormData, name: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base"
+                    className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     {t('organizations.form.code')}
                   </label>
                   <input
                     type="text"
                     value={modalFormData.code}
                     onChange={(e) => setModalFormData({ ...modalFormData, code: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base"
+                    className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     {t('organizations.form.type')} {!editingOrg && <span className="text-red-500">*</span>}
                   </label>
                   <select
                     value={modalFormData.organization_type}
                     onChange={(e) => setModalFormData({ ...modalFormData, organization_type: e.target.value as 'internal' | 'vendor' | 'agent' })}
                     disabled={!!editingOrg}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base bg-white disabled:bg-gray-100"
+                    className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white disabled:bg-gray-100"
                   >
                     <option value="internal">{t('organizations.type.internal')}</option>
                     <option value="vendor">{t('organizations.type.vendor')}</option>
@@ -650,42 +650,42 @@ const Organizations = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     {t('organizations.form.email')}
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Mail className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
                     <input
                       type="email"
                       value={modalFormData.email}
                       onChange={(e) => setModalFormData({ ...modalFormData, email: e.target.value })}
-                      className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base"
+                      className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     {t('organizations.form.phone')}
                   </label>
                   <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Phone className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
                     <input
                       type="tel"
                       value={modalFormData.phone}
                       onChange={(e) => setModalFormData({ ...modalFormData, phone: e.target.value })}
-                      className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base"
+                      className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="flex items-center space-x-2 cursor-pointer">
+                  <label className="flex items-center space-x-1.5 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={modalFormData.is_active}
                       onChange={(e) => setModalFormData({ ...modalFormData, is_active: e.target.checked })}
-                      className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                      className="w-3.5 h-3.5 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
                     />
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className="text-xs font-medium text-gray-700">
                       {t('organizations.form.isActive')}
                     </span>
                   </label>
@@ -694,19 +694,19 @@ const Organizations = () => {
             </div>
 
             {/* 弹窗底部 */}
-            <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-end space-x-3">
+            <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-4 py-2.5 flex justify-end space-x-2">
               <button
                 onClick={handleCloseModal}
-                className="px-6 py-2.5 text-base font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-4 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 {t('organizations.cancel')}
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="px-6 py-2.5 text-base font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
               >
-                <Save className="h-4 w-4" />
+                <Save className="h-3.5 w-3.5" />
                 <span>{t('organizations.save')}</span>
               </button>
             </div>
@@ -722,96 +722,96 @@ const Organizations = () => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* 弹窗头部 */}
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-2.5 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900 tracking-tight">
                 {t('organizations.detail.title')}
               </h2>
               <button
                 onClick={handleCloseDetail}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
               >
-                <X className="h-6 w-6" />
+                <X className="h-4 w-4" />
               </button>
             </div>
 
             {/* 弹窗内容 */}
             {loadingDetail ? (
-              <div className="p-12 text-center">
-                <div className="text-gray-500">{t('organizations.loading')}</div>
+              <div className="p-6 text-center">
+                <div className="text-sm text-gray-500">{t('organizations.loading')}</div>
               </div>
             ) : orgDetail ? (
-              <div className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* 基本信息 */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                  <div className="space-y-2.5">
+                    <h3 className="text-sm font-semibold text-gray-900 border-b border-gray-200 pb-1.5">
                       {t('organizations.detail.basicInfo')}
                     </h3>
                     <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-1">
+                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
                         {t('organizations.table.name')}
                       </label>
-                      <div className="text-base text-gray-900 font-medium">{orgDetail.name}</div>
+                      <div className="text-sm text-gray-900 font-medium">{orgDetail.name}</div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-1">
+                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
                         {t('organizations.table.code')}
                       </label>
-                      <div className="text-base text-gray-900">{orgDetail.code || '-'}</div>
+                      <div className="text-sm text-gray-900">{orgDetail.code || '-'}</div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-1">
+                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
                         {t('organizations.table.type')}
                       </label>
-                      <span className={`inline-flex items-center px-3 py-1 text-sm font-medium rounded-lg ${getOrganizationTypeColor(orgDetail.organization_type)}`}>
+                      <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded ${getOrganizationTypeColor(orgDetail.organization_type)}`}>
                         {getOrganizationTypeLabel(orgDetail.organization_type)}
                       </span>
                     </div>
                     {orgDetail.description && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-500 mb-1">
+                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
                           {t('organizations.detail.description')}
                         </label>
-                        <div className="text-base text-gray-900 whitespace-pre-wrap">{orgDetail.description}</div>
+                        <div className="text-sm text-gray-900 whitespace-pre-wrap">{orgDetail.description}</div>
                       </div>
                     )}
                   </div>
 
                   {/* 联系信息 */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                  <div className="space-y-2.5">
+                    <h3 className="text-sm font-semibold text-gray-900 border-b border-gray-200 pb-1.5">
                       {t('organizations.detail.contactInfo')}
                     </h3>
                     <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-1">
+                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
                         {t('organizations.table.email')}
                       </label>
-                      <div className="flex items-center space-x-2 text-base text-gray-900">
-                        <Mail className="h-4 w-4 text-gray-400" />
+                      <div className="flex items-center space-x-1.5 text-sm text-gray-900">
+                        <Mail className="h-3.5 w-3.5 text-gray-400" />
                         <span>{orgDetail.email || '-'}</span>
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-1">
+                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
                         {t('organizations.table.phone')}
                       </label>
-                      <div className="flex items-center space-x-2 text-base text-gray-900">
-                        <Phone className="h-4 w-4 text-gray-400" />
+                      <div className="flex items-center space-x-1.5 text-sm text-gray-900">
+                        <Phone className="h-3.5 w-3.5 text-gray-400" />
                         <span>{orgDetail.phone || '-'}</span>
                       </div>
                     </div>
                     {orgDetail.website && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-500 mb-1">
+                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
                           {t('organizations.table.website')}
                         </label>
                         <a
                           href={orgDetail.website}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center space-x-2 text-primary-600 hover:text-primary-700"
+                          className="flex items-center space-x-1.5 text-sm text-primary-600 hover:text-primary-700"
                         >
-                          <Globe className="h-4 w-4" />
+                          <Globe className="h-3.5 w-3.5" />
                           <span>{orgDetail.website}</span>
                         </a>
                       </div>
@@ -819,74 +819,74 @@ const Organizations = () => {
                   </div>
 
                   {/* 状态信息 */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                  <div className="space-y-2.5">
+                    <h3 className="text-sm font-semibold text-gray-900 border-b border-gray-200 pb-1.5">
                       {t('organizations.detail.statusInfo')}
                     </h3>
                     <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-1">
+                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
                         {t('organizations.table.status')}
                       </label>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-1.5">
                         {orgDetail.is_active ? (
-                          <span className="inline-flex items-center space-x-1 text-sm text-green-600">
-                            <CheckCircle2 className="h-4 w-4" />
+                          <span className="inline-flex items-center space-x-1 text-xs text-green-600">
+                            <CheckCircle2 className="h-3.5 w-3.5" />
                             <span>{t('organizations.table.active')}</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center space-x-1 text-sm text-red-600">
-                            <XCircle className="h-4 w-4" />
+                          <span className="inline-flex items-center space-x-1 text-xs text-red-600">
+                            <XCircle className="h-3.5 w-3.5" />
                             <span>{t('organizations.table.inactive')}</span>
                           </span>
                         )}
                         {orgDetail.is_locked && (
-                          <span className="inline-flex items-center space-x-1 text-sm text-orange-600">
-                            <Lock className="h-4 w-4" />
+                          <span className="inline-flex items-center space-x-1 text-xs text-orange-600">
+                            <Lock className="h-3 w-3" />
                             <span>{t('organizations.table.locked')}</span>
                           </span>
                         )}
                         {orgDetail.is_verified && (
-                          <span className="inline-flex items-center space-x-1 text-sm text-blue-600">
-                            <Shield className="h-4 w-4" />
+                          <span className="inline-flex items-center space-x-1 text-xs text-blue-600">
+                            <Shield className="h-3 w-3" />
                             <span>{t('organizations.table.verified')}</span>
                           </span>
                         )}
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-1">
+                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
                         {t('organizations.table.employees')}
                       </label>
-                      <div className="flex items-center space-x-2 text-base text-gray-900">
-                        <Users className="h-4 w-4 text-gray-400" />
+                      <div className="flex items-center space-x-1.5 text-sm text-gray-900">
+                        <Users className="h-3.5 w-3.5 text-gray-400" />
                         <span>{orgDetail.employees_count ?? 0}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* 时间信息 */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                  <div className="space-y-2.5">
+                    <h3 className="text-sm font-semibold text-gray-900 border-b border-gray-200 pb-1.5">
                       {t('organizations.detail.timeInfo')}
                     </h3>
                     {orgDetail.created_at && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-500 mb-1">
+                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
                           {t('organizations.detail.createdAt')}
                         </label>
-                        <div className="flex items-center space-x-2 text-base text-gray-900">
-                          <Calendar className="h-4 w-4 text-gray-400" />
+                        <div className="flex items-center space-x-1.5 text-sm text-gray-900">
+                          <Calendar className="h-3.5 w-3.5 text-gray-400" />
                           <span>{new Date(orgDetail.created_at).toLocaleString()}</span>
                         </div>
                       </div>
                     )}
                     {orgDetail.updated_at && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-500 mb-1">
+                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
                           {t('organizations.detail.updatedAt')}
                         </label>
-                        <div className="flex items-center space-x-2 text-base text-gray-900">
-                          <Calendar className="h-4 w-4 text-gray-400" />
+                        <div className="flex items-center space-x-1.5 text-sm text-gray-900">
+                          <Calendar className="h-3.5 w-3.5 text-gray-400" />
                           <span>{new Date(orgDetail.updated_at).toLocaleString()}</span>
                         </div>
                       </div>

@@ -18,6 +18,8 @@ import EmployeeManagement from './pages/admin/EmployeeManagement'
 import Organizations from './pages/admin/Organizations'
 import UserInfo from './pages/admin/UserInfo'
 import SystemStatus from './pages/admin/SystemStatus'
+import ProductManagement from './pages/admin/ProductManagement'
+import VendorProductList from './pages/admin/VendorProductList'
 
 const AppContent = () => {
   const location = useLocation()
@@ -96,6 +98,30 @@ const AppContent = () => {
               <AdminLayout>
                 <PermissionGuard role="ADMIN">
                   <SystemStatus />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          
+          {/* 产品/服务管理模块（仅 ADMIN） */}
+          <Route
+            path="/admin/product/management"
+            element={
+              <AdminLayout>
+                <PermissionGuard role="ADMIN">
+                  <ProductManagement />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          
+          {/* 供应商服务列表（仅 ADMIN） */}
+          <Route
+            path="/admin/product/vendor-list"
+            element={
+              <AdminLayout>
+                <PermissionGuard role="ADMIN">
+                  <VendorProductList />
                 </PermissionGuard>
               </AdminLayout>
             }

@@ -10,21 +10,21 @@ const UserInfo = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="container mx-auto max-w-7xl py-8 px-6">
+      <div className="w-full py-3 px-2">
         {/* 页面标题 */}
-        <div className="mb-8">
-          <h1 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-3 tracking-tight">
+        <div className="mb-4">
+          <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
             {t('systemManagement.userInfo.title')}
           </h1>
-          <p className="text-lg text-gray-500 font-medium">
+          <p className="text-sm text-gray-500 font-medium">
             {t('systemManagement.userInfo.subtitle')}
           </p>
         </div>
 
         {/* 占位内容 */}
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-          <User className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-500 text-lg">{t('systemManagement.userInfo.placeholder')}</p>
+        <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
+          <User className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+          <p className="text-gray-500 text-sm">{t('systemManagement.userInfo.placeholder')}</p>
         </div>
       </div>
     </div>

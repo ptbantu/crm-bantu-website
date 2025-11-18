@@ -92,5 +92,16 @@ export const API_PATHS = {
     BASE: '/api/foundation/roles',
     BY_ID: (id: string) => `/api/foundation/roles/${id}`,
   },
+  // 服务管理 - 分类
+  CATEGORIES: {
+    BASE: '/api/service-management/categories',
+    BY_ID: (id: string) => `/api/service-management/categories/${id}`,
+  },
+  // 服务管理 - 产品/服务
+  PRODUCTS: {
+    BASE: '/api/service-management/products',
+    BY_ID: (id: string) => `/api/service-management/products/${id}`,
+    BY_VENDOR: (vendorId: string) => `/api/service-management/products/vendors/${vendorId}`,
+  },
 } as const
 
