@@ -23,6 +23,8 @@ import VendorProductList from './pages/admin/VendorProductList'
 import CategoryManagement from './pages/admin/CategoryManagement'
 import CustomerList from './pages/admin/CustomerList'
 import ContactList from './pages/admin/ContactList'
+import OrderList from './pages/admin/OrderList'
+import OrderDetail from './pages/admin/OrderDetail'
 
 const AppContent = () => {
   const location = useLocation()
@@ -159,6 +161,28 @@ const AppContent = () => {
               <AdminLayout>
                 <PermissionGuard role="ADMIN">
                   <ContactList />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          
+          {/* 订单管理模块（仅 ADMIN） */}
+          <Route
+            path="/admin/order/list"
+            element={
+              <AdminLayout>
+                <PermissionGuard role="ADMIN">
+                  <OrderList />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/order/detail/:id"
+            element={
+              <AdminLayout>
+                <PermissionGuard role="ADMIN">
+                  <OrderDetail />
                 </PermissionGuard>
               </AdminLayout>
             }

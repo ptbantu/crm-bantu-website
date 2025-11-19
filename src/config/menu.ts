@@ -94,10 +94,19 @@ export const adminMenuItems: MenuItem[] = [
   },
   {
     key: 'order',
-    label: 'menu.order',
+    label: 'menu.businessPlatform',
     icon: ShoppingCart,
     path: '/admin/order',
-    permission: Permission.ORDER_READ,
+    role: Role.ADMIN, // 仅管理员可见
+    children: [
+      {
+        key: 'orderList',
+        label: 'menu.serviceList',
+        icon: ShoppingCart,
+        path: '/admin/order/list',
+        role: Role.ADMIN,
+      },
+    ],
   },
   {
     key: 'product',

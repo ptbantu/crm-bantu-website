@@ -120,5 +120,32 @@ export const API_PATHS = {
     BY_ID: (id: string) => `/api/service-management/service-records/${id}`,
     BY_CUSTOMER: (customerId: string) => `/api/service-management/service-records/customers/${customerId}/service-records`,
   },
+  // 订单与工作流 - 订单
+  ORDERS: {
+    BASE: '/api/order-workflow/orders',
+    BY_ID: (id: string) => `/api/order-workflow/orders/${id}`,
+    ASSIGN: (id: string) => `/api/order-workflow/orders/${id}/assign`,
+  },
+  // 订单与工作流 - 订单项
+  ORDER_ITEMS: {
+    BASE: (orderId: string) => `/api/order-workflow/orders/${orderId}/items`,
+    BY_ID: (orderId: string, itemId: string) => `/api/order-workflow/orders/${orderId}/items/${itemId}`,
+  },
+  // 订单与工作流 - 订单评论
+  ORDER_COMMENTS: {
+    BASE: (orderId: string) => `/api/order-workflow/orders/${orderId}/comments`,
+    BY_ID: (orderId: string, commentId: string) => `/api/order-workflow/orders/${orderId}/comments/${commentId}`,
+    REPLY: (orderId: string, commentId: string) => `/api/order-workflow/orders/${orderId}/comments/${commentId}/reply`,
+    PIN: (orderId: string, commentId: string) => `/api/order-workflow/orders/${orderId}/comments/${commentId}/pin`,
+  },
+  // 订单与工作流 - 订单文件
+  ORDER_FILES: {
+    BASE: (orderId: string) => `/api/order-workflow/orders/${orderId}/files`,
+    BY_ID: (orderId: string, fileId: string) => `/api/order-workflow/orders/${orderId}/files/${fileId}`,
+    DOWNLOAD: (orderId: string, fileId: string) => `/api/order-workflow/orders/${orderId}/files/${fileId}/download`,
+    VERIFY: (orderId: string, fileId: string) => `/api/order-workflow/orders/${orderId}/files/${fileId}/verify`,
+    BY_STAGE: (orderId: string, stageId: string) => `/api/order-workflow/orders/${orderId}/stages/${stageId}/files`,
+    BY_ITEM: (orderId: string, itemId: string) => `/api/order-workflow/orders/${orderId}/items/${itemId}/files`,
+  },
 } as const
 

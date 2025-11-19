@@ -51,6 +51,7 @@ const createUrl = (path: string): string => {
 interface RequestOptions extends RequestInit {
   skipAuth?: boolean // 是否跳过认证（用于登录等公开接口）
   timeout?: number // 请求超时时间（毫秒）
+  skipJson?: boolean // 是否跳过JSON序列化（用于FormData等）
 }
 
 /**
@@ -69,8 +70,12 @@ export async function request<T = any>(
 
   // 构建请求头
   const requestHeaders: HeadersInit = {
-    'Content-Type': 'application/json',
     ...headers,
+  }
+  
+  // 如果不是FormData，设置Content-Type为application/json
+  if (!options.skipJson && !(restOptions.body instanceof FormData)) {
+    requestHeaders['Content-Type'] = 'application/json'
   }
 
   // 添加认证Token（如果需要）
@@ -87,14 +92,23 @@ export async function request<T = any>(
 
   try {
     const url = createUrl(path)
-    const response = await fetch(url, {
+    
+    // 构建fetch选项
+    const fetchOptions: RequestInit = {
       ...restOptions,
       method: restOptions.method || 'GET',
       headers: requestHeaders,
       signal: controller.signal,
       mode: 'cors', // 明确指定 CORS 模式
       credentials: 'omit', // 不使用 credentials（与后端配置一致）
-    })
+    }
+    
+    // body已经在post/put中设置，这里不需要额外处理
+    if (restOptions.body !== undefined) {
+      fetchOptions.body = restOptions.body
+    }
+    
+    const response = await fetch(url, fetchOptions)
 
     // 清除超时定时器
     clearTimeout(timeoutId)
@@ -164,10 +178,16 @@ export function post<T = any>(
   data?: any,
   options?: RequestOptions
 ): Promise<ApiResult<T>> {
+  // 如果是FormData，直接传递，否则序列化为JSON
+  const body = data instanceof FormData 
+    ? data 
+    : (data ? JSON.stringify(data) : undefined)
+  
   return request<T>(path, {
     ...options,
     method: 'POST',
-    body: data ? JSON.stringify(data) : undefined,
+    body,
+    skipJson: data instanceof FormData,
   })
 }
 

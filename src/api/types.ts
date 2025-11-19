@@ -428,3 +428,197 @@ export interface ServiceRecordListParams {
   referral_customer_id?: string
 }
 
+// ==================== 订单管理相关类型 ====================
+
+// 订单状态
+export type OrderStatus = 'submitted' | 'approved' | 'assigned' | 'processing' | 'completed' | 'cancelled'
+
+// 订单
+export interface Order {
+  id: string
+  order_number: string
+  title: string
+  customer_id: string
+  customer_name?: string | null
+  service_record_id?: string | null
+  service_record_title?: string | null
+  workflow_instance_id?: string | null
+  sales_user_id: string
+  sales_username?: string | null
+  total_amount: number
+  discount_amount?: number
+  final_amount: number
+  currency_code: string
+  status_code: OrderStatus
+  entry_city?: string | null
+  passport_id?: string | null
+  processor?: string | null
+  exchange_rate?: number | null
+  description?: string | null
+  notes?: string | null
+  created_at: string
+  updated_at: string
+}
+
+// 订单列表查询参数
+export interface OrderListParams {
+  page?: number
+  size?: number
+  order_number?: string
+  title?: string
+  customer_id?: string
+  customer_name?: string
+  service_record_id?: string
+  sales_user_id?: string
+  status_code?: OrderStatus
+  created_at_from?: string
+  created_at_to?: string
+  lang?: 'zh' | 'id'
+}
+
+// 订单项状态
+export type OrderItemStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled'
+
+// 订单项
+export interface OrderItem {
+  id: string
+  order_id: string
+  item_number: number
+  product_id?: string | null
+  product_name?: string | null
+  product_code?: string | null
+  service_type_id?: string | null
+  service_type_name?: string | null
+  quantity: number
+  unit?: string | null
+  unit_price: number
+  discount_amount?: number
+  item_amount: number
+  currency_code: string
+  description?: string | null
+  requirements?: string | null
+  expected_start_date?: string | null
+  expected_completion_date?: string | null
+  status: OrderItemStatus
+  created_at: string
+  updated_at: string
+}
+
+// 订单评论类型
+export type OrderCommentType = 'general' | 'internal' | 'customer' | 'system'
+
+// 订单评论
+export interface OrderComment {
+  id: string
+  order_id: string
+  order_stage_id?: string | null
+  comment_type: OrderCommentType
+  content?: string | null
+  is_internal: boolean
+  is_pinned: boolean
+  replied_to_comment_id?: string | null
+  created_by?: string | null
+  created_by_name?: string | null
+  created_at: string
+  updated_at: string
+}
+
+// 订单文件分类
+export type OrderFileCategory = 'passport' | 'visa' | 'document' | 'other'
+
+// 订单文件
+export interface OrderFile {
+  id: string
+  order_id: string
+  order_item_id?: string | null
+  order_stage_id?: string | null
+  file_category?: OrderFileCategory | null
+  file_name?: string | null
+  file_type?: string | null
+  file_path?: string | null
+  file_url?: string | null
+  file_size?: number | null
+  mime_type?: string | null
+  description?: string | null
+  is_required: boolean
+  is_verified: boolean
+  verified_by?: string | null
+  verified_by_name?: string | null
+  verified_at?: string | null
+  uploaded_by?: string | null
+  uploaded_by_name?: string | null
+  created_at: string
+  updated_at: string
+}
+
+// 订单创建请求
+export interface CreateOrderRequest {
+  title: string
+  customer_id: string
+  service_record_id?: string | null
+  sales_user_id: string
+  discount_amount?: number
+  currency_code?: string
+  entry_city?: string | null
+  passport_id?: string | null
+  processor?: string | null
+  exchange_rate?: number | null
+  description?: string | null
+  notes?: string | null
+  order_items: CreateOrderItemRequest[]
+}
+
+// 订单项创建请求
+export interface CreateOrderItemRequest {
+  product_id?: string | null
+  service_type_id?: string | null
+  quantity: number
+  unit?: string | null
+  unit_price: number
+  discount_amount?: number
+  currency_code?: string
+  description?: string | null
+  requirements?: string | null
+  expected_start_date?: string | null
+  expected_completion_date?: string | null
+}
+
+// 订单项更新请求
+export interface UpdateOrderItemRequest {
+  product_id?: string | null
+  service_type_id?: string | null
+  quantity?: number
+  unit?: string | null
+  unit_price?: number
+  discount_amount?: number
+  currency_code?: string
+  description?: string | null
+  requirements?: string | null
+  expected_start_date?: string | null
+  expected_completion_date?: string | null
+  status?: OrderItemStatus
+}
+
+// 订单更新请求
+export interface UpdateOrderRequest {
+  title?: string
+  customer_id?: string
+  service_record_id?: string | null
+  discount_amount?: number
+  currency_code?: string
+  entry_city?: string | null
+  passport_id?: string | null
+  processor?: string | null
+  exchange_rate?: number | null
+  description?: string | null
+  notes?: string | null
+  status_code?: OrderStatus
+}
+
+// 订单分配请求
+export interface AssignOrderRequest {
+  assigned_to_user_id: string
+  assignment_type?: string
+  notes?: string | null
+}
+
