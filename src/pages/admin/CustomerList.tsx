@@ -4,7 +4,7 @@
  */
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Search, Plus, Edit, Trash2, X, Users, Building2, User, CheckCircle2, XCircle, Eye, Mail, Phone, Tag } from 'lucide-react'
+import { Search, Plus, Edit, Trash2, X, Users, Building2, User, CheckCircle2, XCircle, Eye, Mail, Phone, Tag, TrendingUp, DollarSign, ShoppingCart } from 'lucide-react'
 import {
   getCustomerList,
   getCustomerDetail,
@@ -33,6 +33,15 @@ const CustomerList = () => {
   const [total, setTotal] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
   const [pages, setPages] = useState(0)
+
+  // 统计数据
+  const [statistics, setStatistics] = useState({
+    totalCustomers: 0,
+    activeCustomers: 0,
+    totalTransactionAmount: 0,
+    averageOrderValue: 0,
+  })
+  const [loadingStats, setLoadingStats] = useState(false)
 
   // 表单状态
   const [formData, setFormData] = useState({
@@ -87,9 +96,58 @@ const CustomerList = () => {
     }
   }
 
+  // 加载统计数据
+  const loadStatistics = async () => {
+    setLoadingStats(true)
+    try {
+      // 获取总客户数（不筛选，使用较大的size以获取所有客户）
+      const allCustomersResult = await getCustomerList({ size: 10000 })
+      const allCustomers = allCustomersResult.records
+      const totalCustomers = allCustomersResult.total
+      
+      // 统计活跃客户（is_locked = false）
+      // 如果返回的记录数少于总数，需要重新计算
+      let activeCustomers = 0
+      if (allCustomers.length === totalCustomers) {
+        // 如果获取了所有客户，直接统计
+        activeCustomers = allCustomers.filter(c => !c.is_locked).length
+      } else {
+        // 如果客户数太多，需要单独查询活跃客户数
+        const activeResult = await getCustomerList({ size: 10000, is_locked: false })
+        activeCustomers = activeResult.total
+      }
+      
+      // TODO: 总交易额和平均客单价需要从服务记录或订单中获取
+      // 暂时使用 mock 数据
+      const totalTransactionAmount = 12500000 // Mock: 1250万
+      const averageOrderValue = activeCustomers > 0 
+        ? Math.round(totalTransactionAmount / activeCustomers) 
+        : 0
+
+      setStatistics({
+        totalCustomers,
+        activeCustomers,
+        totalTransactionAmount,
+        averageOrderValue,
+      })
+    } catch (error: any) {
+      console.error('Failed to load statistics:', error)
+      // 如果加载失败，使用默认值
+      setStatistics({
+        totalCustomers: total,
+        activeCustomers: 0,
+        totalTransactionAmount: 0,
+        averageOrderValue: 0,
+      })
+    } finally {
+      setLoadingStats(false)
+    }
+  }
+
   // 初始加载
   useEffect(() => {
     loadCustomers(queryParams)
+    loadStatistics()
   }, [])
 
   // 处理查询
@@ -288,6 +346,39 @@ const CustomerList = () => {
     loadCustomers(params)
   }
 
+  // 格式化数字
+  const formatNumber = (num: number) => {
+    if (num >= 100000000) {
+      return (num / 100000000).toFixed(2) + '亿'
+    } else if (num >= 10000) {
+      return (num / 10000).toFixed(2) + '万'
+    } else if (num >= 1000) {
+      return (num / 1000).toFixed(2) + '千'
+    }
+    return num.toLocaleString()
+  }
+
+  // 格式化金额
+  const formatCurrency = (amount: number) => {
+    return `¥${formatNumber(amount)}`
+  }
+
+  // 格式化日期时间
+  const formatDateTime = (dateString: string | undefined) => {
+    if (!dateString) return '-'
+    try {
+      const date = new Date(dateString)
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      const hours = String(date.getHours()).padStart(2, '0')
+      const minutes = String(date.getMinutes()).padStart(2, '0')
+      return `${year}-${month}-${day} ${hours}:${minutes}`
+    } catch (error) {
+      return '-'
+    }
+  }
+
   return (
     <div className="w-full">
       {/* 页面标题 */}
@@ -300,11 +391,102 @@ const CustomerList = () => {
         </p>
       </div>
 
+      {/* 统计卡片 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+        {/* 总客户数 */}
+        <div className="bg-white rounded-xl border border-gray-200 p-3 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center space-x-2">
+              <Users className="h-4 w-4 text-blue-600" />
+              <h3 className="text-xs font-semibold text-gray-700">
+                {t('customerList.statistics.totalCustomers')}
+              </h3>
+            </div>
+          </div>
+          <div className="text-2xl font-bold text-gray-900 mb-1">
+            {loadingStats ? (
+              <span className="text-gray-400">...</span>
+            ) : (
+              statistics.totalCustomers.toLocaleString()
+            )}
+          </div>
+          <div className="text-xs text-gray-500">
+            {t('customerList.statistics.totalCustomersDesc')}
+          </div>
+        </div>
+
+        {/* 活跃客户 */}
+        <div className="bg-white rounded-xl border border-gray-200 p-3 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center space-x-2">
+              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              <h3 className="text-xs font-semibold text-gray-700">
+                {t('customerList.statistics.activeCustomers')}
+              </h3>
+            </div>
+          </div>
+          <div className="text-2xl font-bold text-gray-900 mb-1">
+            {loadingStats ? (
+              <span className="text-gray-400">...</span>
+            ) : (
+              statistics.activeCustomers.toLocaleString()
+            )}
+          </div>
+          <div className="text-xs text-gray-500">
+            {t('customerList.statistics.activeCustomersDesc')}
+          </div>
+        </div>
+
+        {/* 总交易额 */}
+        <div className="bg-white rounded-xl border border-gray-200 p-3 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center space-x-2">
+              <DollarSign className="h-4 w-4 text-orange-600" />
+              <h3 className="text-xs font-semibold text-gray-700">
+                {t('customerList.statistics.totalTransactionAmount')}
+              </h3>
+            </div>
+          </div>
+          <div className="text-2xl font-bold text-gray-900 mb-1">
+            {loadingStats ? (
+              <span className="text-gray-400">...</span>
+            ) : (
+              formatCurrency(statistics.totalTransactionAmount)
+            )}
+          </div>
+          <div className="text-xs text-gray-500">
+            {t('customerList.statistics.totalTransactionAmountDesc')}
+          </div>
+        </div>
+
+        {/* 平均客单价 */}
+        <div className="bg-white rounded-xl border border-gray-200 p-3 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center space-x-2">
+              <ShoppingCart className="h-4 w-4 text-purple-600" />
+              <h3 className="text-xs font-semibold text-gray-700">
+                {t('customerList.statistics.averageOrderValue')}
+              </h3>
+            </div>
+          </div>
+          <div className="text-2xl font-bold text-gray-900 mb-1">
+            {loadingStats ? (
+              <span className="text-gray-400">...</span>
+            ) : (
+              formatCurrency(statistics.averageOrderValue)
+            )}
+          </div>
+          <div className="text-xs text-gray-500">
+            {t('customerList.statistics.averageOrderValueDesc')}
+          </div>
+        </div>
+      </div>
+
       {/* 查询表单 */}
       <div className="bg-white rounded-xl border border-gray-200 p-2 mb-2">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
+        <div className="flex items-end gap-2 flex-wrap">
           {/* 客户名称 */}
-          <div>
+          <div className="flex-1 min-w-[150px]">
             <label className="block text-xs font-medium text-gray-700 mb-1">
               {t('customerList.search.name')}
             </label>
@@ -322,7 +504,7 @@ const CustomerList = () => {
           </div>
 
           {/* 客户编码 */}
-          <div>
+          <div className="flex-1 min-w-[150px]">
             <label className="block text-xs font-medium text-gray-700 mb-1">
               {t('customerList.search.code')}
             </label>
@@ -340,7 +522,7 @@ const CustomerList = () => {
           </div>
 
           {/* 客户类型 */}
-          <div>
+          <div className="flex-1 min-w-[120px]">
             <label className="block text-xs font-medium text-gray-700 mb-1">
               {t('customerList.search.customerType')}
             </label>
@@ -356,7 +538,7 @@ const CustomerList = () => {
           </div>
 
           {/* 客户来源类型 */}
-          <div>
+          <div className="flex-1 min-w-[120px]">
             <label className="block text-xs font-medium text-gray-700 mb-1">
               {t('customerList.search.sourceType')}
             </label>
@@ -372,7 +554,7 @@ const CustomerList = () => {
           </div>
 
           {/* 锁定状态 */}
-          <div>
+          <div className="flex-1 min-w-[120px]">
             <label className="block text-xs font-medium text-gray-700 mb-1">
               {t('customerList.search.locked')}
             </label>
@@ -386,24 +568,24 @@ const CustomerList = () => {
               <option value="true">{t('customerList.search.locked')}</option>
             </select>
           </div>
-        </div>
 
-        {/* 操作按钮 */}
-        <div className="flex items-center justify-end space-x-2">
-          <button
-            onClick={handleReset}
-            className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            {t('customerList.search.reset')}
-          </button>
-          <button
-            onClick={handleSearch}
-            disabled={loading}
-            className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
-          >
-            <Search className="h-3.5 w-3.5" />
-            <span>{t('customerList.search.search')}</span>
-          </button>
+          {/* 操作按钮 */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleReset}
+              className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors whitespace-nowrap"
+            >
+              {t('customerList.search.reset')}
+            </button>
+            <button
+              onClick={handleSearch}
+              disabled={loading}
+              className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5 whitespace-nowrap"
+            >
+              <Search className="h-3.5 w-3.5" />
+              <span>{t('customerList.search.search')}</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -441,8 +623,11 @@ const CustomerList = () => {
                   <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('customerList.table.code')}</th>
                   <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('customerList.table.type')}</th>
                   <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('customerList.table.sourceType')}</th>
+                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('customerList.table.sourceName')}</th>
+                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('customerList.table.ownerUserName')}</th>
                   <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('customerList.table.level')}</th>
                   <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('customerList.table.status')}</th>
+                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('customerList.table.createdAt')}</th>
                   <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('customerList.table.actions')}</th>
                 </tr>
               </thead>
@@ -467,6 +652,8 @@ const CustomerList = () => {
                     <td className="px-1 py-1 text-sm text-gray-600">
                       {customer.customer_source_type === 'own' ? t('customerList.table.own') : t('customerList.table.agent')}
                     </td>
+                    <td className="px-1 py-1 text-sm text-gray-600">{customer.source_name || '-'}</td>
+                    <td className="px-1 py-1 text-sm text-gray-600">{customer.owner_user_name || '-'}</td>
                     <td className="px-1 py-1 text-sm text-gray-600">{customer.level || '-'}</td>
                     <td className="px-1 py-1 text-sm">
                       {customer.is_locked ? (
@@ -481,6 +668,7 @@ const CustomerList = () => {
                         </span>
                       )}
                     </td>
+                    <td className="px-1 py-1 text-sm text-gray-600">{formatDateTime(customer.created_at)}</td>
                     <td className="px-1 py-1 text-sm">
                       <div className="flex items-center space-x-1">
                         <button
