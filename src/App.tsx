@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import './i18n/config'
 import { ToastProvider } from './components/ToastContainer'
 import { AuthProvider } from './contexts/AuthContext'
+import { ChakraProvider } from './providers/ChakraProvider'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import { AdminLayout } from './layouts/AdminLayout'
@@ -208,13 +209,15 @@ const AppContent = () => {
 
 const App = () => {
   return (
-    <ToastProvider>
-      <AuthProvider>
-        <Router>
-          <AppContent />
-        </Router>
-      </AuthProvider>
-    </ToastProvider>
+    <ChakraProvider>
+      <ToastProvider>
+        <AuthProvider>
+          <Router>
+            <AppContent />
+          </Router>
+        </AuthProvider>
+      </ToastProvider>
+    </ChakraProvider>
   )
 }
 

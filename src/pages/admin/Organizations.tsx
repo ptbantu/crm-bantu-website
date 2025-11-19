@@ -16,6 +16,8 @@ import {
 } from '@/api/organizations'
 import { OrganizationListParams, Organization, OrganizationDetail } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
+import { PageHeader } from '@/components/admin/PageHeader'
+import { Button } from '@chakra-ui/react'
 
 const Organizations = () => {
   const { t } = useTranslation()
@@ -287,24 +289,22 @@ const Organizations = () => {
 
   return (
     <div className="w-full">
-      {/* 页面标题 */}
-      <div className="mb-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
-            {t('organizations.title')}
-          </h1>
-          <p className="text-sm text-gray-500 font-medium">
-            {t('organizations.subtitle')}
-          </p>
-        </div>
-        <button
-          onClick={handleCreate}
-          className="inline-flex items-center space-x-1.5 px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
-        >
-          <Plus className="h-4 w-4" />
-          <span>{t('organizations.create')}</span>
-        </button>
-      </div>
+      {/* 页面头部 */}
+      <PageHeader
+        icon={Building2}
+        title={t('organizations.title')}
+        subtitle={t('organizations.subtitle')}
+        actions={
+          <Button
+            colorScheme="primary"
+            leftIcon={<Plus size={16} />}
+            onClick={handleCreate}
+            size="sm"
+          >
+            {t('organizations.create')}
+          </Button>
+        }
+      />
 
       {/* 查询表单 */}
       <div className="bg-white rounded-xl border border-gray-200 p-3 mb-3">

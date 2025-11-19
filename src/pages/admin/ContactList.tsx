@@ -17,10 +17,40 @@ import {
 import { getCustomerList } from '@/api/customers'
 import { ContactListParams, Contact, Customer } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
+import { PageHeader } from '@/components/admin/PageHeader'
+import {
+  Button,
+  Card,
+  CardBody,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Input,
+  Select,
+  InputGroup,
+  InputLeftElement,
+  HStack,
+  VStack,
+  Box,
+  Flex,
+  Spinner,
+  Text,
+  Badge,
+  IconButton,
+  useColorModeValue,
+} from '@chakra-ui/react'
 
 const ContactList = () => {
   const { t } = useTranslation()
   const { showSuccess, showError } = useToast()
+  
+  // Chakra UI 颜色模式
+  const bgColor = useColorModeValue('white', 'gray.800')
+  const borderColor = useColorModeValue('gray.200', 'gray.700')
+  const hoverBg = useColorModeValue('gray.50', 'gray.700')
 
   // 查询参数
   const [queryParams, setQueryParams] = useState<ContactListParams>({
@@ -357,275 +387,305 @@ const ContactList = () => {
   }
 
   return (
-    <div className="w-full">
-      {/* 页面标题 */}
-      <div className="mb-4">
-        <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
-          {t('contactList.title')}
-        </h1>
-        <p className="text-sm text-gray-500 font-medium">
-          {t('contactList.subtitle')}
-        </p>
-      </div>
+    <Box w="full">
+      {/* 页面头部 */}
+      <PageHeader
+        icon={Contact2}
+        title={t('contactList.title')}
+        subtitle={t('contactList.subtitle')}
+        actions={
+          <Button
+            colorScheme="primary"
+            leftIcon={<Plus size={16} />}
+            onClick={handleCreate}
+            size="sm"
+          >
+            {t('contactList.create')}
+          </Button>
+        }
+      />
 
       {/* 查询表单 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-2 mb-2">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
-          {/* 客户选择 */}
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('contactList.search.customer')} <span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <Users className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-              <select
-                value={formData.customer_id}
-                onChange={(e) => setFormData({ ...formData, customer_id: e.target.value })}
-                className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
+      <Card mb={4} bg={bgColor} borderColor={borderColor}>
+        <CardBody>
+          <HStack spacing={3} align="flex-end" flexWrap="wrap">
+            {/* 客户选择 */}
+            <Box flex={1} minW="150px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('contactList.search.customer')} <Text as="span" color="red.500">*</Text>
+              </Text>
+              <HStack spacing={2}>
+                <Box as={Users} size={4} color="gray.400" />
+                <Select
+                  size="sm"
+                  flex={1}
+                  value={formData.customer_id}
+                  onChange={(e) => setFormData({ ...formData, customer_id: e.target.value })}
+                >
+                  <option value="">{t('contactList.search.selectCustomer')}</option>
+                  {customers.map((customer) => (
+                    <option key={customer.id} value={customer.id}>
+                      {customer.name} {customer.code ? `(${customer.code})` : ''}
+                    </option>
+                  ))}
+                </Select>
+              </HStack>
+            </Box>
+
+            {/* 是否主要联系人 */}
+            <Box flex={1} minW="120px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('contactList.search.isPrimary')}
+              </Text>
+              <Select
+                size="sm"
+                value={formData.is_primary}
+                onChange={(e) => setFormData({ ...formData, is_primary: e.target.value as '' | 'true' | 'false' })}
               >
-                <option value="">{t('contactList.search.selectCustomer')}</option>
-                {customers.map((customer) => (
-                  <option key={customer.id} value={customer.id}>
-                    {customer.name} {customer.code ? `(${customer.code})` : ''}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+                <option value="">{t('contactList.search.allStatus')}</option>
+                <option value="true">{t('contactList.search.primary')}</option>
+                <option value="false">{t('contactList.search.nonPrimary')}</option>
+              </Select>
+            </Box>
 
-          {/* 是否主要联系人 */}
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('contactList.search.isPrimary')}
-            </label>
-            <select
-              value={formData.is_primary}
-              onChange={(e) => setFormData({ ...formData, is_primary: e.target.value as '' | 'true' | 'false' })}
-              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-            >
-              <option value="">{t('contactList.search.allStatus')}</option>
-              <option value="true">{t('contactList.search.primary')}</option>
-              <option value="false">{t('contactList.search.nonPrimary')}</option>
-            </select>
-          </div>
+            {/* 激活状态 */}
+            <Box flex={1} minW="120px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('contactList.search.status')}
+              </Text>
+              <Select
+                size="sm"
+                value={formData.is_active}
+                onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
+              >
+                <option value="">{t('contactList.search.allStatus')}</option>
+                <option value="true">{t('contactList.search.active')}</option>
+                <option value="false">{t('contactList.search.inactive')}</option>
+              </Select>
+            </Box>
 
-          {/* 激活状态 */}
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('contactList.search.status')}
-            </label>
-            <select
-              value={formData.is_active}
-              onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
-              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-            >
-              <option value="">{t('contactList.search.allStatus')}</option>
-              <option value="true">{t('contactList.search.active')}</option>
-              <option value="false">{t('contactList.search.inactive')}</option>
-            </select>
-          </div>
-        </div>
-
-        {/* 操作按钮 */}
-        <div className="flex items-center justify-end space-x-2">
-          <button
-            onClick={handleReset}
-            className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            {t('contactList.search.reset')}
-          </button>
-          <button
-            onClick={handleSearch}
-            disabled={loading || !formData.customer_id}
-            className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
-          >
-            <Search className="h-3.5 w-3.5" />
-            <span>{t('contactList.search.search')}</span>
-          </button>
-        </div>
-      </div>
+            {/* 操作按钮 */}
+            <HStack spacing={2}>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleReset}
+              >
+                {t('contactList.search.reset')}
+              </Button>
+              <Button
+                size="sm"
+                colorScheme="blue"
+                leftIcon={<Search size={14} />}
+                onClick={handleSearch}
+                isLoading={loading}
+                isDisabled={!formData.customer_id}
+              >
+                {t('contactList.search.search')}
+              </Button>
+            </HStack>
+          </HStack>
+        </CardBody>
+      </Card>
 
       {/* 操作栏 */}
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-sm text-gray-600">
+      <Flex justify="space-between" align="center" mb={4}>
+        <Text fontSize="sm" color="gray.600">
           {t('contactList.total', { total })}
-        </div>
-        <button
+        </Text>
+        <Button
+          size="sm"
+          colorScheme="blue"
+          leftIcon={<Plus size={16} />}
           onClick={handleCreate}
-          disabled={!formData.customer_id}
-          className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
+          isDisabled={!formData.customer_id}
         >
-          <Plus className="h-3.5 w-3.5" />
-          <span>{t('contactList.create')}</span>
-        </button>
-      </div>
+          {t('contactList.create')}
+        </Button>
+      </Flex>
 
       {/* 联系人列表 */}
       {!formData.customer_id ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-          <Users className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-          <div className="text-gray-500">{t('contactList.selectCustomerFirst')}</div>
-        </div>
+        <Card bg={bgColor} borderColor={borderColor}>
+          <CardBody>
+            <VStack py={8} spacing={3}>
+              <Users size={48} color="gray" />
+              <Text color="gray.500">{t('contactList.selectCustomerFirst')}</Text>
+            </VStack>
+          </CardBody>
+        </Card>
       ) : loading ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-          <div className="text-gray-500">{t('contactList.loading')}</div>
-        </div>
+        <Card bg={bgColor} borderColor={borderColor}>
+          <CardBody>
+            <Flex justify="center" align="center" py={8}>
+              <Spinner size="lg" color="blue.500" />
+              <Text ml={4} color="gray.500">{t('contactList.loading')}</Text>
+            </Flex>
+          </CardBody>
+        </Card>
       ) : contacts.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-          <Contact2 className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-          <div className="text-gray-500">{t('contactList.noData')}</div>
-        </div>
+        <Card bg={bgColor} borderColor={borderColor}>
+          <CardBody>
+            <VStack py={8} spacing={3}>
+              <Contact2 size={48} color="gray" />
+              <Text color="gray.500">{t('contactList.noData')}</Text>
+            </VStack>
+          </CardBody>
+        </Card>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('contactList.table.name')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('contactList.table.customer')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('contactList.table.position')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('contactList.table.contact')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('contactList.table.role')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('contactList.table.status')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('contactList.table.actions')}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
+        <Card bg={bgColor} borderColor={borderColor} overflow="hidden">
+          <Box overflowX="auto">
+            <Table variant="simple" size="sm">
+              <Thead bg="gray.50">
+                <Tr>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('contactList.table.name')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('contactList.table.customer')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('contactList.table.position')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('contactList.table.contact')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('contactList.table.role')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('contactList.table.status')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('contactList.table.actions')}</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
                 {contacts.map((contact) => (
-                  <tr key={contact.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-1 py-1 text-sm text-gray-900">
+                  <Tr key={contact.id} _hover={{ bg: hoverBg }} transition="background-color 0.2s">
+                    <Td fontSize="sm" color="gray.900">
                       {contact.full_name || `${contact.first_name} ${contact.last_name}`}
-                    </td>
-                    <td className="px-1 py-1 text-sm text-gray-600">{contact.customer_name || getCustomerName(contact.customer_id)}</td>
-                    <td className="px-1 py-1 text-sm text-gray-600">{contact.position || '-'}</td>
-                    <td className="px-1 py-1 text-sm text-gray-600">
-                      <div className="flex flex-col space-y-0.5">
+                    </Td>
+                    <Td fontSize="sm" color="gray.600">{contact.customer_name || getCustomerName(contact.customer_id)}</Td>
+                    <Td fontSize="sm" color="gray.600">{contact.position || '-'}</Td>
+                    <Td fontSize="sm" color="gray.600">
+                      <VStack spacing={0.5} align="start">
                         {contact.mobile && (
-                          <div className="flex items-center space-x-1">
-                            <Phone className="h-3 w-3 text-gray-400" />
-                            <span>{contact.mobile}</span>
-                          </div>
+                          <HStack spacing={1}>
+                            <Box as={Phone} size={3} color="gray.400" />
+                            <Text>{contact.mobile}</Text>
+                          </HStack>
                         )}
                         {contact.email && (
-                          <div className="flex items-center space-x-1">
-                            <Mail className="h-3 w-3 text-gray-400" />
-                            <span className="truncate max-w-xs">{contact.email}</span>
-                          </div>
+                          <HStack spacing={1}>
+                            <Box as={Mail} size={3} color="gray.400" />
+                            <Text truncate maxW="xs">{contact.email}</Text>
+                          </HStack>
                         )}
-                        {!contact.mobile && !contact.email && '-'}
-                      </div>
-                    </td>
-                    <td className="px-1 py-1 text-sm">
-                      <div className="flex flex-wrap gap-1">
+                        {!contact.mobile && !contact.email && <Text>-</Text>}
+                      </VStack>
+                    </Td>
+                    <Td fontSize="sm">
+                      <HStack spacing={1} flexWrap="wrap">
                         {contact.is_primary && (
-                          <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 text-xs font-medium text-primary-700 bg-primary-50 rounded">
-                            <User className="h-3 w-3" />
-                            <span>{t('contactList.table.primary')}</span>
-                          </span>
+                          <Badge colorScheme="blue" fontSize="xs">
+                            {t('contactList.table.primary')}
+                          </Badge>
                         )}
                         {contact.is_decision_maker && (
-                          <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 text-xs font-medium text-orange-700 bg-orange-50 rounded">
-                            <Building2 className="h-3 w-3" />
-                            <span>{t('contactList.table.decisionMaker')}</span>
-                          </span>
+                          <Badge colorScheme="orange" fontSize="xs">
+                            {t('contactList.table.decisionMaker')}
+                          </Badge>
                         )}
-                        {!contact.is_primary && !contact.is_decision_maker && '-'}
-                      </div>
-                    </td>
-                    <td className="px-1 py-1 text-sm">
+                        {!contact.is_primary && !contact.is_decision_maker && <Text>-</Text>}
+                      </HStack>
+                    </Td>
+                    <Td fontSize="sm">
                       {contact.is_active ? (
-                        <span className="inline-flex items-center space-x-1 text-green-600">
-                          <CheckCircle2 className="h-3 w-3" />
-                          <span>{t('contactList.table.active')}</span>
-                        </span>
+                        <Badge colorScheme="green" fontSize="xs">
+                          {t('contactList.table.active')}
+                        </Badge>
                       ) : (
-                        <span className="inline-flex items-center space-x-1 text-red-600">
-                          <XCircle className="h-3 w-3" />
-                          <span>{t('contactList.table.inactive')}</span>
-                        </span>
+                        <Badge colorScheme="red" fontSize="xs">
+                          {t('contactList.table.inactive')}
+                        </Badge>
                       )}
-                    </td>
-                    <td className="px-1 py-1 text-sm">
-                      <div className="flex items-center space-x-1">
-                        <button
+                    </Td>
+                    <Td fontSize="sm">
+                      <HStack spacing={1}>
+                        <IconButton
+                          aria-label={t('contactList.actions.view')}
+                          icon={<Eye size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="blue"
                           onClick={() => handleViewDetail(contact.id)}
-                          className="p-1 text-gray-600 hover:text-primary-600 transition-colors"
-                          title={t('contactList.actions.view')}
-                        >
-                          <Eye className="h-3.5 w-3.5" />
-                        </button>
-                        <button
+                        />
+                        <IconButton
+                          aria-label={t('contactList.actions.edit')}
+                          icon={<Edit size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="blue"
                           onClick={() => handleEdit(contact)}
-                          className="p-1 text-gray-600 hover:text-primary-600 transition-colors"
-                          title={t('contactList.actions.edit')}
-                        >
-                          <Edit className="h-3.5 w-3.5" />
-                        </button>
-                        <button
+                        />
+                        <IconButton
+                          aria-label={t('contactList.actions.delete')}
+                          icon={<Trash2 size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="red"
                           onClick={() => handleDelete(contact)}
-                          className="p-1 text-gray-600 hover:text-red-600 transition-colors"
-                          title={t('contactList.actions.delete')}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                        />
+                      </HStack>
+                    </Td>
+                  </Tr>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+              </Tbody>
+            </Table>
+          </Box>
+        </Card>
       )}
 
       {/* 分页 */}
       {pages > 1 && (
-        <div className="mt-2 flex items-center justify-between bg-white rounded-xl border border-gray-200 px-1 py-1">
-          <div className="text-xs text-gray-600">
-            {t('contactList.pagination.info', { current: currentPage, total: pages, size: queryParams.size || 10 })}
-          </div>
-          <div className="flex items-center space-x-1">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="px-2 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {t('contactList.pagination.prev')}
-            </button>
-            {Array.from({ length: Math.min(pages, 5) }, (_, i) => {
-              let pageNum: number
-              if (pages <= 5) {
-                pageNum = i + 1
-              } else if (currentPage <= 3) {
-                pageNum = i + 1
-              } else if (currentPage >= pages - 2) {
-                pageNum = pages - 4 + i
-              } else {
-                pageNum = currentPage - 2 + i
-              }
-              return (
-                <button
-                  key={pageNum}
-                  onClick={() => handlePageChange(pageNum)}
-                  className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
-                    currentPage === pageNum
-                      ? 'text-white bg-primary-600'
-                      : 'text-gray-700 bg-white border border-gray-200 hover:bg-gray-50'
-                  }`}
+        <Card mt={4} bg={bgColor} borderColor={borderColor}>
+          <CardBody py={2}>
+            <Flex justify="space-between" align="center">
+              <Text fontSize="xs" color="gray.600">
+                {t('contactList.pagination.info', { current: currentPage, total: pages, size: queryParams.size || 10 })}
+              </Text>
+              <HStack spacing={1}>
+                <Button
+                  size="xs"
+                  variant="outline"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  isDisabled={currentPage === 1}
                 >
-                  {pageNum}
-                </button>
-              )
-            })}
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === pages}
-              className="px-2 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {t('contactList.pagination.next')}
-            </button>
-          </div>
-        </div>
+                  {t('contactList.pagination.prev')}
+                </Button>
+                {Array.from({ length: Math.min(pages, 5) }, (_, i) => {
+                  let pageNum: number
+                  if (pages <= 5) {
+                    pageNum = i + 1
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1
+                  } else if (currentPage >= pages - 2) {
+                    pageNum = pages - 4 + i
+                  } else {
+                    pageNum = currentPage - 2 + i
+                  }
+                  return (
+                    <Button
+                      key={pageNum}
+                      size="xs"
+                      variant={currentPage === pageNum ? 'solid' : 'outline'}
+                      colorScheme={currentPage === pageNum ? 'blue' : 'gray'}
+                      onClick={() => handlePageChange(pageNum)}
+                    >
+                      {pageNum}
+                    </Button>
+                  )
+                })}
+                <Button
+                  size="xs"
+                  variant="outline"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  isDisabled={currentPage === pages}
+                >
+                  {t('contactList.pagination.next')}
+                </Button>
+              </HStack>
+            </Flex>
+          </CardBody>
+        </Card>
       )}
 
       {/* 创建/编辑弹窗 */}
@@ -954,7 +1014,7 @@ const ContactList = () => {
           </div>
         </div>
       )}
-    </div>
+    </Box>
   )
 }
 

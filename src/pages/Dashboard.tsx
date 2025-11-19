@@ -18,8 +18,32 @@ import {
   ArrowDownRight,
   Calendar,
   FileText,
-  Bell
+  Bell,
+  LayoutDashboard
 } from 'lucide-react'
+import { PageHeader } from '@/components/admin/PageHeader'
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Heading,
+  SimpleGrid,
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  StatArrow,
+  HStack,
+  VStack,
+  Box,
+  Flex,
+  Text,
+  Badge,
+  Progress,
+  Checkbox,
+  Divider,
+  useColorModeValue,
+} from '@chakra-ui/react'
 
 interface StatCard {
   icon: typeof Users
@@ -58,6 +82,9 @@ interface OrderItem {
 
 const Dashboard = () => {
   const { t } = useTranslation()
+  const bgColor = useColorModeValue('white', 'gray.800')
+  const borderColor = useColorModeValue('gray.200', 'gray.700')
+  const hoverBg = useColorModeValue('gray.50', 'gray.700')
 
   // 统计数据
   const stats: StatCard[] = [
@@ -236,282 +263,357 @@ const Dashboard = () => {
 
   const maxRevenue = Math.max(...revenueTrend.map(r => r.value))
 
-  const getStatusColor = (status: string) => {
+  const getStatusColorScheme = (status: string): string => {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 text-green-700 border-green-200'
+        return 'green'
       case 'processing':
-        return 'bg-blue-100 text-blue-700 border-blue-200'
+        return 'blue'
       case 'pending':
-        return 'bg-yellow-100 text-yellow-700 border-yellow-200'
+        return 'yellow'
       default:
-        return 'bg-gray-100 text-gray-700 border-gray-200'
+        return 'gray'
     }
   }
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityColorScheme = (priority: string): string => {
     switch (priority) {
       case 'high':
-        return 'bg-red-100 text-red-700'
+        return 'red'
       case 'medium':
-        return 'bg-yellow-100 text-yellow-700'
+        return 'yellow'
       case 'low':
-        return 'bg-blue-100 text-blue-700'
+        return 'blue'
       default:
-        return 'bg-gray-100 text-gray-700'
+        return 'gray'
     }
   }
 
-  const getIconColor = (color: string) => {
-    const colors: Record<string, string> = {
-      blue: 'bg-blue-50 text-blue-600',
-      green: 'bg-green-50 text-green-600',
-      purple: 'bg-purple-50 text-purple-600',
-      orange: 'bg-orange-50 text-orange-600',
-      indigo: 'bg-indigo-50 text-indigo-600',
-      pink: 'bg-pink-50 text-pink-600',
+  const getColorScheme = (color: string): string => {
+    const colorMap: Record<string, string> = {
+      blue: 'blue',
+      green: 'green',
+      purple: 'purple',
+      orange: 'orange',
+      indigo: 'indigo',
+      pink: 'pink',
     }
-    return colors[color] || 'bg-gray-50 text-gray-600'
+    return colorMap[color] || 'gray'
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="w-full py-2 px-1">
-        {/* 页面标题 */}
-        <div className="mb-4">
-          <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
-            {t('dashboard.welcome')}
-          </h1>
-          <p className="text-sm text-gray-500 font-medium">
-            {t('dashboard.title')}
-          </p>
-        </div>
+    <Box minH="100vh" bg={useColorModeValue('gray.50', 'gray.900')}>
+      <Box w="full" py={2} px={1}>
+        {/* 页面头部 */}
+        <PageHeader
+          icon={LayoutDashboard}
+          title={t('dashboard.welcome')}
+          subtitle={t('dashboard.title')}
+        />
 
         {/* 统计数据网格 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 mb-3">
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3, xl: 6 }} spacing={3} mb={3}>
           {stats.map((stat, index) => {
             const Icon = stat.icon
+            const colorScheme = getColorScheme(stat.color)
             return (
-              <div
+              <Card
                 key={index}
-                className="bg-white rounded-xl border border-gray-200 p-3 hover:shadow-md transition-all"
+                bg={`${colorScheme}.50`}
+                borderColor={`${colorScheme}.200`}
+                borderWidth={1}
+                _hover={{ boxShadow: 'md', transform: 'translateY(-2px)' }}
+                transition="all 0.2s"
               >
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex-1">
-                    <p className="text-xs font-medium text-gray-500 mb-1">
-                      {stat.label}
-                    </p>
-                    <p className="text-xl font-semibold text-gray-900 tracking-tight">
-                      {stat.value}
-                    </p>
-                  </div>
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${getIconColor(stat.color)}`}>
-                    <Icon className="h-4 w-4" />
-                  </div>
-                </div>
-                <div className="pt-2 border-t border-gray-100 flex items-center">
-                  {stat.changeType === 'positive' ? (
-                    <ArrowUpRight className="h-3 w-3 text-green-600 mr-1" />
-                  ) : (
-                    <ArrowDownRight className="h-3 w-3 text-red-600 mr-1" />
-                  )}
-                  <span
-                    className={`text-xs font-medium ${
-                      stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                    }`}
-                  >
-                    {stat.change}
-                  </span>
-                  <span className="text-xs text-gray-500 ml-1">
-                    {t('dashboard.stats.vsLastMonth')}
-                  </span>
-                </div>
-              </div>
+                <CardBody>
+                  <Stat>
+                    <Flex align="start" justify="space-between" mb={2}>
+                      <Box flex={1}>
+                        <StatLabel fontSize="xs" fontWeight="medium" color="gray.500" mb={1}>
+                          {stat.label}
+                        </StatLabel>
+                        <StatNumber fontSize="xl" fontWeight="semibold" color="gray.900">
+                          {stat.value}
+                        </StatNumber>
+                      </Box>
+                      <Box
+                        as={Icon}
+                        size={5}
+                        color={`${colorScheme}.600`}
+                        bg={`${colorScheme}.100`}
+                        p={2}
+                        borderRadius="lg"
+                        flexShrink={0}
+                      />
+                    </Flex>
+                    <Divider my={2} />
+                    <HStack spacing={1}>
+                      {stat.changeType === 'positive' ? (
+                        <StatArrow type="increase" color="green.500" />
+                      ) : (
+                        <StatArrow type="decrease" color="red.500" />
+                      )}
+                      <Text
+                        fontSize="xs"
+                        fontWeight="medium"
+                        color={stat.changeType === 'positive' ? 'green.600' : 'red.600'}
+                      >
+                        {stat.change}
+                      </Text>
+                      <Text fontSize="xs" color="gray.500">
+                        {t('dashboard.stats.vsLastMonth')}
+                      </Text>
+                    </HStack>
+                  </Stat>
+                </CardBody>
+              </Card>
             )
           })}
-        </div>
+        </SimpleGrid>
 
         {/* 主要内容区域 */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-3">
+        <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={3} mb={3}>
           {/* 收入趋势 */}
-          <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-3">
-            <h2 className="text-base font-semibold text-gray-900 mb-3 flex items-center space-x-2">
-              <TrendingUp className="h-4 w-4" />
-              <span>{t('dashboard.revenueTrend.title')}</span>
-            </h2>
-            <div className="space-y-2">
-              {revenueTrend.map((item, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <div className="w-12 text-xs text-gray-600">{item.day}</div>
-                  <div className="flex-1 bg-gray-100 rounded-full h-4 relative overflow-hidden">
-                    <div
-                      className="bg-gradient-to-r from-blue-500 to-purple-500 h-full rounded-full transition-all"
-                      style={{ width: `${(item.value / maxRevenue) * 100}%` }}
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-xs font-medium text-gray-700">
+          <Card gridColumn={{ lg: 'span 2' }} bg={bgColor} borderColor={borderColor}>
+            <CardHeader pb={3}>
+              <HStack spacing={2}>
+                <Box as={TrendingUp} size={4} />
+                <Heading size="sm">{t('dashboard.revenueTrend.title')}</Heading>
+              </HStack>
+            </CardHeader>
+            <CardBody pt={0}>
+              <VStack spacing={2} align="stretch">
+                {revenueTrend.map((item, index) => (
+                  <Box key={index}>
+                    <HStack spacing={2} mb={1}>
+                      <Text fontSize="xs" color="gray.600" w={12}>
+                        {item.day}
+                      </Text>
+                      <Text fontSize="xs" fontWeight="medium" color="gray.700">
                         Rp {(item.value * 1).toFixed(1)}M
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+                      </Text>
+                    </HStack>
+                    <Progress
+                      value={(item.value / maxRevenue) * 100}
+                      colorScheme="blue"
+                      size="sm"
+                      borderRadius="full"
+                      bg="gray.100"
+                    />
+                  </Box>
+                ))}
+              </VStack>
+            </CardBody>
+          </Card>
 
           {/* 待办事项 */}
-          <div className="bg-white rounded-xl border border-gray-200 p-3">
-            <h2 className="text-base font-semibold text-gray-900 mb-3 flex items-center space-x-2">
-              <Bell className="h-4 w-4" />
-              <span>{t('dashboard.todos.title')}</span>
-            </h2>
-            <div className="space-y-2">
-              {todos.map((todo) => (
-                <div
-                  key={todo.id}
-                  className={`p-2 rounded-lg border ${
-                    todo.completed
-                      ? 'bg-gray-50 border-gray-200 opacity-60'
-                      : 'bg-white border-gray-200'
-                  }`}
-                >
-                  <div className="flex items-start justify-between mb-1">
-                    <div className="flex items-center space-x-2 flex-1">
-                      <input
-                        type="checkbox"
-                        checked={todo.completed}
-                        readOnly
-                        className="h-3.5 w-3.5 text-primary-600 rounded border-gray-300"
-                      />
-                      <span
-                        className={`text-xs font-medium ${
-                          todo.completed ? 'line-through text-gray-400' : 'text-gray-900'
-                        }`}
+          <Card bg={bgColor} borderColor={borderColor}>
+            <CardHeader pb={3}>
+              <HStack spacing={2}>
+                <Box as={Bell} size={4} />
+                <Heading size="sm">{t('dashboard.todos.title')}</Heading>
+              </HStack>
+            </CardHeader>
+            <CardBody pt={0}>
+              <VStack spacing={2} align="stretch">
+                {todos.map((todo) => (
+                  <Box
+                    key={todo.id}
+                    p={2}
+                    borderRadius="lg"
+                    borderWidth={1}
+                    borderColor={borderColor}
+                    bg={todo.completed ? 'gray.50' : bgColor}
+                    opacity={todo.completed ? 0.6 : 1}
+                  >
+                    <Flex align="start" justify="space-between" mb={1}>
+                      <HStack spacing={2} flex={1}>
+                        <Checkbox
+                          isChecked={todo.completed}
+                          isReadOnly
+                          size="sm"
+                          colorScheme="blue"
+                        />
+                        <Text
+                          fontSize="xs"
+                          fontWeight="medium"
+                          color={todo.completed ? 'gray.400' : 'gray.900'}
+                          textDecoration={todo.completed ? 'line-through' : 'none'}
+                        >
+                          {todo.title}
+                        </Text>
+                      </HStack>
+                      <Badge
+                        colorScheme={getPriorityColorScheme(todo.priority)}
+                        fontSize="xs"
                       >
-                        {todo.title}
-                      </span>
-                    </div>
-                    <span
-                      className={`text-xs px-1.5 py-0.5 rounded ${getPriorityColor(todo.priority)}`}
-                    >
-                      {t(`dashboard.todos.priority.${todo.priority}`)}
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-1 text-xs text-gray-500 ml-5.5">
-                    <Clock className="h-3 w-3" />
-                    <span>{todo.dueDate}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+                        {t(`dashboard.todos.priority.${todo.priority}`)}
+                      </Badge>
+                    </Flex>
+                    <HStack spacing={1} ml={7} mt={1}>
+                      <Box as={Clock} size={3} color="gray.500" />
+                      <Text fontSize="xs" color="gray.500">
+                        {todo.dueDate}
+                      </Text>
+                    </HStack>
+                  </Box>
+                ))}
+              </VStack>
+            </CardBody>
+          </Card>
+        </SimpleGrid>
 
         {/* 最近活动和最近订单 */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
+        <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={3} mb={3}>
           {/* 最近活动 */}
-          <div className="bg-white rounded-xl border border-gray-200 p-3">
-            <h2 className="text-base font-semibold text-gray-900 mb-3 flex items-center space-x-2">
-              <Activity className="h-4 w-4" />
-              <span>{t('dashboard.activities.title')}</span>
-            </h2>
-            <div className="space-y-2">
-              {recentActivities.map((activity) => {
-                const Icon = activity.icon
-                return (
-                  <div
-                    key={activity.id}
-                    className="flex items-start space-x-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="bg-blue-50 p-1.5 rounded-lg">
-                      <Icon className="h-3.5 w-3.5 text-blue-600" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs font-medium text-gray-900 mb-0.5">
-                        {activity.title}
-                      </div>
-                      <div className="text-xs text-gray-600 mb-1">
-                        {activity.description}
-                      </div>
-                      <div className="flex items-center space-x-1 text-xs text-gray-500">
-                        <Clock className="h-3 w-3" />
-                        <span>{activity.time}</span>
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
+          <Card bg={bgColor} borderColor={borderColor}>
+            <CardHeader pb={3}>
+              <HStack spacing={2}>
+                <Box as={Activity} size={4} />
+                <Heading size="sm">{t('dashboard.activities.title')}</Heading>
+              </HStack>
+            </CardHeader>
+            <CardBody pt={0}>
+              <VStack spacing={2} align="stretch">
+                {recentActivities.map((activity) => {
+                  const Icon = activity.icon
+                  return (
+                    <HStack
+                      key={activity.id}
+                      spacing={2}
+                      p={2}
+                      borderRadius="lg"
+                      _hover={{ bg: hoverBg }}
+                      transition="background-color 0.2s"
+                      align="start"
+                    >
+                      <Box
+                        as={Icon}
+                        size={4}
+                        color="blue.600"
+                        bg="blue.50"
+                        p={1.5}
+                        borderRadius="lg"
+                      />
+                      <Box flex={1} minW={0}>
+                        <Text fontSize="xs" fontWeight="medium" color="gray.900" mb={0.5}>
+                          {activity.title}
+                        </Text>
+                        <Text fontSize="xs" color="gray.600" mb={1}>
+                          {activity.description}
+                        </Text>
+                        <HStack spacing={1}>
+                          <Box as={Clock} size={3} color="gray.500" />
+                          <Text fontSize="xs" color="gray.500">
+                            {activity.time}
+                          </Text>
+                        </HStack>
+                      </Box>
+                    </HStack>
+                  )
+                })}
+              </VStack>
+            </CardBody>
+          </Card>
 
           {/* 最近订单 */}
-          <div className="bg-white rounded-xl border border-gray-200 p-3">
-            <h2 className="text-base font-semibold text-gray-900 mb-3 flex items-center space-x-2">
-              <ShoppingCart className="h-4 w-4" />
-              <span>{t('dashboard.recentOrders.title')}</span>
-            </h2>
-            <div className="space-y-2">
-              {recentOrders.map((order) => (
-                <div
-                  key={order.id}
-                  className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-start justify-between mb-1">
-                    <div className="flex-1">
-                      <div className="text-xs font-medium text-gray-900 mb-0.5">
-                        {order.id}
-                      </div>
-                      <div className="text-xs text-gray-600 mb-1">
-                        {order.customer} - {order.service}
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-xs font-semibold text-gray-900">
-                          {order.amount}
-                        </span>
-                        <span
-                          className={`text-xs px-1.5 py-0.5 rounded border ${getStatusColor(order.status)}`}
-                        >
-                          {t(`dashboard.recentOrders.status.${order.status}`)}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {order.date}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+          <Card bg={bgColor} borderColor={borderColor}>
+            <CardHeader pb={3}>
+              <HStack spacing={2}>
+                <Box as={ShoppingCart} size={4} />
+                <Heading size="sm">{t('dashboard.recentOrders.title')}</Heading>
+              </HStack>
+            </CardHeader>
+            <CardBody pt={0}>
+              <VStack spacing={2} align="stretch">
+                {recentOrders.map((order) => (
+                  <Box
+                    key={order.id}
+                    p={2}
+                    borderRadius="lg"
+                    borderWidth={1}
+                    borderColor={borderColor}
+                    _hover={{ bg: hoverBg }}
+                    transition="background-color 0.2s"
+                  >
+                    <Flex align="start" justify="space-between" mb={1}>
+                      <Box flex={1}>
+                        <Text fontSize="xs" fontWeight="medium" color="gray.900" mb={0.5}>
+                          {order.id}
+                        </Text>
+                        <Text fontSize="xs" color="gray.600" mb={1}>
+                          {order.customer} - {order.service}
+                        </Text>
+                        <HStack spacing={2}>
+                          <Text fontSize="xs" fontWeight="semibold" color="gray.900">
+                            {order.amount}
+                          </Text>
+                          <Badge
+                            colorScheme={getStatusColorScheme(order.status)}
+                            fontSize="xs"
+                          >
+                            {t(`dashboard.recentOrders.status.${order.status}`)}
+                          </Badge>
+                        </HStack>
+                      </Box>
+                      <Text fontSize="xs" color="gray.500">
+                        {order.date}
+                      </Text>
+                    </Flex>
+                  </Box>
+                ))}
+              </VStack>
+            </CardBody>
+          </Card>
+        </SimpleGrid>
 
         {/* 系统状态概览 */}
-        <div className="bg-white rounded-xl border border-gray-200 p-3">
-          <h2 className="text-base font-semibold text-gray-900 mb-3 flex items-center space-x-2">
-            <CheckCircle2 className="h-4 w-4 text-green-600" />
-            <span>{t('dashboard.systemStatus.title')}</span>
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="text-center p-2 bg-green-50 rounded-lg">
-              <div className="text-xs text-gray-600 mb-1">{t('dashboard.systemStatus.allServices')}</div>
-              <div className="text-lg font-semibold text-green-700">6/6</div>
-            </div>
-            <div className="text-center p-2 bg-blue-50 rounded-lg">
-              <div className="text-xs text-gray-600 mb-1">{t('dashboard.systemStatus.apiRequests')}</div>
-              <div className="text-lg font-semibold text-blue-700">1,234</div>
-            </div>
-            <div className="text-center p-2 bg-purple-50 rounded-lg">
-              <div className="text-xs text-gray-600 mb-1">{t('dashboard.systemStatus.activeUsers')}</div>
-              <div className="text-lg font-semibold text-purple-700">156</div>
-            </div>
-            <div className="text-center p-2 bg-orange-50 rounded-lg">
-              <div className="text-xs text-gray-600 mb-1">{t('dashboard.systemStatus.uptime')}</div>
-              <div className="text-lg font-semibold text-orange-700">15天</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        <Card bg={bgColor} borderColor={borderColor}>
+          <CardHeader pb={3}>
+            <HStack spacing={2}>
+              <Box as={CheckCircle2} size={4} color="green.600" />
+              <Heading size="sm">{t('dashboard.systemStatus.title')}</Heading>
+            </HStack>
+          </CardHeader>
+          <CardBody pt={0}>
+            <SimpleGrid columns={{ base: 2, md: 4 }} spacing={3}>
+              <Box textAlign="center" p={2} bg="green.50" borderRadius="lg">
+                <Text fontSize="xs" color="gray.600" mb={1}>
+                  {t('dashboard.systemStatus.allServices')}
+                </Text>
+                <Text fontSize="lg" fontWeight="semibold" color="green.700">
+                  6/6
+                </Text>
+              </Box>
+              <Box textAlign="center" p={2} bg="blue.50" borderRadius="lg">
+                <Text fontSize="xs" color="gray.600" mb={1}>
+                  {t('dashboard.systemStatus.apiRequests')}
+                </Text>
+                <Text fontSize="lg" fontWeight="semibold" color="blue.700">
+                  1,234
+                </Text>
+              </Box>
+              <Box textAlign="center" p={2} bg="purple.50" borderRadius="lg">
+                <Text fontSize="xs" color="gray.600" mb={1}>
+                  {t('dashboard.systemStatus.activeUsers')}
+                </Text>
+                <Text fontSize="lg" fontWeight="semibold" color="purple.700">
+                  156
+                </Text>
+              </Box>
+              <Box textAlign="center" p={2} bg="orange.50" borderRadius="lg">
+                <Text fontSize="xs" color="gray.600" mb={1}>
+                  {t('dashboard.systemStatus.uptime')}
+                </Text>
+                <Text fontSize="lg" fontWeight="semibold" color="orange.700">
+                  15天
+                </Text>
+              </Box>
+            </SimpleGrid>
+          </CardBody>
+        </Card>
+      </Box>
+    </Box>
   )
 }
 

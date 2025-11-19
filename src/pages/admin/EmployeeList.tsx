@@ -8,10 +8,41 @@ import { Search, Filter, X, User, Mail, Building2, Shield, CheckCircle2, XCircle
 import { getUserList, getOrganizationList, getRoleList, getUserDetail } from '@/api/users'
 import { UserListParams, UserListItem, Organization, Role, UserDetail } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
+import { PageHeader } from '@/components/admin/PageHeader'
+import {
+  Button,
+  Card,
+  CardBody,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Input,
+  Select,
+  InputGroup,
+  InputLeftElement,
+  HStack,
+  VStack,
+  Box,
+  Flex,
+  Spinner,
+  Text,
+  Badge,
+  IconButton,
+  useColorModeValue,
+  Divider,
+} from '@chakra-ui/react'
 
 const EmployeeList = () => {
   const { t } = useTranslation()
   const { showError } = useToast()
+  
+  // Chakra UI 颜色模式
+  const bgColor = useColorModeValue('white', 'gray.800')
+  const borderColor = useColorModeValue('gray.200', 'gray.700')
+  const hoverBg = useColorModeValue('gray.50', 'gray.700')
 
   // 查询参数
   const [queryParams, setQueryParams] = useState<UserListParams>({
@@ -160,274 +191,291 @@ const EmployeeList = () => {
   }
 
   return (
-    <div className="w-full">
-        {/* 页面标题 */}
-        <div className="mb-4">
-          <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
-            {t('employeeList.title')}
-          </h1>
-          <p className="text-sm text-gray-500 font-medium">
-            {t('employeeList.subtitle')}
-          </p>
-        </div>
+    <Box w="full">
+        {/* 页面头部 */}
+        <PageHeader
+          icon={User}
+          title={t('employeeList.title')}
+          subtitle={t('employeeList.subtitle')}
+        />
 
         {/* 查询表单 */}
-        <div className="bg-white rounded-xl border border-gray-200 p-2 mb-2">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
-            {/* 用户名 */}
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                {t('employeeList.search.username')}
-              </label>
-              <div className="relative">
-                <User className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-                <input
-                  type="text"
-                  value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  placeholder={t('employeeList.search.usernamePlaceholder')}
-                  className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                />
-              </div>
-            </div>
+        <Card mb={4} bg={bgColor} borderColor={borderColor}>
+          <CardBody>
+            <HStack spacing={3} align="flex-end" flexWrap="wrap" mb={showAdvanced ? 3 : 0}>
+              {/* 用户名 */}
+              <Box flex={1} minW="150px">
+                <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                  {t('employeeList.search.username')}
+                </Text>
+                <InputGroup size="sm">
+                  <InputLeftElement pointerEvents="none">
+                    <User size={14} color="gray" />
+                  </InputLeftElement>
+                  <Input
+                    value={formData.username}
+                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                    placeholder={t('employeeList.search.usernamePlaceholder')}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  />
+                </InputGroup>
+              </Box>
 
-            {/* 邮箱 */}
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                {t('employeeList.search.email')}
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder={t('employeeList.search.emailPlaceholder')}
-                  className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                />
-              </div>
-            </div>
+              {/* 邮箱 */}
+              <Box flex={1} minW="150px">
+                <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                  {t('employeeList.search.email')}
+                </Text>
+                <InputGroup size="sm">
+                  <InputLeftElement pointerEvents="none">
+                    <Mail size={14} color="gray" />
+                  </InputLeftElement>
+                  <Input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder={t('employeeList.search.emailPlaceholder')}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  />
+                </InputGroup>
+              </Box>
 
-            {/* 状态 */}
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                {t('employeeList.search.status')}
-              </label>
-              <select
-                value={formData.is_active}
-                onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
-                className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-              >
-                <option value="">{t('employeeList.search.allStatus')}</option>
-                <option value="true">{t('employeeList.search.active')}</option>
-                <option value="false">{t('employeeList.search.inactive')}</option>
-              </select>
-            </div>
-          </div>
+              {/* 状态 */}
+              <Box flex={1} minW="120px">
+                <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                  {t('employeeList.search.status')}
+                </Text>
+                <Select
+                  size="sm"
+                  value={formData.is_active}
+                  onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
+                >
+                  <option value="">{t('employeeList.search.allStatus')}</option>
+                  <option value="true">{t('employeeList.search.active')}</option>
+                  <option value="false">{t('employeeList.search.inactive')}</option>
+                </Select>
+              </Box>
 
-          {/* 高级筛选 */}
-          {showAdvanced && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3 pt-3 border-t border-gray-200">
-              {/* 组织 */}
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">
-                  {t('employeeList.search.organization')}
-                </label>
-                <div className="relative">
-                  <Building2 className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-                  <select
-                    value={formData.organization_id}
-                    onChange={(e) => setFormData({ ...formData, organization_id: e.target.value })}
-                    className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-                  >
-                    <option value="">{t('employeeList.search.allOrganizations')}</option>
-                    {organizations.map((org) => (
-                      <option key={org.id} value={org.id}>
-                        {org.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+              {/* 操作按钮 */}
+              <HStack spacing={2}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  leftIcon={<Filter size={14} />}
+                  onClick={() => setShowAdvanced(!showAdvanced)}
+                >
+                  {showAdvanced ? t('employeeList.search.hideAdvanced') : t('employeeList.search.showAdvanced')}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleReset}
+                >
+                  {t('employeeList.search.reset')}
+                </Button>
+                <Button
+                  size="sm"
+                  colorScheme="blue"
+                  leftIcon={<Search size={14} />}
+                  onClick={handleSearch}
+                  isLoading={loading}
+                >
+                  {t('employeeList.search.search')}
+                </Button>
+              </HStack>
+            </HStack>
 
-              {/* 角色 */}
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">
-                  {t('employeeList.search.role')}
-                </label>
-                <div className="relative">
-                  <Shield className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-                  <select
-                    value={formData.role_id}
-                    onChange={(e) => setFormData({ ...formData, role_id: e.target.value })}
-                    className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-                  >
-                    <option value="">{t('employeeList.search.allRoles')}</option>
-                    {roles.map((role) => (
-                      <option key={role.id} value={role.id}>
-                        {role.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-          )}
+            {/* 高级筛选 */}
+            {showAdvanced && (
+              <>
+                <Divider my={3} />
+                <HStack spacing={3} align="flex-end" flexWrap="wrap">
+                  {/* 组织 */}
+                  <Box flex={1} minW="150px">
+                    <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                      {t('employeeList.search.organization')}
+                    </Text>
+                    <HStack spacing={2}>
+                      <Box as={Building2} size={4} color="gray.400" />
+                      <Select
+                        size="sm"
+                        flex={1}
+                        value={formData.organization_id}
+                        onChange={(e) => setFormData({ ...formData, organization_id: e.target.value })}
+                      >
+                        <option value="">{t('employeeList.search.allOrganizations')}</option>
+                        {organizations.map((org) => (
+                          <option key={org.id} value={org.id}>
+                            {org.name}
+                          </option>
+                        ))}
+                      </Select>
+                    </HStack>
+                  </Box>
 
-          {/* 操作按钮 */}
-          <div className="flex items-center justify-between">
-            <button
-              onClick={() => setShowAdvanced(!showAdvanced)}
-              className="flex items-center space-x-1.5 text-xs text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <Filter className="h-3.5 w-3.5" />
-              <span>{showAdvanced ? t('employeeList.search.hideAdvanced') : t('employeeList.search.showAdvanced')}</span>
-            </button>
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={handleReset}
-                className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                {t('employeeList.search.reset')}
-              </button>
-              <button
-                onClick={handleSearch}
-                disabled={loading}
-                className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
-              >
-                <Search className="h-3.5 w-3.5" />
-                <span>{t('employeeList.search.search')}</span>
-              </button>
-            </div>
-          </div>
-        </div>
+                  {/* 角色 */}
+                  <Box flex={1} minW="150px">
+                    <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                      {t('employeeList.search.role')}
+                    </Text>
+                    <HStack spacing={2}>
+                      <Box as={Shield} size={4} color="gray.400" />
+                      <Select
+                        size="sm"
+                        flex={1}
+                        value={formData.role_id}
+                        onChange={(e) => setFormData({ ...formData, role_id: e.target.value })}
+                      >
+                        <option value="">{t('employeeList.search.allRoles')}</option>
+                        {roles.map((role) => (
+                          <option key={role.id} value={role.id}>
+                            {role.name}
+                          </option>
+                        ))}
+                      </Select>
+                    </HStack>
+                  </Box>
+                </HStack>
+              </>
+            )}
+          </CardBody>
+        </Card>
 
         {/* 用户列表 */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          {loading ? (
-            <div className="p-6 text-center">
-              <div className="text-sm text-gray-500">{t('employeeList.loading')}</div>
-            </div>
-          ) : users.length === 0 ? (
-            <div className="p-6 text-center">
-              <div className="text-sm text-gray-500">{t('employeeList.noData')}</div>
-            </div>
-          ) : (
-            <>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('employeeList.table.username')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('employeeList.table.displayName')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('employeeList.table.email')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('employeeList.table.organization')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('employeeList.table.status')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('employeeList.table.createdAt')}
-                      </th>
-                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900 w-20">
-                        {t('employeeList.table.actions')}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
+        {loading ? (
+          <Card bg={bgColor} borderColor={borderColor}>
+            <CardBody>
+              <Flex justify="center" align="center" py={8}>
+                <Spinner size="lg" color="blue.500" />
+                <Text ml={4} color="gray.500">{t('employeeList.loading')}</Text>
+              </Flex>
+            </CardBody>
+          </Card>
+        ) : users.length === 0 ? (
+          <Card bg={bgColor} borderColor={borderColor}>
+            <CardBody>
+              <VStack py={8} spacing={3}>
+                <User size={48} color="gray" />
+                <Text color="gray.500">{t('employeeList.noData')}</Text>
+              </VStack>
+            </CardBody>
+          </Card>
+        ) : (
+          <>
+            <Card bg={bgColor} borderColor={borderColor} overflow="hidden">
+              <Box overflowX="auto">
+                <Table variant="simple" size="sm">
+                  <Thead bg="gray.50">
+                    <Tr>
+                      <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('employeeList.table.username')}</Th>
+                      <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('employeeList.table.displayName')}</Th>
+                      <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('employeeList.table.email')}</Th>
+                      <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('employeeList.table.organization')}</Th>
+                      <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('employeeList.table.status')}</Th>
+                      <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('employeeList.table.createdAt')}</Th>
+                      <Th fontSize="xs" fontWeight="semibold" color="gray.700" w={20}>{t('employeeList.table.actions')}</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
                     {users.map((user) => (
-                      <tr
-                        key={user.id}
-                        className="hover:bg-gray-50 transition-colors"
-                      >
-                        <td className="px-1 py-1 text-sm text-gray-900 font-medium">
-                          {user.username}
-                        </td>
-                        <td className="px-1 py-1 text-sm text-gray-700">
-                          {user.display_name || '-'}
-                        </td>
-                        <td className="px-1 py-1 text-sm text-gray-700">
-                          {user.email || '-'}
-                        </td>
-                        <td className="px-1 py-1 text-sm text-gray-700">
-                          <div className="flex items-center space-x-1.5">
-                            <Building2 className="h-3.5 w-3.5 text-gray-400" />
-                            <span>{user.primary_organization_name || '-'}</span>
-                          </div>
-                        </td>
-                        <td className="px-1 py-1">
+                      <Tr key={user.id} _hover={{ bg: hoverBg }} transition="background-color 0.2s">
+                        <Td fontSize="sm" color="gray.900" fontWeight="medium">{user.username}</Td>
+                        <Td fontSize="sm" color="gray.700">{user.display_name || '-'}</Td>
+                        <Td fontSize="sm" color="gray.700">{user.email || '-'}</Td>
+                        <Td fontSize="sm" color="gray.700">
+                          <HStack spacing={1.5}>
+                            <Box as={Building2} size={3.5} color="gray.400" />
+                            <Text>{user.primary_organization_name || '-'}</Text>
+                          </HStack>
+                        </Td>
+                        <Td fontSize="sm">
                           {user.is_active ? (
-                            <span className="inline-flex items-center space-x-1 text-xs text-green-600">
-                              <CheckCircle2 className="h-3.5 w-3.5" />
-                              <span>{t('employeeList.table.active')}</span>
-                            </span>
+                            <Badge colorScheme="green" fontSize="xs">
+                              {t('employeeList.table.active')}
+                            </Badge>
                           ) : (
-                            <span className="inline-flex items-center space-x-1 text-xs text-red-600">
-                              <XCircle className="h-3.5 w-3.5" />
-                              <span>{t('employeeList.table.inactive')}</span>
-                            </span>
+                            <Badge colorScheme="red" fontSize="xs">
+                              {t('employeeList.table.inactive')}
+                            </Badge>
                           )}
-                        </td>
-                        <td className="px-2 py-1.5 text-sm text-gray-500">
+                        </Td>
+                        <Td fontSize="sm" color="gray.500">
                           {user.created_at
                             ? new Date(user.created_at).toLocaleDateString('zh-CN')
                             : '-'}
-                        </td>
-                        <td className="px-1 py-1">
-                          <button
+                        </Td>
+                        <Td fontSize="sm">
+                          <Button
+                            size="xs"
+                            colorScheme="blue"
+                            variant="ghost"
                             onClick={() => handleViewDetail(user.id)}
-                            className="px-1.5 py-0.5 text-xs font-medium text-primary-600 bg-primary-50 rounded hover:bg-primary-100 transition-colors"
                           >
                             {t('employeeList.table.detail')}
-                          </button>
-                        </td>
-                      </tr>
+                          </Button>
+                        </Td>
+                      </Tr>
                     ))}
-                  </tbody>
-                </table>
-              </div>
+                  </Tbody>
+                </Table>
+              </Box>
+            </Card>
 
-              {/* 分页 */}
-              {pages > 1 && (
-                <div className="px-1 py-1 border-t border-gray-200 flex items-center justify-between">
-                  <div className="text-xs text-gray-600">
-                    {t('employeeList.pagination.total').replace('{{total}}', total.toString())}
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      {t('employeeList.pagination.prev')}
-                    </button>
-                    <div className="text-xs text-gray-700">
-                      {t('employeeList.pagination.page')
-                        .replace('{{current}}', currentPage.toString())
-                        .replace('{{total}}', pages.toString())}
-                    </div>
-                    <button
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === pages}
-                      className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      {t('employeeList.pagination.next')}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-        </div>
+            {/* 分页 */}
+            {pages > 1 && (
+              <Card mt={4} bg={bgColor} borderColor={borderColor}>
+                <CardBody py={2}>
+                  <Flex justify="space-between" align="center">
+                    <Text fontSize="xs" color="gray.600">
+                      {t('employeeList.pagination.total').replace('{{total}}', total.toString())}
+                    </Text>
+                    <HStack spacing={1}>
+                      <Button
+                        size="xs"
+                        variant="outline"
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        isDisabled={currentPage === 1}
+                      >
+                        {t('employeeList.pagination.prev')}
+                      </Button>
+                      {Array.from({ length: Math.min(pages, 5) }, (_, i) => {
+                        let pageNum: number
+                        if (pages <= 5) {
+                          pageNum = i + 1
+                        } else if (currentPage <= 3) {
+                          pageNum = i + 1
+                        } else if (currentPage >= pages - 2) {
+                          pageNum = pages - 4 + i
+                        } else {
+                          pageNum = currentPage - 2 + i
+                        }
+                        return (
+                          <Button
+                            key={pageNum}
+                            size="xs"
+                            variant={currentPage === pageNum ? 'solid' : 'outline'}
+                            colorScheme={currentPage === pageNum ? 'blue' : 'gray'}
+                            onClick={() => handlePageChange(pageNum)}
+                          >
+                            {pageNum}
+                          </Button>
+                        )
+                      })}
+                      <Button
+                        size="xs"
+                        variant="outline"
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        isDisabled={currentPage === pages}
+                      >
+                        {t('employeeList.pagination.next')}
+                      </Button>
+                    </HStack>
+                  </Flex>
+                </CardBody>
+              </Card>
+            )}
+          </>
+        )}
 
       {/* 详情弹窗 */}
       {showDetailModal && (
@@ -677,7 +725,7 @@ const EmployeeList = () => {
           </div>
         </div>
       )}
-    </div>
+    </Box>
   )
 }
 

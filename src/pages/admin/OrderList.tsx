@@ -20,11 +20,41 @@ import { useToast } from '@/components/ToastContainer'
 import { getCustomerList } from '@/api/customers'
 import { getProductList } from '@/api/products'
 import { getUserList } from '@/api/users'
+import { PageHeader } from '@/components/admin/PageHeader'
+import {
+  Button,
+  Card,
+  CardBody,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Input,
+  Select,
+  InputGroup,
+  InputLeftElement,
+  HStack,
+  VStack,
+  Box,
+  Flex,
+  Spinner,
+  Text,
+  Badge,
+  IconButton,
+  useColorModeValue,
+} from '@chakra-ui/react'
 
 const OrderList = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const { showSuccess, showError } = useToast()
+  
+  // Chakra UI 颜色模式
+  const bgColor = useColorModeValue('white', 'gray.800')
+  const borderColor = useColorModeValue('gray.200', 'gray.700')
+  const hoverBg = useColorModeValue('gray.50', 'gray.700')
 
   // 查询参数
   const [queryParams, setQueryParams] = useState<OrderListParams>({
@@ -388,19 +418,19 @@ const OrderList = () => {
 
   // 获取状态标签
   const getStatusBadge = (status: OrderStatus) => {
-    const statusMap: Record<OrderStatus, { label: string; className: string }> = {
-      submitted: { label: t('orderList.status.submitted'), className: 'bg-blue-100 text-blue-800' },
-      approved: { label: t('orderList.status.approved'), className: 'bg-green-100 text-green-800' },
-      assigned: { label: t('orderList.status.assigned'), className: 'bg-purple-100 text-purple-800' },
-      processing: { label: t('orderList.status.processing'), className: 'bg-yellow-100 text-yellow-800' },
-      completed: { label: t('orderList.status.completed'), className: 'bg-gray-100 text-gray-800' },
-      cancelled: { label: t('orderList.status.cancelled'), className: 'bg-red-100 text-red-800' },
+    const statusMap: Record<OrderStatus, { label: string; colorScheme: string }> = {
+      submitted: { label: t('orderList.status.submitted'), colorScheme: 'blue' },
+      approved: { label: t('orderList.status.approved'), colorScheme: 'green' },
+      assigned: { label: t('orderList.status.assigned'), colorScheme: 'purple' },
+      processing: { label: t('orderList.status.processing'), colorScheme: 'yellow' },
+      completed: { label: t('orderList.status.completed'), colorScheme: 'gray' },
+      cancelled: { label: t('orderList.status.cancelled'), colorScheme: 'red' },
     }
     const statusInfo = statusMap[status] || statusMap.submitted
     return (
-      <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusInfo.className}`}>
+      <Badge colorScheme={statusInfo.colorScheme as any} fontSize="xs">
         {statusInfo.label}
-      </span>
+      </Badge>
     )
   }
 
@@ -412,231 +442,281 @@ const OrderList = () => {
   }
 
   return (
-    <div className="w-full">
-      {/* 页面标题 */}
-      <div className="mb-4">
-        <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
-          {t('orderList.title')}
-        </h1>
-        <p className="text-sm text-gray-500 font-medium">
-          {t('orderList.subtitle')}
-        </p>
-      </div>
+    <Box w="full">
+      {/* 页面头部 */}
+      <PageHeader
+        icon={ShoppingCart}
+        title={t('orderList.title')}
+        subtitle={t('orderList.subtitle')}
+        actions={
+          <Button
+            colorScheme="primary"
+            leftIcon={<Plus size={16} />}
+            onClick={handleCreate}
+            size="sm"
+          >
+            {t('orderList.create')}
+          </Button>
+        }
+      />
 
       {/* 查询表单 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-2 mb-2">
-        <div className="flex items-end gap-2 flex-wrap">
-          {/* 订单号 */}
-          <div className="flex-1 min-w-[150px]">
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('orderList.search.orderNumber')}
-            </label>
-            <div className="relative">
-              <FileText className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-              <input
-                type="text"
-                value={formData.order_number}
-                onChange={(e) => setFormData({ ...formData, order_number: e.target.value })}
-                placeholder={t('orderList.search.orderNumberPlaceholder')}
-                className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              />
-            </div>
-          </div>
+      <Card mb={4} bg={bgColor} borderColor={borderColor}>
+        <CardBody>
+          <HStack spacing={3} align="flex-end" flexWrap="wrap">
+            {/* 订单号 */}
+            <Box flex={1} minW="150px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('orderList.search.orderNumber')}
+              </Text>
+              <InputGroup size="sm">
+                <InputLeftElement pointerEvents="none">
+                  <FileText size={14} color="gray" />
+                </InputLeftElement>
+                <Input
+                  value={formData.order_number}
+                  onChange={(e) => setFormData({ ...formData, order_number: e.target.value })}
+                  placeholder={t('orderList.search.orderNumberPlaceholder')}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                />
+              </InputGroup>
+            </Box>
 
-          {/* 订单标题 */}
-          <div className="flex-1 min-w-[150px]">
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('orderList.search.title')}
-            </label>
-            <div className="relative">
-              <ShoppingCart className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-              <input
-                type="text"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder={t('orderList.search.titlePlaceholder')}
-                className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              />
-            </div>
-          </div>
+            {/* 订单标题 */}
+            <Box flex={1} minW="150px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('orderList.search.title')}
+              </Text>
+              <InputGroup size="sm">
+                <InputLeftElement pointerEvents="none">
+                  <ShoppingCart size={14} color="gray" />
+                </InputLeftElement>
+                <Input
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder={t('orderList.search.titlePlaceholder')}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                />
+              </InputGroup>
+            </Box>
 
-          {/* 客户名称 */}
-          <div className="flex-1 min-w-[150px]">
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('orderList.search.customerName')}
-            </label>
-            <div className="relative">
-              <User className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-              <input
-                type="text"
-                value={formData.customer_name}
-                onChange={(e) => setFormData({ ...formData, customer_name: e.target.value })}
-                placeholder={t('orderList.search.customerNamePlaceholder')}
-                className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              />
-            </div>
-          </div>
+            {/* 客户名称 */}
+            <Box flex={1} minW="150px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('orderList.search.customerName')}
+              </Text>
+              <InputGroup size="sm">
+                <InputLeftElement pointerEvents="none">
+                  <User size={14} color="gray" />
+                </InputLeftElement>
+                <Input
+                  value={formData.customer_name}
+                  onChange={(e) => setFormData({ ...formData, customer_name: e.target.value })}
+                  placeholder={t('orderList.search.customerNamePlaceholder')}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                />
+              </InputGroup>
+            </Box>
 
-          {/* 订单状态 */}
-          <div className="flex-1 min-w-[120px]">
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('orderList.search.status')}
-            </label>
-            <select
-              value={formData.status_code}
-              onChange={(e) => setFormData({ ...formData, status_code: e.target.value as '' | OrderStatus })}
-              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-            >
-              <option value="">{t('orderList.search.allStatus')}</option>
-              <option value="submitted">{t('orderList.status.submitted')}</option>
-              <option value="approved">{t('orderList.status.approved')}</option>
-              <option value="assigned">{t('orderList.status.assigned')}</option>
-              <option value="processing">{t('orderList.status.processing')}</option>
-              <option value="completed">{t('orderList.status.completed')}</option>
-              <option value="cancelled">{t('orderList.status.cancelled')}</option>
-            </select>
-          </div>
+            {/* 订单状态 */}
+            <Box flex={1} minW="120px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('orderList.search.status')}
+              </Text>
+              <Select
+                size="sm"
+                value={formData.status_code}
+                onChange={(e) => setFormData({ ...formData, status_code: e.target.value as '' | OrderStatus })}
+              >
+                <option value="">{t('orderList.search.allStatus')}</option>
+                <option value="submitted">{t('orderList.status.submitted')}</option>
+                <option value="approved">{t('orderList.status.approved')}</option>
+                <option value="assigned">{t('orderList.status.assigned')}</option>
+                <option value="processing">{t('orderList.status.processing')}</option>
+                <option value="completed">{t('orderList.status.completed')}</option>
+                <option value="cancelled">{t('orderList.status.cancelled')}</option>
+              </Select>
+            </Box>
 
-          {/* 操作按钮 */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleReset}
-              className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors whitespace-nowrap"
-            >
-              {t('orderList.search.reset')}
-            </button>
-            <button
-              onClick={handleSearch}
-              disabled={loading}
-              className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5 whitespace-nowrap"
-            >
-              <Search className="h-3.5 w-3.5" />
-              <span>{t('orderList.search.search')}</span>
-            </button>
-          </div>
-        </div>
-      </div>
+            {/* 操作按钮 */}
+            <HStack spacing={2}>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleReset}
+              >
+                {t('orderList.search.reset')}
+              </Button>
+              <Button
+                size="sm"
+                colorScheme="blue"
+                leftIcon={<Search size={14} />}
+                onClick={handleSearch}
+                isLoading={loading}
+              >
+                {t('orderList.search.search')}
+              </Button>
+            </HStack>
+          </HStack>
+        </CardBody>
+      </Card>
 
       {/* 操作栏 */}
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-sm text-gray-600">
+      <Flex justify="space-between" align="center" mb={4}>
+        <Text fontSize="sm" color="gray.600">
           {t('orderList.total', { total })}
-        </div>
-        <button
+        </Text>
+        <Button
+          size="sm"
+          colorScheme="blue"
+          leftIcon={<Plus size={16} />}
           onClick={handleCreate}
-          className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors flex items-center space-x-1.5"
         >
-          <Plus className="h-3.5 w-3.5" />
-          <span>{t('orderList.create')}</span>
-        </button>
-      </div>
+          {t('orderList.create')}
+        </Button>
+      </Flex>
 
       {/* 订单列表 */}
       {loading ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-          <div className="text-gray-500">{t('orderList.loading')}</div>
-        </div>
+        <Card bg={bgColor} borderColor={borderColor}>
+          <CardBody>
+            <Flex justify="center" align="center" py={8}>
+              <Spinner size="lg" color="blue.500" />
+              <Text ml={4} color="gray.500">{t('orderList.loading')}</Text>
+            </Flex>
+          </CardBody>
+        </Card>
       ) : !orders || orders.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-          <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-          <div className="text-gray-500">{t('orderList.noData')}</div>
-        </div>
+        <Card bg={bgColor} borderColor={borderColor}>
+          <CardBody>
+            <VStack py={8} spacing={3}>
+              <ShoppingCart size={48} color="gray" />
+              <Text color="gray.500">{t('orderList.noData')}</Text>
+            </VStack>
+          </CardBody>
+        </Card>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('orderList.table.orderNumber')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('orderList.table.title')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('orderList.table.customerName')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('orderList.table.salesUser')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('orderList.table.totalAmount')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('orderList.table.status')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('orderList.table.createdAt')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('orderList.table.actions')}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
+        <Card bg={bgColor} borderColor={borderColor} overflow="hidden">
+          <Box overflowX="auto">
+            <Table variant="simple" size="sm">
+              <Thead bg="gray.50">
+                <Tr>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('orderList.table.orderNumber')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('orderList.table.title')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('orderList.table.customerName')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('orderList.table.salesUser')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('orderList.table.totalAmount')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('orderList.table.status')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('orderList.table.createdAt')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('orderList.table.actions')}</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
                 {orders.map((order) => (
-                  <tr key={order.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-1 py-1 text-sm text-gray-900 font-medium">{order.order_number || '-'}</td>
-                    <td className="px-1 py-1 text-sm text-gray-900">{order.title || '-'}</td>
-                    <td className="px-1 py-1 text-sm text-gray-600">{order.customer_name || '-'}</td>
-                    <td className="px-1 py-1 text-sm text-gray-600">{order.sales_username || '-'}</td>
-                    <td className="px-1 py-1 text-sm text-gray-900 font-medium">
+                  <Tr key={order.id} _hover={{ bg: hoverBg }} transition="background-color 0.2s">
+                    <Td fontSize="sm" color="gray.900" fontWeight="medium">{order.order_number || '-'}</Td>
+                    <Td fontSize="sm" color="gray.900">{order.title || '-'}</Td>
+                    <Td fontSize="sm" color="gray.600">{order.customer_name || '-'}</Td>
+                    <Td fontSize="sm" color="gray.600">{order.sales_username || '-'}</Td>
+                    <Td fontSize="sm" color="gray.900" fontWeight="medium">
                       {formatCurrency(order.final_amount ?? order.total_amount, order.currency_code)}
-                    </td>
-                    <td className="px-1 py-1 text-sm">
+                    </Td>
+                    <Td fontSize="sm">
                       {getStatusBadge(order.status_code || 'submitted')}
-                    </td>
-                    <td className="px-1 py-1 text-sm text-gray-600">{formatDateTime(order.created_at)}</td>
-                    <td className="px-1 py-1 text-sm">
-                      <div className="flex items-center space-x-1">
-                        <button
+                    </Td>
+                    <Td fontSize="sm" color="gray.600">{formatDateTime(order.created_at)}</Td>
+                    <Td fontSize="sm">
+                      <HStack spacing={1}>
+                        <IconButton
+                          aria-label={t('orderList.actions.view')}
+                          icon={<Eye size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="blue"
                           onClick={() => handleViewDetail(order.id)}
-                          className="p-1 text-gray-600 hover:text-primary-600 transition-colors"
-                          title={t('orderList.actions.view')}
-                        >
-                          <Eye className="h-3.5 w-3.5" />
-                        </button>
-                        <button
+                        />
+                        <IconButton
+                          aria-label={t('orderList.actions.edit')}
+                          icon={<Edit size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="blue"
                           onClick={() => handleEdit(order)}
-                          className="p-1 text-gray-600 hover:text-primary-600 transition-colors"
-                          title={t('orderList.actions.edit')}
-                        >
-                          <Edit className="h-3.5 w-3.5" />
-                        </button>
-                        <button
+                        />
+                        <IconButton
+                          aria-label={t('orderList.actions.delete')}
+                          icon={<Trash2 size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="red"
                           onClick={() => handleDelete(order.id)}
-                          className="p-1 text-gray-600 hover:text-red-600 transition-colors"
-                          title={t('orderList.actions.delete')}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                        />
+                      </HStack>
+                    </Td>
+                  </Tr>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+              </Tbody>
+            </Table>
+          </Box>
+        </Card>
       )}
 
       {/* 分页 */}
       {pages > 1 && (
-        <div className="mt-4 flex items-center justify-between">
-          <div className="text-sm text-gray-600">
-            {t('orderList.pagination.showing', {
-              from: (currentPage - 1) * (queryParams.size || 10) + 1,
-              to: Math.min(currentPage * (queryParams.size || 10), total),
-              total,
-            })}
-          </div>
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {t('orderList.pagination.previous')}
-            </button>
-            <div className="text-sm text-gray-600">
-              {t('orderList.pagination.page', { current: currentPage, total: pages })}
-            </div>
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === pages}
-              className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {t('orderList.pagination.next')}
-            </button>
-          </div>
-        </div>
+        <Card mt={4} bg={bgColor} borderColor={borderColor}>
+          <CardBody py={2}>
+            <Flex justify="space-between" align="center">
+              <Text fontSize="xs" color="gray.600">
+                {t('orderList.pagination.showing', {
+                  from: (currentPage - 1) * (queryParams.size || 10) + 1,
+                  to: Math.min(currentPage * (queryParams.size || 10), total),
+                  total,
+                })}
+              </Text>
+              <HStack spacing={1}>
+                <Button
+                  size="xs"
+                  variant="outline"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  isDisabled={currentPage === 1}
+                >
+                  {t('orderList.pagination.previous')}
+                </Button>
+                {Array.from({ length: Math.min(pages, 5) }, (_, i) => {
+                  let pageNum: number
+                  if (pages <= 5) {
+                    pageNum = i + 1
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1
+                  } else if (currentPage >= pages - 2) {
+                    pageNum = pages - 4 + i
+                  } else {
+                    pageNum = currentPage - 2 + i
+                  }
+                  return (
+                    <Button
+                      key={pageNum}
+                      size="xs"
+                      variant={currentPage === pageNum ? 'solid' : 'outline'}
+                      colorScheme={currentPage === pageNum ? 'blue' : 'gray'}
+                      onClick={() => handlePageChange(pageNum)}
+                    >
+                      {pageNum}
+                    </Button>
+                  )
+                })}
+                <Button
+                  size="xs"
+                  variant="outline"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  isDisabled={currentPage === pages}
+                >
+                  {t('orderList.pagination.next')}
+                </Button>
+              </HStack>
+            </Flex>
+          </CardBody>
+        </Card>
       )}
 
       {/* 创建/编辑弹窗 */}
@@ -1042,7 +1122,7 @@ const OrderList = () => {
           </div>
         </div>
       )}
-    </div>
+    </Box>
   )
 }
 

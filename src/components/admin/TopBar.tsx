@@ -5,18 +5,28 @@
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
-import { LogOut, User, Globe, Menu, X } from 'lucide-react'
-import { useState } from 'react'
-import { cn } from '@/utils/cn'
+import { LogOut, User, Globe, Menu as MenuIcon, X } from 'lucide-react'
 import { useSidebar } from '@/contexts/SidebarContext'
+import {
+  Box,
+  HStack,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Avatar,
+  Text,
+  useColorModeValue,
+} from '@chakra-ui/react'
 
 export const TopBar = () => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const { user, logout } = useAuth()
   const { isCollapsed, toggleCollapse } = useSidebar()
-  const [showUserMenu, setShowUserMenu] = useState(false)
-  const [showLangMenu, setShowLangMenu] = useState(false)
+  const bg = useColorModeValue('white', 'gray.800')
+  const borderColor = useColorModeValue('gray.200', 'gray.700')
 
   const handleLogout = () => {
     logout()
@@ -25,110 +35,99 @@ export const TopBar = () => {
 
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang)
-    setShowLangMenu(false)
   }
 
   const currentLang = i18n.language
 
   return (
-    <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
-      <div className="flex items-center space-x-4">
+    <Box
+      as="header"
+      h={16}
+      bg={bg}
+      borderBottom="1px"
+      borderColor={borderColor}
+      display="flex"
+      alignItems="center"
+      justifyContent="space-between"
+      px={6}
+    >
+      <HStack spacing={4}>
         {/* 侧边栏折叠按钮 */}
-        <button
+        <IconButton
+          aria-label={isCollapsed ? t('common.sidebar.expand') : t('common.sidebar.collapse')}
+          icon={isCollapsed ? <MenuIcon size={20} /> : <X size={20} />}
           onClick={toggleCollapse}
-          className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
-          title={isCollapsed ? t('common.sidebar.expand') : t('common.sidebar.collapse')}
-        >
-          {isCollapsed ? (
-            <Menu className="h-5 w-5" />
-          ) : (
-            <X className="h-5 w-5" />
-          )}
-        </button>
-      </div>
+          variant="ghost"
+          size="md"
+        />
+      </HStack>
 
-      <div className="flex items-center space-x-4">
+      <HStack spacing={4}>
         {/* 语言切换 */}
-        <div className="relative">
-          <button
-            onClick={() => setShowLangMenu(!showLangMenu)}
-            className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            icon={<Globe size={16} />}
+            variant="ghost"
+            size="md"
           >
-            <Globe className="h-4 w-4" />
-            <span>{currentLang === 'zh-CN' ? '中文' : 'ID'}</span>
-          </button>
-          {showLangMenu && (
-            <div className="absolute right-0 mt-2 w-36 rounded-lg bg-white shadow-lg border border-gray-100 overflow-hidden z-50">
-              <button
-                onClick={() => handleLanguageChange('zh-CN')}
-                className={cn(
-                  'w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors flex items-center space-x-2',
-                  currentLang === 'zh-CN' && 'bg-primary-50 text-primary-600'
-                )}
-              >
-                <span>🇨🇳</span>
-                <span>{t('common.chinese')}</span>
-              </button>
-              <button
-                onClick={() => handleLanguageChange('id-ID')}
-                className={cn(
-                  'w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors flex items-center space-x-2',
-                  currentLang === 'id-ID' && 'bg-primary-50 text-primary-600'
-                )}
-              >
-                <span>🇮🇩</span>
-                <span>{t('common.indonesian')}</span>
-              </button>
-            </div>
-          )}
-        </div>
+            {currentLang === 'zh-CN' ? '中文' : 'ID'}
+          </MenuButton>
+          <MenuList>
+            <MenuItem
+              icon={<span>🇨🇳</span>}
+              onClick={() => handleLanguageChange('zh-CN')}
+              bg={currentLang === 'zh-CN' ? 'primary.50' : 'transparent'}
+              color={currentLang === 'zh-CN' ? 'primary.600' : 'inherit'}
+            >
+              {t('common.chinese')}
+            </MenuItem>
+            <MenuItem
+              icon={<span>🇮🇩</span>}
+              onClick={() => handleLanguageChange('id-ID')}
+              bg={currentLang === 'id-ID' ? 'primary.50' : 'transparent'}
+              color={currentLang === 'id-ID' ? 'primary.600' : 'inherit'}
+            >
+              {t('common.indonesian')}
+            </MenuItem>
+          </MenuList>
+        </Menu>
 
         {/* 用户菜单 */}
-        <div className="relative">
-          <button
-            onClick={() => setShowUserMenu(!showUserMenu)}
-            className="flex items-center space-x-3 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
-          >
-            <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
-              <User className="h-4 w-4 text-primary-600" />
-            </div>
-            <span className="font-medium">
-              {user?.display_name || user?.username || 'User'}
-            </span>
-          </button>
-          {showUserMenu && (
-            <div className="absolute right-0 mt-2 w-48 rounded-lg bg-white shadow-lg border border-gray-100 overflow-hidden z-50">
-              <div className="px-4 py-3 border-b border-gray-100">
-                <p className="text-sm font-medium text-gray-900">
-                  {user?.display_name || user?.username}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">
-                  {user?.email || ''}
-                </p>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center space-x-2"
-              >
-                <LogOut className="h-4 w-4" />
-                <span>{t('admin.logout')}</span>
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* 点击外部关闭菜单 */}
-      {(showUserMenu || showLangMenu) && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => {
-            setShowUserMenu(false)
-            setShowLangMenu(false)
-          }}
-        />
-      )}
-    </header>
+        <Menu>
+          <MenuButton>
+            <HStack spacing={3}>
+              <Avatar
+                size="sm"
+                bg="primary.100"
+                icon={<User size={16} />}
+              />
+              <Text fontSize="sm" fontWeight="medium">
+                {user?.display_name || user?.username || 'User'}
+              </Text>
+            </HStack>
+          </MenuButton>
+          <MenuList>
+            <Box px={4} py={3} borderBottom="1px" borderColor="gray.200">
+              <Text fontSize="sm" fontWeight="medium">
+                {user?.display_name || user?.username}
+              </Text>
+              <Text fontSize="xs" color="gray.500" mt={1}>
+                {user?.email || ''}
+              </Text>
+            </Box>
+            <MenuItem
+              icon={<LogOut size={16} />}
+              onClick={handleLogout}
+              color="red.600"
+              _hover={{ bg: 'red.50' }}
+            >
+              {t('admin.logout')}
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      </HStack>
+    </Box>
   )
 }
 

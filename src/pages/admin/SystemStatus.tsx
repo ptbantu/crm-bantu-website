@@ -20,6 +20,25 @@ import {
   Users,
   Zap
 } from 'lucide-react'
+import { PageHeader } from '@/components/admin/PageHeader'
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Heading,
+  SimpleGrid,
+  VStack,
+  HStack,
+  Box,
+  Text,
+  Badge,
+  Progress,
+  useColorModeValue,
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+} from '@chakra-ui/react'
 
 interface ServiceStatus {
   name: string
@@ -41,6 +60,8 @@ interface SystemInfo {
 
 const SystemStatus = () => {
   const { t } = useTranslation()
+  const bgColor = useColorModeValue('white', 'gray.800')
+  const borderColor = useColorModeValue('gray.200', 'gray.700')
   const [systemInfo, setSystemInfo] = useState<SystemInfo>({
     uptime: '15天 8小时 32分钟',
     cpuUsage: 45.2,
@@ -106,35 +127,35 @@ const SystemStatus = () => {
     return () => clearInterval(interval)
   }, [])
 
-  const getStatusColor = (status: string) => {
+  const getStatusColorScheme = (status: string): string => {
     switch (status) {
       case 'normal':
-        return 'text-green-600 bg-green-50 border-green-200'
+        return 'green'
       case 'warning':
-        return 'text-yellow-600 bg-yellow-50 border-yellow-200'
+        return 'yellow'
       case 'error':
-        return 'text-red-600 bg-red-50 border-red-200'
+        return 'red'
       default:
-        return 'text-gray-600 bg-gray-50 border-gray-200'
+        return 'gray'
     }
   }
 
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'normal':
-        return <CheckCircle2 className="h-4 w-4" />
+        return CheckCircle2
       case 'warning':
       case 'error':
-        return <XCircle className="h-4 w-4" />
+        return XCircle
       default:
-        return <Activity className="h-4 w-4" />
+        return Activity
     }
   }
 
-  const getUsageColor = (usage: number) => {
-    if (usage < 50) return 'bg-green-500'
-    if (usage < 80) return 'bg-yellow-500'
-    return 'bg-red-500'
+  const getUsageColorScheme = (usage: number): string => {
+    if (usage < 50) return 'green'
+    if (usage < 80) return 'yellow'
+    return 'red'
   }
 
   const formatNumber = (num: number) => {
@@ -142,256 +163,362 @@ const SystemStatus = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="w-full py-2 px-1">
-        {/* 页面标题 */}
-        <div className="mb-4">
-          <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
-            {t('systemStatus.title')}
-          </h1>
-          <p className="text-sm text-gray-500 font-medium">
-            {t('systemStatus.subtitle')}
-          </p>
-        </div>
+    <Box minH="100vh" bg={useColorModeValue('gray.50', 'gray.900')}>
+      <Box w="full" py={2} px={1}>
+        {/* 页面头部 */}
+        <PageHeader
+          icon={Activity}
+          title={t('systemStatus.title')}
+          subtitle={t('systemStatus.subtitle')}
+        />
 
         {/* 系统运行时间与版本信息 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-          <div className="bg-white rounded-xl border border-gray-200 p-3">
-            <div className="flex items-center space-x-2 mb-2">
-              <Clock className="h-4 w-4 text-blue-600" />
-              <h3 className="text-sm font-semibold text-gray-900">
-                {t('systemStatus.systemInfo.uptime')}
-              </h3>
-            </div>
-            <div className="text-lg font-semibold text-gray-900">
-              {systemInfo.uptime}
-            </div>
-          </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-3">
-            <div className="flex items-center space-x-2 mb-2">
-              <Zap className="h-4 w-4 text-purple-600" />
-              <h3 className="text-sm font-semibold text-gray-900">
-                {t('systemStatus.systemInfo.version')}
-              </h3>
-            </div>
-            <div className="text-lg font-semibold text-gray-900">
-              {systemInfo.version}
-            </div>
-          </div>
-        </div>
+        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3} mb={3}>
+          <Card bg="blue.50" borderColor="blue.200" borderWidth={1}>
+            <CardBody>
+              <HStack spacing={3} mb={3}>
+                <Box
+                  as={Clock}
+                  size={6}
+                  color="blue.600"
+                  bg="blue.100"
+                  p={2}
+                  borderRadius="lg"
+                />
+                <Text fontSize="sm" fontWeight="semibold" color="blue.700">
+                  {t('systemStatus.systemInfo.uptime')}
+                </Text>
+              </HStack>
+              <Text fontSize="lg" fontWeight="bold" color="blue.900">
+                {systemInfo.uptime}
+              </Text>
+            </CardBody>
+          </Card>
+          <Card bg="purple.50" borderColor="purple.200" borderWidth={1}>
+            <CardBody>
+              <HStack spacing={3} mb={3}>
+                <Box
+                  as={Zap}
+                  size={6}
+                  color="purple.600"
+                  bg="purple.100"
+                  p={2}
+                  borderRadius="lg"
+                />
+                <Text fontSize="sm" fontWeight="semibold" color="purple.700">
+                  {t('systemStatus.systemInfo.version')}
+                </Text>
+              </HStack>
+              <Text fontSize="lg" fontWeight="bold" color="purple.900">
+                {systemInfo.version}
+              </Text>
+            </CardBody>
+          </Card>
+        </SimpleGrid>
 
         {/* 性能指标 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={3} mb={3}>
           {/* CPU使用率 */}
-          <div className="bg-white rounded-xl border border-gray-200 p-3">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center space-x-2">
-                <Cpu className="h-4 w-4 text-blue-600" />
-                <span className="text-xs font-medium text-gray-700">
-                  {t('systemStatus.performance.cpu')}
-                </span>
-              </div>
-              <span className="text-sm font-semibold text-gray-900">
-                {systemInfo.cpuUsage.toFixed(1)}%
-              </span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className={`h-2 rounded-full transition-all ${getUsageColor(systemInfo.cpuUsage)}`}
-                style={{ width: `${systemInfo.cpuUsage}%` }}
+          <Card bg={bgColor} borderColor={borderColor}>
+            <CardBody>
+              <HStack justify="space-between" mb={3}>
+                <HStack spacing={3}>
+                  <Box
+                    as={Cpu}
+                    size={5}
+                    color="blue.600"
+                    bg="blue.50"
+                    p={2}
+                    borderRadius="lg"
+                  />
+                  <Text fontSize="xs" fontWeight="medium" color="gray.700">
+                    {t('systemStatus.performance.cpu')}
+                  </Text>
+                </HStack>
+                <Text fontSize="sm" fontWeight="bold" color="gray.900">
+                  {systemInfo.cpuUsage.toFixed(1)}%
+                </Text>
+              </HStack>
+              <Progress
+                value={systemInfo.cpuUsage}
+                colorScheme={getUsageColorScheme(systemInfo.cpuUsage)}
+                size="sm"
+                borderRadius="full"
               />
-            </div>
-          </div>
+            </CardBody>
+          </Card>
 
           {/* 内存使用率 */}
-          <div className="bg-white rounded-xl border border-gray-200 p-3">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center space-x-2">
-                <MemoryStick className="h-4 w-4 text-green-600" />
-                <span className="text-xs font-medium text-gray-700">
-                  {t('systemStatus.performance.memory')}
-                </span>
-              </div>
-              <span className="text-sm font-semibold text-gray-900">
-                {systemInfo.memoryUsage.toFixed(1)}%
-              </span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className={`h-2 rounded-full transition-all ${getUsageColor(systemInfo.memoryUsage)}`}
-                style={{ width: `${systemInfo.memoryUsage}%` }}
+          <Card bg={bgColor} borderColor={borderColor}>
+            <CardBody>
+              <HStack justify="space-between" mb={3}>
+                <HStack spacing={3}>
+                  <Box
+                    as={MemoryStick}
+                    size={5}
+                    color="green.600"
+                    bg="green.50"
+                    p={2}
+                    borderRadius="lg"
+                  />
+                  <Text fontSize="xs" fontWeight="medium" color="gray.700">
+                    {t('systemStatus.performance.memory')}
+                  </Text>
+                </HStack>
+                <Text fontSize="sm" fontWeight="bold" color="gray.900">
+                  {systemInfo.memoryUsage.toFixed(1)}%
+                </Text>
+              </HStack>
+              <Progress
+                value={systemInfo.memoryUsage}
+                colorScheme={getUsageColorScheme(systemInfo.memoryUsage)}
+                size="sm"
+                borderRadius="full"
               />
-            </div>
-          </div>
+            </CardBody>
+          </Card>
 
           {/* 磁盘使用率 */}
-          <div className="bg-white rounded-xl border border-gray-200 p-3">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center space-x-2">
-                <HardDrive className="h-4 w-4 text-orange-600" />
-                <span className="text-xs font-medium text-gray-700">
-                  {t('systemStatus.performance.disk')}
-                </span>
-              </div>
-              <span className="text-sm font-semibold text-gray-900">
-                {systemInfo.diskUsage.toFixed(1)}%
-              </span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className={`h-2 rounded-full transition-all ${getUsageColor(systemInfo.diskUsage)}`}
-                style={{ width: `${systemInfo.diskUsage}%` }}
+          <Card bg={bgColor} borderColor={borderColor}>
+            <CardBody>
+              <HStack justify="space-between" mb={3}>
+                <HStack spacing={3}>
+                  <Box
+                    as={HardDrive}
+                    size={5}
+                    color="orange.600"
+                    bg="orange.50"
+                    p={2}
+                    borderRadius="lg"
+                  />
+                  <Text fontSize="xs" fontWeight="medium" color="gray.700">
+                    {t('systemStatus.performance.disk')}
+                  </Text>
+                </HStack>
+                <Text fontSize="sm" fontWeight="bold" color="gray.900">
+                  {systemInfo.diskUsage.toFixed(1)}%
+                </Text>
+              </HStack>
+              <Progress
+                value={systemInfo.diskUsage}
+                colorScheme={getUsageColorScheme(systemInfo.diskUsage)}
+                size="sm"
+                borderRadius="full"
               />
-            </div>
-          </div>
+            </CardBody>
+          </Card>
 
           {/* 数据库连接数 */}
-          <div className="bg-white rounded-xl border border-gray-200 p-3">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center space-x-2">
-                <Database className="h-4 w-4 text-indigo-600" />
-                <span className="text-xs font-medium text-gray-700">
-                  {t('systemStatus.performance.dbConnections')}
-                </span>
-              </div>
-              <span className="text-sm font-semibold text-gray-900">
-                {systemInfo.dbConnections}
-              </span>
-            </div>
-            <div className="text-xs text-gray-500 mt-1">
-              {t('systemStatus.performance.maxConnections')}: 100
-            </div>
-          </div>
-        </div>
+          <Card bg={bgColor} borderColor={borderColor}>
+            <CardBody>
+              <HStack justify="space-between" mb={2}>
+                <HStack spacing={3}>
+                  <Box
+                    as={Database}
+                    size={5}
+                    color="indigo.600"
+                    bg="indigo.50"
+                    p={2}
+                    borderRadius="lg"
+                  />
+                  <Text fontSize="xs" fontWeight="medium" color="gray.700">
+                    {t('systemStatus.performance.dbConnections')}
+                  </Text>
+                </HStack>
+                <Text fontSize="sm" fontWeight="bold" color="gray.900">
+                  {systemInfo.dbConnections}
+                </Text>
+              </HStack>
+              <Text fontSize="xs" color="gray.500" mt={1}>
+                {t('systemStatus.performance.maxConnections')}: 100
+              </Text>
+            </CardBody>
+          </Card>
+        </SimpleGrid>
 
         {/* 服务状态卡片 */}
-        <div className="mb-3">
-          <h2 className="text-base font-semibold text-gray-900 mb-2">
+        <Box mb={3}>
+          <Heading size="sm" mb={2} color="gray.900">
             {t('systemStatus.services.title')}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          </Heading>
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={3}>
             {services.map((service, index) => {
               const IconComponent = service.icon
+              const StatusIcon = getStatusIcon(service.status)
+              const colorScheme = getStatusColorScheme(service.status)
               return (
-                <div
+                <Card
                   key={index}
-                  className={`bg-white rounded-xl border-2 p-3 transition-all hover:shadow-md ${getStatusColor(service.status)}`}
+                  bg={`${colorScheme}.50`}
+                  borderColor={`${colorScheme}.200`}
+                  borderWidth={2}
+                  _hover={{ boxShadow: 'md', transform: 'translateY(-2px)' }}
+                  transition="all 0.2s"
                 >
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-center space-x-2">
-                      <IconComponent className="h-5 w-5" />
-                      <h3 className="text-sm font-semibold text-gray-900">
-                        {service.name}
-                      </h3>
-                    </div>
-                    <div className={`flex items-center space-x-1 ${service.status === 'normal' ? 'text-green-600' : service.status === 'warning' ? 'text-yellow-600' : 'text-red-600'}`}>
-                      {getStatusIcon(service.status)}
-                    </div>
-                  </div>
-                  <div className="mt-2">
-                    <p className="text-xs text-gray-600 font-medium">
+                  <CardBody>
+                    <HStack justify="space-between" mb={3}>
+                      <HStack spacing={3}>
+                        <Box
+                          as={IconComponent}
+                          size={6}
+                          color={`${colorScheme}.600`}
+                          bg={`${colorScheme}.100`}
+                          p={2}
+                          borderRadius="lg"
+                        />
+                        <Text fontSize="sm" fontWeight="semibold" color="gray.900">
+                          {service.name}
+                        </Text>
+                      </HStack>
+                      <Box
+                        as={StatusIcon}
+                        size={5}
+                        color={`${colorScheme}.600`}
+                        bg={`${colorScheme}.100`}
+                        p={1.5}
+                        borderRadius="md"
+                      />
+                    </HStack>
+                    <Text fontSize="xs" color="gray.600" fontWeight="medium">
                       {service.message}
-                    </p>
-                  </div>
-                </div>
+                    </Text>
+                  </CardBody>
+                </Card>
               )
             })}
-          </div>
-        </div>
+          </SimpleGrid>
+        </Box>
 
         {/* 统计信息 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={3} mb={3}>
           {/* API请求统计 */}
-          <div className="bg-white rounded-xl border border-gray-200 p-3">
-            <div className="flex items-center space-x-2 mb-2">
-              <TrendingUp className="h-4 w-4 text-blue-600" />
-              <h3 className="text-sm font-semibold text-gray-900">
-                {t('systemStatus.stats.apiRequests')}
-              </h3>
-            </div>
-            <div className="text-2xl font-bold text-gray-900 mb-1">
-              {formatNumber(systemInfo.apiRequests)}
-            </div>
-            <div className="text-xs text-gray-500">
-              {t('systemStatus.stats.today')}
-            </div>
-          </div>
+          <Card bg="blue.50" borderColor="blue.200" borderWidth={1}>
+            <CardBody>
+              <HStack spacing={3} mb={3}>
+                <Box
+                  as={TrendingUp}
+                  size={6}
+                  color="blue.600"
+                  bg="blue.100"
+                  p={2}
+                  borderRadius="lg"
+                />
+                <Text fontSize="sm" fontWeight="semibold" color="blue.700">
+                  {t('systemStatus.stats.apiRequests')}
+                </Text>
+              </HStack>
+              <Stat>
+                <StatNumber fontSize="2xl" fontWeight="bold" color="blue.900" mb={1}>
+                  {formatNumber(systemInfo.apiRequests)}
+                </StatNumber>
+                <StatHelpText fontSize="xs" color="blue.600" m={0}>
+                  {t('systemStatus.stats.today')}
+                </StatHelpText>
+              </Stat>
+            </CardBody>
+          </Card>
 
           {/* 活跃用户 */}
-          <div className="bg-white rounded-xl border border-gray-200 p-3">
-            <div className="flex items-center space-x-2 mb-2">
-              <Users className="h-4 w-4 text-green-600" />
-              <h3 className="text-sm font-semibold text-gray-900">
-                {t('systemStatus.stats.activeUsers')}
-              </h3>
-            </div>
-            <div className="text-2xl font-bold text-gray-900 mb-1">
-              {systemInfo.activeUsers}
-            </div>
-            <div className="text-xs text-gray-500">
-              {t('systemStatus.stats.currentOnline')}
-            </div>
-          </div>
+          <Card bg="green.50" borderColor="green.200" borderWidth={1}>
+            <CardBody>
+              <HStack spacing={3} mb={3}>
+                <Box
+                  as={Users}
+                  size={6}
+                  color="green.600"
+                  bg="green.100"
+                  p={2}
+                  borderRadius="lg"
+                />
+                <Text fontSize="sm" fontWeight="semibold" color="green.700">
+                  {t('systemStatus.stats.activeUsers')}
+                </Text>
+              </HStack>
+              <Stat>
+                <StatNumber fontSize="2xl" fontWeight="bold" color="green.900" mb={1}>
+                  {systemInfo.activeUsers}
+                </StatNumber>
+                <StatHelpText fontSize="xs" color="green.600" m={0}>
+                  {t('systemStatus.stats.currentOnline')}
+                </StatHelpText>
+              </Stat>
+            </CardBody>
+          </Card>
 
           {/* 网络状态 */}
-          <div className="bg-white rounded-xl border border-gray-200 p-3">
-            <div className="flex items-center space-x-2 mb-2">
-              <Network className="h-4 w-4 text-purple-600" />
-              <h3 className="text-sm font-semibold text-gray-900">
-                {t('systemStatus.stats.network')}
-              </h3>
-            </div>
-            <div className="text-2xl font-bold text-green-600 mb-1">
-              {t('systemStatus.status.normal')}
-            </div>
-            <div className="text-xs text-gray-500">
-              {t('systemStatus.stats.latency')}: 12ms
-            </div>
-          </div>
-        </div>
+          <Card bg="purple.50" borderColor="purple.200" borderWidth={1}>
+            <CardBody>
+              <HStack spacing={3} mb={3}>
+                <Box
+                  as={Network}
+                  size={6}
+                  color="purple.600"
+                  bg="purple.100"
+                  p={2}
+                  borderRadius="lg"
+                />
+                <Text fontSize="sm" fontWeight="semibold" color="purple.700">
+                  {t('systemStatus.stats.network')}
+                </Text>
+              </HStack>
+              <Stat>
+                <StatNumber fontSize="2xl" fontWeight="bold" color="green.600" mb={1}>
+                  {t('systemStatus.status.normal')}
+                </StatNumber>
+                <StatHelpText fontSize="xs" color="purple.600" m={0}>
+                  {t('systemStatus.stats.latency')}: 12ms
+                </StatHelpText>
+              </Stat>
+            </CardBody>
+          </Card>
+        </SimpleGrid>
 
         {/* 系统概览 */}
-        <div className="bg-white rounded-xl border border-gray-200 p-3">
-          <h2 className="text-base font-semibold text-gray-900 mb-3">
-            {t('systemStatus.overview.title')}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-            <div className="bg-gray-50 rounded-lg p-2.5">
-              <div className="text-xs text-gray-500 mb-1">
-                {t('systemStatus.overview.totalServices')}
-              </div>
-              <div className="text-lg font-semibold text-gray-900">
-                {services.length}
-              </div>
-            </div>
-            <div className="bg-green-50 rounded-lg p-2.5">
-              <div className="text-xs text-green-600 mb-1">
-                {t('systemStatus.overview.normalServices')}
-              </div>
-              <div className="text-lg font-semibold text-green-700">
-                {services.filter(s => s.status === 'normal').length}
-              </div>
-            </div>
-            <div className="bg-yellow-50 rounded-lg p-2.5">
-              <div className="text-xs text-yellow-600 mb-1">
-                {t('systemStatus.overview.warningServices')}
-              </div>
-              <div className="text-lg font-semibold text-yellow-700">
-                {services.filter(s => s.status === 'warning').length}
-              </div>
-            </div>
-            <div className="bg-red-50 rounded-lg p-2.5">
-              <div className="text-xs text-red-600 mb-1">
-                {t('systemStatus.overview.errorServices')}
-              </div>
-              <div className="text-lg font-semibold text-red-700">
-                {services.filter(s => s.status === 'error').length}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        <Card bg={bgColor} borderColor={borderColor}>
+          <CardHeader pb={3}>
+            <Heading size="sm" color="gray.900">
+              {t('systemStatus.overview.title')}
+            </Heading>
+          </CardHeader>
+          <CardBody pt={0}>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={3}>
+              <Box bg="gray.50" borderRadius="lg" p={2.5}>
+                <Text fontSize="xs" color="gray.500" mb={1}>
+                  {t('systemStatus.overview.totalServices')}
+                </Text>
+                <Text fontSize="lg" fontWeight="semibold" color="gray.900">
+                  {services.length}
+                </Text>
+              </Box>
+              <Box bg="green.50" borderRadius="lg" p={2.5}>
+                <Text fontSize="xs" color="green.600" mb={1}>
+                  {t('systemStatus.overview.normalServices')}
+                </Text>
+                <Text fontSize="lg" fontWeight="semibold" color="green.700">
+                  {services.filter(s => s.status === 'normal').length}
+                </Text>
+              </Box>
+              <Box bg="yellow.50" borderRadius="lg" p={2.5}>
+                <Text fontSize="xs" color="yellow.600" mb={1}>
+                  {t('systemStatus.overview.warningServices')}
+                </Text>
+                <Text fontSize="lg" fontWeight="semibold" color="yellow.700">
+                  {services.filter(s => s.status === 'warning').length}
+                </Text>
+              </Box>
+              <Box bg="red.50" borderRadius="lg" p={2.5}>
+                <Text fontSize="xs" color="red.600" mb={1}>
+                  {t('systemStatus.overview.errorServices')}
+                </Text>
+                <Text fontSize="lg" fontWeight="semibold" color="red.700">
+                  {services.filter(s => s.status === 'error').length}
+                </Text>
+              </Box>
+            </SimpleGrid>
+          </CardBody>
+        </Card>
+      </Box>
+    </Box>
   )
 }
 

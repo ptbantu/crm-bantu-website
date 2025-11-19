@@ -16,10 +16,45 @@ import {
 } from '@/api/customers'
 import { CustomerListParams, Customer } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
+import { PageHeader } from '@/components/admin/PageHeader'
+import {
+  Button,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Input,
+  Select,
+  InputGroup,
+  InputLeftElement,
+  HStack,
+  VStack,
+  Box,
+  Flex,
+  Spinner,
+  Text,
+  Badge,
+  IconButton,
+  Card,
+  CardBody,
+  useColorModeValue,
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  SimpleGrid,
+} from '@chakra-ui/react'
 
 const CustomerList = () => {
   const { t } = useTranslation()
   const { showSuccess, showError } = useToast()
+  
+  // Chakra UI 颜色模式
+  const bgColor = useColorModeValue('white', 'gray.800')
+  const borderColor = useColorModeValue('gray.200', 'gray.700')
+  const hoverBg = useColorModeValue('gray.50', 'gray.700')
 
   // 查询参数
   const [queryParams, setQueryParams] = useState<CustomerListParams>({
@@ -381,375 +416,411 @@ const CustomerList = () => {
 
   return (
     <div className="w-full">
-      {/* 页面标题 */}
-      <div className="mb-4">
-        <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
-          {t('customerList.title')}
-        </h1>
-        <p className="text-sm text-gray-500 font-medium">
-          {t('customerList.subtitle')}
-        </p>
-      </div>
+      {/* 页面头部 */}
+      <PageHeader
+        icon={Users}
+        title={t('customerList.title')}
+        subtitle={t('customerList.subtitle')}
+        actions={
+          <Button
+            colorScheme="primary"
+            leftIcon={<Plus size={16} />}
+            onClick={handleCreate}
+            size="sm"
+          >
+            {t('customerList.create')}
+          </Button>
+        }
+      />
 
       {/* 统计卡片 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={3} mb={4}>
         {/* 总客户数 */}
-        <div className="bg-white rounded-xl border border-gray-200 p-3 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center space-x-2">
-              <Users className="h-4 w-4 text-blue-600" />
-              <h3 className="text-xs font-semibold text-gray-700">
-                {t('customerList.statistics.totalCustomers')}
-              </h3>
-            </div>
-          </div>
-          <div className="text-2xl font-bold text-gray-900 mb-1">
-            {loadingStats ? (
-              <span className="text-gray-400">...</span>
-            ) : (
-              statistics.totalCustomers.toLocaleString()
-            )}
-          </div>
-          <div className="text-xs text-gray-500">
-            {t('customerList.statistics.totalCustomersDesc')}
-          </div>
-        </div>
+        <Card bg="blue.50" borderColor="blue.200" borderWidth={1} _hover={{ boxShadow: 'md', transform: 'translateY(-2px)' }} transition="all 0.2s">
+          <CardBody>
+            <Stat>
+              <Flex align="center" mb={2}>
+                <Box as={Users} size={5} color="blue.600" mr={2} />
+                <StatLabel fontSize="xs" fontWeight="semibold" color="blue.700">
+                  {t('customerList.statistics.totalCustomers')}
+                </StatLabel>
+              </Flex>
+              <StatNumber fontSize="2xl" fontWeight="bold" color="blue.900" mb={1}>
+                {loadingStats ? (
+                  <Spinner size="sm" color="blue.400" />
+                ) : (
+                  statistics.totalCustomers.toLocaleString()
+                )}
+              </StatNumber>
+              <StatHelpText fontSize="xs" color="blue.600" m={0}>
+                {t('customerList.statistics.totalCustomersDesc')}
+              </StatHelpText>
+            </Stat>
+          </CardBody>
+        </Card>
 
         {/* 活跃客户 */}
-        <div className="bg-white rounded-xl border border-gray-200 p-3 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center space-x-2">
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
-              <h3 className="text-xs font-semibold text-gray-700">
-                {t('customerList.statistics.activeCustomers')}
-              </h3>
-            </div>
-          </div>
-          <div className="text-2xl font-bold text-gray-900 mb-1">
-            {loadingStats ? (
-              <span className="text-gray-400">...</span>
-            ) : (
-              statistics.activeCustomers.toLocaleString()
-            )}
-          </div>
-          <div className="text-xs text-gray-500">
-            {t('customerList.statistics.activeCustomersDesc')}
-          </div>
-        </div>
+        <Card bg="green.50" borderColor="green.200" borderWidth={1} _hover={{ boxShadow: 'md', transform: 'translateY(-2px)' }} transition="all 0.2s">
+          <CardBody>
+            <Stat>
+              <Flex align="center" mb={2}>
+                <Box as={CheckCircle2} size={5} color="green.600" mr={2} />
+                <StatLabel fontSize="xs" fontWeight="semibold" color="green.700">
+                  {t('customerList.statistics.activeCustomers')}
+                </StatLabel>
+              </Flex>
+              <StatNumber fontSize="2xl" fontWeight="bold" color="green.900" mb={1}>
+                {loadingStats ? (
+                  <Spinner size="sm" color="green.400" />
+                ) : (
+                  statistics.activeCustomers.toLocaleString()
+                )}
+              </StatNumber>
+              <StatHelpText fontSize="xs" color="green.600" m={0}>
+                {t('customerList.statistics.activeCustomersDesc')}
+              </StatHelpText>
+            </Stat>
+          </CardBody>
+        </Card>
 
         {/* 总交易额 */}
-        <div className="bg-white rounded-xl border border-gray-200 p-3 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center space-x-2">
-              <DollarSign className="h-4 w-4 text-orange-600" />
-              <h3 className="text-xs font-semibold text-gray-700">
-                {t('customerList.statistics.totalTransactionAmount')}
-              </h3>
-            </div>
-          </div>
-          <div className="text-2xl font-bold text-gray-900 mb-1">
-            {loadingStats ? (
-              <span className="text-gray-400">...</span>
-            ) : (
-              formatCurrency(statistics.totalTransactionAmount)
-            )}
-          </div>
-          <div className="text-xs text-gray-500">
-            {t('customerList.statistics.totalTransactionAmountDesc')}
-          </div>
-        </div>
+        <Card bg="orange.50" borderColor="orange.200" borderWidth={1} _hover={{ boxShadow: 'md', transform: 'translateY(-2px)' }} transition="all 0.2s">
+          <CardBody>
+            <Stat>
+              <Flex align="center" mb={2}>
+                <Box as={DollarSign} size={5} color="orange.600" mr={2} />
+                <StatLabel fontSize="xs" fontWeight="semibold" color="orange.700">
+                  {t('customerList.statistics.totalTransactionAmount')}
+                </StatLabel>
+              </Flex>
+              <StatNumber fontSize="2xl" fontWeight="bold" color="orange.900" mb={1}>
+                {loadingStats ? (
+                  <Spinner size="sm" color="orange.400" />
+                ) : (
+                  formatCurrency(statistics.totalTransactionAmount)
+                )}
+              </StatNumber>
+              <StatHelpText fontSize="xs" color="orange.600" m={0}>
+                {t('customerList.statistics.totalTransactionAmountDesc')}
+              </StatHelpText>
+            </Stat>
+          </CardBody>
+        </Card>
 
         {/* 平均客单价 */}
-        <div className="bg-white rounded-xl border border-gray-200 p-3 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center space-x-2">
-              <ShoppingCart className="h-4 w-4 text-purple-600" />
-              <h3 className="text-xs font-semibold text-gray-700">
-                {t('customerList.statistics.averageOrderValue')}
-              </h3>
-            </div>
-          </div>
-          <div className="text-2xl font-bold text-gray-900 mb-1">
-            {loadingStats ? (
-              <span className="text-gray-400">...</span>
-            ) : (
-              formatCurrency(statistics.averageOrderValue)
-            )}
-          </div>
-          <div className="text-xs text-gray-500">
-            {t('customerList.statistics.averageOrderValueDesc')}
-          </div>
-        </div>
-      </div>
+        <Card bg="purple.50" borderColor="purple.200" borderWidth={1} _hover={{ boxShadow: 'md', transform: 'translateY(-2px)' }} transition="all 0.2s">
+          <CardBody>
+            <Stat>
+              <Flex align="center" mb={2}>
+                <Box as={ShoppingCart} size={5} color="purple.600" mr={2} />
+                <StatLabel fontSize="xs" fontWeight="semibold" color="purple.700">
+                  {t('customerList.statistics.averageOrderValue')}
+                </StatLabel>
+              </Flex>
+              <StatNumber fontSize="2xl" fontWeight="bold" color="purple.900" mb={1}>
+                {loadingStats ? (
+                  <Spinner size="sm" color="purple.400" />
+                ) : (
+                  formatCurrency(statistics.averageOrderValue)
+                )}
+              </StatNumber>
+              <StatHelpText fontSize="xs" color="purple.600" m={0}>
+                {t('customerList.statistics.averageOrderValueDesc')}
+              </StatHelpText>
+            </Stat>
+          </CardBody>
+        </Card>
+      </SimpleGrid>
 
       {/* 查询表单 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-2 mb-2">
-        <div className="flex items-end gap-2 flex-wrap">
-          {/* 客户名称 */}
-          <div className="flex-1 min-w-[150px]">
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('customerList.search.name')}
-            </label>
-            <div className="relative">
-              <Users className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder={t('customerList.search.namePlaceholder')}
-                className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              />
-            </div>
-          </div>
+      <Card mb={4} bg={bgColor} borderColor={borderColor}>
+        <CardBody>
+          <HStack spacing={3} align="flex-end" flexWrap="wrap">
+            {/* 客户名称 */}
+            <Box flex={1} minW="150px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('customerList.search.name')}
+              </Text>
+              <InputGroup size="sm">
+                <InputLeftElement pointerEvents="none">
+                  <Users size={14} color="gray" />
+                </InputLeftElement>
+                <Input
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder={t('customerList.search.namePlaceholder')}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                />
+              </InputGroup>
+            </Box>
 
-          {/* 客户编码 */}
-          <div className="flex-1 min-w-[150px]">
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('customerList.search.code')}
-            </label>
-            <div className="relative">
-              <Tag className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-              <input
-                type="text"
-                value={formData.code}
-                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                placeholder={t('customerList.search.codePlaceholder')}
-                className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              />
-            </div>
-          </div>
+            {/* 客户编码 */}
+            <Box flex={1} minW="150px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('customerList.search.code')}
+              </Text>
+              <InputGroup size="sm">
+                <InputLeftElement pointerEvents="none">
+                  <Tag size={14} color="gray" />
+                </InputLeftElement>
+                <Input
+                  value={formData.code}
+                  onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                  placeholder={t('customerList.search.codePlaceholder')}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                />
+              </InputGroup>
+            </Box>
 
-          {/* 客户类型 */}
-          <div className="flex-1 min-w-[120px]">
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('customerList.search.customerType')}
-            </label>
-            <select
-              value={formData.customer_type}
-              onChange={(e) => setFormData({ ...formData, customer_type: e.target.value as '' | 'individual' | 'organization' })}
-              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-            >
-              <option value="">{t('customerList.search.allTypes')}</option>
-              <option value="individual">{t('customerList.search.individual')}</option>
-              <option value="organization">{t('customerList.search.organization')}</option>
-            </select>
-          </div>
+            {/* 客户类型 */}
+            <Box flex={1} minW="120px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('customerList.search.customerType')}
+              </Text>
+              <Select
+                size="sm"
+                value={formData.customer_type}
+                onChange={(e) => setFormData({ ...formData, customer_type: e.target.value as '' | 'individual' | 'organization' })}
+              >
+                <option value="">{t('customerList.search.allTypes')}</option>
+                <option value="individual">{t('customerList.search.individual')}</option>
+                <option value="organization">{t('customerList.search.organization')}</option>
+              </Select>
+            </Box>
 
-          {/* 客户来源类型 */}
-          <div className="flex-1 min-w-[120px]">
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('customerList.search.sourceType')}
-            </label>
-            <select
-              value={formData.customer_source_type}
-              onChange={(e) => setFormData({ ...formData, customer_source_type: e.target.value as '' | 'own' | 'agent' })}
-              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-            >
-              <option value="">{t('customerList.search.allSources')}</option>
-              <option value="own">{t('customerList.search.own')}</option>
-              <option value="agent">{t('customerList.search.agent')}</option>
-            </select>
-          </div>
+            {/* 客户来源类型 */}
+            <Box flex={1} minW="120px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('customerList.search.sourceType')}
+              </Text>
+              <Select
+                size="sm"
+                value={formData.customer_source_type}
+                onChange={(e) => setFormData({ ...formData, customer_source_type: e.target.value as '' | 'own' | 'agent' })}
+              >
+                <option value="">{t('customerList.search.allSources')}</option>
+                <option value="own">{t('customerList.search.own')}</option>
+                <option value="agent">{t('customerList.search.agent')}</option>
+              </Select>
+            </Box>
 
-          {/* 锁定状态 */}
-          <div className="flex-1 min-w-[120px]">
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('customerList.search.locked')}
-            </label>
-            <select
-              value={formData.is_locked}
-              onChange={(e) => setFormData({ ...formData, is_locked: e.target.value as '' | 'true' | 'false' })}
-              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-            >
-              <option value="">{t('customerList.search.allStatus')}</option>
-              <option value="false">{t('customerList.search.unlocked')}</option>
-              <option value="true">{t('customerList.search.locked')}</option>
-            </select>
-          </div>
+            {/* 锁定状态 */}
+            <Box flex={1} minW="120px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('customerList.search.locked')}
+              </Text>
+              <Select
+                size="sm"
+                value={formData.is_locked}
+                onChange={(e) => setFormData({ ...formData, is_locked: e.target.value as '' | 'true' | 'false' })}
+              >
+                <option value="">{t('customerList.search.allStatus')}</option>
+                <option value="false">{t('customerList.search.unlocked')}</option>
+                <option value="true">{t('customerList.search.locked')}</option>
+              </Select>
+            </Box>
 
-          {/* 操作按钮 */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleReset}
-              className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors whitespace-nowrap"
-            >
-              {t('customerList.search.reset')}
-            </button>
-            <button
-              onClick={handleSearch}
-              disabled={loading}
-              className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5 whitespace-nowrap"
-            >
-              <Search className="h-3.5 w-3.5" />
-              <span>{t('customerList.search.search')}</span>
-            </button>
-          </div>
-        </div>
-      </div>
+            {/* 操作按钮 */}
+            <HStack spacing={2}>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleReset}
+              >
+                {t('customerList.search.reset')}
+              </Button>
+              <Button
+                size="sm"
+                colorScheme="blue"
+                leftIcon={<Search size={14} />}
+                onClick={handleSearch}
+                isLoading={loading}
+              >
+                {t('customerList.search.search')}
+              </Button>
+            </HStack>
+          </HStack>
+        </CardBody>
+      </Card>
 
       {/* 操作栏 */}
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-sm text-gray-600">
+      <Flex justify="space-between" align="center" mb={4}>
+        <Text fontSize="sm" color="gray.600">
           {t('customerList.total', { total })}
-        </div>
-        <button
+        </Text>
+        <Button
+          size="sm"
+          colorScheme="blue"
+          leftIcon={<Plus size={16} />}
           onClick={handleCreate}
-          className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors flex items-center space-x-1.5"
         >
-          <Plus className="h-3.5 w-3.5" />
-          <span>{t('customerList.create')}</span>
-        </button>
-      </div>
+          {t('customerList.create')}
+        </Button>
+      </Flex>
 
       {/* 客户列表 */}
       {loading ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-          <div className="text-gray-500">{t('customerList.loading')}</div>
-        </div>
+        <Card bg={bgColor} borderColor={borderColor}>
+          <CardBody>
+            <Flex justify="center" align="center" py={8}>
+              <Spinner size="lg" color="blue.500" />
+              <Text ml={4} color="gray.500">{t('customerList.loading')}</Text>
+            </Flex>
+          </CardBody>
+        </Card>
       ) : customers.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-          <Users className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-          <div className="text-gray-500">{t('customerList.noData')}</div>
-        </div>
+        <Card bg={bgColor} borderColor={borderColor}>
+          <CardBody>
+            <VStack py={8} spacing={3}>
+              <Users size={48} color="gray" />
+              <Text color="gray.500">{t('customerList.noData')}</Text>
+            </VStack>
+          </CardBody>
+        </Card>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('customerList.table.name')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('customerList.table.code')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('customerList.table.type')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('customerList.table.sourceType')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('customerList.table.sourceName')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('customerList.table.ownerUserName')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('customerList.table.level')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('customerList.table.status')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('customerList.table.createdAt')}</th>
-                  <th className="px-1 py-1 text-left text-xs font-semibold text-gray-700">{t('customerList.table.actions')}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
+        <Card bg={bgColor} borderColor={borderColor} overflow="hidden">
+          <Box overflowX="auto">
+            <Table variant="simple" size="sm">
+              <Thead bg="gray.50">
+                <Tr>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.name')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.code')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.type')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.sourceType')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.sourceName')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.ownerUserName')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.level')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.status')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.createdAt')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.actions')}</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
                 {customers.map((customer) => (
-                  <tr key={customer.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-1 py-1 text-sm text-gray-900">{customer.name}</td>
-                    <td className="px-1 py-1 text-sm text-gray-600">{customer.code || '-'}</td>
-                    <td className="px-1 py-1 text-sm text-gray-600">
-                      {customer.customer_type === 'individual' ? (
-                        <span className="inline-flex items-center space-x-1">
-                          <User className="h-3 w-3" />
-                          <span>{t('customerList.table.individual')}</span>
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center space-x-1">
-                          <Building2 className="h-3 w-3" />
-                          <span>{t('customerList.table.organization')}</span>
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-1 py-1 text-sm text-gray-600">
+                  <Tr key={customer.id} _hover={{ bg: hoverBg }} transition="background-color 0.2s">
+                    <Td fontSize="sm" color="gray.900">{customer.name}</Td>
+                    <Td fontSize="sm" color="gray.600">{customer.code || '-'}</Td>
+                    <Td fontSize="sm" color="gray.600">
+                      <HStack spacing={1}>
+                        {customer.customer_type === 'individual' ? (
+                          <>
+                            <User size={14} />
+                            <Text>{t('customerList.table.individual')}</Text>
+                          </>
+                        ) : (
+                          <>
+                            <Building2 size={14} />
+                            <Text>{t('customerList.table.organization')}</Text>
+                          </>
+                        )}
+                      </HStack>
+                    </Td>
+                    <Td fontSize="sm" color="gray.600">
                       {customer.customer_source_type === 'own' ? t('customerList.table.own') : t('customerList.table.agent')}
-                    </td>
-                    <td className="px-1 py-1 text-sm text-gray-600">{customer.source_name || '-'}</td>
-                    <td className="px-1 py-1 text-sm text-gray-600">{customer.owner_user_name || '-'}</td>
-                    <td className="px-1 py-1 text-sm text-gray-600">{customer.level || '-'}</td>
-                    <td className="px-1 py-1 text-sm">
+                    </Td>
+                    <Td fontSize="sm" color="gray.600">{customer.source_name || '-'}</Td>
+                    <Td fontSize="sm" color="gray.600">{customer.owner_user_name || '-'}</Td>
+                    <Td fontSize="sm" color="gray.600">{customer.level || '-'}</Td>
+                    <Td fontSize="sm">
                       {customer.is_locked ? (
-                        <span className="inline-flex items-center space-x-1 text-red-600">
-                          <XCircle className="h-3 w-3" />
-                          <span>{t('customerList.table.locked')}</span>
-                        </span>
+                        <Badge colorScheme="red" fontSize="xs">
+                          {t('customerList.table.locked')}
+                        </Badge>
                       ) : (
-                        <span className="inline-flex items-center space-x-1 text-green-600">
-                          <CheckCircle2 className="h-3 w-3" />
-                          <span>{t('customerList.table.active')}</span>
-                        </span>
+                        <Badge colorScheme="green" fontSize="xs">
+                          {t('customerList.table.active')}
+                        </Badge>
                       )}
-                    </td>
-                    <td className="px-1 py-1 text-sm text-gray-600">{formatDateTime(customer.created_at)}</td>
-                    <td className="px-1 py-1 text-sm">
-                      <div className="flex items-center space-x-1">
-                        <button
+                    </Td>
+                    <Td fontSize="sm" color="gray.600">{formatDateTime(customer.created_at)}</Td>
+                    <Td fontSize="sm">
+                      <HStack spacing={1}>
+                        <IconButton
+                          aria-label={t('customerList.actions.view')}
+                          icon={<Eye size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="blue"
                           onClick={() => handleViewDetail(customer.id)}
-                          className="p-1 text-gray-600 hover:text-primary-600 transition-colors"
-                          title={t('customerList.actions.view')}
-                        >
-                          <Eye className="h-3.5 w-3.5" />
-                        </button>
-                        <button
+                        />
+                        <IconButton
+                          aria-label={t('customerList.actions.edit')}
+                          icon={<Edit size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="blue"
                           onClick={() => handleEdit(customer)}
-                          className="p-1 text-gray-600 hover:text-primary-600 transition-colors"
-                          title={t('customerList.actions.edit')}
-                        >
-                          <Edit className="h-3.5 w-3.5" />
-                        </button>
-                        <button
+                        />
+                        <IconButton
+                          aria-label={t('customerList.actions.delete')}
+                          icon={<Trash2 size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="red"
                           onClick={() => handleDelete(customer)}
-                          className="p-1 text-gray-600 hover:text-red-600 transition-colors"
-                          title={t('customerList.actions.delete')}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                        />
+                      </HStack>
+                    </Td>
+                  </Tr>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+              </Tbody>
+            </Table>
+          </Box>
+        </Card>
       )}
 
       {/* 分页 */}
       {pages > 1 && (
-        <div className="mt-2 flex items-center justify-between bg-white rounded-xl border border-gray-200 px-1 py-1">
-          <div className="text-xs text-gray-600">
-            {t('customerList.pagination.info', { current: currentPage, total: pages, size: queryParams.size || 10 })}
-          </div>
-          <div className="flex items-center space-x-1">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="px-2 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {t('customerList.pagination.prev')}
-            </button>
-            {Array.from({ length: Math.min(pages, 5) }, (_, i) => {
-              let pageNum: number
-              if (pages <= 5) {
-                pageNum = i + 1
-              } else if (currentPage <= 3) {
-                pageNum = i + 1
-              } else if (currentPage >= pages - 2) {
-                pageNum = pages - 4 + i
-              } else {
-                pageNum = currentPage - 2 + i
-              }
-              return (
-                <button
-                  key={pageNum}
-                  onClick={() => handlePageChange(pageNum)}
-                  className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
-                    currentPage === pageNum
-                      ? 'text-white bg-primary-600'
-                      : 'text-gray-700 bg-white border border-gray-200 hover:bg-gray-50'
-                  }`}
+        <Card mt={4} bg={bgColor} borderColor={borderColor}>
+          <CardBody py={2}>
+            <Flex justify="space-between" align="center">
+              <Text fontSize="xs" color="gray.600">
+                {t('customerList.pagination.info', { current: currentPage, total: pages, size: queryParams.size || 10 })}
+              </Text>
+              <HStack spacing={1}>
+                <Button
+                  size="xs"
+                  variant="outline"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  isDisabled={currentPage === 1}
                 >
-                  {pageNum}
-                </button>
-              )
-            })}
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === pages}
-              className="px-2 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {t('customerList.pagination.next')}
-            </button>
-          </div>
-        </div>
+                  {t('customerList.pagination.prev')}
+                </Button>
+                {Array.from({ length: Math.min(pages, 5) }, (_, i) => {
+                  let pageNum: number
+                  if (pages <= 5) {
+                    pageNum = i + 1
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1
+                  } else if (currentPage >= pages - 2) {
+                    pageNum = pages - 4 + i
+                  } else {
+                    pageNum = currentPage - 2 + i
+                  }
+                  return (
+                    <Button
+                      key={pageNum}
+                      size="xs"
+                      variant={currentPage === pageNum ? 'solid' : 'outline'}
+                      colorScheme={currentPage === pageNum ? 'blue' : 'gray'}
+                      onClick={() => handlePageChange(pageNum)}
+                    >
+                      {pageNum}
+                    </Button>
+                  )
+                })}
+                <Button
+                  size="xs"
+                  variant="outline"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  isDisabled={currentPage === pages}
+                >
+                  {t('customerList.pagination.next')}
+                </Button>
+              </HStack>
+            </Flex>
+          </CardBody>
+        </Card>
       )}
 
       {/* 创建/编辑弹窗 */}

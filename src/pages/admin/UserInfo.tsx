@@ -22,12 +22,33 @@ import { getUserDetail } from '@/api/users'
 import { getCurrentUser } from '@/api/auth'
 import { UserDetail } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
+import { PageHeader } from '@/components/admin/PageHeader'
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Heading,
+  SimpleGrid,
+  VStack,
+  HStack,
+  Box,
+  Text,
+  Badge,
+  Spinner,
+  useColorModeValue,
+  Divider,
+  Flex,
+} from '@chakra-ui/react'
 
 const UserInfo = () => {
   const { t } = useTranslation()
   const { showError } = useToast()
   const [userDetail, setUserDetail] = useState<UserDetail | null>(null)
   const [loading, setLoading] = useState(true)
+  
+  // Chakra UI 颜色模式
+  const bgColor = useColorModeValue('white', 'gray.800')
+  const borderColor = useColorModeValue('gray.200', 'gray.700')
 
   useEffect(() => {
     const loadUserInfo = async () => {
@@ -70,220 +91,289 @@ const UserInfo = () => {
 
   if (loading) {
     return (
-      <div className="w-full">
-        <div className="mb-4">
-          <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
-            {t('userInfo.title')}
-          </h1>
-          <p className="text-sm text-gray-500 font-medium">
-            {t('userInfo.subtitle')}
-          </p>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
-          <div className="text-sm text-gray-500">{t('userInfo.loading')}</div>
-        </div>
-      </div>
+      <Box w="full">
+        <PageHeader
+          icon={User}
+          title={t('userInfo.title')}
+          subtitle={t('userInfo.subtitle')}
+        />
+        <Card bg={bgColor} borderColor={borderColor}>
+          <CardBody>
+            <Flex justify="center" align="center" py={8}>
+              <Spinner size="lg" color="blue.500" />
+              <Text ml={4} color="gray.500">{t('userInfo.loading')}</Text>
+            </Flex>
+          </CardBody>
+        </Card>
+      </Box>
     )
   }
 
   if (!userDetail) {
     return (
-      <div className="w-full">
-        <div className="mb-4">
-          <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
-            {t('userInfo.title')}
-          </h1>
-          <p className="text-sm text-gray-500 font-medium">
-            {t('userInfo.subtitle')}
-          </p>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
-          <User className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-          <p className="text-gray-500 text-sm">{t('userInfo.error.noData')}</p>
-        </div>
-      </div>
+      <Box w="full">
+        <PageHeader
+          icon={User}
+          title={t('userInfo.title')}
+          subtitle={t('userInfo.subtitle')}
+        />
+        <Card bg={bgColor} borderColor={borderColor}>
+          <CardBody>
+            <VStack py={8} spacing={3}>
+              <Box as={User} size={48} color="gray.400" />
+              <Text color="gray.500" fontSize="sm">{t('userInfo.error.noData')}</Text>
+            </VStack>
+          </CardBody>
+        </Card>
+      </Box>
     )
   }
 
   return (
-    <div className="w-full">
-      {/* 页面标题 */}
-      <div className="mb-4">
-        <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5 tracking-tight">
-          {t('userInfo.title')}
-        </h1>
-        <p className="text-sm text-gray-500 font-medium">
-          {t('userInfo.subtitle')}
-        </p>
-      </div>
+    <Box w="full">
+      {/* 页面头部 */}
+      <PageHeader
+        icon={User}
+        title={t('userInfo.title')}
+        subtitle={t('userInfo.subtitle')}
+      />
 
       {/* 基本信息卡片 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-3 mb-3">
-        <h2 className="text-base font-semibold text-gray-900 mb-3 flex items-center space-x-2">
-          <User className="h-4 w-4" />
-          <span>{t('userInfo.basicInfo.title')}</span>
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="flex items-start space-x-2">
-            <div className="flex-1">
-              <div className="text-xs text-gray-500 mb-0.5">{t('userInfo.basicInfo.username')}</div>
-              <div className="text-sm font-medium text-gray-900">{userDetail.username}</div>
-            </div>
-          </div>
-          <div className="flex items-start space-x-2">
-            <Mail className="h-4 w-4 text-gray-400 mt-0.5" />
-            <div className="flex-1">
-              <div className="text-xs text-gray-500 mb-0.5">{t('userInfo.basicInfo.email')}</div>
-              <div className="text-sm font-medium text-gray-900">{userDetail.email || '-'}</div>
-            </div>
-          </div>
-          <div className="flex items-start space-x-2">
-            <div className="flex-1">
-              <div className="text-xs text-gray-500 mb-0.5">{t('userInfo.basicInfo.displayName')}</div>
-              <div className="text-sm font-medium text-gray-900">{userDetail.display_name || '-'}</div>
-            </div>
-          </div>
-          <div className="flex items-start space-x-2">
-            <Phone className="h-4 w-4 text-gray-400 mt-0.5" />
-            <div className="flex-1">
-              <div className="text-xs text-gray-500 mb-0.5">{t('userInfo.basicInfo.phone')}</div>
-              <div className="text-sm font-medium text-gray-900">{userDetail.phone || '-'}</div>
-            </div>
-          </div>
-          <div className="flex items-start space-x-2">
-            <div className="flex-1">
-              <div className="text-xs text-gray-500 mb-0.5">{t('userInfo.basicInfo.status')}</div>
-              <div className="flex items-center space-x-1">
+      <Card bg={bgColor} borderColor={borderColor} mb={3}>
+        <CardHeader pb={3}>
+          <HStack spacing={2}>
+            <Box as={User} size={4} />
+            <Heading size="sm">{t('userInfo.basicInfo.title')}</Heading>
+          </HStack>
+        </CardHeader>
+        <CardBody pt={0}>
+          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3}>
+            <Box>
+              <Text fontSize="xs" color="gray.500" mb={0.5}>
+                {t('userInfo.basicInfo.username')}
+              </Text>
+              <Text fontSize="sm" fontWeight="medium" color="gray.900">
+                {userDetail.username}
+              </Text>
+            </Box>
+            <HStack align="start" spacing={2}>
+              <Box as={Mail} size={4} color="gray.400" mt={0.5} />
+              <Box flex={1}>
+                <Text fontSize="xs" color="gray.500" mb={0.5}>
+                  {t('userInfo.basicInfo.email')}
+                </Text>
+                <Text fontSize="sm" fontWeight="medium" color="gray.900">
+                  {userDetail.email || '-'}
+                </Text>
+              </Box>
+            </HStack>
+            <Box>
+              <Text fontSize="xs" color="gray.500" mb={0.5}>
+                {t('userInfo.basicInfo.displayName')}
+              </Text>
+              <Text fontSize="sm" fontWeight="medium" color="gray.900">
+                {userDetail.display_name || '-'}
+              </Text>
+            </Box>
+            <HStack align="start" spacing={2}>
+              <Box as={Phone} size={4} color="gray.400" mt={0.5} />
+              <Box flex={1}>
+                <Text fontSize="xs" color="gray.500" mb={0.5}>
+                  {t('userInfo.basicInfo.phone')}
+                </Text>
+                <Text fontSize="sm" fontWeight="medium" color="gray.900">
+                  {userDetail.phone || '-'}
+                </Text>
+              </Box>
+            </HStack>
+            <Box>
+              <Text fontSize="xs" color="gray.500" mb={0.5}>
+                {t('userInfo.basicInfo.status')}
+              </Text>
+              <HStack spacing={1}>
                 {userDetail.is_active ? (
                   <>
-                    <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
-                    <span className="text-xs text-green-600 font-medium">{t('userInfo.basicInfo.active')}</span>
+                    <Box as={CheckCircle2} size={3.5} color="green.600" />
+                    <Badge colorScheme="green" fontSize="xs">
+                      {t('userInfo.basicInfo.active')}
+                    </Badge>
                   </>
                 ) : (
                   <>
-                    <XCircle className="h-3.5 w-3.5 text-red-600" />
-                    <span className="text-xs text-red-600 font-medium">{t('userInfo.basicInfo.inactive')}</span>
+                    <Box as={XCircle} size={3.5} color="red.600" />
+                    <Badge colorScheme="red" fontSize="xs">
+                      {t('userInfo.basicInfo.inactive')}
+                    </Badge>
                   </>
                 )}
-              </div>
-            </div>
-          </div>
-          <div className="flex items-start space-x-2">
-            <Building2 className="h-4 w-4 text-gray-400 mt-0.5" />
-            <div className="flex-1">
-              <div className="text-xs text-gray-500 mb-0.5">{t('userInfo.basicInfo.organization')}</div>
-              <div className="text-sm font-medium text-gray-900">
-                {userDetail.primary_organization_name || '-'}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+              </HStack>
+            </Box>
+            <HStack align="start" spacing={2}>
+              <Box as={Building2} size={4} color="gray.400" mt={0.5} />
+              <Box flex={1}>
+                <Text fontSize="xs" color="gray.500" mb={0.5}>
+                  {t('userInfo.basicInfo.organization')}
+                </Text>
+                <Text fontSize="sm" fontWeight="medium" color="gray.900">
+                  {userDetail.primary_organization_name || '-'}
+                </Text>
+              </Box>
+            </HStack>
+          </SimpleGrid>
+        </CardBody>
+      </Card>
 
       {/* 角色信息 */}
       {userDetail.roles && userDetail.roles.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 p-3 mb-3">
-          <h2 className="text-base font-semibold text-gray-900 mb-3 flex items-center space-x-2">
-            <Shield className="h-4 w-4" />
-            <span>{t('userInfo.roles.title')}</span>
-          </h2>
-          <div className="flex flex-wrap gap-2">
-            {userDetail.roles.map((role) => (
-              <div
-                key={role.id}
-                className="inline-flex items-center space-x-1.5 px-2.5 py-1 bg-blue-50 border border-blue-200 rounded-lg"
-              >
-                <Shield className="h-3.5 w-3.5 text-blue-600" />
-                <span className="text-xs font-medium text-blue-700">{role.name}</span>
-                <span className="text-xs text-blue-500">({role.code})</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <Card bg={bgColor} borderColor={borderColor} mb={3}>
+          <CardHeader pb={3}>
+            <HStack spacing={2}>
+              <Box as={Shield} size={4} />
+              <Heading size="sm">{t('userInfo.roles.title')}</Heading>
+            </HStack>
+          </CardHeader>
+          <CardBody pt={0}>
+            <HStack spacing={2} flexWrap="wrap">
+              {userDetail.roles.map((role) => (
+                <Badge
+                  key={role.id}
+                  colorScheme="blue"
+                  fontSize="xs"
+                  px={2.5}
+                  py={1}
+                  borderRadius="lg"
+                >
+                  <HStack spacing={1.5}>
+                    <Box as={Shield} size={3.5} />
+                    <Text>{role.name}</Text>
+                    <Text opacity={0.7}>({role.code})</Text>
+                  </HStack>
+                </Badge>
+              ))}
+            </HStack>
+          </CardBody>
+        </Card>
       )}
 
       {/* 联系信息 */}
       {(userDetail.contact_phone || userDetail.whatsapp || userDetail.wechat || userDetail.address) && (
-        <div className="bg-white rounded-xl border border-gray-200 p-3 mb-3">
-          <h2 className="text-base font-semibold text-gray-900 mb-3 flex items-center space-x-2">
-            <MessageSquare className="h-4 w-4" />
-            <span>{t('userInfo.contact.title')}</span>
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {userDetail.contact_phone && (
-              <div className="flex items-start space-x-2">
-                <Phone className="h-4 w-4 text-gray-400 mt-0.5" />
-                <div className="flex-1">
-                  <div className="text-xs text-gray-500 mb-0.5">{t('userInfo.contact.contactPhone')}</div>
-                  <div className="text-sm font-medium text-gray-900">{userDetail.contact_phone}</div>
-                </div>
-              </div>
-            )}
-            {userDetail.whatsapp && (
-              <div className="flex items-start space-x-2">
-                <MessageCircle className="h-4 w-4 text-gray-400 mt-0.5" />
-                <div className="flex-1">
-                  <div className="text-xs text-gray-500 mb-0.5">{t('userInfo.contact.whatsapp')}</div>
-                  <div className="text-sm font-medium text-gray-900">{userDetail.whatsapp}</div>
-                </div>
-              </div>
-            )}
-            {userDetail.wechat && (
-              <div className="flex items-start space-x-2">
-                <MessageCircle className="h-4 w-4 text-gray-400 mt-0.5" />
-                <div className="flex-1">
-                  <div className="text-xs text-gray-500 mb-0.5">{t('userInfo.contact.wechat')}</div>
-                  <div className="text-sm font-medium text-gray-900">{userDetail.wechat}</div>
-                </div>
-              </div>
-            )}
-            {userDetail.address && (
-              <div className="flex items-start space-x-2 md:col-span-2">
-                <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
-                <div className="flex-1">
-                  <div className="text-xs text-gray-500 mb-0.5">{t('userInfo.contact.address')}</div>
-                  <div className="text-sm font-medium text-gray-900">{userDetail.address}</div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+        <Card bg={bgColor} borderColor={borderColor} mb={3}>
+          <CardHeader pb={3}>
+            <HStack spacing={2}>
+              <Box as={MessageSquare} size={4} />
+              <Heading size="sm">{t('userInfo.contact.title')}</Heading>
+            </HStack>
+          </CardHeader>
+          <CardBody pt={0}>
+            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3}>
+              {userDetail.contact_phone && (
+                <HStack align="start" spacing={2}>
+                  <Box as={Phone} size={4} color="gray.400" mt={0.5} />
+                  <Box flex={1}>
+                    <Text fontSize="xs" color="gray.500" mb={0.5}>
+                      {t('userInfo.contact.contactPhone')}
+                    </Text>
+                    <Text fontSize="sm" fontWeight="medium" color="gray.900">
+                      {userDetail.contact_phone}
+                    </Text>
+                  </Box>
+                </HStack>
+              )}
+              {userDetail.whatsapp && (
+                <HStack align="start" spacing={2}>
+                  <Box as={MessageCircle} size={4} color="gray.400" mt={0.5} />
+                  <Box flex={1}>
+                    <Text fontSize="xs" color="gray.500" mb={0.5}>
+                      {t('userInfo.contact.whatsapp')}
+                    </Text>
+                    <Text fontSize="sm" fontWeight="medium" color="gray.900">
+                      {userDetail.whatsapp}
+                    </Text>
+                  </Box>
+                </HStack>
+              )}
+              {userDetail.wechat && (
+                <HStack align="start" spacing={2}>
+                  <Box as={MessageCircle} size={4} color="gray.400" mt={0.5} />
+                  <Box flex={1}>
+                    <Text fontSize="xs" color="gray.500" mb={0.5}>
+                      {t('userInfo.contact.wechat')}
+                    </Text>
+                    <Text fontSize="sm" fontWeight="medium" color="gray.900">
+                      {userDetail.wechat}
+                    </Text>
+                  </Box>
+                </HStack>
+              )}
+              {userDetail.address && (
+                <HStack align="start" spacing={2} gridColumn={{ md: 'span 2' }}>
+                  <Box as={MapPin} size={4} color="gray.400" mt={0.5} />
+                  <Box flex={1}>
+                    <Text fontSize="xs" color="gray.500" mb={0.5}>
+                      {t('userInfo.contact.address')}
+                    </Text>
+                    <Text fontSize="sm" fontWeight="medium" color="gray.900">
+                      {userDetail.address}
+                    </Text>
+                  </Box>
+                </HStack>
+              )}
+            </SimpleGrid>
+          </CardBody>
+        </Card>
       )}
 
       {/* 时间信息 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-3">
-        <h2 className="text-base font-semibold text-gray-900 mb-3 flex items-center space-x-2">
-          <Clock className="h-4 w-4" />
-          <span>{t('userInfo.timeline.title')}</span>
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="flex items-start space-x-2">
-            <Calendar className="h-4 w-4 text-gray-400 mt-0.5" />
-            <div className="flex-1">
-              <div className="text-xs text-gray-500 mb-0.5">{t('userInfo.timeline.createdAt')}</div>
-              <div className="text-sm font-medium text-gray-900">{formatDate(userDetail.created_at)}</div>
-            </div>
-          </div>
-          <div className="flex items-start space-x-2">
-            <Calendar className="h-4 w-4 text-gray-400 mt-0.5" />
-            <div className="flex-1">
-              <div className="text-xs text-gray-500 mb-0.5">{t('userInfo.timeline.updatedAt')}</div>
-              <div className="text-sm font-medium text-gray-900">{formatDate(userDetail.updated_at)}</div>
-            </div>
-          </div>
-          {userDetail.last_login_at && (
-            <div className="flex items-start space-x-2">
-              <Clock className="h-4 w-4 text-gray-400 mt-0.5" />
-              <div className="flex-1">
-                <div className="text-xs text-gray-500 mb-0.5">{t('userInfo.timeline.lastLoginAt')}</div>
-                <div className="text-sm font-medium text-gray-900">{formatDate(userDetail.last_login_at)}</div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+      <Card bg={bgColor} borderColor={borderColor}>
+        <CardHeader pb={3}>
+          <HStack spacing={2}>
+            <Box as={Clock} size={4} />
+            <Heading size="sm">{t('userInfo.timeline.title')}</Heading>
+          </HStack>
+        </CardHeader>
+        <CardBody pt={0}>
+          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3}>
+            <HStack align="start" spacing={2}>
+              <Box as={Calendar} size={4} color="gray.400" mt={0.5} />
+              <Box flex={1}>
+                <Text fontSize="xs" color="gray.500" mb={0.5}>
+                  {t('userInfo.timeline.createdAt')}
+                </Text>
+                <Text fontSize="sm" fontWeight="medium" color="gray.900">
+                  {formatDate(userDetail.created_at)}
+                </Text>
+              </Box>
+            </HStack>
+            <HStack align="start" spacing={2}>
+              <Box as={Calendar} size={4} color="gray.400" mt={0.5} />
+              <Box flex={1}>
+                <Text fontSize="xs" color="gray.500" mb={0.5}>
+                  {t('userInfo.timeline.updatedAt')}
+                </Text>
+                <Text fontSize="sm" fontWeight="medium" color="gray.900">
+                  {formatDate(userDetail.updated_at)}
+                </Text>
+              </Box>
+            </HStack>
+            {userDetail.last_login_at && (
+              <HStack align="start" spacing={2}>
+                <Box as={Clock} size={4} color="gray.400" mt={0.5} />
+                <Box flex={1}>
+                  <Text fontSize="xs" color="gray.500" mb={0.5}>
+                    {t('userInfo.timeline.lastLoginAt')}
+                  </Text>
+                  <Text fontSize="sm" fontWeight="medium" color="gray.900">
+                    {formatDate(userDetail.last_login_at)}
+                  </Text>
+                </Box>
+              </HStack>
+            )}
+          </SimpleGrid>
+        </CardBody>
+      </Card>
+    </Box>
   )
 }
 
 export default UserInfo
+
