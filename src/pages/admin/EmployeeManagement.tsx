@@ -20,12 +20,40 @@ import { UserListParams, UserListItem, Organization, Role } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
 import { useAuth } from '@/contexts/AuthContext'
 import { PageHeader } from '@/components/admin/PageHeader'
-import { Button } from '@chakra-ui/react'
+import {
+  Button,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Input,
+  Select,
+  InputGroup,
+  InputLeftElement,
+  HStack,
+  VStack,
+  Box,
+  Flex,
+  Spinner,
+  Text,
+  Badge,
+  IconButton,
+  Card,
+  CardBody,
+  useColorModeValue,
+} from '@chakra-ui/react'
 
 const EmployeeManagement = () => {
   const { t } = useTranslation()
   const { showSuccess, showError } = useToast()
   const { user } = useAuth()
+  
+  // Chakra UI 颜色模式
+  const bgColor = useColorModeValue('white', 'gray.800')
+  const borderColor = useColorModeValue('gray.200', 'gray.700')
+  const hoverBg = useColorModeValue('gray.50', 'gray.700')
   
   // 当前用户的组织ID
   const currentUserOrganizationId = user?.primary_organization_id || null
@@ -328,199 +356,222 @@ const EmployeeManagement = () => {
       />
 
       {/* 查询表单 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-2 mb-2">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('employeeManagement.search.username')}
-            </label>
-            <div className="relative">
-              <User className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-              <input
-                type="text"
-                value={formData.username}
-                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                placeholder={t('employeeManagement.search.usernamePlaceholder')}
-                className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('employeeManagement.search.email')}
-            </label>
-            <div className="relative">
-              <Mail className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder={t('employeeManagement.search.emailPlaceholder')}
-                className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('employeeManagement.search.status')}
-            </label>
-            <select
-              value={formData.is_active}
-              onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
-              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-            >
-              <option value="">{t('employeeManagement.search.allStatus')}</option>
-              <option value="true">{t('employeeManagement.search.active')}</option>
-              <option value="false">{t('employeeManagement.search.inactive')}</option>
-            </select>
-          </div>
-        </div>
-        <div className="flex items-center justify-end space-x-2">
-            <button
-              onClick={handleReset}
-              className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              {t('employeeManagement.search.reset')}
-            </button>
-            <button
-              onClick={handleSearch}
-              disabled={loading}
-              className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
-            >
-              <Search className="h-3.5 w-3.5" />
-              <span>{t('employeeManagement.search.search')}</span>
-            </button>
-          </div>
-      </div>
+      <Card mb={4} bg={bgColor} borderColor={borderColor}>
+        <CardBody>
+          <HStack spacing={3} align="flex-end" flexWrap="wrap">
+            {/* 用户名 */}
+            <Box flex={1} minW="150px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('employeeManagement.search.username')}
+              </Text>
+              <InputGroup size="sm">
+                <InputLeftElement pointerEvents="none">
+                  <User size={14} color="gray" />
+                </InputLeftElement>
+                <Input
+                  value={formData.username}
+                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                  placeholder={t('employeeManagement.search.usernamePlaceholder')}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                />
+              </InputGroup>
+            </Box>
+
+            {/* 邮箱 */}
+            <Box flex={1} minW="150px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('employeeManagement.search.email')}
+              </Text>
+              <InputGroup size="sm">
+                <InputLeftElement pointerEvents="none">
+                  <Mail size={14} color="gray" />
+                </InputLeftElement>
+                <Input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder={t('employeeManagement.search.emailPlaceholder')}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                />
+              </InputGroup>
+            </Box>
+
+            {/* 状态 */}
+            <Box flex={1} minW="120px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('employeeManagement.search.status')}
+              </Text>
+              <Select
+                size="sm"
+                value={formData.is_active}
+                onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
+              >
+                <option value="">{t('employeeManagement.search.allStatus')}</option>
+                <option value="true">{t('employeeManagement.search.active')}</option>
+                <option value="false">{t('employeeManagement.search.inactive')}</option>
+              </Select>
+            </Box>
+
+            {/* 操作按钮 */}
+            <HStack spacing={2}>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleReset}
+              >
+                {t('employeeManagement.search.reset')}
+              </Button>
+              <Button
+                size="sm"
+                colorScheme="blue"
+                leftIcon={<Search size={14} />}
+                onClick={handleSearch}
+                isLoading={loading}
+              >
+                {t('employeeManagement.search.search')}
+              </Button>
+            </HStack>
+          </HStack>
+        </CardBody>
+      </Card>
 
       {/* 用户列表 */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        {loading ? (
-            <div className="p-6 text-center">
-              <div className="text-sm text-gray-500">{t('employeeManagement.loading')}</div>
-            </div>
-          ) : users.length === 0 ? (
-            <div className="p-6 text-center">
-              <div className="text-sm text-gray-500">{t('employeeManagement.noData')}</div>
-            </div>
-          ) : (
-            <>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('employeeManagement.table.username')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('employeeManagement.table.displayName')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('employeeManagement.table.email')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('employeeManagement.table.organization')}
-                      </th>
-                      <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                        {t('employeeManagement.table.status')}
-                      </th>
-                      <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900 w-20">
-                        {t('employeeManagement.table.actions')}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {users.map((user) => (
-                      <tr
-                        key={user.id}
-                        className="hover:bg-gray-50 transition-colors"
-                      >
-                        <td className="px-1 py-1 text-sm text-gray-900 font-medium">
-                          {user.username}
-                        </td>
-                        <td className="px-1 py-1 text-sm text-gray-700">
-                          {user.display_name || '-'}
-                        </td>
-                        <td className="px-1 py-1 text-sm text-gray-700">
-                          {user.email || '-'}
-                        </td>
-                        <td className="px-1 py-1 text-sm text-gray-700">
-                          <div className="flex items-center space-x-1.5">
-                            <Building2 className="h-3.5 w-3.5 text-gray-400" />
-                            <span>{user.primary_organization_name || '-'}</span>
-                          </div>
-                        </td>
-                        <td className="px-2 py-1.5">
-                          {user.is_active ? (
-                            <span className="inline-flex items-center space-x-1 text-xs text-green-600">
-                              <CheckCircle2 className="h-3.5 w-3.5" />
-                              <span>{t('employeeManagement.table.active')}</span>
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center space-x-1 text-xs text-red-600">
-                              <XCircle className="h-3.5 w-3.5" />
-                              <span>{t('employeeManagement.table.inactive')}</span>
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-2 py-1.5">
-                          <div className="flex items-center space-x-1">
-                            <button
-                              onClick={() => handleEdit(user)}
-                              className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
-                              title={t('employeeManagement.edit')}
-                            >
-                              <Edit className="h-3.5 w-3.5" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(user)}
-                              className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-                              title={t('employeeManagement.delete')}
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+      {loading ? (
+        <Card bg={bgColor} borderColor={borderColor}>
+          <CardBody>
+            <Flex justify="center" align="center" py={8}>
+              <Spinner size="lg" color="blue.500" />
+              <Text ml={4} color="gray.500">{t('employeeManagement.loading')}</Text>
+            </Flex>
+          </CardBody>
+        </Card>
+      ) : users.length === 0 ? (
+        <Card bg={bgColor} borderColor={borderColor}>
+          <CardBody>
+            <VStack py={8} spacing={3}>
+              <User size={48} color="gray" />
+              <Text color="gray.500">{t('employeeManagement.noData')}</Text>
+            </VStack>
+          </CardBody>
+        </Card>
+      ) : (
+        <Card bg={bgColor} borderColor={borderColor} overflow="hidden">
+          <Box overflowX="auto">
+            <Table variant="simple" size="sm">
+              <Thead bg="gray.50">
+                <Tr>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('employeeManagement.table.username')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('employeeManagement.table.displayName')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('employeeManagement.table.email')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('employeeManagement.table.organization')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('employeeManagement.table.status')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('employeeManagement.table.actions')}</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {users.map((user) => (
+                  <Tr key={user.id} _hover={{ bg: hoverBg }} transition="background-color 0.2s">
+                    <Td fontSize="sm" color="gray.900" fontWeight="medium">{user.username}</Td>
+                    <Td fontSize="sm" color="gray.600">{user.display_name || '-'}</Td>
+                    <Td fontSize="sm" color="gray.600">{user.email || '-'}</Td>
+                    <Td fontSize="sm" color="gray.600">
+                      <HStack spacing={1}>
+                        <Building2 size={14} />
+                        <Text>{user.primary_organization_name || '-'}</Text>
+                      </HStack>
+                    </Td>
+                    <Td fontSize="sm">
+                      {user.is_active ? (
+                        <Badge colorScheme="green" fontSize="xs">
+                          {t('employeeManagement.table.active')}
+                        </Badge>
+                      ) : (
+                        <Badge colorScheme="red" fontSize="xs">
+                          {t('employeeManagement.table.inactive')}
+                        </Badge>
+                      )}
+                    </Td>
+                    <Td fontSize="sm">
+                      <HStack spacing={1}>
+                        <IconButton
+                          aria-label={t('employeeManagement.edit')}
+                          icon={<Edit size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="blue"
+                          onClick={() => handleEdit(user)}
+                        />
+                        <IconButton
+                          aria-label={t('employeeManagement.delete')}
+                          icon={<Trash2 size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="red"
+                          onClick={() => handleDelete(user)}
+                        />
+                      </HStack>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </Box>
+        </Card>
+      )}
 
-              {/* 分页 */}
-              {pages > 1 && (
-                <div className="px-2 py-1.5 border-t border-gray-200 flex items-center justify-between">
-                  <div className="text-xs text-gray-600">
-                    {t('employeeManagement.pagination.total').replace('{{total}}', total.toString())}
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      {/* 分页 */}
+      {pages > 1 && (
+        <Card mt={4} bg={bgColor} borderColor={borderColor}>
+          <CardBody py={2}>
+            <Flex justify="space-between" align="center">
+              <Text fontSize="xs" color="gray.600">
+                {t('employeeManagement.pagination.info', { current: currentPage, total: pages, size: queryParams.size || 10 })}
+              </Text>
+              <HStack spacing={1}>
+                <Button
+                  size="xs"
+                  variant="outline"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  isDisabled={currentPage === 1}
+                >
+                  {t('employeeManagement.pagination.prev')}
+                </Button>
+                {Array.from({ length: Math.min(pages, 5) }, (_, i) => {
+                  let pageNum: number
+                  if (pages <= 5) {
+                    pageNum = i + 1
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1
+                  } else if (currentPage >= pages - 2) {
+                    pageNum = pages - 4 + i
+                  } else {
+                    pageNum = currentPage - 2 + i
+                  }
+                  return (
+                    <Button
+                      key={pageNum}
+                      size="xs"
+                      variant={currentPage === pageNum ? 'solid' : 'outline'}
+                      colorScheme={currentPage === pageNum ? 'blue' : 'gray'}
+                      onClick={() => handlePageChange(pageNum)}
                     >
-                      {t('employeeManagement.pagination.prev')}
-                    </button>
-                    <div className="text-xs text-gray-700">
-                      {t('employeeManagement.pagination.page')
-                        .replace('{{current}}', currentPage.toString())
-                        .replace('{{total}}', pages.toString())}
-                    </div>
-                    <button
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === pages}
-                      className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      {t('employeeManagement.pagination.next')}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-        </div>
+                      {pageNum}
+                    </Button>
+                  )
+                })}
+                <Button
+                  size="xs"
+                  variant="outline"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  isDisabled={currentPage === pages}
+                >
+                  {t('employeeManagement.pagination.next')}
+                </Button>
+              </HStack>
+            </Flex>
+          </CardBody>
+        </Card>
+      )}
 
       {/* 创建/编辑弹窗 */}
       {showModal && (

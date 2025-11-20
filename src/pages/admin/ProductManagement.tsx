@@ -18,11 +18,39 @@ import { getCategoryList } from '@/api/categories'
 import { ProductListParams, Product, ProductDetail, ProductCategory } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
 import { PageHeader } from '@/components/admin/PageHeader'
-import { Button } from '@chakra-ui/react'
+import {
+  Button,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Input,
+  Select,
+  InputGroup,
+  InputLeftElement,
+  HStack,
+  VStack,
+  Box,
+  Flex,
+  Spinner,
+  Text,
+  Badge,
+  IconButton,
+  Card,
+  CardBody,
+  useColorModeValue,
+} from '@chakra-ui/react'
 
 const ProductManagement = () => {
   const { t } = useTranslation()
   const { showSuccess, showError } = useToast()
+  
+  // Chakra UI 颜色模式
+  const bgColor = useColorModeValue('white', 'gray.800')
+  const borderColor = useColorModeValue('gray.200', 'gray.700')
+  const hoverBg = useColorModeValue('gray.50', 'gray.700')
 
   // 查询参数
   const [queryParams, setQueryParams] = useState<ProductListParams>({
@@ -355,243 +383,271 @@ const ProductManagement = () => {
       />
 
       {/* 查询表单 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-2 mb-2">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('productManagement.search.name')}
-            </label>
-            <div className="relative">
-              <Package className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder={t('productManagement.search.namePlaceholder')}
-                className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('productManagement.search.code')}
-            </label>
-            <input
-              type="text"
-              value={formData.code}
-              onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-              placeholder={t('productManagement.search.codePlaceholder')}
-              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('productManagement.search.category')}
-            </label>
-            <select
-              value={formData.category_id}
-              onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-            >
-              <option value="">{t('productManagement.search.allCategories')}</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('productManagement.search.status')}
-            </label>
-            <select
-              value={formData.is_active}
-              onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
-              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-            >
-              <option value="">{t('productManagement.search.allStatus')}</option>
-              <option value="true">{t('productManagement.search.active')}</option>
-              <option value="false">{t('productManagement.search.inactive')}</option>
-            </select>
-          </div>
-        </div>
-        <div className="flex items-center justify-end space-x-2">
-          <button
-            onClick={handleReset}
-            className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            {t('productManagement.search.reset')}
-          </button>
-          <button
-            onClick={handleSearch}
-            disabled={loading}
-            className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
-          >
-            <Search className="h-3.5 w-3.5" />
-            <span>{t('productManagement.search.search')}</span>
-          </button>
-        </div>
-      </div>
+      <Card mb={4} bg={bgColor} borderColor={borderColor}>
+        <CardBody>
+          <HStack spacing={3} align="flex-end" flexWrap="wrap">
+            {/* 产品名称 */}
+            <Box flex={1} minW="150px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('productManagement.search.name')}
+              </Text>
+              <InputGroup size="sm">
+                <InputLeftElement pointerEvents="none">
+                  <Package size={14} color="gray" />
+                </InputLeftElement>
+                <Input
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder={t('productManagement.search.namePlaceholder')}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                />
+              </InputGroup>
+            </Box>
+
+            {/* 产品编码 */}
+            <Box flex={1} minW="150px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('productManagement.search.code')}
+              </Text>
+              <InputGroup size="sm">
+                <InputLeftElement pointerEvents="none">
+                  <Tag size={14} color="gray" />
+                </InputLeftElement>
+                <Input
+                  value={formData.code}
+                  onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                  placeholder={t('productManagement.search.codePlaceholder')}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                />
+              </InputGroup>
+            </Box>
+
+            {/* 分类 */}
+            <Box flex={1} minW="120px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('productManagement.search.category')}
+              </Text>
+              <Select
+                size="sm"
+                value={formData.category_id}
+                onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+              >
+                <option value="">{t('productManagement.search.allCategories')}</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </Select>
+            </Box>
+
+            {/* 状态 */}
+            <Box flex={1} minW="120px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('productManagement.search.status')}
+              </Text>
+              <Select
+                size="sm"
+                value={formData.is_active}
+                onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
+              >
+                <option value="">{t('productManagement.search.allStatus')}</option>
+                <option value="true">{t('productManagement.search.active')}</option>
+                <option value="false">{t('productManagement.search.inactive')}</option>
+              </Select>
+            </Box>
+
+            {/* 操作按钮 */}
+            <HStack spacing={2}>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleReset}
+              >
+                {t('productManagement.search.reset')}
+              </Button>
+              <Button
+                size="sm"
+                colorScheme="blue"
+                leftIcon={<Search size={14} />}
+                onClick={handleSearch}
+                isLoading={loading}
+              >
+                {t('productManagement.search.search')}
+              </Button>
+            </HStack>
+          </HStack>
+        </CardBody>
+      </Card>
 
       {/* 产品列表 */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        {loading ? (
-          <div className="p-6 text-center">
-            <div className="text-sm text-gray-500">{t('productManagement.loading')}</div>
-          </div>
-        ) : products.length === 0 ? (
-          <div className="p-6 text-center">
-            <div className="text-sm text-gray-500">{t('productManagement.noData')}</div>
-          </div>
-        ) : (
-          <>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                      {t('productManagement.table.name')}
-                    </th>
-                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                      {t('productManagement.table.code')}
-                    </th>
-                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                      {t('productManagement.table.category')}
-                    </th>
-                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                      {t('productManagement.table.serviceType')}
-                    </th>
-                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                      {t('productManagement.table.price')}
-                    </th>
-                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                      {t('productManagement.table.status')}
-                    </th>
-                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900 w-20">
-                      {t('productManagement.table.actions')}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {products.map((product) => (
-                    <tr
-                      key={product.id}
-                      className="hover:bg-gray-50 transition-colors"
-                    >
-                      <td className="px-1 py-1 text-sm text-gray-900 font-medium">
-                        {product.name}
-                      </td>
-                      <td className="px-1 py-1 text-sm text-gray-700">
-                        {product.code || '-'}
-                      </td>
-                      <td className="px-1 py-1 text-sm text-gray-700">
-                        {product.category_name || '-'}
-                      </td>
-                      <td className="px-1 py-1 text-sm text-gray-700">
-                        <div className="flex items-center space-x-1.5">
-                          <Tag className="h-3.5 w-3.5 text-gray-400" />
-                          <span>{product.service_type || '-'}</span>
-                          {product.service_subtype && (
-                            <span className="text-xs text-gray-500">({product.service_subtype})</span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-1 py-1 text-sm text-gray-700">
-                        <div className="flex flex-col space-y-0.5">
-                          {product.price_direct_idr && (
-                            <div className="flex items-center space-x-1.5">
-                              <DollarSign className="h-3.5 w-3.5 text-gray-400" />
-                              <span className="text-xs">{formatPrice(product.price_direct_idr, 'IDR')}</span>
-                            </div>
-                          )}
-                          {product.price_direct_cny && (
-                            <div className="flex items-center space-x-1.5">
-                              <DollarSign className="h-3.5 w-3.5 text-gray-400" />
-                              <span className="text-xs">{formatPrice(product.price_direct_cny, 'CNY')}</span>
-                            </div>
-                          )}
-                          {!product.price_direct_idr && !product.price_direct_cny && '-'}
-                        </div>
-                      </td>
-                      <td className="px-1 py-1">
-                        {product.is_active ? (
-                          <span className="inline-flex items-center space-x-1 text-xs text-green-600">
-                            <CheckCircle2 className="h-3.5 w-3.5" />
-                            <span>{t('productManagement.table.active')}</span>
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center space-x-1 text-xs text-red-600">
-                            <XCircle className="h-3.5 w-3.5" />
-                            <span>{t('productManagement.table.inactive')}</span>
-                          </span>
+      {loading ? (
+        <Card bg={bgColor} borderColor={borderColor}>
+          <CardBody>
+            <Flex justify="center" align="center" py={8}>
+              <Spinner size="lg" color="blue.500" />
+              <Text ml={4} color="gray.500">{t('productManagement.loading')}</Text>
+            </Flex>
+          </CardBody>
+        </Card>
+      ) : products.length === 0 ? (
+        <Card bg={bgColor} borderColor={borderColor}>
+          <CardBody>
+            <VStack py={8} spacing={3}>
+              <Package size={48} color="gray" />
+              <Text color="gray.500">{t('productManagement.noData')}</Text>
+            </VStack>
+          </CardBody>
+        </Card>
+      ) : (
+        <Card bg={bgColor} borderColor={borderColor} overflow="hidden">
+          <Box overflowX="auto">
+            <Table variant="simple" size="sm">
+              <Thead bg="gray.50">
+                <Tr>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.name')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.code')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.category')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.serviceType')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.price')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.status')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.actions')}</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {products.map((product) => (
+                  <Tr key={product.id} _hover={{ bg: hoverBg }} transition="background-color 0.2s">
+                    <Td fontSize="sm" color="gray.900" fontWeight="medium">{product.name}</Td>
+                    <Td fontSize="sm" color="gray.600">{product.code || '-'}</Td>
+                    <Td fontSize="sm" color="gray.600">{product.category_name || '-'}</Td>
+                    <Td fontSize="sm" color="gray.600">
+                      <HStack spacing={1}>
+                        <Tag size={14} />
+                        <Text>{product.service_type || '-'}</Text>
+                        {product.service_subtype && (
+                          <Text fontSize="xs" color="gray.500">({product.service_subtype})</Text>
                         )}
-                      </td>
-                      <td className="px-1 py-1">
-                        <div className="flex items-center space-x-1">
-                          <button
-                            onClick={() => handleViewDetail(product.id)}
-                            className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
-                            title={t('productManagement.viewDetail')}
-                          >
-                            <Eye className="h-3.5 w-3.5" />
-                          </button>
-                          <button
-                            onClick={() => handleEdit(product)}
-                            className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
-                            title={t('productManagement.edit')}
-                          >
-                            <Edit className="h-3.5 w-3.5" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(product)}
-                            className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-                            title={t('productManagement.delete')}
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                      </HStack>
+                    </Td>
+                    <Td fontSize="sm" color="gray.600">
+                      <VStack spacing={0.5} align="flex-start">
+                        {product.price_direct_idr && (
+                          <HStack spacing={1}>
+                            <DollarSign size={14} />
+                            <Text fontSize="xs">{formatPrice(product.price_direct_idr, 'IDR')}</Text>
+                          </HStack>
+                        )}
+                        {product.price_direct_cny && (
+                          <HStack spacing={1}>
+                            <DollarSign size={14} />
+                            <Text fontSize="xs">{formatPrice(product.price_direct_cny, 'CNY')}</Text>
+                          </HStack>
+                        )}
+                        {!product.price_direct_idr && !product.price_direct_cny && (
+                          <Text>-</Text>
+                        )}
+                      </VStack>
+                    </Td>
+                    <Td fontSize="sm">
+                      {product.is_active ? (
+                        <Badge colorScheme="green" fontSize="xs">
+                          {t('productManagement.table.active')}
+                        </Badge>
+                      ) : (
+                        <Badge colorScheme="red" fontSize="xs">
+                          {t('productManagement.table.inactive')}
+                        </Badge>
+                      )}
+                    </Td>
+                    <Td fontSize="sm">
+                      <HStack spacing={1}>
+                        <IconButton
+                          aria-label={t('productManagement.viewDetail')}
+                          icon={<Eye size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="blue"
+                          onClick={() => handleViewDetail(product.id)}
+                        />
+                        <IconButton
+                          aria-label={t('productManagement.edit')}
+                          icon={<Edit size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="blue"
+                          onClick={() => handleEdit(product)}
+                        />
+                        <IconButton
+                          aria-label={t('productManagement.delete')}
+                          icon={<Trash2 size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="red"
+                          onClick={() => handleDelete(product)}
+                        />
+                      </HStack>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </Box>
+        </Card>
+      )}
 
-            {/* 分页 */}
-            {pages > 1 && (
-              <div className="px-1 py-1 border-t border-gray-200 flex items-center justify-between">
-                <div className="text-xs text-gray-600">
-                  {t('productManagement.pagination.total').replace('{{total}}', total.toString())}
-                </div>
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    {t('productManagement.pagination.prev')}
-                  </button>
-                  <div className="text-xs text-gray-700">
-                    {t('productManagement.pagination.page')
-                      .replace('{{current}}', currentPage.toString())
-                      .replace('{{total}}', pages.toString())}
-                  </div>
-                  <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === pages}
-                    className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    {t('productManagement.pagination.next')}
-                  </button>
-                </div>
-              </div>
-            )}
-          </>
-        )}
-      </div>
+      {/* 分页 */}
+      {pages > 1 && (
+        <Card mt={4} bg={bgColor} borderColor={borderColor}>
+          <CardBody py={2}>
+            <Flex justify="space-between" align="center">
+              <Text fontSize="xs" color="gray.600">
+                {t('productManagement.pagination.info', { current: currentPage, total: pages, size: queryParams.size || 10 })}
+              </Text>
+              <HStack spacing={1}>
+                <Button
+                  size="xs"
+                  variant="outline"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  isDisabled={currentPage === 1}
+                >
+                  {t('productManagement.pagination.prev')}
+                </Button>
+                {Array.from({ length: Math.min(pages, 5) }, (_, i) => {
+                  let pageNum: number
+                  if (pages <= 5) {
+                    pageNum = i + 1
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1
+                  } else if (currentPage >= pages - 2) {
+                    pageNum = pages - 4 + i
+                  } else {
+                    pageNum = currentPage - 2 + i
+                  }
+                  return (
+                    <Button
+                      key={pageNum}
+                      size="xs"
+                      variant={currentPage === pageNum ? 'solid' : 'outline'}
+                      colorScheme={currentPage === pageNum ? 'blue' : 'gray'}
+                      onClick={() => handlePageChange(pageNum)}
+                    >
+                      {pageNum}
+                    </Button>
+                  )
+                })}
+                <Button
+                  size="xs"
+                  variant="outline"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  isDisabled={currentPage === pages}
+                >
+                  {t('productManagement.pagination.next')}
+                </Button>
+              </HStack>
+            </Flex>
+          </CardBody>
+        </Card>
+      )}
 
       {/* 创建/编辑弹窗 */}
       {showModal && (

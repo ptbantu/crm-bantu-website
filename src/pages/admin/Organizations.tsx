@@ -17,11 +17,39 @@ import {
 import { OrganizationListParams, Organization, OrganizationDetail } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
 import { PageHeader } from '@/components/admin/PageHeader'
-import { Button } from '@chakra-ui/react'
+import {
+  Button,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Input,
+  Select,
+  InputGroup,
+  InputLeftElement,
+  HStack,
+  VStack,
+  Box,
+  Flex,
+  Spinner,
+  Text,
+  Badge,
+  IconButton,
+  Card,
+  CardBody,
+  useColorModeValue,
+} from '@chakra-ui/react'
 
 const Organizations = () => {
   const { t } = useTranslation()
   const { showSuccess, showError } = useToast()
+  
+  // Chakra UI 颜色模式
+  const bgColor = useColorModeValue('white', 'gray.800')
+  const borderColor = useColorModeValue('gray.200', 'gray.700')
+  const hoverBg = useColorModeValue('gray.50', 'gray.700')
 
   // 查询参数
   const [queryParams, setQueryParams] = useState<OrganizationListParams>({
@@ -287,6 +315,20 @@ const Organizations = () => {
     }
   }
 
+  // 获取组织类型颜色方案（用于 Chakra UI Badge）
+  const getOrganizationTypeColorScheme = (type: string) => {
+    switch (type) {
+      case 'internal':
+        return 'blue'
+      case 'vendor':
+        return 'green'
+      case 'agent':
+        return 'purple'
+      default:
+        return 'gray'
+    }
+  }
+
   return (
     <div className="w-full">
       {/* 页面头部 */}
@@ -307,270 +349,283 @@ const Organizations = () => {
       />
 
       {/* 查询表单 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-3 mb-3">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('organizations.search.name')}
-            </label>
-            <div className="relative">
-              <Building2 className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder={t('organizations.search.namePlaceholder')}
-                className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+      <Card mb={4} bg={bgColor} borderColor={borderColor}>
+        <CardBody>
+          <HStack spacing={3} align="flex-end" flexWrap="wrap">
+            {/* 组织名称 */}
+            <Box flex={1} minW="150px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('organizations.search.name')}
+              </Text>
+              <InputGroup size="sm">
+                <InputLeftElement pointerEvents="none">
+                  <Building2 size={14} color="gray" />
+                </InputLeftElement>
+                <Input
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder={t('organizations.search.namePlaceholder')}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                />
+              </InputGroup>
+            </Box>
+
+            {/* 组织编码 */}
+            <Box flex={1} minW="150px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('organizations.search.code')}
+              </Text>
+              <Input
+                size="sm"
+                value={formData.code}
+                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                placeholder={t('organizations.search.codePlaceholder')}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
-            </div>
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('organizations.search.code')}
-            </label>
-            <input
-              type="text"
-              value={formData.code}
-              onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-              placeholder={t('organizations.search.codePlaceholder')}
-              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('organizations.search.type')}
-            </label>
-            <select
-              value={formData.organization_type}
-              onChange={(e) => setFormData({ ...formData, organization_type: e.target.value as '' | 'internal' | 'vendor' | 'agent' })}
-              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-            >
-              <option value="">{t('organizations.search.allTypes')}</option>
-              <option value="internal">{t('organizations.type.internal')}</option>
-              <option value="vendor">{t('organizations.type.vendor')}</option>
-              <option value="agent">{t('organizations.type.agent')}</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('organizations.search.status')}
-            </label>
-            <select
-              value={formData.is_active}
-              onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
-              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-            >
-              <option value="">{t('organizations.search.allStatus')}</option>
-              <option value="true">{t('organizations.search.active')}</option>
-              <option value="false">{t('organizations.search.inactive')}</option>
-            </select>
-          </div>
-        </div>
-        <div className="flex items-center justify-end space-x-2">
-          <button
-            onClick={handleReset}
-            className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            {t('organizations.search.reset')}
-          </button>
-          <button
-            onClick={handleSearch}
-            disabled={loading}
-            className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
-          >
-            <Search className="h-3.5 w-3.5" />
-            <span>{t('organizations.search.search')}</span>
-          </button>
-        </div>
-      </div>
+            </Box>
+
+            {/* 组织类型 */}
+            <Box flex={1} minW="120px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('organizations.search.type')}
+              </Text>
+              <Select
+                size="sm"
+                value={formData.organization_type}
+                onChange={(e) => setFormData({ ...formData, organization_type: e.target.value as '' | 'internal' | 'vendor' | 'agent' })}
+              >
+                <option value="">{t('organizations.search.allTypes')}</option>
+                <option value="internal">{t('organizations.type.internal')}</option>
+                <option value="vendor">{t('organizations.type.vendor')}</option>
+                <option value="agent">{t('organizations.type.agent')}</option>
+              </Select>
+            </Box>
+
+            {/* 状态 */}
+            <Box flex={1} minW="120px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('organizations.search.status')}
+              </Text>
+              <Select
+                size="sm"
+                value={formData.is_active}
+                onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
+              >
+                <option value="">{t('organizations.search.allStatus')}</option>
+                <option value="true">{t('organizations.search.active')}</option>
+                <option value="false">{t('organizations.search.inactive')}</option>
+              </Select>
+            </Box>
+
+            {/* 操作按钮 */}
+            <HStack spacing={2}>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleReset}
+              >
+                {t('organizations.search.reset')}
+              </Button>
+              <Button
+                size="sm"
+                colorScheme="blue"
+                leftIcon={<Search size={14} />}
+                onClick={handleSearch}
+                isLoading={loading}
+              >
+                {t('organizations.search.search')}
+              </Button>
+            </HStack>
+          </HStack>
+        </CardBody>
+      </Card>
 
       {/* 组织列表 */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        {loading ? (
-          <div className="p-6 text-center">
-            <div className="text-sm text-gray-500">{t('organizations.loading')}</div>
-          </div>
-        ) : organizations.length === 0 ? (
-          <div className="p-6 text-center">
-            <div className="text-sm text-gray-500">{t('organizations.noData')}</div>
-          </div>
-        ) : (
-          <>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
-                      {t('organizations.table.name')}
-                    </th>
-                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
-                      {t('organizations.table.code')}
-                    </th>
-                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
-                      {t('organizations.table.type')}
-                    </th>
-                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
-                      {t('organizations.table.email')}
-                    </th>
-                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
-                      {t('organizations.table.phone')}
-                    </th>
-                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
-                      {t('organizations.table.website')}
-                    </th>
-                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
-                      {t('organizations.table.employees')}
-                    </th>
-                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900">
-                      {t('organizations.table.status')}
-                    </th>
-                    <th className="px-2 py-1.5 text-left text-xs font-semibold text-gray-900 w-20">
-                      {t('organizations.table.actions')}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {organizations.map((org) => (
-                    <tr
-                      key={org.id}
-                      className="hover:bg-gray-50 transition-colors"
-                    >
-                      <td className="px-2 py-1.5 text-sm text-gray-900 font-medium">
-                        {org.name}
-                      </td>
-                      <td className="px-2 py-1.5 text-sm text-gray-700">
-                        {org.code || '-'}
-                      </td>
-                      <td className="px-2 py-1.5">
-                        <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded ${getOrganizationTypeColor(org.organization_type)}`}>
-                          {getOrganizationTypeLabel(org.organization_type)}
-                        </span>
-                      </td>
-                      <td className="px-2 py-1.5 text-sm text-gray-700">
-                        <div className="flex items-center space-x-1.5">
-                          <Mail className="h-3.5 w-3.5 text-gray-400" />
-                          <span>{org.email || '-'}</span>
-                        </div>
-                      </td>
-                      <td className="px-2 py-1.5 text-sm text-gray-700">
-                        <div className="flex items-center space-x-1.5">
-                          <Phone className="h-3.5 w-3.5 text-gray-400" />
-                          <span>{org.phone || '-'}</span>
-                        </div>
-                      </td>
-                      <td className="px-2 py-1.5 text-sm text-gray-700">
-                        {org.website ? (
-                          <a
-                            href={org.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center space-x-1.5 text-primary-600 hover:text-primary-700"
-                          >
-                            <Globe className="h-3.5 w-3.5" />
-                            <span className="truncate max-w-xs">{org.website}</span>
-                          </a>
+      {loading ? (
+        <Card bg={bgColor} borderColor={borderColor}>
+          <CardBody>
+            <Flex justify="center" align="center" py={8}>
+              <Spinner size="lg" color="blue.500" />
+              <Text ml={4} color="gray.500">{t('organizations.loading')}</Text>
+            </Flex>
+          </CardBody>
+        </Card>
+      ) : organizations.length === 0 ? (
+        <Card bg={bgColor} borderColor={borderColor}>
+          <CardBody>
+            <VStack py={8} spacing={3}>
+              <Building2 size={48} color="gray" />
+              <Text color="gray.500">{t('organizations.noData')}</Text>
+            </VStack>
+          </CardBody>
+        </Card>
+      ) : (
+        <Card bg={bgColor} borderColor={borderColor} overflow="hidden">
+          <Box overflowX="auto">
+            <Table variant="simple" size="sm">
+              <Thead bg="gray.50">
+                <Tr>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('organizations.table.name')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('organizations.table.code')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('organizations.table.type')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('organizations.table.email')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('organizations.table.phone')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('organizations.table.website')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('organizations.table.employees')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('organizations.table.status')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('organizations.table.actions')}</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {organizations.map((org) => (
+                  <Tr key={org.id} _hover={{ bg: hoverBg }} transition="background-color 0.2s">
+                    <Td fontSize="sm" color="gray.900" fontWeight="medium">{org.name}</Td>
+                    <Td fontSize="sm" color="gray.600">{org.code || '-'}</Td>
+                    <Td fontSize="sm">
+                      <Badge colorScheme={getOrganizationTypeColorScheme(org.organization_type)} fontSize="xs">
+                        {getOrganizationTypeLabel(org.organization_type)}
+                      </Badge>
+                    </Td>
+                    <Td fontSize="sm" color="gray.600">
+                      <HStack spacing={1}>
+                        <Mail size={14} />
+                        <Text>{org.email || '-'}</Text>
+                      </HStack>
+                    </Td>
+                    <Td fontSize="sm" color="gray.600">
+                      <HStack spacing={1}>
+                        <Phone size={14} />
+                        <Text>{org.phone || '-'}</Text>
+                      </HStack>
+                    </Td>
+                    <Td fontSize="sm" color="gray.600">
+                      {org.website ? (
+                        <HStack spacing={1} as="a" href={org.website} target="_blank" rel="noopener noreferrer" color="blue.600" _hover={{ color: 'blue.700' }}>
+                          <Globe size={14} />
+                          <Text maxW="200px" isTruncated>{org.website}</Text>
+                        </HStack>
+                      ) : (
+                        <Text>-</Text>
+                      )}
+                    </Td>
+                    <Td fontSize="sm" color="gray.600">
+                      <HStack spacing={1}>
+                        <Users size={14} />
+                        <Text>{org.employees_count ?? 0}</Text>
+                      </HStack>
+                    </Td>
+                    <Td fontSize="sm">
+                      <VStack spacing={0.5} align="flex-start">
+                        {org.is_active ? (
+                          <Badge colorScheme="green" fontSize="xs">
+                            {t('organizations.table.active')}
+                          </Badge>
                         ) : (
-                          '-'
+                          <Badge colorScheme="red" fontSize="xs">
+                            {t('organizations.table.inactive')}
+                          </Badge>
                         )}
-                      </td>
-                      <td className="px-2 py-1.5 text-sm text-gray-700">
-                        <div className="flex items-center space-x-1.5">
-                          <Users className="h-3.5 w-3.5 text-gray-400" />
-                          <span>{org.employees_count ?? 0}</span>
-                        </div>
-                      </td>
-                      <td className="px-2 py-1.5">
-                        <div className="flex flex-col space-y-0.5">
-                          {org.is_active ? (
-                            <span className="inline-flex items-center space-x-1 text-xs text-green-600">
-                              <CheckCircle2 className="h-3.5 w-3.5" />
-                              <span>{t('organizations.table.active')}</span>
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center space-x-1 text-xs text-red-600">
-                              <XCircle className="h-3.5 w-3.5" />
-                              <span>{t('organizations.table.inactive')}</span>
-                            </span>
-                          )}
-                          {org.is_locked && (
-                            <span className="inline-flex items-center space-x-1 text-xs text-orange-600">
-                              <Lock className="h-3 w-3" />
-                              <span>{t('organizations.table.locked')}</span>
-                            </span>
-                          )}
-                          {org.is_verified && (
-                            <span className="inline-flex items-center space-x-1 text-xs text-blue-600">
-                              <Shield className="h-3 w-3" />
-                              <span>{t('organizations.table.verified')}</span>
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-2 py-1.5">
-                        <div className="flex items-center space-x-1">
-                          <button
-                            onClick={() => handleViewDetail(org.id)}
-                            className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
-                            title={t('organizations.detail.title')}
-                          >
-                            <Eye className="h-3.5 w-3.5" />
-                          </button>
-                          <button
-                            onClick={() => handleEdit(org)}
-                            className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
-                            title={t('organizations.edit')}
-                          >
-                            <Edit className="h-3.5 w-3.5" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(org)}
-                            className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-                            title={t('organizations.delete')}
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                        {org.is_locked && (
+                          <Badge colorScheme="orange" fontSize="xs">
+                            {t('organizations.table.locked')}
+                          </Badge>
+                        )}
+                        {org.is_verified && (
+                          <Badge colorScheme="blue" fontSize="xs">
+                            {t('organizations.table.verified')}
+                          </Badge>
+                        )}
+                      </VStack>
+                    </Td>
+                    <Td fontSize="sm">
+                      <HStack spacing={1}>
+                        <IconButton
+                          aria-label={t('organizations.detail.title')}
+                          icon={<Eye size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="blue"
+                          onClick={() => handleViewDetail(org.id)}
+                        />
+                        <IconButton
+                          aria-label={t('organizations.edit')}
+                          icon={<Edit size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="blue"
+                          onClick={() => handleEdit(org)}
+                        />
+                        <IconButton
+                          aria-label={t('organizations.delete')}
+                          icon={<Trash2 size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="red"
+                          onClick={() => handleDelete(org)}
+                        />
+                      </HStack>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </Box>
+        </Card>
+      )}
 
-            {/* 分页 */}
-            {pages > 1 && (
-              <div className="px-2 py-1.5 border-t border-gray-200 flex items-center justify-between">
-                <div className="text-xs text-gray-600">
-                  {t('organizations.pagination.total').replace('{{total}}', total.toString())}
-                </div>
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    {t('organizations.pagination.prev')}
-                  </button>
-                  <div className="text-xs text-gray-700">
-                    {t('organizations.pagination.page')
-                      .replace('{{current}}', currentPage.toString())
-                      .replace('{{total}}', pages.toString())}
-                  </div>
-                  <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === pages}
-                    className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    {t('organizations.pagination.next')}
-                  </button>
-                </div>
-              </div>
-            )}
-          </>
-        )}
-      </div>
+      {/* 分页 */}
+      {pages > 1 && (
+        <Card mt={4} bg={bgColor} borderColor={borderColor}>
+          <CardBody py={2}>
+            <Flex justify="space-between" align="center">
+              <Text fontSize="xs" color="gray.600">
+                {t('organizations.pagination.info', { current: currentPage, total: pages, size: queryParams.size || 10 })}
+              </Text>
+              <HStack spacing={1}>
+                <Button
+                  size="xs"
+                  variant="outline"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  isDisabled={currentPage === 1}
+                >
+                  {t('organizations.pagination.prev')}
+                </Button>
+                {Array.from({ length: Math.min(pages, 5) }, (_, i) => {
+                  let pageNum: number
+                  if (pages <= 5) {
+                    pageNum = i + 1
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1
+                  } else if (currentPage >= pages - 2) {
+                    pageNum = pages - 4 + i
+                  } else {
+                    pageNum = currentPage - 2 + i
+                  }
+                  return (
+                    <Button
+                      key={pageNum}
+                      size="xs"
+                      variant={currentPage === pageNum ? 'solid' : 'outline'}
+                      colorScheme={currentPage === pageNum ? 'blue' : 'gray'}
+                      onClick={() => handlePageChange(pageNum)}
+                    >
+                      {pageNum}
+                    </Button>
+                  )
+                })}
+                <Button
+                  size="xs"
+                  variant="outline"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  isDisabled={currentPage === pages}
+                >
+                  {t('organizations.pagination.next')}
+                </Button>
+              </HStack>
+            </Flex>
+          </CardBody>
+        </Card>
+      )}
 
       {/* 创建/编辑弹窗 */}
       {showModal && (

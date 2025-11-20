@@ -17,11 +17,39 @@ import {
 import { CategoryListParams, ProductCategory } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
 import { PageHeader } from '@/components/admin/PageHeader'
-import { Button } from '@chakra-ui/react'
+import {
+  Button,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Input,
+  Select,
+  InputGroup,
+  InputLeftElement,
+  HStack,
+  VStack,
+  Box,
+  Flex,
+  Spinner,
+  Text,
+  Badge,
+  IconButton,
+  Card,
+  CardBody,
+  useColorModeValue,
+} from '@chakra-ui/react'
 
 const CategoryManagement = () => {
   const { t } = useTranslation()
   const { showSuccess, showError } = useToast()
+  
+  // Chakra UI 颜色模式
+  const bgColor = useColorModeValue('white', 'gray.800')
+  const borderColor = useColorModeValue('gray.200', 'gray.700')
+  const hoverBg = useColorModeValue('gray.50', 'gray.700')
 
   // 查询参数
   const [queryParams, setQueryParams] = useState<CategoryListParams>({
@@ -237,200 +265,229 @@ const CategoryManagement = () => {
       />
 
       {/* 查询表单 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-2 mb-2">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('categoryManagement.search.code')}
-            </label>
-            <div className="relative">
-              <Folder className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-              <input
-                type="text"
-                value={formData.code}
-                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                placeholder={t('categoryManagement.search.codePlaceholder')}
-                className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+      <Card mb={4} bg={bgColor} borderColor={borderColor}>
+        <CardBody>
+          <HStack spacing={3} align="flex-end" flexWrap="wrap">
+            {/* 分类编码 */}
+            <Box flex={1} minW="150px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('categoryManagement.search.code')}
+              </Text>
+              <InputGroup size="sm">
+                <InputLeftElement pointerEvents="none">
+                  <Folder size={14} color="gray" />
+                </InputLeftElement>
+                <Input
+                  value={formData.code}
+                  onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                  placeholder={t('categoryManagement.search.codePlaceholder')}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                />
+              </InputGroup>
+            </Box>
+
+            {/* 分类名称 */}
+            <Box flex={1} minW="150px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('categoryManagement.search.name')}
+              </Text>
+              <Input
+                size="sm"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder={t('categoryManagement.search.namePlaceholder')}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
-            </div>
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('categoryManagement.search.name')}
-            </label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder={t('categoryManagement.search.namePlaceholder')}
-              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('categoryManagement.search.parent')}
-            </label>
-            <select
-              value={formData.parent_id}
-              onChange={(e) => setFormData({ ...formData, parent_id: e.target.value })}
-              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-            >
-              <option value="">{t('categoryManagement.search.allCategories')}</option>
-              {allCategories
-                .filter(cat => !editingCategory || cat.id !== editingCategory.id)
-                .map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name} {cat.code ? `(${cat.code})` : ''}
-                  </option>
-                ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              {t('categoryManagement.search.status')}
-            </label>
-            <select
-              value={formData.is_active}
-              onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
-              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
-            >
-              <option value="">{t('categoryManagement.search.allStatus')}</option>
-              <option value="true">{t('categoryManagement.search.active')}</option>
-              <option value="false">{t('categoryManagement.search.inactive')}</option>
-            </select>
-          </div>
-        </div>
-        <div className="flex items-center justify-end space-x-2">
-          <button
-            onClick={handleReset}
-            className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            {t('categoryManagement.search.reset')}
-          </button>
-          <button
-            onClick={handleSearch}
-            disabled={loading}
-            className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
-          >
-            <Search className="h-3.5 w-3.5" />
-            <span>{t('categoryManagement.search.search')}</span>
-          </button>
-        </div>
-      </div>
+            </Box>
+
+            {/* 父分类 */}
+            <Box flex={1} minW="120px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('categoryManagement.search.parent')}
+              </Text>
+              <Select
+                size="sm"
+                value={formData.parent_id}
+                onChange={(e) => setFormData({ ...formData, parent_id: e.target.value })}
+              >
+                <option value="">{t('categoryManagement.search.allCategories')}</option>
+                {allCategories
+                  .filter(cat => !editingCategory || cat.id !== editingCategory.id)
+                  .map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name} {cat.code ? `(${cat.code})` : ''}
+                    </option>
+                  ))}
+              </Select>
+            </Box>
+
+            {/* 状态 */}
+            <Box flex={1} minW="120px">
+              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                {t('categoryManagement.search.status')}
+              </Text>
+              <Select
+                size="sm"
+                value={formData.is_active}
+                onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
+              >
+                <option value="">{t('categoryManagement.search.allStatus')}</option>
+                <option value="true">{t('categoryManagement.search.active')}</option>
+                <option value="false">{t('categoryManagement.search.inactive')}</option>
+              </Select>
+            </Box>
+
+            {/* 操作按钮 */}
+            <HStack spacing={2}>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleReset}
+              >
+                {t('categoryManagement.search.reset')}
+              </Button>
+              <Button
+                size="sm"
+                colorScheme="blue"
+                leftIcon={<Search size={14} />}
+                onClick={handleSearch}
+                isLoading={loading}
+              >
+                {t('categoryManagement.search.search')}
+              </Button>
+            </HStack>
+          </HStack>
+        </CardBody>
+      </Card>
 
       {/* 分类列表 */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        {loading ? (
-          <div className="p-6 text-center">
-            <div className="text-sm text-gray-500">{t('categoryManagement.loading')}</div>
-          </div>
-        ) : categories.length === 0 ? (
-          <div className="p-6 text-center">
-            <div className="text-sm text-gray-500">{t('categoryManagement.noData')}</div>
-          </div>
-        ) : (
-          <>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                      {t('categoryManagement.table.code')}
-                    </th>
-                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                      {t('categoryManagement.table.name')}
-                    </th>
-                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900">
-                      {t('categoryManagement.table.status')}
-                    </th>
-                    <th className="px-1 py-1 text-left text-xs font-semibold text-gray-900 w-20">
-                      {t('categoryManagement.table.actions')}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {categories.map((category) => (
-                    <tr
-                      key={category.id}
-                      className="hover:bg-gray-50 transition-colors"
-                    >
-                      <td className="px-1 py-1 text-sm text-gray-900 font-medium">
-                        {category.code}
-                      </td>
-                      <td className="px-1 py-1 text-sm text-gray-700">
-                        {category.name}
-                      </td>
-                      <td className="px-1 py-1">
-                        {category.is_active ? (
-                          <span className="inline-flex items-center space-x-1 text-xs text-green-600">
-                            <CheckCircle2 className="h-3.5 w-3.5" />
-                            <span>{t('categoryManagement.table.active')}</span>
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center space-x-1 text-xs text-red-600">
-                            <XCircle className="h-3.5 w-3.5" />
-                            <span>{t('categoryManagement.table.inactive')}</span>
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-1 py-1">
-                        <div className="flex items-center space-x-1">
-                          <button
-                            onClick={() => handleEdit(category)}
-                            className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
-                            title={t('categoryManagement.edit')}
-                          >
-                            <Edit className="h-3.5 w-3.5" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(category)}
-                            className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-                            title={t('categoryManagement.delete')}
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+      {loading ? (
+        <Card bg={bgColor} borderColor={borderColor}>
+          <CardBody>
+            <Flex justify="center" align="center" py={8}>
+              <Spinner size="lg" color="blue.500" />
+              <Text ml={4} color="gray.500">{t('categoryManagement.loading')}</Text>
+            </Flex>
+          </CardBody>
+        </Card>
+      ) : categories.length === 0 ? (
+        <Card bg={bgColor} borderColor={borderColor}>
+          <CardBody>
+            <VStack py={8} spacing={3}>
+              <Folder size={48} color="gray" />
+              <Text color="gray.500">{t('categoryManagement.noData')}</Text>
+            </VStack>
+          </CardBody>
+        </Card>
+      ) : (
+        <Card bg={bgColor} borderColor={borderColor} overflow="hidden">
+          <Box overflowX="auto">
+            <Table variant="simple" size="sm">
+              <Thead bg="gray.50">
+                <Tr>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('categoryManagement.table.code')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('categoryManagement.table.name')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('categoryManagement.table.status')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('categoryManagement.table.actions')}</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {categories.map((category) => (
+                  <Tr key={category.id} _hover={{ bg: hoverBg }} transition="background-color 0.2s">
+                    <Td fontSize="sm" color="gray.900" fontWeight="medium">{category.code}</Td>
+                    <Td fontSize="sm" color="gray.600">{category.name}</Td>
+                    <Td fontSize="sm">
+                      {category.is_active ? (
+                        <Badge colorScheme="green" fontSize="xs">
+                          {t('categoryManagement.table.active')}
+                        </Badge>
+                      ) : (
+                        <Badge colorScheme="red" fontSize="xs">
+                          {t('categoryManagement.table.inactive')}
+                        </Badge>
+                      )}
+                    </Td>
+                    <Td fontSize="sm">
+                      <HStack spacing={1}>
+                        <IconButton
+                          aria-label={t('categoryManagement.edit')}
+                          icon={<Edit size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="blue"
+                          onClick={() => handleEdit(category)}
+                        />
+                        <IconButton
+                          aria-label={t('categoryManagement.delete')}
+                          icon={<Trash2 size={14} />}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="red"
+                          onClick={() => handleDelete(category)}
+                        />
+                      </HStack>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </Box>
+        </Card>
+      )}
 
-            {/* 分页 */}
-            {pages > 1 && (
-              <div className="px-1 py-1 border-t border-gray-200 flex items-center justify-between">
-                <div className="text-xs text-gray-600">
-                  {t('categoryManagement.pagination.total').replace('{{total}}', total.toString())}
-                </div>
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    {t('categoryManagement.pagination.prev')}
-                  </button>
-                  <div className="text-xs text-gray-700">
-                    {t('categoryManagement.pagination.page')
-                      .replace('{{current}}', currentPage.toString())
-                      .replace('{{total}}', pages.toString())}
-                  </div>
-                  <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === pages}
-                    className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    {t('categoryManagement.pagination.next')}
-                  </button>
-                </div>
-              </div>
-            )}
-          </>
-        )}
-      </div>
+      {/* 分页 */}
+      {pages > 1 && (
+        <Card mt={4} bg={bgColor} borderColor={borderColor}>
+          <CardBody py={2}>
+            <Flex justify="space-between" align="center">
+              <Text fontSize="xs" color="gray.600">
+                {t('categoryManagement.pagination.info', { current: currentPage, total: pages, size: queryParams.size || 10 })}
+              </Text>
+              <HStack spacing={1}>
+                <Button
+                  size="xs"
+                  variant="outline"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  isDisabled={currentPage === 1}
+                >
+                  {t('categoryManagement.pagination.prev')}
+                </Button>
+                {Array.from({ length: Math.min(pages, 5) }, (_, i) => {
+                  let pageNum: number
+                  if (pages <= 5) {
+                    pageNum = i + 1
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1
+                  } else if (currentPage >= pages - 2) {
+                    pageNum = pages - 4 + i
+                  } else {
+                    pageNum = currentPage - 2 + i
+                  }
+                  return (
+                    <Button
+                      key={pageNum}
+                      size="xs"
+                      variant={currentPage === pageNum ? 'solid' : 'outline'}
+                      colorScheme={currentPage === pageNum ? 'blue' : 'gray'}
+                      onClick={() => handlePageChange(pageNum)}
+                    >
+                      {pageNum}
+                    </Button>
+                  )
+                })}
+                <Button
+                  size="xs"
+                  variant="outline"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  isDisabled={currentPage === pages}
+                >
+                  {t('categoryManagement.pagination.next')}
+                </Button>
+              </HStack>
+            </Flex>
+          </CardBody>
+        </Card>
+      )}
 
       {/* 创建/编辑弹窗 */}
       {showModal && (
