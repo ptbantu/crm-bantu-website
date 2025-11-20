@@ -14,7 +14,8 @@
     "services": "Layanan",
     "contact": "Hubungi Kami",
     "dashboard": "Dashboard",
-    "welcome": "Selamat Datang"
+    "welcome": "Selamat Datang",
+    "search": "Cari"
   },
   "header": {
     "title": "Bantu Enterprise Services",
@@ -618,6 +619,7 @@
     "noData": "Tidak ada data"
   },
   "menu": {
+    "menu": "Menu",
     "dashboard": "Dashboard",
     "admin": "Manajemen Backend",
     "userManagement": "Manajemen Pengguna",

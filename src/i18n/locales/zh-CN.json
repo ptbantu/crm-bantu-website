@@ -14,7 +14,8 @@
     "services": "服务介绍",
     "contact": "联系我们",
     "dashboard": "仪表板",
-    "welcome": "欢迎"
+    "welcome": "欢迎",
+    "search": "搜索"
   },
   "header": {
     "title": "班兔企服",
@@ -618,6 +619,7 @@
     "noData": "暂无数据"
   },
   "menu": {
+    "menu": "菜单",
     "dashboard": "仪表盘",
     "admin": "后台管理",
     "userManagement": "用户管理",
