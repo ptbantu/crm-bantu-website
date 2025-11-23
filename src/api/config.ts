@@ -92,6 +92,11 @@ export const API_PATHS = {
     BASE: '/api/foundation/roles',
     BY_ID: (id: string) => `/api/foundation/roles/${id}`,
   },
+  // 权限
+  PERMISSIONS: {
+    BASE: '/api/foundation/permissions',
+    BY_ID: (id: string) => `/api/foundation/permissions/${id}`,
+  },
   // 服务管理 - 分类
   CATEGORIES: {
     BASE: '/api/service-management/categories',

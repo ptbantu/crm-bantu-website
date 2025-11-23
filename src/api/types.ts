@@ -52,9 +52,11 @@ export interface UserListItem {
   id: string
   username: string
   email: string | null
+  phone?: string | null
   display_name: string | null
   primary_organization_id?: string | null
   primary_organization_name?: string | null
+  whatsapp?: string | null
   is_active: boolean
   created_at?: string
   updated_at?: string

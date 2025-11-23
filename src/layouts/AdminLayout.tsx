@@ -71,6 +71,7 @@ const AdminLayoutContent = ({ children }: AdminLayoutContentProps) => {
       '/admin/user-management/employee-list': 'menu.employeeList',
       '/admin/user-management/employee-management': 'menu.employeeManagement',
       '/admin/user-management/organizations': 'menu.organizations',
+      '/admin/user-management/role-management': 'menu.roleManagement',
       '/admin/customer/list': 'menu.customers',
       '/admin/customer/contacts': 'menu.contactList',
       '/admin/order/list': 'menu.serviceList',
@@ -79,6 +80,7 @@ const AdminLayoutContent = ({ children }: AdminLayoutContentProps) => {
       '/admin/product/category-management': 'menu.categoryManagement',
       '/admin/system-management/user-info': 'menu.userInfo',
       '/admin/system-management/system-status': 'menu.systemStatus',
+      '/admin/system-management/system-logs': 'menu.systemLogs',
     }
 
     return {

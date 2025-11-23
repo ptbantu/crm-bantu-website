@@ -100,7 +100,9 @@ export async function createUser(data: CreateUserRequest): Promise<UserListItem>
  */
 export interface UpdateUserRequest {
   email?: string
+  phone?: string
   display_name?: string
+  gender?: string
   organization_id?: string
   role_ids?: string[]
   is_active?: boolean

@@ -17,6 +17,8 @@ import {
   User,
   Activity,
   Folder,
+  Shield,
+  FileText,
 } from 'lucide-react'
 import { ComponentType } from 'react'
 
@@ -65,6 +67,13 @@ export const adminMenuItems: MenuItem[] = [
         label: 'menu.organizations',
         icon: Building2,
         path: '/admin/user-management/organizations',
+        role: Role.ADMIN,
+      },
+      {
+        key: 'roleManagement',
+        label: 'menu.roleManagement',
+        icon: Shield,
+        path: '/admin/user-management/role-management',
         role: Role.ADMIN,
       },
     ],
@@ -173,6 +182,13 @@ export const adminMenuItems: MenuItem[] = [
         label: 'menu.systemStatus',
         icon: Activity,
         path: '/admin/system-management/system-status',
+        role: Role.ADMIN,
+      },
+      {
+        key: 'systemLogs',
+        label: 'menu.systemLogs',
+        icon: FileText,
+        path: '/admin/system-management/system-logs',
         role: Role.ADMIN,
       },
     ],

@@ -5,6 +5,7 @@ import { Eye, EyeOff } from 'lucide-react'
 import { login } from '@/api/auth'
 import { useToast } from '@/components/ToastContainer'
 import { useAuth } from '@/hooks/useAuth'
+import { ApiError } from '@/api/client'
 
 const Login = () => {
   const { t } = useTranslation()
@@ -33,8 +34,26 @@ const Login = () => {
         navigate('/dashboard')
       }, 500) // 延迟跳转，让用户看到提示
     } catch (err) {
-      // 处理错误：只显示账号密码错误
-      showError(t('login.error.invalidCredentials') || '账号或密码错误')
+      // 处理错误：直接使用后端返回的错误消息
+      let errorMessage = t('login.error.invalidCredentials') || '账号或密码错误'
+      
+      if (err instanceof ApiError) {
+        // 直接使用后端返回的错误消息
+        if (err.message) {
+          errorMessage = err.message
+        }
+      } else if (err instanceof Error) {
+        // 处理网络错误等非API错误
+        if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+          errorMessage = t('login.error.networkError') || '网络连接失败，请检查网络后重试'
+        } else if (err.message.includes('AbortError') || err.message.includes('timeout')) {
+          errorMessage = t('login.error.timeout') || '请求超时，请检查网络连接后重试'
+        } else {
+          errorMessage = err.message || errorMessage
+        }
+      }
+      
+      showError(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -112,32 +131,21 @@ const Login = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember"
-                name="remember"
-                type="checkbox"
-                checked={formData.remember}
-                onChange={handleChange}
-                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-              />
-              <label
-                htmlFor="remember"
-                className="ml-2 block text-sm text-gray-900"
-              >
-                {t('login.remember')}
-              </label>
-            </div>
-
-            <div className="text-sm">
-              <a
-                href="#"
-                className="font-medium text-primary-600 hover:text-primary-500"
-              >
-                {t('login.forgot')}
-              </a>
-            </div>
+          <div className="flex items-center">
+            <input
+              id="remember"
+              name="remember"
+              type="checkbox"
+              checked={formData.remember}
+              onChange={handleChange}
+              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+            />
+            <label
+              htmlFor="remember"
+              className="ml-2 block text-sm text-gray-900"
+            >
+              {t('login.remember')}
+            </label>
           </div>
 
           <div>

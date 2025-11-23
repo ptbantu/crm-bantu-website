@@ -16,9 +16,11 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import EmployeeList from './pages/admin/EmployeeList'
 import EmployeeManagement from './pages/admin/EmployeeManagement'
+import RoleManagement from './pages/admin/RoleManagement'
 import Organizations from './pages/admin/Organizations'
 import UserInfo from './pages/admin/UserInfo'
 import SystemStatus from './pages/admin/SystemStatus'
+import SystemLogs from './pages/admin/SystemLogs'
 import ProductManagement from './pages/admin/ProductManagement'
 import VendorProductList from './pages/admin/VendorProductList'
 import CategoryManagement from './pages/admin/CategoryManagement'
@@ -86,6 +88,16 @@ const AppContent = () => {
               </AdminLayout>
             }
           />
+          <Route
+            path="/admin/user-management/role-management"
+            element={
+              <AdminLayout>
+                <PermissionGuard role="ADMIN">
+                  <RoleManagement />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
           
           {/* 系统管理模块（仅 ADMIN） */}
           <Route
@@ -104,6 +116,16 @@ const AppContent = () => {
               <AdminLayout>
                 <PermissionGuard role="ADMIN">
                   <SystemStatus />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/system-management/system-logs"
+            element={
+              <AdminLayout>
+                <PermissionGuard role="ADMIN">
+                  <SystemLogs />
                 </PermissionGuard>
               </AdminLayout>
             }

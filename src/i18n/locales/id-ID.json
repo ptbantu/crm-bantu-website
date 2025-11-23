@@ -319,7 +319,15 @@
     "passwordPlaceholder": "Masukkan kata sandi",
     "success": "Login berhasil",
     "error": {
-      "invalidCredentials": "Email atau kata sandi salah"
+      "invalidCredentials": "Email atau kata sandi salah",
+      "userNotFound": "Pengguna tidak ditemukan, periksa apakah email benar",
+      "organizationLocked": "Organisasi Anda telah dikunci, tidak dapat login, silakan hubungi administrator",
+      "organizationInactive": "Organisasi Anda tidak aktif, tidak dapat login, silakan hubungi administrator",
+      "userLocked": "Akun Anda telah dikunci, tidak dapat login, silakan hubungi administrator",
+      "userInactive": "Akun Anda tidak aktif, tidak dapat login, silakan hubungi administrator",
+      "timeout": "Permintaan timeout, periksa koneksi jaringan dan coba lagi",
+      "serverError": "Kesalahan server, silakan coba lagi nanti",
+      "networkError": "Koneksi jaringan gagal, periksa jaringan dan coba lagi"
     }
   },
   "footer": {
@@ -628,9 +636,11 @@
     "employeeManagement": "Manajemen Karyawan",
     "employees": "Manajemen Karyawan",
     "organizations": "Manajemen Organisasi",
+    "roleManagement": "Manajemen Peran",
     "systemManagement": "Manajemen Sistem",
     "userInfo": "Informasi Pengguna",
     "systemStatus": "Status Sistem",
+    "systemLogs": "Log Sistem",
     "vendors": "Manajemen Vendor",
     "customer": "Manajemen Pelanggan",
     "customers": "Daftar Pelanggan",
