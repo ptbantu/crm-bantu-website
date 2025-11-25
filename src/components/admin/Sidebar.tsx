@@ -1,14 +1,14 @@
 /**
  * 侧边栏组件
- * 权限感知的导航菜单 - 现代化设计风格
+ * 权限感知的导航菜单 - Refined Glassmorphism 设计风格
  */
 import { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useMenu } from '@/hooks/useMenu'
 import { useSidebar } from '@/contexts/SidebarContext'
 import { useAuth } from '@/hooks/useAuth'
-import { ChevronDown, ChevronRight, Search, ChevronRight as ChevronRightIcon } from 'lucide-react'
+import { ChevronDown, ChevronRight, Search, ChevronRight as ChevronRightIcon, Sparkles, LogOut } from 'lucide-react'
 import {
   Box,
   VStack,
@@ -24,38 +24,71 @@ import {
   InputLeftElement,
   Avatar,
   Image,
+  Button,
 } from '@chakra-ui/react'
 
 export const Sidebar = () => {
   const menu = useMenu()
   const { t } = useTranslation()
   const location = useLocation()
+  const navigate = useNavigate()
   const { isCollapsed } = useSidebar()
   const { user } = useAuth()
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
   const [searchValue, setSearchValue] = useState('')
   
-  // Chakra UI 颜色模式
-  const bgColor = useColorModeValue('white', 'gray.900')
+  // Chakra UI 颜色模式 - Refined Glassmorphism
+  const glassBg = useColorModeValue('whiteAlpha.900', 'blackAlpha.800')
   const borderColor = useColorModeValue('gray.200', 'gray.700')
-  const hoverBg = useColorModeValue('gray.50', 'gray.800')
-  const activeBg = useColorModeValue('gray.100', 'gray.700')
-  const activeColor = useColorModeValue('gray.900', 'white')
-  const textColor = useColorModeValue('gray.600', 'gray.300')
+  const ringColor = useColorModeValue('gray.100', 'gray.800')
+  const hoverBg = useColorModeValue('gray.50', 'whiteAlpha.100')
+  const activeBg = useColorModeValue('indigo.600', 'indigo.500')
+  const activeParentBg = useColorModeValue('indigo.50', 'indigo.900')
+  const activeColor = useColorModeValue('white', 'white')
+  const activeParentColor = useColorModeValue('indigo.700', 'indigo.200')
+  const textColor = useColorModeValue('gray.700', 'gray.300')
   const groupTextColor = useColorModeValue('gray.500', 'gray.400')
-  const searchBg = useColorModeValue('gray.50', 'gray.800')
-  const searchBorder = useColorModeValue('gray.200', 'gray.700')
+  const searchBg = useColorModeValue('gray.50', 'whiteAlpha.100')
+  const searchBorder = useColorModeValue('gray.200', 'gray.600')
+  const childActiveBg = useColorModeValue('indigo.50', 'indigo.900')
+  const childActiveColor = useColorModeValue('indigo.700', 'indigo.200')
+  const userCardBg = useColorModeValue('white', 'gray.800')
+  const userCardHoverBg = useColorModeValue('gray.50', 'gray.700')
+  const userNameColor = useColorModeValue('gray.900', 'white')
 
-  // 自动展开包含激活子菜单的父菜单
+  // 辅助函数：检查路径是否匹配（忽略查询参数）
+  const isPathMatch = (path1: string, path2: string): boolean => {
+    // 移除查询参数进行比较
+    const cleanPath1 = path1.split('?')[0]
+    const cleanPath2 = path2.split('?')[0]
+    return cleanPath1 === cleanPath2 || cleanPath1.startsWith(cleanPath2 + '/')
+  }
+
+  // 自动展开包含激活子菜单的父菜单（确保有激活子项时父菜单始终保持展开）
   useEffect(() => {
     const findActiveParent = (items: typeof menu): string[] => {
       const activeParents: string[] = []
       
+      // 递归检查菜单项及其所有子项
       const checkItem = (item: typeof menu[0]): boolean => {
         if (item.children) {
-          const hasActiveChild = item.children.some(child => 
-            location.pathname === child.path || location.pathname.startsWith(child.path + '/')
-          )
+          let hasActiveChild = false
+          
+          for (const child of item.children) {
+            // 检查当前子项是否激活（忽略查询参数）
+            const childPath = child.path.split('?')[0]
+            if (isPathMatch(location.pathname, childPath)) {
+              hasActiveChild = true
+              break
+            }
+            
+            // 递归检查子项的子项
+            if (child.children && checkItem(child)) {
+              hasActiveChild = true
+              break
+            }
+          }
+          
           if (hasActiveChild) {
             activeParents.push(item.key)
             return true
@@ -69,23 +102,47 @@ export const Sidebar = () => {
     }
     
     const activeParents = findActiveParent(menu)
-    if (activeParents.length > 0) {
-      setExpandedItems(prev => {
-        const next = new Set(prev)
-        activeParents.forEach(key => next.add(key))
-        return next
-      })
-    }
-  }, [location.pathname, menu])
+    // 始终展开包含激活子项的父菜单，确保点击子菜单项时父菜单不会折叠
+    // 使用函数式更新确保不会丢失已有的展开状态
+    setExpandedItems(prev => {
+      const next = new Set(prev)
+      activeParents.forEach(key => next.add(key))
+      return next
+    })
+  }, [location.pathname, location.search, menu])
 
-  const renderMenuItem = (item: (typeof menu)[0], level = 0) => {
+  const renderMenuItem = (item: (typeof menu)[0], level = 0, parentKey?: string) => {
     const Icon = item.icon
     const hasChildren = item.children && item.children.length > 0
     const isExpanded = expandedItems.has(item.key)
+    const isChild = level > 0
+
+    // 检查是否有激活的子项（递归检查，忽略查询参数）
+    const checkActiveChild = (children: typeof item.children): boolean => {
+      if (!children) return false
+      return children.some(child => {
+        const childPath = child.path.split('?')[0] // 移除查询参数
+        // 检查路径是否匹配（忽略查询参数）
+        if (isPathMatch(location.pathname, childPath)) {
+          return true
+        }
+        // 递归检查嵌套的子项
+        if (child.children) {
+          return checkActiveChild(child.children)
+        }
+        return false
+      })
+    }
+    const hasActiveChild = hasChildren && checkActiveChild(item.children)
 
     // 如果有子菜单，显示父菜单标题（可点击折叠/展开）
     if (hasChildren) {
       const toggleExpand = () => {
+        // 如果有激活的子项，不允许折叠
+        if (hasActiveChild) {
+          return
+        }
+        
         setExpandedItems(prev => {
           const next = new Set(prev)
           if (next.has(item.key)) {
@@ -97,6 +154,9 @@ export const Sidebar = () => {
         })
       }
 
+      // 父项是否直接激活（有路径且匹配，忽略查询参数）
+      const isParentDirectlyActive = item.path && isPathMatch(location.pathname, item.path)
+
       return (
         <Box key={item.key}>
           {/* 父菜单作为分组标题，可点击折叠/展开 */}
@@ -106,86 +166,139 @@ export const Sidebar = () => {
               onClick={toggleExpand}
               w="full"
               px={3}
-              py={2}
+              py={2.5}
               display="flex"
               alignItems="center"
               justifyContent="space-between"
-              fontSize="xs"
-              fontWeight="semibold"
-              color={groupTextColor}
+              fontSize="13px"
+              fontWeight="600"
+              color={isParentDirectlyActive ? activeColor : hasActiveChild ? activeParentColor : groupTextColor}
               textTransform="uppercase"
               letterSpacing="wider"
+              bg={isParentDirectlyActive ? activeBg : hasActiveChild ? activeParentBg : 'transparent'}
+              boxShadow={isParentDirectlyActive ? 'md' : 'none'}
               _hover={{
-                bg: hoverBg,
+                bg: isParentDirectlyActive ? activeBg : hasActiveChild ? activeParentBg : hoverBg,
               }}
-              transition="all 0.2s"
-              borderRadius="md"
+              transition="all 0.3s ease-out"
+              borderRadius="lg"
               mb={1}
+              position="relative"
             >
-              <HStack spacing={2}>
+              <HStack spacing={2.5}>
+                <Box as={Icon} size={18} flexShrink={0} />
                 <Text>{t(item.label)}</Text>
               </HStack>
-              <Box as={isExpanded ? ChevronDown : ChevronRight} size={14} />
+              <Box 
+                as={isExpanded ? ChevronDown : ChevronRight} 
+                size={14} 
+                transition="transform 0.3s ease-out"
+                transform={isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)'}
+              />
             </Box>
           )}
           {/* 子菜单列表 */}
           {!isCollapsed && isExpanded ? (
             <VStack
-              spacing={0.5}
+              spacing={0}
               align="stretch"
-              ml={2}
+              ml={4}
+              pl={3}
+              borderLeftWidth="1px"
+              borderColor={borderColor}
+              position="relative"
             >
-              {item.children!.map(child => renderMenuItem(child, level + 1))}
+              {item.children!.map((child, index) => (
+                <Box key={child.key} position="relative">
+                  {renderMenuItem(child, level + 1, item.key)}
+                </Box>
+              ))}
             </VStack>
           ) : null}
         </Box>
       )
     }
 
-    // 没有子菜单的菜单项，正常显示为链接
-    const isActive = location.pathname === item.path || 
-                    location.pathname.startsWith(item.path + '/')
+    // 没有子菜单的菜单项，正常显示为链接（忽略查询参数）
+    const itemPath = item.path.split('?')[0] // 移除查询参数
+    const itemSearch = item.path.includes('?') ? item.path.split('?')[1] : undefined
+    const isActive = isPathMatch(location.pathname, itemPath)
     const tooltipTitle = isCollapsed ? t(item.label) : undefined
+
+    // 子项使用不同的样式
+    const itemBg = isChild 
+      ? (isActive ? childActiveBg : 'transparent')
+      : (isActive ? activeBg : 'transparent')
+    const itemColor = isChild
+      ? (isActive ? childActiveColor : textColor)
+      : (isActive ? activeColor : textColor)
+    const iconSize = isChild ? 15 : 18
+    const fontSize = isChild ? '13px' : '13px'
+    const py = isChild ? 2 : 2.5
+
+    // 处理路径和查询参数
+    const linkTo = itemSearch 
+      ? { pathname: itemPath, search: `?${itemSearch}` }
+      : itemPath
+
+    const handleClick = (e: React.MouseEvent) => {
+      e.preventDefault()
+      if (itemSearch) {
+        navigate({ pathname: itemPath, search: `?${itemSearch}` })
+      } else {
+        navigate(itemPath)
+      }
+    }
 
     const menuItem = (
       <Box
-        as={Link}
-        to={item.path}
+        as="div"
+        onClick={handleClick}
+        cursor="pointer"
         display="flex"
         alignItems="center"
         justifyContent={isCollapsed ? 'center' : 'flex-start'}
-        px={3}
-        py={2}
-        borderRadius="md"
-        transition="all 0.2s"
-        fontSize="sm"
+        px={isChild ? 2.5 : 3}
+        py={py}
+        borderRadius={isChild ? 'md' : 'lg'}
+        transition="all 0.3s ease-out"
+        fontSize={fontSize}
         position="relative"
-        bg={isActive ? activeBg : 'transparent'}
-        color={isActive ? activeColor : textColor}
+        bg={itemBg}
+        color={itemColor}
+        transform={isActive && isChild ? 'scale(1.02)' : 'scale(1)'}
+        boxShadow={isActive && !isChild ? 'md' : 'none'}
         _hover={{
-          bg: isActive ? activeBg : hoverBg,
+          bg: isActive ? itemBg : hoverBg,
+          transform: isChild ? 'scale(1.01)' : 'scale(1)',
         }}
         _active={{
-          bg: activeBg,
-          color: activeColor,
+          bg: isChild ? childActiveBg : activeBg,
+          color: isChild ? childActiveColor : activeColor,
         }}
-        mb={0.5}
+        mb={isChild ? 0.5 : 1}
+        ml={isChild ? 0 : 0}
       >
-        <Box as={Icon} size={18} flexShrink={0} />
+        <Box 
+          as={Icon} 
+          size={iconSize} 
+          flexShrink={0}
+          color={isActive ? (isChild ? childActiveColor : activeColor) : textColor}
+        />
         {!isCollapsed && (
           <>
             <Text
-              fontWeight={isActive ? 'semibold' : 'medium'}
+              fontWeight={isActive ? '600' : '500'}
               flex={1}
               whiteSpace="nowrap"
-              ml={3}
+              ml={isChild ? 2.5 : 3}
             >
               {t(item.label)}
             </Text>
             {item.badge && (
               <Badge
                 colorScheme="red"
-                fontSize="xs"
+                fontSize="10px"
                 borderRadius="full"
                 ml="auto"
                 minW={5}
@@ -194,6 +307,7 @@ export const Sidebar = () => {
                 alignItems="center"
                 justifyContent="center"
                 px={1.5}
+                fontWeight="600"
               >
                 {item.badge}
               </Badge>
@@ -241,27 +355,37 @@ export const Sidebar = () => {
   return (
     <Box
       as="aside"
-      bg={bgColor}
+      bg={glassBg}
+      backdropFilter="blur(24px)"
+      WebkitBackdropFilter="blur(24px)"
       borderRightWidth={1}
       borderColor={borderColor}
+      ringWidth="1px"
+      ringColor={ringColor}
+      ringOffset={0}
       display="flex"
       flexDirection="column"
       h="100vh"
-      transition="all 0.3s"
+      transition="all 0.3s ease-out"
       w={isCollapsed ? 20 : 64}
       minW={isCollapsed ? 20 : 64}
       maxW={isCollapsed ? 20 : 64}
       position="sticky"
       top={0}
+      zIndex={10}
+      sx={{
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+      }}
     >
       {/* Logo 区域 */}
       <Box
         borderBottomWidth={1}
         borderColor={borderColor}
         p={isCollapsed ? 3 : 4}
-        transition="all 0.3s"
+        transition="all 0.3s ease-out"
       >
-        <Flex align="center" justify={isCollapsed ? 'center' : 'flex-start'}>
+        <Flex align="center" justify={isCollapsed ? 'center' : 'flex-start'} gap={2}>
           <Image
             src="/pics/bantu/bantu_logo_blue.png"
             alt="Bantu Logo"
@@ -269,6 +393,9 @@ export const Sidebar = () => {
             w="auto"
             objectFit="contain"
           />
+          {!isCollapsed && (
+            <Box as={Sparkles} size={16} color="indigo.500" opacity={0.7} />
+          )}
         </Flex>
       </Box>
 
@@ -331,7 +458,7 @@ export const Sidebar = () => {
         </VStack>
       </Box>
 
-      {/* 用户资料 */}
+      {/* 用户资料 - Polished Footer Card */}
       <Box
         p={3}
         borderTopWidth={1}
@@ -352,41 +479,75 @@ export const Sidebar = () => {
               <Avatar
                 size="sm"
                 name={user?.display_name || user?.username || 'User'}
-                src={user?.email ? `https://ui-avatars.com/api/?name=${encodeURIComponent(user.display_name || user.username || 'User')}&background=blue&color=fff` : undefined}
+                src={user?.email ? `https://ui-avatars.com/api/?name=${encodeURIComponent(user.display_name || user.username || 'User')}&background=indigo&color=fff` : undefined}
+                borderWidth="2px"
+                borderColor="indigo.200"
               />
-              <Box as={ChevronRightIcon} size={14} ml={1} color={textColor} />
             </Flex>
           </Tooltip>
         ) : (
-          <HStack spacing={3} align="center">
-            <Avatar
-              size="sm"
-              name={user?.display_name || user?.username || 'User'}
-              src={user?.email ? `https://ui-avatars.com/api/?name=${encodeURIComponent(user.display_name || user.username || 'User')}&background=blue&color=fff` : undefined}
-            />
-            <VStack spacing={0} align="flex-start" flex={1} minW={0}>
-              <Text
-                fontSize="sm"
-                fontWeight="semibold"
-                color={useColorModeValue('gray.900', 'white')}
-                isTruncated
-                w="full"
-              >
-                {user?.display_name || user?.username || 'User'}
-              </Text>
-              {user?.email && (
+          <Button
+            as={Box}
+            w="full"
+            variant="ghost"
+            p={3}
+            borderRadius="xl"
+            bg={userCardBg}
+            borderWidth="1px"
+            borderColor={borderColor}
+            boxShadow="sm"
+            _hover={{
+              bg: userCardHoverBg,
+              boxShadow: 'md',
+              transform: 'translateY(-1px)',
+            }}
+            transition="all 0.3s ease-out"
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            cursor="pointer"
+          >
+            <HStack spacing={3} align="center" flex={1} minW={0}>
+              <Avatar
+                size="sm"
+                name={user?.display_name || user?.username || 'User'}
+                src={user?.email ? `https://ui-avatars.com/api/?name=${encodeURIComponent(user.display_name || user.username || 'User')}&background=indigo&color=fff` : undefined}
+                borderWidth="2px"
+                borderColor="indigo.200"
+              />
+              <VStack spacing={0} align="flex-start" flex={1} minW={0}>
                 <Text
-                  fontSize="xs"
-                  color={textColor}
+                  fontSize="sm"
+                  fontWeight="600"
+                  color={userNameColor}
                   isTruncated
                   w="full"
                 >
-                  {user.email}
+                  {user?.display_name || user?.username || 'User'}
                 </Text>
-              )}
-            </VStack>
-            <Box as={ChevronRightIcon} size={16} color={textColor} flexShrink={0} />
-          </HStack>
+                {user?.roles && user.roles.length > 0 && (
+                  <Text
+                    fontSize="xs"
+                    color={textColor}
+                    isTruncated
+                    w="full"
+                  >
+                    {user.roles[0] === 'ADMIN' ? '超级管理员' : user.roles[0]}
+                  </Text>
+                )}
+              </VStack>
+            </HStack>
+            <Box 
+              as={ChevronRightIcon} 
+              size={16} 
+              color={textColor} 
+              flexShrink={0}
+              transition="transform 0.3s ease-out"
+              _groupHover={{
+                transform: 'translateX(2px)',
+              }}
+            />
+          </Button>
         )}
       </Box>
     </Box>

@@ -37,6 +37,8 @@ export const Breadcrumb = () => {
     'order': 'menu.order',
     'order-execution': 'menu.orderExecution',
     'leads': 'menu.leadManagement',
+    'myLeads': 'menu.myLeads',
+    'publicLeads': 'menu.publicLeads',
     'detail': 'leadDetail.title',
     'product': 'menu.product',
     'product-service': 'menu.productService',
