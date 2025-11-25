@@ -79,11 +79,14 @@ export async function request<T = any>(
   }
 
   // 添加认证Token（如果需要）
+  // 根据 API 文档，除登录接口外，所有接口都需要在 Header 中携带 JWT Token
   if (!skipAuth) {
     const token = storage.getToken()
     if (token) {
       requestHeaders['Authorization'] = `Bearer ${token}`
     }
+    // 如果没有 token，仍然发送请求，让后端返回 401 错误
+    // 这样可以在 401 处理逻辑中统一处理（清除 token 并跳转登录页）
   }
 
   // 创建AbortController用于超时控制
@@ -115,6 +118,26 @@ export async function request<T = any>(
 
     // 检查HTTP状态码
     if (!response.ok) {
+      // 处理 401 未授权错误（Token 过期或无效）
+      if (response.status === 401 && !skipAuth) {
+        // 清除本地存储的认证信息
+        storage.clear()
+        
+        // 如果不是在登录页，跳转到登录页
+        if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+          // 延迟跳转，避免在错误处理中立即跳转
+          setTimeout(() => {
+            window.location.href = '/login'
+          }, 100)
+        }
+        
+        throw new ApiError(
+          401,
+          '登录已过期，请重新登录',
+          null
+        )
+      }
+      
       // 尝试解析错误响应
       let errorData: any = null
       try {
@@ -135,6 +158,20 @@ export async function request<T = any>(
 
     // 检查业务状态码
     if (result.code !== 200) {
+      // 处理业务层面的 401 错误（Token 过期或无效）
+      if (result.code === 401 && !skipAuth) {
+        // 清除本地存储的认证信息
+        storage.clear()
+        
+        // 如果不是在登录页，跳转到登录页
+        if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+          // 延迟跳转，避免在错误处理中立即跳转
+          setTimeout(() => {
+            window.location.href = '/login'
+          }, 100)
+        }
+      }
+      
       throw new ApiError(result.code, result.message, result.data)
     }
 

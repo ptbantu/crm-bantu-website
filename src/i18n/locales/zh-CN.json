@@ -641,20 +641,33 @@
     "userInfo": "用户信息",
     "systemStatus": "系统状态",
     "systemLogs": "系统日志",
+    "systemMonitoring": "系统监控",
     "customer": "客户管理",
+    "customerSales": "客户与销售",
     "customers": "客户列表",
     "list": "列表",
     "contacts": "联系人",
     "contactList": "客户专员列表",
     "order": "订单管理",
+    "orderExecution": "订单执行",
     "orderList": "订单列表",
     "businessPlatform": "业务中台",
     "serviceList": "服务列表",
+    "serviceManagement": "服务管理",
+    "leadManagement": "线索管理",
+    "myLeads": "我的线索",
+    "publicLeads": "公海线索",
     "product": "产品管理",
+    "productService": "产品服务",
     "productManagement": "服务管理",
+    "serviceCatalog": "服务目录",
+    "vendorManagement": "供应商管理",
     "vendorProductList": "供应商服务列表",
     "categoryManagement": "服务分类管理",
     "finance": "财务管理",
+    "receivables": "应收管理",
+    "invoicing": "开票管理",
+    "financeReports": "财务报表",
     "agent": "渠道代理"
   },
   "admin": {
@@ -1430,6 +1443,186 @@
       "uploadFile": "文件上传成功",
       "verifyFile": "文件验证成功",
       "deleteFile": "文件删除成功"
+    }
+  },
+  "leadList": {
+    "title": "线索管理",
+    "subtitle": "管理和查看所有线索信息",
+    "create": "新建线索",
+    "total": "共 {{total}} 条线索",
+    "loading": "加载中...",
+    "noData": "暂无线索数据",
+    "search": {
+      "companyName": "公司名称",
+      "companyNamePlaceholder": "请输入公司名称",
+      "phone": "电话",
+      "phonePlaceholder": "请输入电话",
+      "email": "邮箱",
+      "emailPlaceholder": "请输入邮箱",
+      "status": "状态",
+      "allStatus": "全部状态",
+      "owner": "负责人",
+      "allOwners": "全部负责人",
+      "pool": "公海池",
+      "all": "全部",
+      "inPool": "在公海池",
+      "notInPool": "不在公海池",
+      "search": "搜索",
+      "reset": "重置"
+    },
+    "table": {
+      "name": "线索名称",
+      "companyName": "公司名称",
+      "contact": "联系方式",
+      "owner": "负责人",
+      "status": "状态",
+      "pool": "公海池",
+      "inPool": "在公海池",
+      "nextFollowUp": "下次跟进",
+      "createdAt": "创建时间",
+      "actions": "操作"
+    },
+    "status": {
+      "new": "新建",
+      "contacted": "已联系",
+      "qualified": "已确认",
+      "converted": "已转化",
+      "lost": "已丢失"
+    },
+    "actions": {
+      "view": "查看",
+      "edit": "编辑",
+      "assign": "分配",
+      "moveToPool": "移入公海池",
+      "delete": "删除"
+    },
+    "pagination": {
+      "showing": "显示第 {{from}} - {{to}} 条，共 {{total}} 条",
+      "previous": "上一页",
+      "next": "下一页"
+    },
+    "modal": {
+      "createTitle": "新建线索",
+      "editTitle": "编辑线索",
+      "name": "线索名称",
+      "namePlaceholder": "请输入线索名称",
+      "companyName": "公司名称",
+      "companyNamePlaceholder": "请输入公司名称",
+      "contactName": "联系人姓名",
+      "contactNamePlaceholder": "请输入联系人姓名",
+      "phone": "电话",
+      "phonePlaceholder": "请输入电话",
+      "email": "邮箱",
+      "emailPlaceholder": "请输入邮箱",
+      "address": "地址",
+      "addressPlaceholder": "请输入地址",
+      "customer": "关联客户",
+      "selectCustomer": "请选择客户",
+      "owner": "负责人",
+      "selectOwner": "请选择负责人",
+      "status": "状态",
+      "level": "客户分级",
+      "levelPlaceholder": "请输入客户分级代码",
+      "nextFollowUpAt": "下次跟进时间",
+      "cancel": "取消",
+      "submit": "提交"
+    },
+    "prompt": {
+      "selectOwner": "请输入负责人用户ID"
+    },
+    "warning": {
+      "duplicate": "检测到 {{count}} 条重复线索，请确认是否继续"
+    },
+    "confirm": {
+      "delete": "确定要删除该线索吗？",
+      "moveToPool": "确定要将该线索移入公海池吗？"
+    },
+    "success": {
+      "create": "线索创建成功",
+      "update": "线索更新成功",
+      "delete": "线索删除成功",
+      "assign": "线索分配成功",
+      "moveToPool": "线索已移入公海池"
+    },
+    "error": {
+      "loadFailed": "加载失败",
+      "deleteFailed": "删除失败",
+      "assignFailed": "分配失败",
+      "moveToPoolFailed": "移入公海池失败",
+      "nameRequired": "线索名称不能为空",
+      "invalidEmail": "邮箱格式不正确",
+      "submitFailed": "提交失败"
+    }
+  },
+  "leadDetail": {
+    "title": "线索详情",
+    "loading": "加载中...",
+    "notFound": "线索不存在",
+    "back": "返回",
+    "edit": "编辑",
+    "editLead": "编辑线索",
+    "assign": "分配",
+    "moveToPool": "移入公海池",
+    "basicInfo": "基本信息",
+    "contactName": "联系人",
+    "phone": "电话",
+    "email": "邮箱",
+    "address": "地址",
+    "owner": "负责人",
+    "status": "状态",
+    "level": "客户分级",
+    "lastFollowUp": "上次跟进",
+    "nextFollowUp": "下次跟进",
+    "inPublicPool": "在公海池",
+    "followUps": "跟进记录",
+    "addFollowUp": "添加跟进",
+    "noFollowUps": "暂无跟进记录",
+    "followUpTypeLabel": "跟进类型",
+    "followUpDate": "跟进日期",
+    "followUpContent": "跟进内容",
+    "followUpContentPlaceholder": "请输入跟进内容",
+    "followUpType": {
+      "call": "电话",
+      "meeting": "会议",
+      "email": "邮件",
+      "note": "备注"
+    },
+    "notes": "备注",
+    "addNote": "添加备注",
+    "noNotes": "暂无备注",
+    "noteTypeLabel": "备注类型",
+    "noteContent": "备注内容",
+    "noteContentPlaceholder": "请输入备注内容",
+    "isImportant": "重要",
+    "noteType": {
+      "comment": "评论",
+      "reminder": "提醒",
+      "task": "任务"
+    },
+    "selectOwner": "选择负责人",
+    "confirm": {
+      "moveToPool": "确定要将该线索移入公海池吗？"
+    },
+    "success": {
+      "update": "线索更新成功",
+      "createFollowUp": "跟进记录创建成功",
+      "createNote": "备注创建成功",
+      "assign": "线索分配成功",
+      "moveToPool": "线索已移入公海池"
+    },
+    "error": {
+      "loadFailed": "加载失败",
+      "loadFollowUpsFailed": "加载跟进记录失败",
+      "loadNotesFailed": "加载备注失败",
+      "nameRequired": "线索名称不能为空",
+      "followUpDateRequired": "跟进日期不能为空",
+      "noteContentRequired": "备注内容不能为空",
+      "selectUser": "请选择用户",
+      "updateFailed": "更新失败",
+      "createFollowUpFailed": "创建跟进记录失败",
+      "createNoteFailed": "创建备注失败",
+      "assignFailed": "分配失败",
+      "moveToPoolFailed": "移入公海池失败"
     }
   }
 }

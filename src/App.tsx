@@ -28,6 +28,8 @@ import CustomerList from './pages/admin/CustomerList'
 import ContactList from './pages/admin/ContactList'
 import OrderList from './pages/admin/OrderList'
 import OrderDetail from './pages/admin/OrderDetail'
+import LeadList from './pages/admin/LeadList'
+import LeadDetail from './pages/admin/LeadDetail'
 
 const AppContent = () => {
   const location = useLocation()
@@ -206,6 +208,28 @@ const AppContent = () => {
               <AdminLayout>
                 <PermissionGuard role="ADMIN">
                   <OrderDetail />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          
+          {/* 线索管理模块（仅 ADMIN） */}
+          <Route
+            path="/admin/leads/list"
+            element={
+              <AdminLayout>
+                <PermissionGuard role="ADMIN">
+                  <LeadList />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/leads/detail/:id"
+            element={
+              <AdminLayout>
+                <PermissionGuard role="ADMIN">
+                  <LeadDetail />
                 </PermissionGuard>
               </AdminLayout>
             }

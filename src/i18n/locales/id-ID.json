@@ -641,21 +641,34 @@
     "userInfo": "Informasi Pengguna",
     "systemStatus": "Status Sistem",
     "systemLogs": "Log Sistem",
+    "systemMonitoring": "Pemantauan Sistem",
     "vendors": "Manajemen Vendor",
     "customer": "Manajemen Pelanggan",
+    "customerSales": "Pelanggan & Penjualan",
     "customers": "Daftar Pelanggan",
     "list": "Daftar",
     "contacts": "Kontak",
     "contactList": "Daftar Spesialis Pelanggan",
     "order": "Manajemen Pesanan",
+    "orderExecution": "Eksekusi Pesanan",
     "orderList": "Daftar Pesanan",
     "businessPlatform": "Platform Bisnis",
     "serviceList": "Daftar Layanan",
+    "serviceManagement": "Manajemen Layanan",
+    "leadManagement": "Manajemen Prospek",
+    "myLeads": "Prospek Saya",
+    "publicLeads": "Kolam Prospek",
     "product": "Manajemen Produk",
+    "productService": "Produk & Layanan",
     "productManagement": "Manajemen Layanan",
+    "serviceCatalog": "Katalog Layanan",
+    "vendorManagement": "Manajemen Vendor",
     "vendorProductList": "Daftar Layanan Vendor",
     "categoryManagement": "Manajemen Kategori Layanan",
     "finance": "Manajemen Keuangan",
+    "receivables": "Manajemen Piutang",
+    "invoicing": "Manajemen Faktur",
+    "financeReports": "Laporan Keuangan",
     "agent": "Agen Saluran"
   },
   "admin": {
@@ -1419,6 +1432,186 @@
       "uploadFile": "File berhasil diunggah",
       "verifyFile": "File berhasil diverifikasi",
       "deleteFile": "File berhasil dihapus"
+    }
+  },
+  "leadList": {
+    "title": "Manajemen Lead",
+    "subtitle": "Kelola dan lihat semua informasi lead",
+    "create": "Buat Lead Baru",
+    "total": "Total {{total}} lead",
+    "loading": "Memuat...",
+    "noData": "Tidak ada data lead",
+    "search": {
+      "companyName": "Nama Perusahaan",
+      "companyNamePlaceholder": "Masukkan nama perusahaan",
+      "phone": "Telepon",
+      "phonePlaceholder": "Masukkan nomor telepon",
+      "email": "Email",
+      "emailPlaceholder": "Masukkan email",
+      "status": "Status",
+      "allStatus": "Semua Status",
+      "owner": "Pemilik",
+      "allOwners": "Semua Pemilik",
+      "pool": "Kolam Publik",
+      "all": "Semua",
+      "inPool": "Di Kolam Publik",
+      "notInPool": "Tidak di Kolam Publik",
+      "search": "Cari",
+      "reset": "Reset"
+    },
+    "table": {
+      "name": "Nama Lead",
+      "companyName": "Nama Perusahaan",
+      "contact": "Kontak",
+      "owner": "Pemilik",
+      "status": "Status",
+      "pool": "Kolam Publik",
+      "inPool": "Di Kolam Publik",
+      "nextFollowUp": "Tindak Lanjut Berikutnya",
+      "createdAt": "Waktu Dibuat",
+      "actions": "Tindakan"
+    },
+    "status": {
+      "new": "Baru",
+      "contacted": "Dihubungi",
+      "qualified": "Terkualifikasi",
+      "converted": "Dikonversi",
+      "lost": "Hilang"
+    },
+    "actions": {
+      "view": "Lihat",
+      "edit": "Edit",
+      "assign": "Tetapkan",
+      "moveToPool": "Pindahkan ke Kolam Publik",
+      "delete": "Hapus"
+    },
+    "pagination": {
+      "showing": "Menampilkan {{from}} - {{to}} dari {{total}}",
+      "previous": "Sebelumnya",
+      "next": "Selanjutnya"
+    },
+    "modal": {
+      "createTitle": "Buat Lead Baru",
+      "editTitle": "Edit Lead",
+      "name": "Nama Lead",
+      "namePlaceholder": "Masukkan nama lead",
+      "companyName": "Nama Perusahaan",
+      "companyNamePlaceholder": "Masukkan nama perusahaan",
+      "contactName": "Nama Kontak",
+      "contactNamePlaceholder": "Masukkan nama kontak",
+      "phone": "Telepon",
+      "phonePlaceholder": "Masukkan nomor telepon",
+      "email": "Email",
+      "emailPlaceholder": "Masukkan email",
+      "address": "Alamat",
+      "addressPlaceholder": "Masukkan alamat",
+      "customer": "Pelanggan Terkait",
+      "selectCustomer": "Pilih pelanggan",
+      "owner": "Pemilik",
+      "selectOwner": "Pilih pemilik",
+      "status": "Status",
+      "level": "Tingkat Pelanggan",
+      "levelPlaceholder": "Masukkan kode tingkat pelanggan",
+      "nextFollowUpAt": "Waktu Tindak Lanjut Berikutnya",
+      "cancel": "Batal",
+      "submit": "Kirim"
+    },
+    "prompt": {
+      "selectOwner": "Masukkan ID pengguna pemilik"
+    },
+    "warning": {
+      "duplicate": "Ditemukan {{count}} lead duplikat, harap konfirmasi apakah akan melanjutkan"
+    },
+    "confirm": {
+      "delete": "Apakah Anda yakin ingin menghapus lead ini?",
+      "moveToPool": "Apakah Anda yakin ingin memindahkan lead ini ke kolam publik?"
+    },
+    "success": {
+      "create": "Lead berhasil dibuat",
+      "update": "Lead berhasil diperbarui",
+      "delete": "Lead berhasil dihapus",
+      "assign": "Lead berhasil ditetapkan",
+      "moveToPool": "Lead berhasil dipindahkan ke kolam publik"
+    },
+    "error": {
+      "loadFailed": "Gagal memuat",
+      "deleteFailed": "Gagal menghapus",
+      "assignFailed": "Gagal menetapkan",
+      "moveToPoolFailed": "Gagal memindahkan ke kolam publik",
+      "nameRequired": "Nama lead tidak boleh kosong",
+      "invalidEmail": "Format email tidak valid",
+      "submitFailed": "Gagal mengirim"
+    }
+  },
+  "leadDetail": {
+    "title": "Detail Lead",
+    "loading": "Memuat...",
+    "notFound": "Lead tidak ditemukan",
+    "back": "Kembali",
+    "edit": "Edit",
+    "editLead": "Edit Lead",
+    "assign": "Tetapkan",
+    "moveToPool": "Pindahkan ke Kolam Publik",
+    "basicInfo": "Informasi Dasar",
+    "contactName": "Kontak",
+    "phone": "Telepon",
+    "email": "Email",
+    "address": "Alamat",
+    "owner": "Pemilik",
+    "status": "Status",
+    "level": "Tingkat Pelanggan",
+    "lastFollowUp": "Tindak Lanjut Terakhir",
+    "nextFollowUp": "Tindak Lanjut Berikutnya",
+    "inPublicPool": "Di Kolam Publik",
+    "followUps": "Catatan Tindak Lanjut",
+    "addFollowUp": "Tambah Tindak Lanjut",
+    "noFollowUps": "Tidak ada catatan tindak lanjut",
+    "followUpTypeLabel": "Jenis Tindak Lanjut",
+    "followUpDate": "Tanggal Tindak Lanjut",
+    "followUpContent": "Konten Tindak Lanjut",
+    "followUpContentPlaceholder": "Masukkan konten tindak lanjut",
+    "followUpType": {
+      "call": "Telepon",
+      "meeting": "Pertemuan",
+      "email": "Email",
+      "note": "Catatan"
+    },
+    "notes": "Catatan",
+    "addNote": "Tambah Catatan",
+    "noNotes": "Tidak ada catatan",
+    "noteTypeLabel": "Jenis Catatan",
+    "noteContent": "Konten Catatan",
+    "noteContentPlaceholder": "Masukkan konten catatan",
+    "isImportant": "Penting",
+    "noteType": {
+      "comment": "Komentar",
+      "reminder": "Pengingat",
+      "task": "Tugas"
+    },
+    "selectOwner": "Pilih Pemilik",
+    "confirm": {
+      "moveToPool": "Apakah Anda yakin ingin memindahkan lead ini ke kolam publik?"
+    },
+    "success": {
+      "update": "Lead berhasil diperbarui",
+      "createFollowUp": "Catatan tindak lanjut berhasil dibuat",
+      "createNote": "Catatan berhasil dibuat",
+      "assign": "Lead berhasil ditetapkan",
+      "moveToPool": "Lead berhasil dipindahkan ke kolam publik"
+    },
+    "error": {
+      "loadFailed": "Gagal memuat",
+      "loadFollowUpsFailed": "Gagal memuat catatan tindak lanjut",
+      "loadNotesFailed": "Gagal memuat catatan",
+      "nameRequired": "Nama lead tidak boleh kosong",
+      "followUpDateRequired": "Tanggal tindak lanjut tidak boleh kosong",
+      "noteContentRequired": "Konten catatan tidak boleh kosong",
+      "selectUser": "Harap pilih pengguna",
+      "updateFailed": "Gagal memperbarui",
+      "createFollowUpFailed": "Gagal membuat catatan tindak lanjut",
+      "createNoteFailed": "Gagal membuat catatan",
+      "assignFailed": "Gagal menetapkan",
+      "moveToPoolFailed": "Gagal memindahkan ke kolam publik"
     }
   }
 }

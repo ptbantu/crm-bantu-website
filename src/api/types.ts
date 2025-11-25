@@ -624,3 +624,151 @@ export interface AssignOrderRequest {
   notes?: string | null
 }
 
+// ==================== 线索管理相关类型 ====================
+
+// 线索状态
+export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'converted' | 'lost'
+
+// 线索
+export interface Lead {
+  id: string
+  name: string
+  company_name?: string | null
+  contact_name?: string | null
+  phone?: string | null
+  email?: string | null
+  address?: string | null
+  customer_id?: string | null
+  organization_id: string
+  owner_user_id?: string | null
+  owner_username?: string | null
+  status: LeadStatus
+  level?: string | null
+  level_name_zh?: string | null
+  level_name_id?: string | null
+  is_in_public_pool: boolean
+  pool_id?: string | null
+  moved_to_pool_at?: string | null
+  tianyancha_data?: Record<string, any> | null
+  tianyancha_synced_at?: string | null
+  last_follow_up_at?: string | null
+  next_follow_up_at?: string | null
+  created_by?: string | null
+  updated_by?: string | null
+  created_at: string
+  updated_at: string
+}
+
+// 线索列表查询参数
+export interface LeadListParams {
+  page?: number
+  size?: number
+  owner_user_id?: string
+  status?: LeadStatus
+  is_in_public_pool?: boolean
+  customer_id?: string
+  company_name?: string
+  phone?: string
+  email?: string
+}
+
+// 创建线索请求
+export interface CreateLeadRequest {
+  name: string
+  company_name?: string | null
+  contact_name?: string | null
+  phone?: string | null
+  email?: string | null
+  address?: string | null
+  customer_id?: string | null
+  owner_user_id?: string | null
+  status?: LeadStatus
+  level?: string | null
+  next_follow_up_at?: string | null
+}
+
+// 更新线索请求
+export interface UpdateLeadRequest {
+  name?: string
+  company_name?: string | null
+  contact_name?: string | null
+  phone?: string | null
+  email?: string | null
+  address?: string | null
+  customer_id?: string | null
+  owner_user_id?: string | null
+  status?: LeadStatus
+  level?: string | null
+  last_follow_up_at?: string | null
+  next_follow_up_at?: string | null
+}
+
+// 分配线索请求
+export interface LeadAssignRequest {
+  owner_user_id: string
+}
+
+// 移入公海池请求
+export interface LeadMoveToPoolRequest {
+  pool_id?: string | null
+}
+
+// 线索查重请求
+export interface LeadDuplicateCheckRequest {
+  company_name?: string | null
+  phone?: string | null
+  email?: string | null
+  exclude_lead_id?: string | null
+}
+
+// 线索查重响应
+export interface LeadDuplicateCheckResponse {
+  has_duplicate: boolean
+  duplicates: Lead[]
+  similarity_score?: number | null
+}
+
+// 跟进类型
+export type LeadFollowUpType = 'call' | 'meeting' | 'email' | 'note'
+
+// 线索跟进记录
+export interface LeadFollowUp {
+  id: string
+  lead_id: string
+  follow_up_type: LeadFollowUpType
+  content?: string | null
+  follow_up_date: string
+  created_by?: string | null
+  created_by_name?: string | null
+  created_at: string
+}
+
+// 创建跟进记录请求
+export interface LeadFollowUpCreateRequest {
+  follow_up_type: LeadFollowUpType
+  content?: string | null
+  follow_up_date: string
+}
+
+// 备注类型
+export type LeadNoteType = 'comment' | 'reminder' | 'task'
+
+// 线索备注
+export interface LeadNote {
+  id: string
+  lead_id: string
+  note_type: LeadNoteType
+  content: string
+  is_important: boolean
+  created_by?: string | null
+  created_by_name?: string | null
+  created_at: string
+}
+
+// 创建备注请求
+export interface LeadNoteCreateRequest {
+  note_type: LeadNoteType
+  content: string
+  is_important?: boolean
+}
+

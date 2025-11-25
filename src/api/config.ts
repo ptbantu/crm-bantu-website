@@ -152,5 +152,15 @@ export const API_PATHS = {
     BY_STAGE: (orderId: string, stageId: string) => `/api/order-workflow/orders/${orderId}/stages/${stageId}/files`,
     BY_ITEM: (orderId: string, itemId: string) => `/api/order-workflow/orders/${orderId}/items/${itemId}/files`,
   },
+  // 订单与工作流 - 线索管理
+  LEADS: {
+    BASE: '/api/order-workflow/leads',
+    BY_ID: (id: string) => `/api/order-workflow/leads/${id}`,
+    ASSIGN: (id: string) => `/api/order-workflow/leads/${id}/assign`,
+    MOVE_TO_POOL: (id: string) => `/api/order-workflow/leads/${id}/move-to-pool`,
+    CHECK_DUPLICATE: '/api/order-workflow/leads/check-duplicate',
+    FOLLOW_UPS: (id: string) => `/api/order-workflow/leads/${id}/follow-ups`,
+    NOTES: (id: string) => `/api/order-workflow/leads/${id}/notes`,
+  },
 } as const
 

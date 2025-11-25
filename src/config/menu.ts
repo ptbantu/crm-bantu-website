@@ -1,6 +1,7 @@
 /**
  * 菜单配置
  * 定义后台管理系统的所有菜单项，包含权限要求
+ * 根据 bar.md 优化方案重新组织
  */
 import { Permission, Role } from './permissions'
 import {
@@ -11,7 +12,6 @@ import {
   ShoppingCart,
   Package,
   DollarSign,
-  Network,
   Settings,
   Contact2,
   User,
@@ -19,6 +19,14 @@ import {
   Folder,
   Shield,
   FileText,
+  Target,
+  TrendingUp,
+  FileCheck,
+  BarChart3,
+  Receipt,
+  CreditCard,
+  FileText as InvoiceIcon,
+  Globe,
 } from 'lucide-react'
 import { ComponentType } from 'react'
 
@@ -34,6 +42,7 @@ export interface MenuItem {
 }
 
 export const adminMenuItems: MenuItem[] = [
+  // 1. 仪表盘 - 所有角色
   {
     key: 'dashboard',
     label: 'menu.dashboard',
@@ -41,26 +50,183 @@ export const adminMenuItems: MenuItem[] = [
     path: '/dashboard',
     // 所有登录用户都可以访问
   },
+  
+  // 2. 客户与销售 - 销售、管理员
   {
-    key: 'user-management',
-    label: 'menu.userManagement',
+    key: 'customer-sales',
+    label: 'menu.customerSales',
     icon: Users,
-    path: '/admin/user-management',
-    role: Role.ADMIN, // 仅管理员可见
+    path: '/admin/customer-sales',
+    role: [Role.SALES, Role.ADMIN],
     children: [
       {
-        key: 'employeeList',
-        label: 'menu.employeeList',
+        key: 'customers',
+        label: 'menu.customers',
         icon: Users,
-        path: '/admin/user-management/employee-list',
-        role: Role.ADMIN,
+        path: '/admin/customer/list',
+        role: [Role.SALES, Role.ADMIN],
       },
       {
-        key: 'employeeManagement',
-        label: 'menu.employeeManagement',
-        icon: UserCog,
-        path: '/admin/user-management/employee-management',
+        key: 'contacts',
+        label: 'menu.contactList',
+        icon: Contact2,
+        path: '/admin/customer/contacts',
+        role: [Role.SALES, Role.ADMIN],
+      },
+      {
+        key: 'leads',
+        label: 'menu.leadManagement',
+        icon: Target,
+        path: '/admin/leads',
+        role: [Role.SALES, Role.ADMIN],
+        children: [
+          {
+            key: 'myLeads',
+            label: 'menu.myLeads',
+            icon: Target,
+            path: '/admin/leads/list?filter=my',
+            role: [Role.SALES, Role.ADMIN],
+          },
+          {
+            key: 'publicLeads',
+            label: 'menu.publicLeads',
+            icon: Globe,
+            path: '/admin/leads/list?filter=public',
+            role: [Role.SALES, Role.ADMIN],
+          },
+        ],
+      },
+    ],
+  },
+  
+  // 3. 订单执行 - 中台执行、销售、管理员
+  {
+    key: 'order-execution',
+    label: 'menu.orderExecution',
+    icon: ShoppingCart,
+    path: '/admin/order-execution',
+    role: [Role.OPERATION, Role.SALES, Role.ADMIN],
+    children: [
+      {
+        key: 'orderList',
+        label: 'menu.orderList',
+        icon: ShoppingCart,
+        path: '/admin/order/list',
+        role: [Role.OPERATION, Role.SALES, Role.ADMIN],
+      },
+      {
+        key: 'serviceManagement',
+        label: 'menu.serviceManagement',
+        icon: FileCheck,
+        path: '/admin/order/services',
+        role: [Role.OPERATION, Role.ADMIN],
+      },
+    ],
+  },
+  
+  // 4. 产品服务 - 中台执行、管理员
+  {
+    key: 'product-service',
+    label: 'menu.productService',
+    icon: Package,
+    path: '/admin/product-service',
+    role: [Role.OPERATION, Role.ADMIN],
+    children: [
+      {
+        key: 'productManagement',
+        label: 'menu.productManagement',
+        icon: Package,
+        path: '/admin/product/management',
+        role: [Role.OPERATION, Role.ADMIN],
+      },
+      {
+        key: 'serviceCatalog',
+        label: 'menu.serviceCatalog',
+        icon: Folder,
+        path: '/admin/product/catalog',
+        role: [Role.OPERATION, Role.ADMIN],
+      },
+      {
+        key: 'vendorManagement',
+        label: 'menu.vendorManagement',
+        icon: Building2,
+        path: '/admin/product/vendor-list',
+        role: [Role.OPERATION, Role.ADMIN],
+      },
+      {
+        key: 'categoryManagement',
+        label: 'menu.categoryManagement',
+        icon: Folder,
+        path: '/admin/product/category-management',
+        role: [Role.OPERATION, Role.ADMIN],
+      },
+    ],
+  },
+  
+  // 5. 财务管理 - 财务、销售、管理员
+  {
+    key: 'finance',
+    label: 'menu.finance',
+    icon: DollarSign,
+    path: '/admin/finance',
+    role: [Role.FINANCE, Role.SALES, Role.ADMIN],
+    permission: Permission.FINANCE_READ,
+    children: [
+      {
+        key: 'receivables',
+        label: 'menu.receivables',
+        icon: CreditCard,
+        path: '/admin/finance/receivables',
+        role: [Role.FINANCE, Role.SALES, Role.ADMIN],
+        badge: 0, // 待收款数量，可以从API获取
+      },
+      {
+        key: 'invoicing',
+        label: 'menu.invoicing',
+        icon: InvoiceIcon,
+        path: '/admin/finance/invoicing',
+        role: [Role.FINANCE, Role.ADMIN],
+      },
+      {
+        key: 'financeReports',
+        label: 'menu.financeReports',
+        icon: BarChart3,
+        path: '/admin/finance/reports',
+        role: [Role.FINANCE, Role.ADMIN],
+      },
+    ],
+  },
+  
+  // 6. 系统管理 - 仅管理员
+  {
+    key: 'system-management',
+    label: 'menu.systemManagement',
+    icon: Settings,
+    path: '/admin/system-management',
+    role: Role.ADMIN,
+    children: [
+      {
+        key: 'userManagement',
+        label: 'menu.userManagement',
+        icon: Users,
+        path: '/admin/system-management/users',
         role: Role.ADMIN,
+        children: [
+          {
+            key: 'employeeManagement',
+            label: 'menu.employeeManagement',
+            icon: UserCog,
+            path: '/admin/user-management/employee-management',
+            role: Role.ADMIN,
+          },
+          {
+            key: 'roleManagement',
+            label: 'menu.roleManagement',
+            icon: Shield,
+            path: '/admin/user-management/role-management',
+            role: Role.ADMIN,
+          },
+        ],
       },
       {
         key: 'organizations',
@@ -70,116 +236,8 @@ export const adminMenuItems: MenuItem[] = [
         role: Role.ADMIN,
       },
       {
-        key: 'roleManagement',
-        label: 'menu.roleManagement',
-        icon: Shield,
-        path: '/admin/user-management/role-management',
-        role: Role.ADMIN,
-      },
-    ],
-  },
-  {
-    key: 'customer',
-    label: 'menu.customer',
-    icon: Users,
-    path: '/admin/customer',
-    role: Role.ADMIN, // 仅管理员可见
-    children: [
-      {
-        key: 'customers',
-        label: 'menu.customers',
-        icon: Users,
-        path: '/admin/customer/list',
-        role: Role.ADMIN,
-      },
-      {
-        key: 'contacts',
-        label: 'menu.contactList',
-        icon: Contact2,
-        path: '/admin/customer/contacts',
-        role: Role.ADMIN,
-      },
-    ],
-  },
-  {
-    key: 'order',
-    label: 'menu.businessPlatform',
-    icon: ShoppingCart,
-    path: '/admin/order',
-    role: Role.ADMIN, // 仅管理员可见
-    children: [
-      {
-        key: 'orderList',
-        label: 'menu.serviceList',
-        icon: ShoppingCart,
-        path: '/admin/order/list',
-        role: Role.ADMIN,
-      },
-    ],
-  },
-  {
-    key: 'product',
-    label: 'menu.product',
-    icon: Package,
-    path: '/admin/product',
-    role: Role.ADMIN, // 仅管理员可见
-    children: [
-      {
-        key: 'productManagement',
-        label: 'menu.productManagement',
-        icon: Package,
-        path: '/admin/product/management',
-        role: Role.ADMIN,
-      },
-      {
-        key: 'vendorProductList',
-        label: 'menu.vendorProductList',
-        icon: Building2,
-        path: '/admin/product/vendor-list',
-        role: Role.ADMIN,
-      },
-      {
-        key: 'categoryManagement',
-        label: 'menu.categoryManagement',
-        icon: Folder,
-        path: '/admin/product/category-management',
-        role: Role.ADMIN,
-      },
-    ],
-  },
-  {
-    key: 'finance',
-    label: 'menu.finance',
-    icon: DollarSign,
-    path: '/admin/finance',
-    permission: Permission.FINANCE_READ,
-    role: [Role.FINANCE, Role.ADMIN], // 仅财务和管理员
-  },
-  {
-    key: 'agent',
-    label: 'menu.agent',
-    icon: Network,
-    path: '/admin/agent',
-    permission: Permission.AGENT_READ,
-    role: [Role.AGENT, Role.ADMIN], // 仅代理和管理员
-  },
-  {
-    key: 'system-management',
-    label: 'menu.systemManagement',
-    icon: Settings,
-    path: '/admin/system-management',
-    role: Role.ADMIN, // 仅管理员可见
-    children: [
-      {
-        key: 'userInfo',
-        label: 'menu.userInfo',
-        icon: User,
-        path: '/admin/system-management/user-info',
-        role: Role.ADMIN,
-      },
-      {
-        key: 'systemStatus',
-        label: 'menu.systemStatus',
+        key: 'systemMonitoring',
+        label: 'menu.systemMonitoring',
         icon: Activity,
         path: '/admin/system-management/system-status',
         role: Role.ADMIN,
