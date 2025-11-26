@@ -84,6 +84,15 @@ export async function request<T = any>(
     const token = storage.getToken()
     if (token) {
       requestHeaders['Authorization'] = `Bearer ${token}`
+      // 开发环境调试：输出 token 信息（不输出完整 token，只输出前10个字符）
+      if (import.meta.env.DEV) {
+        console.log(`[API Client] 添加 JWT Token: ${token.substring(0, 20)}... (长度: ${token.length})`)
+      }
+    } else {
+      // 开发环境调试：警告没有 token
+      if (import.meta.env.DEV) {
+        console.warn('[API Client] ⚠️ 未找到 JWT Token，请求将可能失败')
+      }
     }
     // 如果没有 token，仍然发送请求，让后端返回 401 错误
     // 这样可以在 401 处理逻辑中统一处理（清除 token 并跳转登录页）
@@ -116,10 +125,19 @@ export async function request<T = any>(
     // 清除超时定时器
     clearTimeout(timeoutId)
 
+    // 开发环境调试：输出响应状态
+    if (import.meta.env.DEV) {
+      console.log(`[API Client] ${restOptions.method || 'GET'} ${path} -> ${response.status} ${response.statusText}`)
+    }
+
     // 检查HTTP状态码
     if (!response.ok) {
       // 处理 401 未授权错误（Token 过期或无效）
       if (response.status === 401 && !skipAuth) {
+        // 开发环境调试：输出 401 错误详情
+        if (import.meta.env.DEV) {
+          console.error('[API Client] ❌ 401 未授权错误，Token 可能已过期或无效')
+        }
         // 清除本地存储的认证信息
         storage.clear()
         

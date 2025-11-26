@@ -17,6 +17,7 @@ import {
 import { CustomerListParams, Customer } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
 import { PageHeader } from '@/components/admin/PageHeader'
+import { getCustomerLevelOptions, CustomerLevelOption } from '@/api/options'
 import {
   Button,
   Table,
@@ -48,7 +49,7 @@ import {
 } from '@chakra-ui/react'
 
 const CustomerList = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { showSuccess, showError } = useToast()
   
   // Chakra UI 颜色模式
@@ -115,6 +116,9 @@ const CustomerList = () => {
   const [customerDetail, setCustomerDetail] = useState<Customer | null>(null)
   const [loadingDetail, setLoadingDetail] = useState(false)
 
+  // 客户分级选项
+  const [customerLevels, setCustomerLevels] = useState<CustomerLevelOption[]>([])
+
   // 加载客户列表
   const loadCustomers = async (params: CustomerListParams) => {
     setLoading(true)
@@ -178,6 +182,21 @@ const CustomerList = () => {
       setLoadingStats(false)
     }
   }
+
+  // 加载客户分级选项
+  useEffect(() => {
+    const loadCustomerLevels = async () => {
+      try {
+        const currentLang = i18n.language || 'zh-CN'
+        const apiLang = currentLang.startsWith('zh') ? 'zh' : 'id'
+        const levels = await getCustomerLevelOptions(apiLang)
+        setCustomerLevels(levels || [])
+      } catch (error: any) {
+        console.error('Failed to load customer levels:', error)
+      }
+    }
+    loadCustomerLevels()
+  }, [i18n.language])
 
   // 初始加载
   useEffect(() => {
@@ -902,13 +921,20 @@ const CustomerList = () => {
                 <label className="block text-xs font-medium text-gray-700 mb-1">
                   {t('customerList.modal.level')}
                 </label>
-                <input
-                  type="text"
+                <select
                   value={modalFormData.level}
                   onChange={(e) => setModalFormData({ ...modalFormData, level: e.target.value })}
                   className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                  placeholder={t('customerList.modal.levelPlaceholder')}
-                />
+                >
+                  <option value="">{t('customerList.modal.levelPlaceholder')}</option>
+                  {customerLevels
+                    .sort((a, b) => a.sort_order - b.sort_order)
+                    .map((level) => (
+                      <option key={level.code} value={level.code}>
+                        {level.name}
+                      </option>
+                    ))}
+                </select>
               </div>
 
               {/* 行业 */}

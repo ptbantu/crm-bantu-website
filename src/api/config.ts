@@ -174,5 +174,10 @@ export const API_PATHS = {
     FOLLOW_UPS: (id: string) => `/api/order-workflow/opportunities/${id}/follow-ups`,
     NOTES: (id: string) => `/api/order-workflow/opportunities/${id}/notes`,
   },
+  // 订单与工作流 - 选项配置
+  OPTIONS: {
+    CUSTOMER_LEVELS: '/api/order-workflow/customer-levels',
+    FOLLOW_UP_STATUSES: '/api/order-workflow/follow-up-statuses',
+  },
 } as const
 

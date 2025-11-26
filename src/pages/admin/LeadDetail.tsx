@@ -22,6 +22,7 @@ import { Lead, LeadFollowUp, LeadNote, LeadStatus, LeadFollowUpType, LeadNoteTyp
 import { useToast } from '@/components/ToastContainer'
 import { getUserList } from '@/api/users'
 import { getCustomerList } from '@/api/customers'
+import { getCustomerLevelOptions, CustomerLevelOption } from '@/api/options'
 import {
   Box,
   Button,
@@ -53,7 +54,7 @@ import {
 const LeadDetail = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { showSuccess, showError } = useToast()
 
   // Chakra UI 颜色模式
@@ -75,6 +76,7 @@ const LeadDetail = () => {
   // 下拉选项
   const [users, setUsers] = useState<UserListItem[]>([])
   const [customers, setCustomers] = useState<Customer[]>([])
+  const [customerLevels, setCustomerLevels] = useState<CustomerLevelOption[]>([])
 
   // 弹窗状态
   const { isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure()
@@ -176,18 +178,24 @@ const LeadDetail = () => {
   useEffect(() => {
     const loadOptions = async () => {
       try {
-        const [usersResult, customersResult] = await Promise.all([
+        // 获取当前语言（从 i18n）
+        const currentLang = i18n.language || 'zh-CN'
+        const apiLang = currentLang.startsWith('zh') ? 'zh' : 'id'
+        
+        const [usersResult, customersResult, levelsResult] = await Promise.all([
           getUserList({ page: 1, size: 100 }),
           getCustomerList({ page: 1, size: 100 }),
+          getCustomerLevelOptions(apiLang),
         ])
         setUsers(usersResult.records || [])
         setCustomers(customersResult.records || [])
+        setCustomerLevels(levelsResult || [])
       } catch (error: any) {
         console.error('Failed to load options:', error)
       }
     }
     loadOptions()
-  }, [])
+  }, [i18n.language])
 
   // 初始加载
   useEffect(() => {
@@ -844,13 +852,21 @@ const LeadDetail = () => {
 
               <FormControl>
                 <FormLabel>{t('leadList.modal.level')}</FormLabel>
-                <Input
+                <Select
                   value={editFormData.level}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                     setEditFormData({ ...editFormData, level: e.target.value })
                   }
-                  placeholder={t('leadList.modal.levelPlaceholder')}
-                />
+                >
+                  <option value="">{t('leadList.modal.levelPlaceholder')}</option>
+                  {customerLevels
+                    .sort((a, b) => a.sort_order - b.sort_order)
+                    .map((level) => (
+                      <option key={level.code} value={level.code}>
+                        {level.name}
+                      </option>
+                    ))}
+                </Select>
               </FormControl>
 
               <FormControl>

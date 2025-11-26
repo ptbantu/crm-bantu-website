@@ -21,6 +21,7 @@ import { LeadListParams, Lead, LeadStatus, UserListItem, Customer } from '@/api/
 import { useToast } from '@/components/ToastContainer'
 import { getUserList } from '@/api/users'
 import { getCustomerList } from '@/api/customers'
+import { getCustomerLevelOptions, CustomerLevelOption } from '@/api/options'
 import { PageHeader } from '@/components/admin/PageHeader'
 import {
   Button,
@@ -64,7 +65,7 @@ import {
 } from '@chakra-ui/react'
 
 const LeadList = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { showSuccess, showError } = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
   
@@ -117,6 +118,7 @@ const LeadList = () => {
   // 下拉选项
   const [users, setUsers] = useState<UserListItem[]>([])
   const [customers, setCustomers] = useState<Customer[]>([])
+  const [customerLevels, setCustomerLevels] = useState<CustomerLevelOption[]>([])
 
   // 统计数据
   const [statistics, setStatistics] = useState({
@@ -215,18 +217,24 @@ const LeadList = () => {
   useEffect(() => {
     const loadOptions = async () => {
       try {
-        const [usersResult, customersResult] = await Promise.all([
+        // 获取当前语言（从 i18n）
+        const currentLang = i18n.language || 'zh-CN'
+        const apiLang = currentLang.startsWith('zh') ? 'zh' : 'id'
+        
+        const [usersResult, customersResult, levelsResult] = await Promise.all([
           getUserList({ page: 1, size: 100 }),
           getCustomerList({ page: 1, size: 100 }),
+          getCustomerLevelOptions(apiLang),
         ])
         setUsers(usersResult.records || [])
         setCustomers(customersResult.records || [])
+        setCustomerLevels(levelsResult || [])
       } catch (error: any) {
         console.error('[LeadList] 加载选项失败:', error)
       }
     }
     loadOptions()
-  }, [])
+  }, [i18n.language])
 
   // 初始加载
   useEffect(() => {
@@ -1029,11 +1037,19 @@ const LeadList = () => {
               {/* 客户分级 */}
               <FormControl>
                 <FormLabel>{t('leadList.modal.level')}</FormLabel>
-                <Input
+                <Select
                   value={modalFormData.level}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setModalFormData({ ...modalFormData, level: e.target.value })}
-                  placeholder={t('leadList.modal.levelPlaceholder')}
-                />
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setModalFormData({ ...modalFormData, level: e.target.value })}
+                >
+                  <option value="">{t('leadList.modal.levelPlaceholder')}</option>
+                  {customerLevels
+                    .sort((a, b) => a.sort_order - b.sort_order)
+                    .map((level) => (
+                      <option key={level.code} value={level.code}>
+                        {level.name}
+                      </option>
+                    ))}
+                </Select>
               </FormControl>
 
               {/* 下次跟进时间 */}
