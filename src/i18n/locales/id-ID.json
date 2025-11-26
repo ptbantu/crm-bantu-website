@@ -1451,6 +1451,10 @@
     "total": "Total {{total}} lead",
     "loading": "Memuat...",
     "noData": "Tidak ada data lead",
+    "view": {
+      "myLeads": "Lead Saya",
+      "publicLeads": "Lead Publik"
+    },
     "search": {
       "companyName": "Nama Perusahaan",
       "companyNamePlaceholder": "Masukkan nama perusahaan",

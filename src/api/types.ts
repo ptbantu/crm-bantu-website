@@ -16,7 +16,7 @@ export interface LoginRequest {
   password: string
 }
 
-// 用户信息
+// 用户信息（包含组织信息，供前端缓存）
 export interface UserInfo {
   id: string
   username: string
@@ -24,6 +24,7 @@ export interface UserInfo {
   display_name: string | null
   primary_organization_id: string | null
   primary_organization_name: string | null
+  organization_ids: string[] // 用户所属的所有组织ID列表（供前端缓存）
   roles: string[]
   permissions: string[]
 }

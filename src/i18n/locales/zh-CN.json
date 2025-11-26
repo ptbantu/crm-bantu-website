@@ -1462,6 +1462,10 @@
     "total": "共 {{total}} 条线索",
     "loading": "加载中...",
     "noData": "暂无线索数据",
+    "view": {
+      "myLeads": "我的线索",
+      "publicLeads": "公海线索"
+    },
     "search": {
       "companyName": "公司名称",
       "companyNamePlaceholder": "请输入公司名称",

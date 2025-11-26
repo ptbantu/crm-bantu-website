@@ -78,7 +78,7 @@ export async function request<T = any>(
     requestHeaders['Content-Type'] = 'application/json'
   }
 
-  // 添加认证Token（如果需要）
+  // 添加认证Token和组织ID（如果需要）
   // 根据 API 文档，除登录接口外，所有接口都需要在 Header 中携带 JWT Token
   if (!skipAuth) {
     const token = storage.getToken()
@@ -94,6 +94,23 @@ export async function request<T = any>(
         console.warn('[API Client] ⚠️ 未找到 JWT Token，请求将可能失败')
       }
     }
+    
+    // 从缓存中读取组织ID并添加到请求头（前端缓存，避免每次查询数据库）
+    const userInfo = storage.getUserInfo()
+    if (userInfo?.primary_organization_id) {
+      requestHeaders['X-Organization-Id'] = userInfo.primary_organization_id
+      // 开发环境调试：输出组织ID信息
+      if (import.meta.env.DEV) {
+        console.log(`[API Client] 添加组织ID（从缓存）: ${userInfo.primary_organization_id}`)
+      }
+    } else if (userInfo?.organization_ids && userInfo.organization_ids.length > 0) {
+      // 如果没有主要组织ID，使用第一个组织ID
+      requestHeaders['X-Organization-Id'] = userInfo.organization_ids[0]
+      if (import.meta.env.DEV) {
+        console.log(`[API Client] 添加组织ID（从缓存，使用第一个）: ${userInfo.organization_ids[0]}`)
+      }
+    }
+    
     // 如果没有 token，仍然发送请求，让后端返回 401 错误
     // 这样可以在 401 处理逻辑中统一处理（清除 token 并跳转登录页）
   }
