@@ -161,6 +161,18 @@ export const API_PATHS = {
     CHECK_DUPLICATE: '/api/order-workflow/leads/check-duplicate',
     FOLLOW_UPS: (id: string) => `/api/order-workflow/leads/${id}/follow-ups`,
     NOTES: (id: string) => `/api/order-workflow/leads/${id}/notes`,
+    CONVERT_TO_CUSTOMER: (id: string) => `/api/order-workflow/leads/${id}/convert-to-customer`,
+    CONVERT_TO_OPPORTUNITY: (id: string) => `/api/order-workflow/leads/${id}/convert-to-opportunity`,
+  },
+  // 订单与工作流 - 商机管理
+  OPPORTUNITIES: {
+    BASE: '/api/order-workflow/opportunities',
+    BY_ID: (id: string) => `/api/order-workflow/opportunities/${id}`,
+    ASSIGN: (id: string) => `/api/order-workflow/opportunities/${id}/assign`,
+    UPDATE_STAGE: (id: string) => `/api/order-workflow/opportunities/${id}/update-stage`,
+    CONVERT: (id: string) => `/api/order-workflow/opportunities/${id}/convert`,
+    FOLLOW_UPS: (id: string) => `/api/order-workflow/opportunities/${id}/follow-ups`,
+    NOTES: (id: string) => `/api/order-workflow/opportunities/${id}/notes`,
   },
 } as const
 

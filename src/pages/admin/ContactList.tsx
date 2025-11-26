@@ -110,7 +110,7 @@ const ContactList = () => {
   useEffect(() => {
     const loadCustomers = async () => {
       try {
-        const result = await getCustomerList({ size: 1000 })
+        const result = await getCustomerList({ page: 1, size: 100 })
         setCustomers(result.records)
       } catch (error: any) {
         console.error('Failed to load customers:', error)

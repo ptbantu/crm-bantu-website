@@ -87,6 +87,13 @@ export const adminMenuItems: MenuItem[] = [
         path: '/admin/leads/list?filter=public',
         role: [Role.SALES, Role.ADMIN],
       },
+      {
+        key: 'opportunities',
+        label: 'menu.opportunities',
+        icon: TrendingUp,
+        path: '/admin/opportunities/list',
+        role: [Role.SALES, Role.ADMIN],
+      },
     ],
   },
   

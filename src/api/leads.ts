@@ -159,6 +159,22 @@ export async function createLeadNote(leadId: string, data: LeadNoteCreateRequest
   return result.data!
 }
 
+/**
+ * 转换线索为客户
+ */
+export async function convertLeadToCustomer(leadId: string, data: { customer_name?: string; contact_name?: string }): Promise<{ customer_id: string; customer: any }> {
+  const result = await post<{ customer_id: string; customer: any }>(API_PATHS.LEADS.CONVERT_TO_CUSTOMER(leadId), data)
+  return result.data!
+}
+
+/**
+ * 转换线索为商机
+ */
+export async function convertLeadToOpportunity(leadId: string, data: { opportunity_name?: string; amount?: number }): Promise<{ opportunity_id: string; opportunity: any }> {
+  const result = await post<{ opportunity_id: string; opportunity: any }>(API_PATHS.LEADS.CONVERT_TO_OPPORTUNITY(leadId), data)
+  return result.data!
+}
+
 // 导出类型
 export type {
   CreateLeadRequest,

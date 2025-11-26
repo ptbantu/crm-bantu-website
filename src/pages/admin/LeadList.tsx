@@ -57,6 +57,10 @@ import {
   useDisclosure,
   Alert,
   AlertIcon,
+  SimpleGrid,
+  Stat,
+  StatLabel,
+  StatNumber,
 } from '@chakra-ui/react'
 
 const LeadList = () => {
@@ -114,6 +118,67 @@ const LeadList = () => {
   const [users, setUsers] = useState<UserListItem[]>([])
   const [customers, setCustomers] = useState<Customer[]>([])
 
+  // 统计数据
+  const [statistics, setStatistics] = useState({
+    total: 0,
+    byStatus: {} as Record<LeadStatus, number>,
+    converted: 0,
+    conversionRate: 0,
+  })
+
+  // 加载统计数据（基于所有数据，不受分页影响）
+  const loadStatistics = async (params: LeadListParams) => {
+    try {
+      // 加载所有数据用于统计（不限制分页）
+      const statsParams: LeadListParams = {
+        ...params,
+        page: 1,
+        size: 1000, // 加载足够多的数据用于统计
+      }
+      const statsResult = await getLeadList(statsParams)
+      
+      // 计算统计数据
+      const stats = {
+        total: statsResult.total || 0,
+        byStatus: {} as Record<LeadStatus, number>,
+        converted: 0,
+        conversionRate: 0,
+      }
+      
+      // 基于所有记录计算统计（如果总数小于1000，使用所有记录；否则需要后端支持）
+      statsResult.records?.forEach((lead: Lead) => {
+        stats.byStatus[lead.status] = (stats.byStatus[lead.status] || 0) + 1
+        if (lead.status === 'converted') {
+          stats.converted++
+        }
+      })
+      
+      // 如果加载的记录数等于总数，说明已经加载了所有数据，可以准确计算
+      // 否则，只能基于已加载的数据估算
+      if (statsResult.records && statsResult.records.length === statsResult.total) {
+        // 已加载所有数据，可以准确计算
+        if (stats.total > 0) {
+          stats.conversionRate = (stats.converted / stats.total) * 100
+        }
+      } else {
+        // 数据太多，只能基于已加载的数据估算
+        const loadedCount = statsResult.records?.length || 0
+        if (loadedCount > 0) {
+          const convertedInLoaded = stats.converted
+          stats.converted = Math.round((convertedInLoaded / loadedCount) * stats.total)
+          if (stats.total > 0) {
+            stats.conversionRate = (stats.converted / stats.total) * 100
+          }
+        }
+      }
+      
+      setStatistics(stats)
+    } catch (error: any) {
+      console.error('[LeadList] 加载统计数据失败:', error)
+      // 统计失败不影响主列表加载
+    }
+  }
+
   // 加载线索列表
   const loadLeads = async (params: LeadListParams) => {
     setLoading(true)
@@ -123,6 +188,11 @@ const LeadList = () => {
       setTotal(result.total || 0)
       setCurrentPage(result.current || 1)
       setPages(result.pages || 0)
+      
+      // 异步加载统计数据（不阻塞主列表）
+      loadStatistics(params).catch((err) => {
+        console.error('[LeadList] 加载统计数据失败:', err)
+      })
     } catch (error: any) {
       console.error('[LeadList] 加载失败:', error)
       showError(error.message || t('leadList.error.loadFailed'))
@@ -130,6 +200,12 @@ const LeadList = () => {
       setTotal(0)
       setCurrentPage(1)
       setPages(0)
+      setStatistics({
+        total: 0,
+        byStatus: {} as Record<LeadStatus, number>,
+        converted: 0,
+        conversionRate: 0,
+      })
     } finally {
       setLoading(false)
     }
@@ -419,6 +495,61 @@ const LeadList = () => {
           </Button>
         }
       />
+
+      {/* 统计卡片 */}
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={3} mb={4}>
+        <Card bg="blue.50" borderColor="blue.200" borderWidth={1}>
+          <CardBody>
+            <Stat>
+              <StatLabel fontSize="xs" fontWeight="semibold" color="blue.700">
+                {t('leadList.statistics.total')}
+              </StatLabel>
+              <StatNumber fontSize="2xl" fontWeight="bold" color="blue.900">
+                {loading ? <Spinner size="sm" /> : statistics.total}
+              </StatNumber>
+            </Stat>
+          </CardBody>
+        </Card>
+
+        <Card bg="green.50" borderColor="green.200" borderWidth={1}>
+          <CardBody>
+            <Stat>
+              <StatLabel fontSize="xs" fontWeight="semibold" color="green.700">
+                {t('leadList.statistics.converted')}
+              </StatLabel>
+              <StatNumber fontSize="2xl" fontWeight="bold" color="green.900">
+                {loading ? <Spinner size="sm" /> : statistics.converted}
+              </StatNumber>
+            </Stat>
+          </CardBody>
+        </Card>
+
+        <Card bg="purple.50" borderColor="purple.200" borderWidth={1}>
+          <CardBody>
+            <Stat>
+              <StatLabel fontSize="xs" fontWeight="semibold" color="purple.700">
+                {t('leadList.statistics.conversionRate')}
+              </StatLabel>
+              <StatNumber fontSize="2xl" fontWeight="bold" color="purple.900">
+                {loading ? <Spinner size="sm" /> : `${statistics.conversionRate.toFixed(1)}%`}
+              </StatNumber>
+            </Stat>
+          </CardBody>
+        </Card>
+
+        <Card bg="orange.50" borderColor="orange.200" borderWidth={1}>
+          <CardBody>
+            <Stat>
+              <StatLabel fontSize="xs" fontWeight="semibold" color="orange.700">
+                {t('leadList.statistics.new')}
+              </StatLabel>
+              <StatNumber fontSize="2xl" fontWeight="bold" color="orange.900">
+                {loading ? <Spinner size="sm" /> : statistics.byStatus.new || 0}
+              </StatNumber>
+            </Stat>
+          </CardBody>
+        </Card>
+      </SimpleGrid>
 
       {/* 查询表单 */}
       <Card mb={4} bg={bgColor} borderColor={borderColor}>

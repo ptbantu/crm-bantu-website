@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ArrowLeft, Plus, Edit, Target, Mail, Phone, UserCheck, Clock } from 'lucide-react'
+import { ArrowLeft, Plus, Edit, Target, Mail, Phone, UserCheck, Clock, TrendingUp, Users } from 'lucide-react'
 import {
   getLeadDetail,
   updateLead,
@@ -15,6 +15,8 @@ import {
   createLeadFollowUp,
   getLeadNotes,
   createLeadNote,
+  convertLeadToCustomer,
+  convertLeadToOpportunity,
 } from '@/api/leads'
 import { Lead, LeadFollowUp, LeadNote, LeadStatus, LeadFollowUpType, LeadNoteType, UserListItem, Customer, UpdateLeadRequest, LeadFollowUpCreateRequest, LeadNoteCreateRequest } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
@@ -79,6 +81,8 @@ const LeadDetail = () => {
   const { isOpen: isFollowUpOpen, onOpen: onFollowUpOpen, onClose: onFollowUpClose } = useDisclosure()
   const { isOpen: isNoteOpen, onOpen: onNoteOpen, onClose: onNoteClose } = useDisclosure()
   const { isOpen: isAssignOpen, onOpen: onAssignOpen, onClose: onAssignClose } = useDisclosure()
+  const { isOpen: isConvertToCustomerOpen, onOpen: onConvertToCustomerOpen, onClose: onConvertToCustomerClose } = useDisclosure()
+  const { isOpen: isConvertToOpportunityOpen, onOpen: onConvertToOpportunityOpen, onClose: onConvertToOpportunityClose } = useDisclosure()
 
   // 编辑表单
   const [editFormData, setEditFormData] = useState({
@@ -364,6 +368,40 @@ const LeadDetail = () => {
     }
   }
 
+  // 转换为客户
+  const handleConvertToCustomer = async () => {
+    if (!id) return
+    try {
+      const result = await convertLeadToCustomer(id, {
+        customer_name: convertToCustomerForm.customer_name || lead.company_name || undefined,
+        contact_name: convertToCustomerForm.contact_name || lead.contact_name || undefined,
+      })
+      showSuccess(t('leadDetail.convert.success'))
+      onConvertToCustomerClose()
+      setConvertToCustomerForm({ customer_name: '', contact_name: '' })
+      navigate(`/admin/customer/list`)
+    } catch (error: any) {
+      showError(error.message || t('leadDetail.convert.failed'))
+    }
+  }
+
+  // 转换为商机
+  const handleConvertToOpportunity = async () => {
+    if (!id) return
+    try {
+      const result = await convertLeadToOpportunity(id, {
+        opportunity_name: convertToOpportunityForm.opportunity_name || lead.name || undefined,
+        amount: convertToOpportunityForm.amount ? parseFloat(convertToOpportunityForm.amount) : undefined,
+      })
+      showSuccess(t('leadDetail.convert.success'))
+      onConvertToOpportunityClose()
+      setConvertToOpportunityForm({ opportunity_name: '', amount: '' })
+      navigate(`/admin/opportunities/list`)
+    } catch (error: any) {
+      showError(error.message || t('leadDetail.convert.failed'))
+    }
+  }
+
   if (loading) {
     return (
       <Box w="full" p={8} textAlign="center">
@@ -429,6 +467,22 @@ const LeadDetail = () => {
             onClick={onEditOpen}
           >
             {t('leadDetail.edit')}
+          </Button>
+          <Button
+            size="sm"
+            colorScheme="green"
+            leftIcon={<Users size={16} />}
+            onClick={onConvertToCustomerOpen}
+          >
+            {t('leadDetail.convert.toCustomer')}
+          </Button>
+          <Button
+            size="sm"
+            colorScheme="purple"
+            leftIcon={<TrendingUp size={16} />}
+            onClick={onConvertToOpportunityOpen}
+          >
+            {t('leadDetail.convert.toOpportunity')}
           </Button>
         </HStack>
       </HStack>

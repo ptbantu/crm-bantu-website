@@ -360,9 +360,7 @@ export const Sidebar = () => {
       WebkitBackdropFilter="blur(24px)"
       borderRightWidth={1}
       borderColor={borderColor}
-      ringWidth="1px"
-      ringColor={ringColor}
-      ringOffset={0}
+      borderWidth="1px"
       display="flex"
       flexDirection="column"
       h="100vh"

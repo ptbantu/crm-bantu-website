@@ -772,3 +772,138 @@ export interface LeadNoteCreateRequest {
   is_important?: boolean
 }
 
+// ==================== 商机管理相关类型 ====================
+
+// 商机状态
+export type OpportunityStatus = 'active' | 'won' | 'lost' | 'cancelled'
+
+// 商机阶段（用于看板拖拽）
+export type OpportunityStage = 'initial_contact' | 'needs_analysis' | 'proposal' | 'negotiation' | 'closed_won' | 'closed_lost'
+
+// 商机
+export interface Opportunity {
+  id: string
+  name: string
+  customer_id?: string | null
+  customer_name?: string | null
+  amount?: number | null
+  probability?: number | null
+  stage: OpportunityStage
+  status: OpportunityStatus
+  owner_user_id?: string | null
+  owner_username?: string | null
+  expected_close_date?: string | null
+  actual_close_date?: string | null
+  description?: string | null
+  organization_id: string
+  created_by?: string | null
+  updated_by?: string | null
+  created_at: string
+  updated_at: string
+}
+
+// 商机列表查询参数
+export interface OpportunityListParams {
+  page?: number
+  size?: number
+  owner_user_id?: string
+  stage?: OpportunityStage
+  status?: OpportunityStatus
+  customer_id?: string
+  name?: string
+  min_amount?: number
+  max_amount?: number
+}
+
+// 创建商机请求
+export interface CreateOpportunityRequest {
+  name: string
+  customer_id?: string | null
+  amount?: number | null
+  probability?: number | null
+  stage?: OpportunityStage
+  status?: OpportunityStatus
+  owner_user_id?: string | null
+  expected_close_date?: string | null
+  description?: string | null
+}
+
+// 更新商机请求
+export interface UpdateOpportunityRequest {
+  name?: string
+  customer_id?: string | null
+  amount?: number | null
+  probability?: number | null
+  stage?: OpportunityStage
+  status?: OpportunityStatus
+  owner_user_id?: string | null
+  expected_close_date?: string | null
+  actual_close_date?: string | null
+  description?: string | null
+}
+
+// 分配商机请求
+export interface OpportunityAssignRequest {
+  owner_user_id: string
+}
+
+// 更新商机阶段请求（拖拽）
+export interface OpportunityStageUpdateRequest {
+  stage: OpportunityStage
+  position?: number | null
+}
+
+// 转换商机为订单请求
+export interface OpportunityConvertRequest {
+  order_title?: string | null
+  order_items?: Array<{
+    product_id: string
+    quantity: number
+    unit_price: number
+  }> | null
+}
+
+// 跟进类型
+export type OpportunityFollowUpType = 'call' | 'meeting' | 'email' | 'note'
+
+// 商机跟进记录
+export interface OpportunityFollowUp {
+  id: string
+  opportunity_id: string
+  follow_up_type: OpportunityFollowUpType
+  content?: string | null
+  follow_up_date: string
+  created_by?: string | null
+  created_by_name?: string | null
+  created_at: string
+}
+
+// 创建跟进记录请求
+export interface OpportunityFollowUpCreateRequest {
+  follow_up_type: OpportunityFollowUpType
+  content?: string | null
+  follow_up_date: string
+}
+
+// 备注类型
+export type OpportunityNoteType = 'comment' | 'reminder' | 'task'
+
+// 商机备注
+export interface OpportunityNote {
+  id: string
+  opportunity_id: string
+  note_type: OpportunityNoteType
+  content: string
+  is_important: boolean
+  created_by?: string | null
+  created_by_name?: string | null
+  created_at: string
+}
+
+// 创建备注请求
+export interface OpportunityNoteCreateRequest {
+  note_type: OpportunityNoteType
+  content: string
+  is_important?: boolean
+}
+

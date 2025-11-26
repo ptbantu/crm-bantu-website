@@ -15,7 +15,16 @@
     "contact": "联系我们",
     "dashboard": "仪表板",
     "welcome": "欢迎",
-    "search": "搜索"
+    "search": "搜索",
+    "submit": "提交",
+    "save": "保存",
+    "cancel": "取消",
+    "edit": "编辑",
+    "back": "返回",
+    "view": "查看",
+    "delete": "删除",
+    "select": "请选择",
+    "confirm": "确认"
   },
   "header": {
     "title": "班兔企服",
@@ -657,6 +666,7 @@
     "leadManagement": "线索管理",
     "myLeads": "我的线索",
     "publicLeads": "公海线索",
+    "opportunities": "商机管理",
     "product": "产品管理",
     "productService": "产品服务",
     "productManagement": "服务管理",
@@ -1552,6 +1562,12 @@
       "nameRequired": "线索名称不能为空",
       "invalidEmail": "邮箱格式不正确",
       "submitFailed": "提交失败"
+    },
+    "statistics": {
+      "total": "总线索数",
+      "converted": "已转化",
+      "conversionRate": "转化率",
+      "new": "新建线索"
     }
   },
   "leadDetail": {
@@ -1623,6 +1639,181 @@
       "createNoteFailed": "创建备注失败",
       "assignFailed": "分配失败",
       "moveToPoolFailed": "移入公海池失败"
+    },
+    "convert": {
+      "toCustomer": "转换为客户",
+      "toOpportunity": "转换为商机",
+      "success": "转换成功",
+      "failed": "转换失败"
+    },
+    "statistics": {
+      "total": "总线索数",
+      "byStatus": "按状态统计",
+      "conversionRate": "转化率"
+    }
+  },
+  "opportunityList": {
+    "title": "商机管理",
+    "subtitle": "管理和查看所有商机信息",
+    "create": "新建商机",
+    "empty": "该阶段暂无商机",
+    "search": {
+      "name": "商机名称",
+      "owner": "负责人",
+      "customer": "客户",
+      "minAmount": "最小金额",
+      "maxAmount": "最大金额"
+    },
+    "table": {
+      "name": "商机名称",
+      "customer": "客户",
+      "amount": "金额",
+      "probability": "可能性",
+      "stage": "阶段",
+      "status": "状态",
+      "owner": "负责人",
+      "expectedCloseDate": "预计成交日期",
+      "actions": "操作"
+    },
+    "status": {
+      "active": "进行中",
+      "won": "已成交",
+      "lost": "已失败",
+      "cancelled": "已取消"
+    },
+    "stage": {
+      "initial_contact": "初步接触",
+      "needs_analysis": "需求分析",
+      "proposal": "方案报价",
+      "negotiation": "谈判",
+      "closed_won": "成交",
+      "closed_lost": "失败"
+    },
+    "actions": {
+      "view": "查看",
+      "edit": "编辑",
+      "assign": "分配",
+      "convert": "转换为订单",
+      "delete": "删除"
+    },
+    "modal": {
+      "create": "新建商机",
+      "edit": "编辑商机",
+      "name": "商机名称",
+      "namePlaceholder": "请输入商机名称",
+      "customer": "客户",
+      "selectCustomer": "请选择客户",
+      "amount": "金额",
+      "amountPlaceholder": "请输入金额",
+      "probability": "可能性 (%)",
+      "probabilityPlaceholder": "请输入可能性 (0-100)",
+      "stage": "阶段",
+      "status": "状态",
+      "owner": "负责人",
+      "selectOwner": "请选择负责人",
+      "expectedCloseDate": "预计成交日期",
+      "description": "描述",
+      "descriptionPlaceholder": "请输入描述",
+      "cancel": "取消",
+      "submit": "提交"
+    },
+    "confirm": {
+      "delete": "确定要删除商机 {{name}} 吗？"
+    },
+    "success": {
+      "create": "商机创建成功",
+      "update": "商机更新成功",
+      "delete": "商机删除成功",
+      "assign": "商机分配成功",
+      "stageUpdated": "阶段更新成功"
+    },
+    "error": {
+      "loadFailed": "加载失败",
+      "deleteFailed": "删除失败",
+      "nameRequired": "商机名称不能为空",
+      "submitFailed": "提交失败",
+      "stageUpdateFailed": "阶段更新失败"
+    },
+    "statistics": {
+      "total": "总商机数",
+      "won": "已成交",
+      "lost": "已失败",
+      "totalAmount": "总金额",
+      "conversionRate": "成交率"
+    },
+    "probability": "可能性",
+    "owner": "负责人",
+    "expectedCloseDate": "预计成交日期"
+  },
+  "opportunityDetail": {
+    "title": "商机详情",
+    "loading": "加载中...",
+    "notFound": "商机不存在",
+    "back": "返回",
+    "edit": "编辑",
+    "assign": "分配",
+    "convert": "转换为订单",
+    "basicInfo": "基本信息",
+    "financialInfo": "财务信息",
+    "name": "商机名称",
+    "customer": "客户",
+    "stage": "阶段",
+    "status": {
+      "active": "进行中",
+      "won": "已成交",
+      "lost": "已失败",
+      "cancelled": "已取消"
+    },
+    "amount": "金额",
+    "probability": "可能性",
+    "owner": "负责人",
+    "expectedCloseDate": "预计成交日期",
+    "actualCloseDate": "实际成交日期",
+    "description": "描述",
+    "followUps": "跟进记录",
+    "addFollowUp": "添加跟进",
+    "noFollowUps": "暂无跟进记录",
+    "followUpType": "跟进类型",
+    "followUpType": {
+      "call": "电话",
+      "meeting": "会议",
+      "email": "邮件",
+      "note": "备注"
+    },
+    "followUpDate": "跟进日期",
+    "content": "内容",
+    "contentPlaceholder": "请输入内容",
+    "notes": "备注",
+    "addNote": "添加备注",
+    "noNotes": "暂无备注",
+    "noteType": "备注类型",
+    "noteType": {
+      "comment": "评论",
+      "reminder": "提醒",
+      "task": "任务"
+    },
+    "important": "重要",
+    "convert": {
+      "orderTitle": "订单标题",
+      "orderTitlePlaceholder": "请输入订单标题（可选）",
+      "info": "将商机转换为订单后，商机状态将自动更新为已成交",
+      "submit": "确认转换"
+    },
+    "success": {
+      "update": "商机更新成功",
+      "assign": "商机分配成功",
+      "convert": "商机转换成功",
+      "followUpCreated": "跟进记录创建成功",
+      "noteCreated": "备注创建成功"
+    },
+    "error": {
+      "loadFailed": "加载失败",
+      "updateFailed": "更新失败",
+      "assignFailed": "分配失败",
+      "convertFailed": "转换失败",
+      "contentRequired": "内容不能为空",
+      "followUpCreateFailed": "创建跟进记录失败",
+      "noteCreateFailed": "创建备注失败"
     }
   }
 }

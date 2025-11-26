@@ -30,6 +30,8 @@ import OrderList from './pages/admin/OrderList'
 import OrderDetail from './pages/admin/OrderDetail'
 import LeadList from './pages/admin/LeadList'
 import LeadDetail from './pages/admin/LeadDetail'
+import OpportunityList from './pages/admin/OpportunityList'
+import OpportunityDetail from './pages/admin/OpportunityDetail'
 
 const AppContent = () => {
   const location = useLocation()
@@ -213,12 +215,12 @@ const AppContent = () => {
             }
           />
           
-          {/* 线索管理模块（仅 ADMIN） */}
+          {/* 线索管理模块（SALES, ADMIN） */}
           <Route
             path="/admin/leads/list"
             element={
               <AdminLayout>
-                <PermissionGuard role="ADMIN">
+                <PermissionGuard role={['SALES', 'ADMIN']}>
                   <LeadList />
                 </PermissionGuard>
               </AdminLayout>
@@ -228,8 +230,30 @@ const AppContent = () => {
             path="/admin/leads/detail/:id"
             element={
               <AdminLayout>
-                <PermissionGuard role="ADMIN">
+                <PermissionGuard role={['SALES', 'ADMIN']}>
                   <LeadDetail />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          
+          {/* 商机管理模块（SALES, ADMIN） */}
+          <Route
+            path="/admin/opportunities/list"
+            element={
+              <AdminLayout>
+                <PermissionGuard role={['SALES', 'ADMIN']}>
+                  <OpportunityList />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/opportunities/detail/:id"
+            element={
+              <AdminLayout>
+                <PermissionGuard role={['SALES', 'ADMIN']}>
+                  <OpportunityDetail />
                 </PermissionGuard>
               </AdminLayout>
             }

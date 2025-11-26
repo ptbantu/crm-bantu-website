@@ -39,6 +39,7 @@ export const Breadcrumb = () => {
     'leads': 'menu.leadManagement',
     'myLeads': 'menu.myLeads',
     'publicLeads': 'menu.publicLeads',
+    'opportunities': 'menu.opportunities',
     'detail': 'leadDetail.title',
     'product': 'menu.product',
     'product-service': 'menu.productService',

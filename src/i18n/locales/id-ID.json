@@ -15,7 +15,16 @@
     "contact": "Hubungi Kami",
     "dashboard": "Dashboard",
     "welcome": "Selamat Datang",
-    "search": "Cari"
+    "search": "Cari",
+    "submit": "Kirim",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "edit": "Edit",
+    "back": "Kembali",
+    "view": "Lihat",
+    "delete": "Hapus",
+    "select": "Pilih",
+    "confirm": "Konfirmasi"
   },
   "header": {
     "title": "Bantu Enterprise Services",
@@ -658,6 +667,7 @@
     "leadManagement": "Manajemen Prospek",
     "myLeads": "Prospek Saya",
     "publicLeads": "Kolam Prospek",
+    "opportunities": "Manajemen Peluang",
     "product": "Manajemen Produk",
     "productService": "Produk & Layanan",
     "productManagement": "Manajemen Layanan",
@@ -1541,6 +1551,12 @@
       "nameRequired": "Nama lead tidak boleh kosong",
       "invalidEmail": "Format email tidak valid",
       "submitFailed": "Gagal mengirim"
+    },
+    "statistics": {
+      "total": "Total Lead",
+      "converted": "Dikonversi",
+      "conversionRate": "Tingkat Konversi",
+      "new": "Lead Baru"
     }
   },
   "leadDetail": {
@@ -1612,6 +1628,181 @@
       "createNoteFailed": "Gagal membuat catatan",
       "assignFailed": "Gagal menetapkan",
       "moveToPoolFailed": "Gagal memindahkan ke kolam publik"
+    },
+    "convert": {
+      "toCustomer": "Konversi ke Pelanggan",
+      "toOpportunity": "Konversi ke Peluang",
+      "success": "Konversi berhasil",
+      "failed": "Konversi gagal"
+    },
+    "statistics": {
+      "total": "Total Lead",
+      "byStatus": "Statistik berdasarkan Status",
+      "conversionRate": "Tingkat Konversi"
+    }
+  },
+  "opportunityList": {
+    "title": "Manajemen Peluang",
+    "subtitle": "Kelola dan lihat semua informasi peluang",
+    "create": "Buat Peluang Baru",
+    "empty": "Tidak ada peluang di tahap ini",
+    "search": {
+      "name": "Nama Peluang",
+      "owner": "Pemilik",
+      "customer": "Pelanggan",
+      "minAmount": "Jumlah Minimum",
+      "maxAmount": "Jumlah Maksimum"
+    },
+    "table": {
+      "name": "Nama Peluang",
+      "customer": "Pelanggan",
+      "amount": "Jumlah",
+      "probability": "Kemungkinan",
+      "stage": "Tahap",
+      "status": "Status",
+      "owner": "Pemilik",
+      "expectedCloseDate": "Tanggal Penutupan yang Diharapkan",
+      "actions": "Tindakan"
+    },
+    "status": {
+      "active": "Aktif",
+      "won": "Menang",
+      "lost": "Kalah",
+      "cancelled": "Dibatalkan"
+    },
+    "stage": {
+      "initial_contact": "Kontak Awal",
+      "needs_analysis": "Analisis Kebutuhan",
+      "proposal": "Proposal Penawaran",
+      "negotiation": "Negosiasi",
+      "closed_won": "Menang",
+      "closed_lost": "Kalah"
+    },
+    "actions": {
+      "view": "Lihat",
+      "edit": "Edit",
+      "assign": "Tetapkan",
+      "convert": "Konversi ke Pesanan",
+      "delete": "Hapus"
+    },
+    "modal": {
+      "create": "Buat Peluang Baru",
+      "edit": "Edit Peluang",
+      "name": "Nama Peluang",
+      "namePlaceholder": "Masukkan nama peluang",
+      "customer": "Pelanggan",
+      "selectCustomer": "Pilih pelanggan",
+      "amount": "Jumlah",
+      "amountPlaceholder": "Masukkan jumlah",
+      "probability": "Kemungkinan (%)",
+      "probabilityPlaceholder": "Masukkan kemungkinan (0-100)",
+      "stage": "Tahap",
+      "status": "Status",
+      "owner": "Pemilik",
+      "selectOwner": "Pilih pemilik",
+      "expectedCloseDate": "Tanggal Penutupan yang Diharapkan",
+      "description": "Deskripsi",
+      "descriptionPlaceholder": "Masukkan deskripsi",
+      "cancel": "Batal",
+      "submit": "Kirim"
+    },
+    "confirm": {
+      "delete": "Apakah Anda yakin ingin menghapus peluang {{name}}?"
+    },
+    "success": {
+      "create": "Peluang berhasil dibuat",
+      "update": "Peluang berhasil diperbarui",
+      "delete": "Peluang berhasil dihapus",
+      "assign": "Peluang berhasil ditetapkan",
+      "stageUpdated": "Tahap berhasil diperbarui"
+    },
+    "error": {
+      "loadFailed": "Gagal memuat",
+      "deleteFailed": "Gagal menghapus",
+      "nameRequired": "Nama peluang tidak boleh kosong",
+      "submitFailed": "Gagal mengirim",
+      "stageUpdateFailed": "Gagal memperbarui tahap"
+    },
+    "statistics": {
+      "total": "Total Peluang",
+      "won": "Menang",
+      "lost": "Kalah",
+      "totalAmount": "Jumlah Total",
+      "conversionRate": "Tingkat Konversi"
+    },
+    "probability": "Kemungkinan",
+    "owner": "Pemilik",
+    "expectedCloseDate": "Tanggal Penutupan yang Diharapkan"
+  },
+  "opportunityDetail": {
+    "title": "Detail Peluang",
+    "loading": "Memuat...",
+    "notFound": "Peluang tidak ditemukan",
+    "back": "Kembali",
+    "edit": "Edit",
+    "assign": "Tetapkan",
+    "convert": "Konversi ke Pesanan",
+    "basicInfo": "Informasi Dasar",
+    "financialInfo": "Informasi Keuangan",
+    "name": "Nama Peluang",
+    "customer": "Pelanggan",
+    "stage": "Tahap",
+    "status": {
+      "active": "Aktif",
+      "won": "Menang",
+      "lost": "Kalah",
+      "cancelled": "Dibatalkan"
+    },
+    "amount": "Jumlah",
+    "probability": "Kemungkinan",
+    "owner": "Pemilik",
+    "expectedCloseDate": "Tanggal Penutupan yang Diharapkan",
+    "actualCloseDate": "Tanggal Penutupan Aktual",
+    "description": "Deskripsi",
+    "followUps": "Catatan Tindak Lanjut",
+    "addFollowUp": "Tambah Tindak Lanjut",
+    "noFollowUps": "Tidak ada catatan tindak lanjut",
+    "followUpType": "Jenis Tindak Lanjut",
+    "followUpType": {
+      "call": "Telepon",
+      "meeting": "Pertemuan",
+      "email": "Email",
+      "note": "Catatan"
+    },
+    "followUpDate": "Tanggal Tindak Lanjut",
+    "content": "Konten",
+    "contentPlaceholder": "Masukkan konten",
+    "notes": "Catatan",
+    "addNote": "Tambah Catatan",
+    "noNotes": "Tidak ada catatan",
+    "noteType": "Jenis Catatan",
+    "noteType": {
+      "comment": "Komentar",
+      "reminder": "Pengingat",
+      "task": "Tugas"
+    },
+    "important": "Penting",
+    "convert": {
+      "orderTitle": "Judul Pesanan",
+      "orderTitlePlaceholder": "Masukkan judul pesanan (opsional)",
+      "info": "Setelah mengonversi peluang ke pesanan, status peluang akan diperbarui otomatis menjadi menang",
+      "submit": "Konfirmasi Konversi"
+    },
+    "success": {
+      "update": "Peluang berhasil diperbarui",
+      "assign": "Peluang berhasil ditetapkan",
+      "convert": "Peluang berhasil dikonversi",
+      "followUpCreated": "Catatan tindak lanjut berhasil dibuat",
+      "noteCreated": "Catatan berhasil dibuat"
+    },
+    "error": {
+      "loadFailed": "Gagal memuat",
+      "updateFailed": "Gagal memperbarui",
+      "assignFailed": "Gagal menetapkan",
+      "convertFailed": "Gagal mengonversi",
+      "contentRequired": "Konten tidak boleh kosong",
+      "followUpCreateFailed": "Gagal membuat catatan tindak lanjut",
+      "noteCreateFailed": "Gagal membuat catatan"
     }
   }
 }
