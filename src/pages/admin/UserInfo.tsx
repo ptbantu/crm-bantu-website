@@ -54,14 +54,8 @@ import {
   IconButton,
   Avatar,
   Container,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
   Grid,
   GridItem,
-  Collapse,
 } from '@chakra-ui/react'
 
 const UserInfo = () => {
@@ -91,10 +85,9 @@ const UserInfo = () => {
   
   // Chakra UI 颜色模式
   const bgColor = useColorModeValue('white', 'gray.800')
-  const borderColor = useColorModeValue('gray.200', 'gray.700')
-  const hoverBg = useColorModeValue('gray.50', 'gray.700')
-  const headerBg = useColorModeValue('blue.500', 'blue.900')
-  const cardShadow = useColorModeValue('sm', 'none')
+  const borderColor = useColorModeValue('gray.100', 'gray.700')
+  const pageBg = useColorModeValue('gray.50', 'gray.900')
+  const cardShadow = useColorModeValue('0 1px 2px rgba(0, 0, 0, 0.04)', 'none')
 
   useEffect(() => {
     loadUserInfo()
@@ -236,8 +229,7 @@ const UserInfo = () => {
   if (loading) {
     return (
       <Flex justify="center" align="center" h="400px">
-        <Spinner size="xl" color="blue.500" thickness="4px" />
-        <Text ml={4} color="gray.500" fontSize="lg">{t('userInfo.loading')}</Text>
+        <Spinner size="xl" color="blue.500" thickness="3px" />
       </Flex>
     )
   }
@@ -246,134 +238,125 @@ const UserInfo = () => {
     return (
       <Box p={8} textAlign="center">
         <VStack spacing={4}>
-          <Box as={User} size={64} color="gray.300" />
-          <Text color="gray.500" fontSize="lg">{t('userInfo.error.noData')}</Text>
+          <Box as={User} size={48} color="gray.300" />
+          <Text color="gray.500">{t('userInfo.error.noData')}</Text>
         </VStack>
       </Box>
     )
   }
 
+  // 使用蓝色背景的头像
   const avatarUrl = userDetail.email 
-    ? `https://ui-avatars.com/api/?name=${encodeURIComponent(userDetail.display_name || userDetail.username)}&background=random&color=fff&size=128`
+    ? `https://ui-avatars.com/api/?name=${encodeURIComponent(userDetail.display_name || userDetail.username)}&background=007aff&color=fff&size=128`
     : undefined
 
   return (
-    <Box w="full" bg="gray.50" minH="100%" pb={8}>
-      {/* 头部 Hero 区域 */}
-      <Box 
-        bg={headerBg} 
-        h="160px" 
-        position="relative"
-        mb="80px"
-        borderRadius="0 0 20px 20px"
-      >
-        <Container maxW="container.xl" h="full">
-          <Flex align="flex-end" h="full" pb={-10} position="relative" top="40px" px={4}>
-            <HStack spacing={6} align="flex-end" w="full">
-              <Box position="relative">
-                <Avatar 
-                  size="2xl" 
-                  src={avatarUrl} 
-                  name={userDetail.display_name || userDetail.username}
-                  borderWidth="4px"
-                  borderColor="white"
-                  boxShadow="lg"
-                  bg="gray.200"
-                />
-                {/* <IconButton
-                  aria-label="Change Avatar"
-                  icon={<Camera size={18} />}
-                  size="sm"
-                  position="absolute"
-                  bottom="2px"
-                  right="2px"
-                  colorScheme="gray"
-                  rounded="full"
-                  shadow="md"
-                /> */}
-              </Box>
-              
-              <VStack align="flex-start" spacing={1} pb={2} flex={1}>
-                <Heading size="lg" color="gray.800" mt={12}>
+    <Box w="full" bg={pageBg} minH="100%" pb={8}>
+      {/* 简约头部 */}
+      <Box bg={bgColor} borderBottomWidth="1px" borderColor={borderColor} mb={6}>
+        <Container maxW="container.xl" py={8}>
+          <Flex 
+            direction={{ base: 'column', md: 'row' }} 
+            align={{ base: 'center', md: 'center' }} 
+            justify="space-between"
+            gap={6}
+          >
+            <HStack spacing={6}>
+              <Avatar 
+                size="xl" 
+                src={avatarUrl} 
+                name={userDetail.display_name || userDetail.username}
+                borderWidth="2px"
+                borderColor="white"
+                boxShadow="md"
+              />
+              <VStack align="flex-start" spacing={1}>
+                <Heading size="lg" color="gray.800" fontWeight="bold">
                   {userDetail.display_name || userDetail.username}
                 </Heading>
-                <HStack spacing={3}>
-                  <Text color="gray.500" fontSize="md">@{userDetail.username}</Text>
+                <HStack spacing={3} color="gray.500">
+                  <Text fontSize="md">@{userDetail.username}</Text>
+                  <Text>•</Text>
+                  <Text fontSize="md">{userDetail.email}</Text>
+                </HStack>
+                <HStack spacing={2} mt={1}>
                   <Badge 
                     colorScheme={userDetail.is_active ? "green" : "red"}
                     variant="subtle"
                     px={2}
                     py={0.5}
                     borderRadius="full"
+                    fontSize="xs"
                   >
                     {userDetail.is_active ? t('userInfo.basicInfo.active') : t('userInfo.basicInfo.inactive')}
                   </Badge>
                   {userDetail.roles.map(role => (
-                    <Badge key={role.id} colorScheme="purple" variant="outline" px={2} borderRadius="full">
+                    <Badge key={role.id} colorScheme="blue" variant="outline" px={2} borderRadius="full" fontSize="xs">
                       {role.name}
                     </Badge>
                   ))}
                 </HStack>
               </VStack>
+            </HStack>
 
-              <HStack spacing={3} pb={2} alignSelf="flex-end" mb={2}>
-                {!isEditing && (
+            <HStack spacing={3}>
+              {!isEditing && (
+                <Button
+                  leftIcon={<Edit size={16} />}
+                  colorScheme="blue"
+                  variant="solid"
+                  onClick={handleEdit}
+                  size="md"
+                  borderRadius="lg"
+                >
+                  {t('userInfo.edit')}
+                </Button>
+              )}
+              {isEditing && (
+                <>
                   <Button
-                    leftIcon={<Edit size={18} />}
+                    leftIcon={<Save size={16} />}
                     colorScheme="blue"
-                    onClick={handleEdit}
-                    shadow="md"
+                    onClick={handleSave}
+                    isLoading={submitting}
+                    size="md"
+                    borderRadius="lg"
                   >
-                    {t('userInfo.edit')}
+                    {t('userInfo.save')}
                   </Button>
-                )}
-                {isEditing && (
-                  <>
-                    <Button
-                      leftIcon={<Save size={18} />}
-                      colorScheme="blue"
-                      onClick={handleSave}
-                      isLoading={submitting}
-                      shadow="md"
-                    >
-                      {t('userInfo.save')}
-                    </Button>
-                    <Button
-                      leftIcon={<X size={18} />}
-                      variant="white"
-                      bg="white"
-                      onClick={handleCancel}
-                      shadow="md"
-                    >
-                      {t('userInfo.cancel')}
-                    </Button>
-                  </>
-                )}
-              </HStack>
+                  <Button
+                    leftIcon={<X size={16} />}
+                    variant="ghost"
+                    onClick={handleCancel}
+                    size="md"
+                    borderRadius="lg"
+                  >
+                    {t('userInfo.cancel')}
+                  </Button>
+                </>
+              )}
             </HStack>
           </Flex>
         </Container>
       </Box>
 
-      <Container maxW="container.xl" px={6}>
+      <Container maxW="container.xl">
         <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={6}>
           {/* 左侧栏：主要信息 */}
           <GridItem>
             <VStack spacing={6} align="stretch">
               {/* 基本信息 */}
-              <Card bg={bgColor} borderColor={borderColor} shadow={cardShadow} borderRadius="xl">
-                <CardHeader borderBottomWidth="1px" borderColor={borderColor} pb={4}>
+              <Card bg={bgColor} borderColor={borderColor} borderWidth="1px" shadow={cardShadow} borderRadius="xl" overflow="hidden">
+                <CardHeader borderBottomWidth="1px" borderColor={borderColor} py={4} bg="gray.50">
                   <HStack>
-                    <Box p={2} bg="blue.50" borderRadius="lg" color="blue.500">
-                      <User size={20} />
-                    </Box>
-                    <Heading size="md">{t('userInfo.basicInfo.title')}</Heading>
+                    <User size={18} className="text-gray-500" />
+                    <Heading size="sm" color="gray.700">{t('userInfo.basicInfo.title')}</Heading>
                   </HStack>
                 </CardHeader>
-                <CardBody>
+                <CardBody p={6}>
                   <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                     <FormControl>
-                      <FormLabel fontSize="sm" color="gray.500">
+                      <FormLabel fontSize="xs" color="gray.500" fontWeight="medium" mb={1}>
                         {t('userInfo.basicInfo.displayName')}
                       </FormLabel>
                       {isEditing ? (
@@ -381,42 +364,30 @@ const UserInfo = () => {
                           value={formData.display_name || ''}
                           onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
                           placeholder={t('userInfo.basicInfo.displayName')}
+                          size="md"
+                          borderRadius="md"
                         />
                       ) : (
-                        <Text fontSize="md" fontWeight="medium">{userDetail.display_name || '-'}</Text>
+                        <Text fontSize="md" fontWeight="medium" color="gray.900">{userDetail.display_name || '-'}</Text>
                       )}
                     </FormControl>
 
                     <FormControl>
-                      <FormLabel fontSize="sm" color="gray.500">
+                      <FormLabel fontSize="xs" color="gray.500" fontWeight="medium" mb={1}>
                         {t('userInfo.basicInfo.username')}
                       </FormLabel>
-                      <Input 
-                        value={userDetail.username} 
-                        isReadOnly 
-                        bg="gray.50" 
-                        border="none" 
-                        _hover={{}} 
-                        cursor="default"
-                      />
+                      <Text fontSize="md" color="gray.700">{userDetail.username}</Text>
                     </FormControl>
 
                     <FormControl>
-                      <FormLabel fontSize="sm" color="gray.500">
+                      <FormLabel fontSize="xs" color="gray.500" fontWeight="medium" mb={1}>
                         {t('userInfo.basicInfo.email')}
                       </FormLabel>
-                      <Input 
-                        value={userDetail.email || ''} 
-                        isReadOnly 
-                        bg="gray.50" 
-                        border="none" 
-                        _hover={{}}
-                        cursor="default"
-                      />
+                      <Text fontSize="md" color="gray.700">{userDetail.email || '-'}</Text>
                     </FormControl>
 
                     <FormControl>
-                      <FormLabel fontSize="sm" color="gray.500">
+                      <FormLabel fontSize="xs" color="gray.500" fontWeight="medium" mb={1}>
                         {t('userInfo.basicInfo.phone')}
                       </FormLabel>
                       {isEditing ? (
@@ -424,44 +395,48 @@ const UserInfo = () => {
                           value={formData.phone || ''}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                           placeholder={t('userInfo.basicInfo.phone')}
+                          size="md"
+                          borderRadius="md"
                         />
                       ) : (
-                        <Text fontSize="md" fontWeight="medium">{userDetail.phone || '-'}</Text>
+                        <Text fontSize="md" color="gray.900">{userDetail.phone || '-'}</Text>
                       )}
                     </FormControl>
 
                     <FormControl>
-                      <FormLabel fontSize="sm" color="gray.500">
+                      <FormLabel fontSize="xs" color="gray.500" fontWeight="medium" mb={1}>
                         {t('userInfo.basicInfo.gender')}
                       </FormLabel>
                       {isEditing ? (
                         <Select
                           value={formData.gender || ''}
                           onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                          size="md"
+                          borderRadius="md"
                         >
                           <option value="male">{t('userInfo.basicInfo.male')}</option>
                           <option value="female">{t('userInfo.basicInfo.female')}</option>
                           <option value="other">{t('userInfo.basicInfo.other')}</option>
                         </Select>
                       ) : (
-                        <Text fontSize="md" fontWeight="medium">
+                        <Text fontSize="md" color="gray.900">
                           {userDetail.gender ? t(`userInfo.basicInfo.${userDetail.gender}`) : '-'}
                         </Text>
                       )}
                     </FormControl>
 
                     <FormControl>
-                      <FormLabel fontSize="sm" color="gray.500">
+                      <FormLabel fontSize="xs" color="gray.500" fontWeight="medium" mb={1}>
                         {t('userInfo.basicInfo.organization')}
                       </FormLabel>
                       <HStack>
-                        <Building2 size={16} color="gray" />
-                        <Text fontSize="md">{userDetail.primary_organization_name || '-'}</Text>
+                        <Building2 size={14} className="text-gray-400" />
+                        <Text fontSize="md" color="gray.700">{userDetail.primary_organization_name || '-'}</Text>
                       </HStack>
                     </FormControl>
 
                     <FormControl gridColumn={{ md: 'span 2' }}>
-                      <FormLabel fontSize="sm" color="gray.500">
+                      <FormLabel fontSize="xs" color="gray.500" fontWeight="medium" mb={1}>
                         {t('userInfo.basicInfo.bio')}
                       </FormLabel>
                       {isEditing ? (
@@ -470,9 +445,11 @@ const UserInfo = () => {
                           onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                           placeholder={t('userInfo.basicInfo.bio')}
                           rows={3}
+                          size="md"
+                          borderRadius="md"
                         />
                       ) : (
-                        <Text fontSize="md" color="gray.700">{userDetail.bio || '-'}</Text>
+                        <Text fontSize="md" color="gray.700" whiteSpace="pre-wrap">{userDetail.bio || '-'}</Text>
                       )}
                     </FormControl>
                   </SimpleGrid>
@@ -480,28 +457,26 @@ const UserInfo = () => {
               </Card>
 
               {/* 个人简介/时间线 */}
-              <Card bg={bgColor} borderColor={borderColor} shadow={cardShadow} borderRadius="xl">
-                <CardHeader borderBottomWidth="1px" borderColor={borderColor} pb={4}>
+              <Card bg={bgColor} borderColor={borderColor} borderWidth="1px" shadow={cardShadow} borderRadius="xl" overflow="hidden">
+                <CardHeader borderBottomWidth="1px" borderColor={borderColor} py={4} bg="gray.50">
                   <HStack>
-                    <Box p={2} bg="orange.50" borderRadius="lg" color="orange.500">
-                      <Clock size={20} />
-                    </Box>
-                    <Heading size="md">{t('userInfo.timeline.title')}</Heading>
+                    <Clock size={18} className="text-gray-500" />
+                    <Heading size="sm" color="gray.700">{t('userInfo.timeline.title')}</Heading>
                   </HStack>
                 </CardHeader>
-                <CardBody>
+                <CardBody p={6}>
                   <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
                     <Box>
                       <Text fontSize="xs" color="gray.500" mb={1}>{t('userInfo.timeline.createdAt')}</Text>
-                      <Text fontWeight="medium">{formatDate(userDetail.created_at)}</Text>
+                      <Text fontWeight="medium" color="gray.900">{formatDate(userDetail.created_at)}</Text>
                     </Box>
                     <Box>
                       <Text fontSize="xs" color="gray.500" mb={1}>{t('userInfo.timeline.updatedAt')}</Text>
-                      <Text fontWeight="medium">{formatDate(userDetail.updated_at)}</Text>
+                      <Text fontWeight="medium" color="gray.900">{formatDate(userDetail.updated_at)}</Text>
                     </Box>
                     <Box>
                       <Text fontSize="xs" color="gray.500" mb={1}>{t('userInfo.timeline.lastLoginAt')}</Text>
-                      <Text fontWeight="medium">{formatDate(userDetail.last_login_at)}</Text>
+                      <Text fontWeight="medium" color="gray.900">{formatDate(userDetail.last_login_at)}</Text>
                     </Box>
                   </SimpleGrid>
                 </CardBody>
@@ -513,16 +488,14 @@ const UserInfo = () => {
           <GridItem>
             <VStack spacing={6} align="stretch">
               {/* 联系方式 */}
-              <Card bg={bgColor} borderColor={borderColor} shadow={cardShadow} borderRadius="xl">
-                <CardHeader borderBottomWidth="1px" borderColor={borderColor} pb={4}>
+              <Card bg={bgColor} borderColor={borderColor} borderWidth="1px" shadow={cardShadow} borderRadius="xl" overflow="hidden">
+                <CardHeader borderBottomWidth="1px" borderColor={borderColor} py={4} bg="gray.50">
                   <HStack>
-                    <Box p={2} bg="green.50" borderRadius="lg" color="green.500">
-                      <MessageSquare size={20} />
-                    </Box>
-                    <Heading size="md">{t('userInfo.contact.title')}</Heading>
+                    <MessageSquare size={18} className="text-gray-500" />
+                    <Heading size="sm" color="gray.700">{t('userInfo.contact.title')}</Heading>
                   </HStack>
                 </CardHeader>
-                <CardBody>
+                <CardBody p={5}>
                   <VStack spacing={4} align="stretch">
                     <FormControl>
                       <HStack mb={1}>
@@ -536,9 +509,10 @@ const UserInfo = () => {
                           size="sm"
                           value={formData.contact_phone || ''}
                           onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
+                          borderRadius="md"
                         />
                       ) : (
-                        <Text fontSize="sm">{userDetail.contact_phone || '-'}</Text>
+                        <Text fontSize="sm" color="gray.900">{userDetail.contact_phone || '-'}</Text>
                       )}
                     </FormControl>
 
@@ -554,9 +528,10 @@ const UserInfo = () => {
                           size="sm"
                           value={formData.whatsapp || ''}
                           onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                          borderRadius="md"
                         />
                       ) : (
-                        <Text fontSize="sm">{userDetail.whatsapp || '-'}</Text>
+                        <Text fontSize="sm" color="gray.900">{userDetail.whatsapp || '-'}</Text>
                       )}
                     </FormControl>
 
@@ -572,9 +547,10 @@ const UserInfo = () => {
                           size="sm"
                           value={formData.wechat || ''}
                           onChange={(e) => setFormData({ ...formData, wechat: e.target.value })}
+                          borderRadius="md"
                         />
                       ) : (
-                        <Text fontSize="sm">{userDetail.wechat || '-'}</Text>
+                        <Text fontSize="sm" color="gray.900">{userDetail.wechat || '-'}</Text>
                       )}
                     </FormControl>
 
@@ -591,9 +567,10 @@ const UserInfo = () => {
                           rows={2}
                           value={formData.address || ''}
                           onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                          borderRadius="md"
                         />
                       ) : (
-                        <Text fontSize="sm">{userDetail.address || '-'}</Text>
+                        <Text fontSize="sm" color="gray.900">{userDetail.address || '-'}</Text>
                       )}
                     </FormControl>
                   </VStack>
@@ -601,18 +578,16 @@ const UserInfo = () => {
               </Card>
 
               {/* 安全设置 */}
-              <Card bg={bgColor} borderColor={borderColor} shadow={cardShadow} borderRadius="xl">
-                <CardHeader borderBottomWidth="1px" borderColor={borderColor} pb={4}>
+              <Card bg={bgColor} borderColor={borderColor} borderWidth="1px" shadow={cardShadow} borderRadius="xl" overflow="hidden">
+                <CardHeader borderBottomWidth="1px" borderColor={borderColor} py={4} bg="gray.50">
                   <Flex justify="space-between" align="center">
                     <HStack>
-                      <Box p={2} bg="red.50" borderRadius="lg" color="red.500">
-                        <Shield size={20} />
-                      </Box>
-                      <Heading size="md">{t('userInfo.password.title')}</Heading>
+                      <Shield size={18} className="text-gray-500" />
+                      <Heading size="sm" color="gray.700">{t('userInfo.password.title')}</Heading>
                     </HStack>
                   </Flex>
                 </CardHeader>
-                <CardBody>
+                <CardBody p={5}>
                   {!isChangingPassword ? (
                     <Button
                       w="full"
@@ -620,6 +595,8 @@ const UserInfo = () => {
                       variant="outline"
                       colorScheme="gray"
                       onClick={() => setIsChangingPassword(true)}
+                      size="sm"
+                      borderRadius="md"
                     >
                       {t('userInfo.password.changePassword')}
                     </Button>
@@ -634,6 +611,7 @@ const UserInfo = () => {
                             type={showPasswords.old ? 'text' : 'password'}
                             value={passwordData.old_password}
                             onChange={(e) => setPasswordData({ ...passwordData, old_password: e.target.value })}
+                            borderRadius="md"
                           />
                           <InputRightElement>
                             <IconButton
@@ -656,6 +634,7 @@ const UserInfo = () => {
                             type={showPasswords.new ? 'text' : 'password'}
                             value={passwordData.new_password}
                             onChange={(e) => setPasswordData({ ...passwordData, new_password: e.target.value })}
+                            borderRadius="md"
                           />
                           <InputRightElement>
                             <IconButton
@@ -681,6 +660,7 @@ const UserInfo = () => {
                             type={showPasswords.confirm ? 'text' : 'password'}
                             value={passwordData.confirm_password}
                             onChange={(e) => setPasswordData({ ...passwordData, confirm_password: e.target.value })}
+                            borderRadius="md"
                           />
                           <InputRightElement>
                             <IconButton
@@ -700,6 +680,7 @@ const UserInfo = () => {
                           flex={1}
                           variant="ghost"
                           onClick={handleCancelPassword}
+                          borderRadius="md"
                         >
                           {t('userInfo.cancel')}
                         </Button>
@@ -709,6 +690,7 @@ const UserInfo = () => {
                           colorScheme="blue"
                           onClick={handleChangePassword}
                           isLoading={changingPassword}
+                          borderRadius="md"
                         >
                           {t('userInfo.save')}
                         </Button>
