@@ -28,7 +28,6 @@ import { getUserDetail, updateUser, changePassword } from '@/api/users'
 import { getCurrentUser } from '@/api/auth'
 import { UserDetail, UpdateUserRequest } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
-import { PageHeader } from '@/components/admin/PageHeader'
 import {
   Card,
   CardBody,
@@ -53,6 +52,16 @@ import {
   InputGroup,
   InputRightElement,
   IconButton,
+  Avatar,
+  Container,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  Grid,
+  GridItem,
+  Collapse,
 } from '@chakra-ui/react'
 
 const UserInfo = () => {
@@ -84,6 +93,8 @@ const UserInfo = () => {
   const bgColor = useColorModeValue('white', 'gray.800')
   const borderColor = useColorModeValue('gray.200', 'gray.700')
   const hoverBg = useColorModeValue('gray.50', 'gray.700')
+  const headerBg = useColorModeValue('blue.500', 'blue.900')
+  const cardShadow = useColorModeValue('sm', 'none')
 
   useEffect(() => {
     loadUserInfo()
@@ -125,7 +136,6 @@ const UserInfo = () => {
 
   const handleCancel = () => {
     setIsEditing(false)
-    setIsChangingPassword(false)
     // 重置表单数据
     if (userDetail) {
       setFormData({
@@ -139,11 +149,6 @@ const UserInfo = () => {
         bio: userDetail.bio || '',
       })
     }
-    setPasswordData({
-      old_password: '',
-      new_password: '',
-      confirm_password: '',
-    })
   }
 
   const handleSave = async () => {
@@ -160,6 +165,15 @@ const UserInfo = () => {
     } finally {
       setSubmitting(false)
     }
+  }
+
+  const handleCancelPassword = () => {
+    setIsChangingPassword(false)
+    setPasswordData({
+      old_password: '',
+      new_password: '',
+      confirm_password: '',
+    })
   }
 
   const handleChangePassword = async () => {
@@ -195,12 +209,7 @@ const UserInfo = () => {
     try {
       await changePassword(userDetail.id, passwordData.old_password, passwordData.new_password)
       showSuccess(t('userInfo.success.passwordChangeSuccess'))
-      setIsChangingPassword(false)
-      setPasswordData({
-        old_password: '',
-        new_password: '',
-        confirm_password: '',
-      })
+      handleCancelPassword()
     } catch (error: any) {
       showError(error.message || t('userInfo.error.passwordChangeFailed'))
     } finally {
@@ -226,540 +235,492 @@ const UserInfo = () => {
 
   if (loading) {
     return (
-      <Box w="full">
-        <PageHeader
-          icon={User}
-          title={t('userInfo.title')}
-          subtitle={t('userInfo.subtitle')}
-        />
-        <Card bg={bgColor} borderColor={borderColor}>
-          <CardBody>
-            <Flex justify="center" align="center" py={8}>
-              <Spinner size="lg" color="blue.500" />
-              <Text ml={4} color="gray.500">{t('userInfo.loading')}</Text>
-            </Flex>
-          </CardBody>
-        </Card>
-      </Box>
+      <Flex justify="center" align="center" h="400px">
+        <Spinner size="xl" color="blue.500" thickness="4px" />
+        <Text ml={4} color="gray.500" fontSize="lg">{t('userInfo.loading')}</Text>
+      </Flex>
     )
   }
 
   if (!userDetail) {
     return (
-      <Box w="full">
-        <PageHeader
-          icon={User}
-          title={t('userInfo.title')}
-          subtitle={t('userInfo.subtitle')}
-        />
-        <Card bg={bgColor} borderColor={borderColor}>
-          <CardBody>
-            <VStack py={8} spacing={3}>
-              <Box as={User} size={48} color="gray.400" />
-              <Text color="gray.500" fontSize="sm">{t('userInfo.error.noData')}</Text>
-            </VStack>
-          </CardBody>
-        </Card>
+      <Box p={8} textAlign="center">
+        <VStack spacing={4}>
+          <Box as={User} size={64} color="gray.300" />
+          <Text color="gray.500" fontSize="lg">{t('userInfo.error.noData')}</Text>
+        </VStack>
       </Box>
     )
   }
 
+  const avatarUrl = userDetail.email 
+    ? `https://ui-avatars.com/api/?name=${encodeURIComponent(userDetail.display_name || userDetail.username)}&background=random&color=fff&size=128`
+    : undefined
+
   return (
-    <Box w="full" p={4}>
-      {/* 页面头部 */}
-      <Flex justify="space-between" align="center" mb={4}>
-        <Box>
-          <Text fontSize="sm" color="gray.500" mb={1}>
-            {t('userInfo.subtitle')}
-          </Text>
-        </Box>
-        {!isEditing && (
-          <Button
-            leftIcon={<Edit size={16} />}
-            colorScheme="blue"
-            size="sm"
-            onClick={handleEdit}
-          >
-            {t('userInfo.edit')}
-          </Button>
-        )}
-      </Flex>
-
-      {/* 基本信息卡片 */}
-      <Card bg={bgColor} borderColor={borderColor} mb={4} boxShadow="sm">
-        <CardHeader pb={3}>
-          <Flex justify="space-between" align="center">
-            <HStack spacing={2}>
-              <Box as={User} size={4} />
-              <Heading size="sm">{t('userInfo.basicInfo.title')}</Heading>
-            </HStack>
-            {isEditing && (
-              <HStack spacing={2}>
-                <Button
-                  size="sm"
-                  leftIcon={<Save size={14} />}
-                  colorScheme="blue"
-                  onClick={handleSave}
-                  isLoading={submitting}
-                >
-                  {t('userInfo.save')}
-                </Button>
-                <Button
-                  size="sm"
-                  leftIcon={<X size={14} />}
-                  variant="outline"
-                  onClick={handleCancel}
-                >
-                  {t('userInfo.cancel')}
-                </Button>
-              </HStack>
-            )}
-          </Flex>
-        </CardHeader>
-        <CardBody pt={0}>
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-            {/* 用户名 - 只读 */}
-            <FormControl>
-              <FormLabel fontSize="xs" color="gray.500" mb={1}>
-                {t('userInfo.basicInfo.username')}
-              </FormLabel>
-              <Input
-                value={userDetail.username}
-                isReadOnly
-                bg={useColorModeValue('gray.50', 'gray.700')}
-                cursor="not-allowed"
-              />
-            </FormControl>
-
-            {/* 邮箱 - 只读 */}
-            <FormControl>
-              <FormLabel fontSize="xs" color="gray.500" mb={1}>
-                {t('userInfo.basicInfo.email')}
-              </FormLabel>
-              <Input
-                value={userDetail.email || ''}
-                isReadOnly
-                bg={useColorModeValue('gray.50', 'gray.700')}
-                cursor="not-allowed"
-              />
-            </FormControl>
-
-            {/* 显示名称 - 可编辑 */}
-            <FormControl>
-              <FormLabel fontSize="xs" color="gray.500" mb={1}>
-                {t('userInfo.basicInfo.displayName')}
-              </FormLabel>
-              {isEditing ? (
-                <Input
-                  value={formData.display_name || ''}
-                  onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
-                  placeholder={t('userInfo.basicInfo.displayName')}
+    <Box w="full" bg="gray.50" minH="100%" pb={8}>
+      {/* 头部 Hero 区域 */}
+      <Box 
+        bg={headerBg} 
+        h="160px" 
+        position="relative"
+        mb="80px"
+        borderRadius="0 0 20px 20px"
+      >
+        <Container maxW="container.xl" h="full">
+          <Flex align="flex-end" h="full" pb={-10} position="relative" top="40px" px={4}>
+            <HStack spacing={6} align="flex-end" w="full">
+              <Box position="relative">
+                <Avatar 
+                  size="2xl" 
+                  src={avatarUrl} 
+                  name={userDetail.display_name || userDetail.username}
+                  borderWidth="4px"
+                  borderColor="white"
+                  boxShadow="lg"
+                  bg="gray.200"
                 />
-              ) : (
-                <Text fontSize="sm" fontWeight="medium" color="gray.900">
-                  {userDetail.display_name || '-'}
-                </Text>
-              )}
-            </FormControl>
-
-            {/* 手机号 - 可编辑 */}
-            <FormControl>
-              <FormLabel fontSize="xs" color="gray.500" mb={1}>
-                {t('userInfo.basicInfo.phone')}
-              </FormLabel>
-              {isEditing ? (
-                <Input
-                  value={formData.phone || ''}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder={t('userInfo.basicInfo.phone')}
-                />
-              ) : (
-                <Text fontSize="sm" fontWeight="medium" color="gray.900">
-                  {userDetail.phone || '-'}
-                </Text>
-              )}
-            </FormControl>
-
-            {/* 性别 - 可编辑 */}
-            <FormControl>
-              <FormLabel fontSize="xs" color="gray.500" mb={1}>
-                {t('userInfo.basicInfo.gender')}
-              </FormLabel>
-              {isEditing ? (
-                <Select
-                  value={formData.gender || ''}
-                  onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                  placeholder={t('userInfo.basicInfo.gender')}
-                >
-                  <option value="male">{t('userInfo.basicInfo.male')}</option>
-                  <option value="female">{t('userInfo.basicInfo.female')}</option>
-                  <option value="other">{t('userInfo.basicInfo.other')}</option>
-                </Select>
-              ) : (
-                <Text fontSize="sm" fontWeight="medium" color="gray.900">
-                  {userDetail.gender 
-                    ? t(`userInfo.basicInfo.${userDetail.gender}`)
-                    : '-'}
-                </Text>
-              )}
-            </FormControl>
-
-            {/* 状态 - 只读 */}
-            <FormControl>
-              <FormLabel fontSize="xs" color="gray.500" mb={1}>
-                {t('userInfo.basicInfo.status')}
-              </FormLabel>
-              <HStack spacing={1}>
-                {userDetail.is_active ? (
-                  <>
-                    <Box as={CheckCircle2} size={3.5} color="green.600" />
-                    <Badge colorScheme="green" fontSize="xs">
-                      {t('userInfo.basicInfo.active')}
+                {/* <IconButton
+                  aria-label="Change Avatar"
+                  icon={<Camera size={18} />}
+                  size="sm"
+                  position="absolute"
+                  bottom="2px"
+                  right="2px"
+                  colorScheme="gray"
+                  rounded="full"
+                  shadow="md"
+                /> */}
+              </Box>
+              
+              <VStack align="flex-start" spacing={1} pb={2} flex={1}>
+                <Heading size="lg" color="gray.800" mt={12}>
+                  {userDetail.display_name || userDetail.username}
+                </Heading>
+                <HStack spacing={3}>
+                  <Text color="gray.500" fontSize="md">@{userDetail.username}</Text>
+                  <Badge 
+                    colorScheme={userDetail.is_active ? "green" : "red"}
+                    variant="subtle"
+                    px={2}
+                    py={0.5}
+                    borderRadius="full"
+                  >
+                    {userDetail.is_active ? t('userInfo.basicInfo.active') : t('userInfo.basicInfo.inactive')}
+                  </Badge>
+                  {userDetail.roles.map(role => (
+                    <Badge key={role.id} colorScheme="purple" variant="outline" px={2} borderRadius="full">
+                      {role.name}
                     </Badge>
-                  </>
-                ) : (
+                  ))}
+                </HStack>
+              </VStack>
+
+              <HStack spacing={3} pb={2} alignSelf="flex-end" mb={2}>
+                {!isEditing && (
+                  <Button
+                    leftIcon={<Edit size={18} />}
+                    colorScheme="blue"
+                    onClick={handleEdit}
+                    shadow="md"
+                  >
+                    {t('userInfo.edit')}
+                  </Button>
+                )}
+                {isEditing && (
                   <>
-                    <Box as={XCircle} size={3.5} color="red.600" />
-                    <Badge colorScheme="red" fontSize="xs">
-                      {t('userInfo.basicInfo.inactive')}
-                    </Badge>
+                    <Button
+                      leftIcon={<Save size={18} />}
+                      colorScheme="blue"
+                      onClick={handleSave}
+                      isLoading={submitting}
+                      shadow="md"
+                    >
+                      {t('userInfo.save')}
+                    </Button>
+                    <Button
+                      leftIcon={<X size={18} />}
+                      variant="white"
+                      bg="white"
+                      onClick={handleCancel}
+                      shadow="md"
+                    >
+                      {t('userInfo.cancel')}
+                    </Button>
                   </>
                 )}
               </HStack>
-            </FormControl>
-
-            {/* 组织 - 只读 */}
-            <FormControl>
-              <FormLabel fontSize="xs" color="gray.500" mb={1}>
-                {t('userInfo.basicInfo.organization')}
-              </FormLabel>
-              <Input
-                value={userDetail.primary_organization_name || ''}
-                isReadOnly
-                bg={useColorModeValue('gray.50', 'gray.700')}
-                cursor="not-allowed"
-              />
-            </FormControl>
-
-            {/* 个人简介 - 可编辑 */}
-            <FormControl gridColumn={{ md: 'span 2' }}>
-              <FormLabel fontSize="xs" color="gray.500" mb={1}>
-                {t('userInfo.basicInfo.bio')}
-              </FormLabel>
-              {isEditing ? (
-                <Textarea
-                  value={formData.bio || ''}
-                  onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                  placeholder={t('userInfo.basicInfo.bio')}
-                  rows={3}
-                />
-              ) : (
-                <Text fontSize="sm" fontWeight="medium" color="gray.900">
-                  {userDetail.bio || '-'}
-                </Text>
-              )}
-            </FormControl>
-          </SimpleGrid>
-        </CardBody>
-      </Card>
-
-      {/* 联系信息卡片 */}
-      <Card bg={bgColor} borderColor={borderColor} mb={4} boxShadow="sm">
-        <CardHeader pb={3}>
-          <HStack spacing={2}>
-            <Box as={MessageSquare} size={4} />
-            <Heading size="sm">{t('userInfo.contact.title')}</Heading>
-          </HStack>
-        </CardHeader>
-        <CardBody pt={0}>
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-            {/* 联系电话 - 可编辑 */}
-            <FormControl>
-              <FormLabel fontSize="xs" color="gray.500" mb={1}>
-                {t('userInfo.contact.contactPhone')}
-              </FormLabel>
-              {isEditing ? (
-                <Input
-                  value={formData.contact_phone || ''}
-                  onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
-                  placeholder={t('userInfo.contact.contactPhone')}
-                />
-              ) : (
-                <Text fontSize="sm" fontWeight="medium" color="gray.900">
-                  {userDetail.contact_phone || '-'}
-                </Text>
-              )}
-            </FormControl>
-
-            {/* WhatsApp - 可编辑 */}
-            <FormControl>
-              <FormLabel fontSize="xs" color="gray.500" mb={1}>
-                {t('userInfo.contact.whatsapp')}
-              </FormLabel>
-              {isEditing ? (
-                <Input
-                  value={formData.whatsapp || ''}
-                  onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                  placeholder={t('userInfo.contact.whatsapp')}
-                />
-              ) : (
-                <Text fontSize="sm" fontWeight="medium" color="gray.900">
-                  {userDetail.whatsapp || '-'}
-                </Text>
-              )}
-            </FormControl>
-
-            {/* 微信 - 可编辑 */}
-            <FormControl>
-              <FormLabel fontSize="xs" color="gray.500" mb={1}>
-                {t('userInfo.contact.wechat')}
-              </FormLabel>
-              {isEditing ? (
-                <Input
-                  value={formData.wechat || ''}
-                  onChange={(e) => setFormData({ ...formData, wechat: e.target.value })}
-                  placeholder={t('userInfo.contact.wechat')}
-                />
-              ) : (
-                <Text fontSize="sm" fontWeight="medium" color="gray.900">
-                  {userDetail.wechat || '-'}
-                </Text>
-              )}
-            </FormControl>
-
-            {/* 地址 - 可编辑 */}
-            <FormControl gridColumn={{ md: 'span 2' }}>
-              <FormLabel fontSize="xs" color="gray.500" mb={1}>
-                {t('userInfo.contact.address')}
-              </FormLabel>
-              {isEditing ? (
-                <Textarea
-                  value={formData.address || ''}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  placeholder={t('userInfo.contact.address')}
-                  rows={2}
-                />
-              ) : (
-                <Text fontSize="sm" fontWeight="medium" color="gray.900">
-                  {userDetail.address || '-'}
-                </Text>
-              )}
-            </FormControl>
-          </SimpleGrid>
-        </CardBody>
-      </Card>
-
-      {/* 密码修改卡片 */}
-      <Card bg={bgColor} borderColor={borderColor} mb={4} boxShadow="sm">
-        <CardHeader pb={3}>
-          <Flex justify="space-between" align="center">
-            <HStack spacing={2}>
-              <Box as={Lock} size={4} />
-              <Heading size="sm">{t('userInfo.password.title')}</Heading>
             </HStack>
-            {!isChangingPassword && (
-              <Button
-                size="sm"
-                leftIcon={<Lock size={14} />}
-                colorScheme="purple"
-                variant="outline"
-                onClick={() => setIsChangingPassword(true)}
-              >
-                {t('userInfo.password.changePassword')}
-              </Button>
-            )}
           </Flex>
-        </CardHeader>
-        <CardBody pt={0}>
-          {isChangingPassword ? (
-            <VStack spacing={4} align="stretch">
-              <FormControl>
-                <FormLabel fontSize="xs" color="gray.500" mb={1}>
-                  {t('userInfo.password.oldPassword')}
-                </FormLabel>
-                <InputGroup>
-                  <Input
-                    type={showPasswords.old ? 'text' : 'password'}
-                    value={passwordData.old_password}
-                    onChange={(e) => setPasswordData({ ...passwordData, old_password: e.target.value })}
-                    placeholder={t('userInfo.password.oldPassword')}
-                  />
-                  <InputRightElement width="3rem">
-                    <IconButton
-                      aria-label={showPasswords.old ? 'Hide password' : 'Show password'}
-                      icon={showPasswords.old ? <EyeOff size={16} /> : <Eye size={16} />}
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => setShowPasswords({ ...showPasswords, old: !showPasswords.old })}
-                    />
-                  </InputRightElement>
-                </InputGroup>
-              </FormControl>
+        </Container>
+      </Box>
 
-              <FormControl>
-                <FormLabel fontSize="xs" color="gray.500" mb={1}>
-                  {t('userInfo.password.newPassword')}
-                </FormLabel>
-                <InputGroup>
-                  <Input
-                    type={showPasswords.new ? 'text' : 'password'}
-                    value={passwordData.new_password}
-                    onChange={(e) => setPasswordData({ ...passwordData, new_password: e.target.value })}
-                    placeholder={t('userInfo.password.newPassword')}
-                  />
-                  <InputRightElement width="3rem">
-                    <IconButton
-                      aria-label={showPasswords.new ? 'Hide password' : 'Show password'}
-                      icon={showPasswords.new ? <EyeOff size={16} /> : <Eye size={16} />}
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
-                    />
-                  </InputRightElement>
-                </InputGroup>
-                <Text fontSize="xs" color="gray.500" mt={1}>
-                  {t('userInfo.password.passwordRequirement')}
-                </Text>
-              </FormControl>
-
-              <FormControl>
-                <FormLabel fontSize="xs" color="gray.500" mb={1}>
-                  {t('userInfo.password.confirmPassword')}
-                </FormLabel>
-                <InputGroup>
-                  <Input
-                    type={showPasswords.confirm ? 'text' : 'password'}
-                    value={passwordData.confirm_password}
-                    onChange={(e) => setPasswordData({ ...passwordData, confirm_password: e.target.value })}
-                    placeholder={t('userInfo.password.confirmPassword')}
-                  />
-                  <InputRightElement width="3rem">
-                    <IconButton
-                      aria-label={showPasswords.confirm ? 'Hide password' : 'Show password'}
-                      icon={showPasswords.confirm ? <EyeOff size={16} /> : <Eye size={16} />}
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
-                    />
-                  </InputRightElement>
-                </InputGroup>
-              </FormControl>
-
-              <HStack spacing={2} justify="flex-end">
-                <Button
-                  size="sm"
-                  leftIcon={<Save size={14} />}
-                  colorScheme="purple"
-                  onClick={handleChangePassword}
-                  isLoading={changingPassword}
-                >
-                  {t('userInfo.save')}
-                </Button>
-                <Button
-                  size="sm"
-                  leftIcon={<X size={14} />}
-                  variant="outline"
-                  onClick={() => {
-                    setIsChangingPassword(false)
-                    setPasswordData({
-                      old_password: '',
-                      new_password: '',
-                      confirm_password: '',
-                    })
-                  }}
-                >
-                  {t('userInfo.cancel')}
-                </Button>
-              </HStack>
-            </VStack>
-          ) : (
-            <Text fontSize="sm" color="gray.500">
-              {t('userInfo.password.changePassword')}
-            </Text>
-          )}
-        </CardBody>
-      </Card>
-
-      {/* 角色信息 */}
-      {userDetail.roles && userDetail.roles.length > 0 && (
-        <Card bg={bgColor} borderColor={borderColor} mb={4} boxShadow="sm">
-          <CardHeader pb={3}>
-            <HStack spacing={2}>
-              <Box as={Shield} size={4} />
-              <Heading size="sm">{t('userInfo.roles.title')}</Heading>
-            </HStack>
-          </CardHeader>
-          <CardBody pt={0}>
-            <HStack spacing={2} flexWrap="wrap">
-              {userDetail.roles.map((role) => (
-                <Badge
-                  key={role.id}
-                  colorScheme="blue"
-                  fontSize="xs"
-                  px={2.5}
-                  py={1}
-                  borderRadius="lg"
-                >
-                  <HStack spacing={1.5}>
-                    <Box as={Shield} size={3.5} />
-                    <Text>{role.name}</Text>
-                    <Text opacity={0.7}>({role.code})</Text>
+      <Container maxW="container.xl" px={6}>
+        <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={6}>
+          {/* 左侧栏：主要信息 */}
+          <GridItem>
+            <VStack spacing={6} align="stretch">
+              {/* 基本信息 */}
+              <Card bg={bgColor} borderColor={borderColor} shadow={cardShadow} borderRadius="xl">
+                <CardHeader borderBottomWidth="1px" borderColor={borderColor} pb={4}>
+                  <HStack>
+                    <Box p={2} bg="blue.50" borderRadius="lg" color="blue.500">
+                      <User size={20} />
+                    </Box>
+                    <Heading size="md">{t('userInfo.basicInfo.title')}</Heading>
                   </HStack>
-                </Badge>
-              ))}
-            </HStack>
-          </CardBody>
-        </Card>
-      )}
+                </CardHeader>
+                <CardBody>
+                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+                    <FormControl>
+                      <FormLabel fontSize="sm" color="gray.500">
+                        {t('userInfo.basicInfo.displayName')}
+                      </FormLabel>
+                      {isEditing ? (
+                        <Input
+                          value={formData.display_name || ''}
+                          onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
+                          placeholder={t('userInfo.basicInfo.displayName')}
+                        />
+                      ) : (
+                        <Text fontSize="md" fontWeight="medium">{userDetail.display_name || '-'}</Text>
+                      )}
+                    </FormControl>
 
-      {/* 时间信息 */}
-      <Card bg={bgColor} borderColor={borderColor} boxShadow="sm">
-        <CardHeader pb={3}>
-          <HStack spacing={2}>
-            <Box as={Clock} size={4} />
-            <Heading size="sm">{t('userInfo.timeline.title')}</Heading>
-          </HStack>
-        </CardHeader>
-        <CardBody pt={0}>
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-            <HStack align="start" spacing={2}>
-              <Box as={Calendar} size={4} color="gray.400" mt={0.5} />
-              <Box flex={1}>
-                <Text fontSize="xs" color="gray.500" mb={0.5}>
-                  {t('userInfo.timeline.createdAt')}
-                </Text>
-                <Text fontSize="sm" fontWeight="medium" color="gray.900">
-                  {formatDate(userDetail.created_at)}
-                </Text>
-              </Box>
-            </HStack>
-            <HStack align="start" spacing={2}>
-              <Box as={Calendar} size={4} color="gray.400" mt={0.5} />
-              <Box flex={1}>
-                <Text fontSize="xs" color="gray.500" mb={0.5}>
-                  {t('userInfo.timeline.updatedAt')}
-                </Text>
-                <Text fontSize="sm" fontWeight="medium" color="gray.900">
-                  {formatDate(userDetail.updated_at)}
-                </Text>
-              </Box>
-            </HStack>
-            {userDetail.last_login_at && (
-              <HStack align="start" spacing={2}>
-                <Box as={Clock} size={4} color="gray.400" mt={0.5} />
-                <Box flex={1}>
-                  <Text fontSize="xs" color="gray.500" mb={0.5}>
-                    {t('userInfo.timeline.lastLoginAt')}
-                  </Text>
-                  <Text fontSize="sm" fontWeight="medium" color="gray.900">
-                    {formatDate(userDetail.last_login_at)}
-                  </Text>
-                </Box>
-              </HStack>
-            )}
-          </SimpleGrid>
-        </CardBody>
-      </Card>
+                    <FormControl>
+                      <FormLabel fontSize="sm" color="gray.500">
+                        {t('userInfo.basicInfo.username')}
+                      </FormLabel>
+                      <Input 
+                        value={userDetail.username} 
+                        isReadOnly 
+                        bg="gray.50" 
+                        border="none" 
+                        _hover={{}} 
+                        cursor="default"
+                      />
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel fontSize="sm" color="gray.500">
+                        {t('userInfo.basicInfo.email')}
+                      </FormLabel>
+                      <Input 
+                        value={userDetail.email || ''} 
+                        isReadOnly 
+                        bg="gray.50" 
+                        border="none" 
+                        _hover={{}}
+                        cursor="default"
+                      />
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel fontSize="sm" color="gray.500">
+                        {t('userInfo.basicInfo.phone')}
+                      </FormLabel>
+                      {isEditing ? (
+                        <Input
+                          value={formData.phone || ''}
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                          placeholder={t('userInfo.basicInfo.phone')}
+                        />
+                      ) : (
+                        <Text fontSize="md" fontWeight="medium">{userDetail.phone || '-'}</Text>
+                      )}
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel fontSize="sm" color="gray.500">
+                        {t('userInfo.basicInfo.gender')}
+                      </FormLabel>
+                      {isEditing ? (
+                        <Select
+                          value={formData.gender || ''}
+                          onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                        >
+                          <option value="male">{t('userInfo.basicInfo.male')}</option>
+                          <option value="female">{t('userInfo.basicInfo.female')}</option>
+                          <option value="other">{t('userInfo.basicInfo.other')}</option>
+                        </Select>
+                      ) : (
+                        <Text fontSize="md" fontWeight="medium">
+                          {userDetail.gender ? t(`userInfo.basicInfo.${userDetail.gender}`) : '-'}
+                        </Text>
+                      )}
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel fontSize="sm" color="gray.500">
+                        {t('userInfo.basicInfo.organization')}
+                      </FormLabel>
+                      <HStack>
+                        <Building2 size={16} color="gray" />
+                        <Text fontSize="md">{userDetail.primary_organization_name || '-'}</Text>
+                      </HStack>
+                    </FormControl>
+
+                    <FormControl gridColumn={{ md: 'span 2' }}>
+                      <FormLabel fontSize="sm" color="gray.500">
+                        {t('userInfo.basicInfo.bio')}
+                      </FormLabel>
+                      {isEditing ? (
+                        <Textarea
+                          value={formData.bio || ''}
+                          onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                          placeholder={t('userInfo.basicInfo.bio')}
+                          rows={3}
+                        />
+                      ) : (
+                        <Text fontSize="md" color="gray.700">{userDetail.bio || '-'}</Text>
+                      )}
+                    </FormControl>
+                  </SimpleGrid>
+                </CardBody>
+              </Card>
+
+              {/* 个人简介/时间线 */}
+              <Card bg={bgColor} borderColor={borderColor} shadow={cardShadow} borderRadius="xl">
+                <CardHeader borderBottomWidth="1px" borderColor={borderColor} pb={4}>
+                  <HStack>
+                    <Box p={2} bg="orange.50" borderRadius="lg" color="orange.500">
+                      <Clock size={20} />
+                    </Box>
+                    <Heading size="md">{t('userInfo.timeline.title')}</Heading>
+                  </HStack>
+                </CardHeader>
+                <CardBody>
+                  <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
+                    <Box>
+                      <Text fontSize="xs" color="gray.500" mb={1}>{t('userInfo.timeline.createdAt')}</Text>
+                      <Text fontWeight="medium">{formatDate(userDetail.created_at)}</Text>
+                    </Box>
+                    <Box>
+                      <Text fontSize="xs" color="gray.500" mb={1}>{t('userInfo.timeline.updatedAt')}</Text>
+                      <Text fontWeight="medium">{formatDate(userDetail.updated_at)}</Text>
+                    </Box>
+                    <Box>
+                      <Text fontSize="xs" color="gray.500" mb={1}>{t('userInfo.timeline.lastLoginAt')}</Text>
+                      <Text fontWeight="medium">{formatDate(userDetail.last_login_at)}</Text>
+                    </Box>
+                  </SimpleGrid>
+                </CardBody>
+              </Card>
+            </VStack>
+          </GridItem>
+
+          {/* 右侧栏：联系方式和安全 */}
+          <GridItem>
+            <VStack spacing={6} align="stretch">
+              {/* 联系方式 */}
+              <Card bg={bgColor} borderColor={borderColor} shadow={cardShadow} borderRadius="xl">
+                <CardHeader borderBottomWidth="1px" borderColor={borderColor} pb={4}>
+                  <HStack>
+                    <Box p={2} bg="green.50" borderRadius="lg" color="green.500">
+                      <MessageSquare size={20} />
+                    </Box>
+                    <Heading size="md">{t('userInfo.contact.title')}</Heading>
+                  </HStack>
+                </CardHeader>
+                <CardBody>
+                  <VStack spacing={4} align="stretch">
+                    <FormControl>
+                      <HStack mb={1}>
+                        <Phone size={14} className="text-gray-400" />
+                        <FormLabel fontSize="xs" color="gray.500" m={0}>
+                          {t('userInfo.contact.contactPhone')}
+                        </FormLabel>
+                      </HStack>
+                      {isEditing ? (
+                        <Input
+                          size="sm"
+                          value={formData.contact_phone || ''}
+                          onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
+                        />
+                      ) : (
+                        <Text fontSize="sm">{userDetail.contact_phone || '-'}</Text>
+                      )}
+                    </FormControl>
+
+                    <FormControl>
+                      <HStack mb={1}>
+                        <MessageCircle size={14} className="text-gray-400" />
+                        <FormLabel fontSize="xs" color="gray.500" m={0}>
+                          {t('userInfo.contact.whatsapp')}
+                        </FormLabel>
+                      </HStack>
+                      {isEditing ? (
+                        <Input
+                          size="sm"
+                          value={formData.whatsapp || ''}
+                          onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                        />
+                      ) : (
+                        <Text fontSize="sm">{userDetail.whatsapp || '-'}</Text>
+                      )}
+                    </FormControl>
+
+                    <FormControl>
+                      <HStack mb={1}>
+                        <MessageCircle size={14} className="text-gray-400" />
+                        <FormLabel fontSize="xs" color="gray.500" m={0}>
+                          {t('userInfo.contact.wechat')}
+                        </FormLabel>
+                      </HStack>
+                      {isEditing ? (
+                        <Input
+                          size="sm"
+                          value={formData.wechat || ''}
+                          onChange={(e) => setFormData({ ...formData, wechat: e.target.value })}
+                        />
+                      ) : (
+                        <Text fontSize="sm">{userDetail.wechat || '-'}</Text>
+                      )}
+                    </FormControl>
+
+                    <FormControl>
+                      <HStack mb={1}>
+                        <MapPin size={14} className="text-gray-400" />
+                        <FormLabel fontSize="xs" color="gray.500" m={0}>
+                          {t('userInfo.contact.address')}
+                        </FormLabel>
+                      </HStack>
+                      {isEditing ? (
+                        <Textarea
+                          size="sm"
+                          rows={2}
+                          value={formData.address || ''}
+                          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                        />
+                      ) : (
+                        <Text fontSize="sm">{userDetail.address || '-'}</Text>
+                      )}
+                    </FormControl>
+                  </VStack>
+                </CardBody>
+              </Card>
+
+              {/* 安全设置 */}
+              <Card bg={bgColor} borderColor={borderColor} shadow={cardShadow} borderRadius="xl">
+                <CardHeader borderBottomWidth="1px" borderColor={borderColor} pb={4}>
+                  <Flex justify="space-between" align="center">
+                    <HStack>
+                      <Box p={2} bg="red.50" borderRadius="lg" color="red.500">
+                        <Shield size={20} />
+                      </Box>
+                      <Heading size="md">{t('userInfo.password.title')}</Heading>
+                    </HStack>
+                  </Flex>
+                </CardHeader>
+                <CardBody>
+                  {!isChangingPassword ? (
+                    <Button
+                      w="full"
+                      leftIcon={<Lock size={16} />}
+                      variant="outline"
+                      colorScheme="gray"
+                      onClick={() => setIsChangingPassword(true)}
+                    >
+                      {t('userInfo.password.changePassword')}
+                    </Button>
+                  ) : (
+                    <VStack spacing={4}>
+                      <FormControl>
+                        <FormLabel fontSize="xs" color="gray.500">
+                          {t('userInfo.password.oldPassword')}
+                        </FormLabel>
+                        <InputGroup size="sm">
+                          <Input
+                            type={showPasswords.old ? 'text' : 'password'}
+                            value={passwordData.old_password}
+                            onChange={(e) => setPasswordData({ ...passwordData, old_password: e.target.value })}
+                          />
+                          <InputRightElement>
+                            <IconButton
+                              aria-label={showPasswords.old ? 'Hide' : 'Show'}
+                              icon={showPasswords.old ? <EyeOff size={12} /> : <Eye size={12} />}
+                              size="xs"
+                              variant="ghost"
+                              onClick={() => setShowPasswords({ ...showPasswords, old: !showPasswords.old })}
+                            />
+                          </InputRightElement>
+                        </InputGroup>
+                      </FormControl>
+
+                      <FormControl>
+                        <FormLabel fontSize="xs" color="gray.500">
+                          {t('userInfo.password.newPassword')}
+                        </FormLabel>
+                        <InputGroup size="sm">
+                          <Input
+                            type={showPasswords.new ? 'text' : 'password'}
+                            value={passwordData.new_password}
+                            onChange={(e) => setPasswordData({ ...passwordData, new_password: e.target.value })}
+                          />
+                          <InputRightElement>
+                            <IconButton
+                              aria-label={showPasswords.new ? 'Hide' : 'Show'}
+                              icon={showPasswords.new ? <EyeOff size={12} /> : <Eye size={12} />}
+                              size="xs"
+                              variant="ghost"
+                              onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
+                            />
+                          </InputRightElement>
+                        </InputGroup>
+                        <Text fontSize="xs" color="gray.400" mt={1}>
+                          {t('userInfo.password.passwordRequirement')}
+                        </Text>
+                      </FormControl>
+
+                      <FormControl>
+                        <FormLabel fontSize="xs" color="gray.500">
+                          {t('userInfo.password.confirmPassword')}
+                        </FormLabel>
+                        <InputGroup size="sm">
+                          <Input
+                            type={showPasswords.confirm ? 'text' : 'password'}
+                            value={passwordData.confirm_password}
+                            onChange={(e) => setPasswordData({ ...passwordData, confirm_password: e.target.value })}
+                          />
+                          <InputRightElement>
+                            <IconButton
+                              aria-label={showPasswords.confirm ? 'Hide' : 'Show'}
+                              icon={showPasswords.confirm ? <EyeOff size={12} /> : <Eye size={12} />}
+                              size="xs"
+                              variant="ghost"
+                              onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
+                            />
+                          </InputRightElement>
+                        </InputGroup>
+                      </FormControl>
+
+                      <HStack w="full" spacing={2}>
+                        <Button
+                          size="sm"
+                          flex={1}
+                          variant="ghost"
+                          onClick={handleCancelPassword}
+                        >
+                          {t('userInfo.cancel')}
+                        </Button>
+                        <Button
+                          size="sm"
+                          flex={1}
+                          colorScheme="blue"
+                          onClick={handleChangePassword}
+                          isLoading={changingPassword}
+                        >
+                          {t('userInfo.save')}
+                        </Button>
+                      </HStack>
+                    </VStack>
+                  )}
+                </CardBody>
+              </Card>
+            </VStack>
+          </GridItem>
+        </Grid>
+      </Container>
     </Box>
   )
 }

@@ -42,14 +42,6 @@ export interface MenuItem {
 }
 
 export const adminMenuItems: MenuItem[] = [
-  // 0. 个人信息 - 所有登录用户可见
-  {
-    key: 'profile',
-    label: 'menu.profile',
-    icon: User,
-    path: '/admin/profile',
-    // 所有登录用户都可以访问
-  },
   // 1. 仪表盘 - 所有角色
   {
     key: 'dashboard',
