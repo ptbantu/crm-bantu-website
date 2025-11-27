@@ -103,6 +103,16 @@ const AppContent = () => {
             }
           />
           
+          {/* 个人信息页面（所有用户可见） */}
+          <Route
+            path="/admin/profile"
+            element={
+              <AdminLayout>
+                <UserInfo />
+              </AdminLayout>
+            }
+          />
+          
           {/* 系统管理模块（仅 ADMIN） */}
           <Route
             path="/admin/system-management/user-info"

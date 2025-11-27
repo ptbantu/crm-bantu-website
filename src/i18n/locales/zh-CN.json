@@ -637,6 +637,7 @@
   },
   "menu": {
     "menu": "菜单",
+    "profile": "个人信息",
     "dashboard": "仪表盘",
     "admin": "后台管理",
     "userManagement": "用户管理",
@@ -739,9 +740,14 @@
     }
   },
   "userInfo": {
-    "title": "用户信息",
-    "subtitle": "查看和管理当前登录用户的详细信息",
+    "title": "个人信息",
+    "subtitle": "查看和管理您的个人信息",
     "loading": "加载中...",
+    "edit": "编辑",
+    "save": "保存",
+    "cancel": "取消",
+    "editMode": "编辑模式",
+    "viewMode": "查看模式",
     "basicInfo": {
       "title": "基本信息",
       "username": "用户名",
@@ -751,7 +757,25 @@
       "status": "状态",
       "active": "启用",
       "inactive": "禁用",
-      "organization": "所属组织"
+      "organization": "所属组织",
+      "gender": "性别",
+      "bio": "个人简介",
+      "male": "男",
+      "female": "女",
+      "other": "其他"
+    },
+    "password": {
+      "title": "修改密码",
+      "oldPassword": "旧密码",
+      "newPassword": "新密码",
+      "confirmPassword": "确认密码",
+      "changePassword": "修改密码",
+      "passwordMismatch": "两次输入的密码不一致",
+      "passwordTooShort": "密码长度至少8位",
+      "passwordRequirement": "密码必须包含字母和数字",
+      "oldPasswordRequired": "请输入旧密码",
+      "newPasswordRequired": "请输入新密码",
+      "confirmPasswordRequired": "请确认新密码"
     },
     "roles": {
       "title": "角色权限"
@@ -769,10 +793,17 @@
       "updatedAt": "更新时间",
       "lastLoginAt": "最后登录时间"
     },
+    "success": {
+      "updateSuccess": "个人信息更新成功",
+      "passwordChangeSuccess": "密码修改成功"
+    },
     "error": {
       "noUser": "未找到用户信息",
       "loadFailed": "加载用户信息失败",
-      "noData": "暂无数据"
+      "noData": "暂无数据",
+      "updateFailed": "更新失败",
+      "passwordChangeFailed": "密码修改失败",
+      "oldPasswordIncorrect": "旧密码不正确"
     }
   },
   "productManagement": {

@@ -134,3 +134,19 @@ export async function resetUserPassword(id: string, newPassword: string): Promis
   return result.data!
 }
 
+/**
+ * 修改密码（用户自己修改）
+ */
+export interface ChangePasswordRequest {
+  old_password: string
+  new_password: string
+}
+
+export async function changePassword(id: string, oldPassword: string, newPassword: string): Promise<UserDetail> {
+  const result = await put<UserDetail>(`${API_PATHS.USERS.BY_ID(id)}/password`, {
+    old_password: oldPassword,
+    new_password: newPassword
+  })
+  return result.data!
+}
+

@@ -637,6 +637,7 @@
   },
   "menu": {
     "menu": "Menu",
+    "profile": "Profil Saya",
     "dashboard": "Dashboard",
     "admin": "Manajemen Backend",
     "userManagement": "Manajemen Pengguna",
@@ -728,9 +729,14 @@
     }
   },
   "userInfo": {
-    "title": "Informasi Pengguna",
-    "subtitle": "Lihat dan kelola informasi detail pengguna yang sedang login",
+    "title": "Profil Saya",
+    "subtitle": "Lihat dan kelola informasi pribadi Anda",
     "loading": "Memuat...",
+    "edit": "Edit",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "editMode": "Mode Edit",
+    "viewMode": "Mode Lihat",
     "basicInfo": {
       "title": "Informasi Dasar",
       "username": "Nama Pengguna",
@@ -740,7 +746,25 @@
       "status": "Status",
       "active": "Aktif",
       "inactive": "Tidak Aktif",
-      "organization": "Organisasi"
+      "organization": "Organisasi",
+      "gender": "Jenis Kelamin",
+      "bio": "Bio",
+      "male": "Laki-laki",
+      "female": "Perempuan",
+      "other": "Lainnya"
+    },
+    "password": {
+      "title": "Ubah Kata Sandi",
+      "oldPassword": "Kata Sandi Lama",
+      "newPassword": "Kata Sandi Baru",
+      "confirmPassword": "Konfirmasi Kata Sandi",
+      "changePassword": "Ubah Kata Sandi",
+      "passwordMismatch": "Kata sandi tidak cocok",
+      "passwordTooShort": "Kata sandi minimal 8 karakter",
+      "passwordRequirement": "Kata sandi harus mengandung huruf dan angka",
+      "oldPasswordRequired": "Masukkan kata sandi lama",
+      "newPasswordRequired": "Masukkan kata sandi baru",
+      "confirmPasswordRequired": "Konfirmasi kata sandi baru"
     },
     "roles": {
       "title": "Peran dan Izin"
@@ -758,10 +782,17 @@
       "updatedAt": "Waktu Diperbarui",
       "lastLoginAt": "Waktu Login Terakhir"
     },
+    "success": {
+      "updateSuccess": "Informasi pribadi berhasil diperbarui",
+      "passwordChangeSuccess": "Kata sandi berhasil diubah"
+    },
     "error": {
       "noUser": "Informasi pengguna tidak ditemukan",
       "loadFailed": "Gagal memuat informasi pengguna",
-      "noData": "Tidak ada data"
+      "noData": "Tidak ada data",
+      "updateFailed": "Gagal memperbarui",
+      "passwordChangeFailed": "Gagal mengubah kata sandi",
+      "oldPasswordIncorrect": "Kata sandi lama tidak benar"
     }
   },
   "productManagement": {
