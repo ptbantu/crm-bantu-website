@@ -18,6 +18,7 @@ interface TabsContextType {
   tabs: Tab[]
   activeTabId: string | null
   addTab: (path: string, title: string, key: string, icon?: ComponentType<{ className?: string }>) => void
+  updateTabTitle: (key: string, title: string) => void
   removeTab: (tabId: string) => void
   setActiveTab: (tabId: string) => void
   closeTab: (tabId: string) => void
@@ -76,6 +77,18 @@ export const TabsProvider = ({ children }: TabsProviderProps) => {
       setActiveTabId(newTab.id)
       setPendingNavigation(path)
       return newTabs
+    })
+  }, [])
+
+  // 更新标签页标题
+  const updateTabTitle = useCallback((key: string, title: string) => {
+    setTabs(prev => {
+      return prev.map(tab => {
+        if (tab.key === key) {
+          return { ...tab, title }
+        }
+        return tab
+      })
     })
   }, [])
 
@@ -139,6 +152,7 @@ export const TabsProvider = ({ children }: TabsProviderProps) => {
         tabs,
         activeTabId,
         addTab,
+        updateTabTitle,
         removeTab,
         setActiveTab,
         closeTab,

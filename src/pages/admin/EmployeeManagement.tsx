@@ -5,13 +5,14 @@
  */
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Search, Plus, Edit, Trash2, User, Building2, Eye, EyeOff } from 'lucide-react'
+import { Search, Plus, Edit, Trash2, User, Building2, Eye, EyeOff, Key } from 'lucide-react'
 import {
   getUserList,
   getRoleList,
   createUser,
   updateUser,
   deleteUser,
+  resetUserPassword,
   CreateUserRequest,
   UpdateUserRequest,
 } from '@/api/users'
@@ -454,6 +455,20 @@ const EmployeeManagement = () => {
     }
   }
 
+  // 重置密码
+  const handleResetPassword = async (user: UserListItem) => {
+    if (!window.confirm(`确定要将用户 "${user.username}" 的密码重置为 "bantuqifu123" 吗？`)) {
+      return
+    }
+
+    try {
+      await resetUserPassword(user.id, 'bantuqifu123')
+      showSuccess('密码重置成功')
+    } catch (error: any) {
+      showError(error.message || '密码重置失败')
+    }
+  }
+
   // 切换角色选择
   const toggleRole = (roleId: string) => {
     setFormData((prev: typeof formData) => ({
@@ -667,6 +682,14 @@ const EmployeeManagement = () => {
                                         size="xs"
                                         variant="ghost"
                                         onClick={() => handleEdit(user)}
+                                      />
+                                      <IconButton
+                                        aria-label="重置密码"
+                                        icon={<Key size={14} />}
+                                        size="xs"
+                                        variant="ghost"
+                                        colorScheme="orange"
+                                        onClick={() => handleResetPassword(user)}
                                       />
                                       <IconButton
                                         aria-label="删除"

@@ -120,3 +120,17 @@ export async function deleteUser(id: string): Promise<void> {
   await del(API_PATHS.USERS.BY_ID(id))
 }
 
+/**
+ * 重置用户密码
+ */
+export interface ResetPasswordRequest {
+  new_password: string
+}
+
+export async function resetUserPassword(id: string, newPassword: string): Promise<UserDetail> {
+  const result = await post<UserDetail>(`${API_PATHS.USERS.BY_ID(id)}/reset-password`, { 
+    new_password: newPassword 
+  })
+  return result.data!
+}
+

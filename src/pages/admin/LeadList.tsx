@@ -21,6 +21,8 @@ import {
 import { LeadListParams, Lead, LeadStatus, UserListItem, Customer } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
 import { getUserList } from '@/api/users'
+import { storage } from '@/utils/storage'
+import { useAuth } from '@/hooks/useAuth'
 import { getCustomerList } from '@/api/customers'
 import { getCustomerLevelOptions, CustomerLevelOption } from '@/api/options'
 import { PageHeader } from '@/components/admin/PageHeader'
@@ -67,13 +69,22 @@ import {
   Checkbox,
   CheckboxGroup,
   Stack,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
 } from '@chakra-ui/react'
 
 const LeadList = () => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const { showSuccess, showError } = useToast()
+  const { user } = useAuth()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen: isTransferOpen, onOpen: onTransferOpen, onClose: onTransferClose } = useDisclosure()
   
   // Chakra UI 颜色模式
   const bgColor = useColorModeValue('white', 'gray.800')
@@ -95,6 +106,12 @@ const LeadList = () => {
   const [total, setTotal] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
   const [pages, setPages] = useState(0)
+  
+  // 转换用户相关状态
+  const [transferringLeadId, setTransferringLeadId] = useState<string | null>(null)
+  const [organizationUsers, setOrganizationUsers] = useState<UserListItem[]>([])
+  const [loadingUsers, setLoadingUsers] = useState(false)
+  const [selectedUserId, setSelectedUserId] = useState<string>('')
 
   // 表单状态（移除 is_in_public_pool，由 viewType 控制）
   const [formData, setFormData] = useState({
@@ -126,6 +143,8 @@ const LeadList = () => {
   })
   const [submitting, setSubmitting] = useState(false)
   const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null)
+  const [isDuplicate, setIsDuplicate] = useState(false) // 标记是否存在重复线索（完全匹配公司名）
+  const [checkingDuplicate, setCheckingDuplicate] = useState(false) // 标记是否正在查重
 
   // 下拉选项
   const [users, setUsers] = useState<UserListItem[]>([])
@@ -260,6 +279,7 @@ const LeadList = () => {
       next_follow_up_at: '',
     })
     setDuplicateWarning(null)
+    setIsDuplicate(false)
     onOpen()
   }
 
@@ -280,6 +300,7 @@ const LeadList = () => {
       next_follow_up_at: lead.next_follow_up_at ? new Date(lead.next_follow_up_at).toISOString().slice(0, 16) : '',
     })
     setDuplicateWarning(null)
+    setIsDuplicate(false)
     onOpen()
   }
 
@@ -297,11 +318,44 @@ const LeadList = () => {
     }
   }
 
-  // 分配线索
-  const handleAssign = async (leadId: string, userId: string) => {
+  // 打开转换弹窗
+  const handleOpenTransfer = async (leadId: string) => {
+    setTransferringLeadId(leadId)
+    setSelectedUserId('')
+    // 获取当前用户的组织ID
+    const userInfo = storage.getUserInfo()
+    const organizationId = userInfo?.primary_organization_id || userInfo?.organization_ids?.[0]
+    
+    if (!organizationId) {
+      showError(t('leadList.error.noOrganization'))
+      return
+    }
+    
+    // 加载同组织的用户列表
+    setLoadingUsers(true)
     try {
-      await assignLead(leadId, { owner_user_id: userId })
+      const result = await getUserList({ organization_id: organizationId, size: 1000 })
+      setOrganizationUsers(result.records || [])
+      onTransferOpen()
+    } catch (error: any) {
+      showError(error.message || t('leadList.error.loadUsersFailed'))
+    } finally {
+      setLoadingUsers(false)
+    }
+  }
+  
+  // 转换线索（分配线索）
+  const handleTransfer = async () => {
+    if (!transferringLeadId || !selectedUserId) {
+      showError(t('leadList.error.selectUser'))
+      return
+    }
+    try {
+      await assignLead(transferringLeadId, { owner_user_id: selectedUserId })
       showSuccess(t('leadList.success.assign'))
+      onTransferClose()
+      setTransferringLeadId(null)
+      setSelectedUserId('')
       loadLeads(queryParams)
     } catch (error: any) {
       showError(error.message || t('leadList.error.assignFailed'))
@@ -322,7 +376,25 @@ const LeadList = () => {
     }
   }
 
-  // 查重
+  // 转化线索（从公海转化为我的线索）
+  const handleConvert = async (id: string) => {
+    if (!user?.id) {
+      showError(t('leadList.error.noUser'))
+      return
+    }
+    if (!window.confirm(t('leadList.confirm.convert'))) {
+      return
+    }
+    try {
+      await assignLead(id, { owner_user_id: user.id })
+      showSuccess(t('leadList.success.convert'))
+      loadLeads(queryParams)
+    } catch (error: any) {
+      showError(error.message || t('leadList.error.convertFailed'))
+    }
+  }
+
+  // 查重（用于提交前的完整查重）
   const handleCheckDuplicate = async () => {
     if (!modalFormData.company_name && !modalFormData.phone && !modalFormData.email) {
       setDuplicateWarning(null)
@@ -334,6 +406,7 @@ const LeadList = () => {
         phone: modalFormData.phone || null,
         email: modalFormData.email || null,
         exclude_lead_id: editingLead?.id || null,
+        exact_match: false, // 提交前查重使用模糊匹配
       }
       const result = await checkLeadDuplicate(checkData)
       if (result.has_duplicate) {
@@ -343,6 +416,37 @@ const LeadList = () => {
       }
     } catch (error: any) {
       console.error('[LeadList] 查重失败:', error)
+    }
+  }
+
+  // 公司名称 onBlur 查重（完全匹配）
+  const handleCompanyNameBlur = async () => {
+    const companyName = modalFormData.company_name?.trim()
+    
+    // 如果公司名为空，重置重复状态
+    if (!companyName) {
+      setIsDuplicate(false)
+      return
+    }
+    
+    // 开始查重
+    setCheckingDuplicate(true)
+    try {
+      const checkData: LeadDuplicateCheckRequest = {
+        company_name: companyName,
+        phone: null,
+        email: null,
+        exclude_lead_id: editingLead?.id || null,
+        exact_match: true, // 完全匹配
+      }
+      const result = await checkLeadDuplicate(checkData)
+      setIsDuplicate(result.has_duplicate)
+    } catch (error: any) {
+      console.error('[LeadList] 公司名查重失败:', error)
+      // 查重失败时不阻止提交，只记录错误
+      setIsDuplicate(false)
+    } finally {
+      setCheckingDuplicate(false)
     }
   }
 
@@ -863,56 +967,61 @@ const LeadList = () => {
                     <Td fontSize="sm" color="gray.600">{formatDateTime(lead.next_follow_up_at)}</Td>
                     <Td fontSize="sm" color="gray.600">{formatDateTime(lead.created_at)}</Td>
                     <Td fontSize="sm">
-                      <HStack spacing={1}>
-                        <IconButton
-                          aria-label={t('leadList.actions.view')}
-                          icon={<Eye size={14} />}
+                      <HStack spacing={2} flexWrap="wrap">
+                        <Button
                           size="xs"
-                          variant="ghost"
+                          variant="link"
                           colorScheme="blue"
                           onClick={() => navigate(`/admin/leads/detail/${lead.id}`)}
-                        />
-                        <IconButton
-                          aria-label={t('leadList.actions.edit')}
-                          icon={<Edit size={14} />}
+                        >
+                          {t('leadList.actions.view')}
+                        </Button>
+                        <Button
                           size="xs"
-                          variant="ghost"
+                          variant="link"
                           colorScheme="blue"
                           onClick={() => handleEdit(lead)}
-                        />
-                        {!lead.is_in_public_pool && (
-                          <IconButton
-                            aria-label={t('leadList.actions.assign')}
-                            icon={<UserCheck size={14} />}
+                        >
+                          {t('leadList.actions.edit')}
+                        </Button>
+                        {viewType === 'public' && lead.is_in_public_pool && (
+                          <Button
                             size="xs"
-                            variant="ghost"
-                            colorScheme="green"
-                            onClick={() => {
-                              const userId = window.prompt(t('leadList.prompt.selectOwner'))
-                              if (userId) {
-                                handleAssign(lead.id, userId)
-                              }
-                            }}
-                          />
+                            variant="link"
+                            colorScheme="teal"
+                            onClick={() => handleConvert(lead.id)}
+                          >
+                            {t('leadList.actions.convert')}
+                          </Button>
                         )}
                         {!lead.is_in_public_pool && (
-                          <IconButton
-                            aria-label={t('leadList.actions.moveToPool')}
-                            icon={<Target size={14} />}
+                          <Button
                             size="xs"
-                            variant="ghost"
+                            variant="link"
+                            colorScheme="green"
+                            onClick={() => handleOpenTransfer(lead.id)}
+                          >
+                            {t('leadList.actions.transfer')}
+                          </Button>
+                        )}
+                        {!lead.is_in_public_pool && (
+                          <Button
+                            size="xs"
+                            variant="link"
                             colorScheme="orange"
                             onClick={() => handleMoveToPool(lead.id)}
-                          />
+                          >
+                            {t('leadList.actions.moveToPool')}
+                          </Button>
                         )}
-                        <IconButton
-                          aria-label={t('leadList.actions.delete')}
-                          icon={<Trash2 size={14} />}
+                        <Button
                           size="xs"
-                          variant="ghost"
+                          variant="link"
                           colorScheme="red"
                           onClick={() => handleDelete(lead.id)}
-                        />
+                        >
+                          {t('leadList.actions.delete')}
+                        </Button>
                       </HStack>
                     </Td>
                   </Tr>
@@ -982,7 +1091,16 @@ const LeadList = () => {
       )}
 
       {/* 创建/编辑抽屉 */}
-      <Drawer isOpen={isOpen} onClose={onClose} size="md" placement="right">
+      <Drawer 
+        isOpen={isOpen} 
+        onClose={() => {
+          setIsDuplicate(false)
+          setDuplicateWarning(null)
+          onClose()
+        }} 
+        size="md" 
+        placement="right"
+      >
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
@@ -992,8 +1110,16 @@ const LeadList = () => {
 
           <DrawerBody>
             <VStack spacing={4} align="stretch">
-              {/* 查重警告 */}
-              {duplicateWarning && (
+              {/* 完全匹配重复警告 */}
+              {isDuplicate && (
+                <Alert status="error">
+                  <AlertIcon />
+                  {t('leadList.warning.duplicateCompanyName')}
+                </Alert>
+              )}
+              
+              {/* 查重警告（模糊匹配） */}
+              {duplicateWarning && !isDuplicate && (
                 <Alert status="warning">
                   <AlertIcon />
                   {duplicateWarning}
@@ -1015,9 +1141,22 @@ const LeadList = () => {
                 <FormLabel>{t('leadList.modal.companyName')}</FormLabel>
                 <Input
                   value={modalFormData.company_name}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setModalFormData({ ...modalFormData, company_name: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setModalFormData({ ...modalFormData, company_name: e.target.value })
+                    // 如果之前有重复标记，用户修改公司名后重置
+                    if (isDuplicate) {
+                      setIsDuplicate(false)
+                    }
+                  }}
+                  onBlur={handleCompanyNameBlur}
                   placeholder={t('leadList.modal.companyNamePlaceholder')}
+                  isDisabled={checkingDuplicate}
                 />
+                {checkingDuplicate && (
+                  <Text fontSize="xs" color="gray.500" mt={1}>
+                    {t('leadList.checkingDuplicate')}
+                  </Text>
+                )}
               </FormControl>
 
               {/* 联系人姓名 */}
@@ -1146,12 +1285,50 @@ const LeadList = () => {
               colorScheme="blue"
               onClick={handleSubmit}
               isLoading={submitting}
+              isDisabled={isDuplicate || submitting}
             >
               {t('leadList.modal.submit')}
             </Button>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
+
+      {/* 转换用户弹窗 */}
+      <Modal isOpen={isTransferOpen} onClose={onTransferClose} size="md">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{t('leadList.transfer.title')}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl mb={4}>
+              <FormLabel>{t('leadList.transfer.selectUser')}</FormLabel>
+              {loadingUsers ? (
+                <Spinner size="sm" />
+              ) : (
+                <Select
+                  value={selectedUserId}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedUserId(e.target.value)}
+                  placeholder={t('leadList.transfer.selectUserPlaceholder')}
+                >
+                  {organizationUsers.map((user: UserListItem) => (
+                    <option key={user.id} value={user.id}>
+                      {user.display_name || user.username} ({user.email || user.username})
+                    </option>
+                  ))}
+                </Select>
+              )}
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={onTransferClose}>
+              {t('common.cancel')}
+            </Button>
+            <Button colorScheme="teal" onClick={handleTransfer} isDisabled={!selectedUserId || loadingUsers}>
+              {t('leadList.transfer.confirm')}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   )
 }

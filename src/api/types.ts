@@ -720,6 +720,7 @@ export interface LeadDuplicateCheckRequest {
   phone?: string | null
   email?: string | null
   exclude_lead_id?: string | null
+  exact_match?: boolean
 }
 
 // 线索查重响应

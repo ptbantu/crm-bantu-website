@@ -4,10 +4,12 @@
 import { useLocation, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ChevronRight, Home } from 'lucide-react'
+import { useTabs } from '@/contexts/TabsContext'
 
 export const Breadcrumb = () => {
   const location = useLocation()
   const { t } = useTranslation()
+  const { tabs } = useTabs()
 
   const paths = location.pathname.split('/').filter(Boolean)
   
@@ -60,8 +62,28 @@ export const Breadcrumb = () => {
   const breadcrumbItems = paths.map((path, index) => {
     const isLast = index === paths.length - 1
     const pathTo = '/' + paths.slice(0, index + 1).join('/')
-    const translationKey = pathToKeyMap[path] || `menu.${path}`
-    const label = t(translationKey) || path
+    
+    // 检查是否是线索详情页面的 ID（UUID 格式）
+    // UUID 格式：8-4-4-4-12 个十六进制字符
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(path)
+    const isLeadDetailPath = index >= 2 && paths[index - 1] === 'detail' && paths[index - 2] === 'leads'
+    
+    let label: string
+    if (isUUID && isLeadDetailPath) {
+      // 如果是线索详情页面的 ID，尝试从标签页获取标题
+      const currentTab = tabs.find(tab => tab.key === location.pathname)
+      const defaultTitle = t('leadDetail.title')
+      if (currentTab && currentTab.title && currentTab.title !== defaultTitle && !currentTab.title.startsWith('menu.')) {
+        // 如果标签页标题已更新（不是默认标题，也不是翻译 key），使用标签页标题
+        label = currentTab.title
+      } else {
+        // 否则使用默认的"线索详情"
+        label = defaultTitle
+      }
+    } else {
+      const translationKey = pathToKeyMap[path] || `menu.${path}`
+      label = t(translationKey) || path
+    }
 
     return {
       label,

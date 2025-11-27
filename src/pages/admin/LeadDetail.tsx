@@ -23,6 +23,7 @@ import { useToast } from '@/components/ToastContainer'
 import { getUserList } from '@/api/users'
 import { getCustomerList } from '@/api/customers'
 import { getCustomerLevelOptions, CustomerLevelOption } from '@/api/options'
+import { useTabs } from '@/contexts/TabsContext'
 import {
   Box,
   Button,
@@ -56,6 +57,7 @@ const LeadDetail = () => {
   const navigate = useNavigate()
   const { t, i18n } = useTranslation()
   const { showSuccess, showError } = useToast()
+  const { updateTabTitle } = useTabs()
 
   // Chakra UI 颜色模式
   const bgColor = useColorModeValue('white', 'gray.800')
@@ -125,6 +127,9 @@ const LeadDetail = () => {
     try {
       const leadData = await getLeadDetail(id)
       setLead(leadData)
+      // 更新标签页标题为线索名称
+      const leadTitle = leadData.name || leadData.company_name || id
+      updateTabTitle(`/admin/leads/detail/${id}`, leadTitle)
       // 初始化编辑表单
       setEditFormData({
         name: leadData.name,

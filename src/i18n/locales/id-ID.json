@@ -1496,6 +1496,8 @@
       "view": "Lihat",
       "edit": "Edit",
       "assign": "Tetapkan",
+      "transfer": "Transfer",
+      "convert": "Konversi",
       "moveToPool": "Pindahkan ke Kolam Publik",
       "delete": "Hapus"
     },
@@ -1534,28 +1536,43 @@
       "selectOwner": "Masukkan ID pengguna pemilik"
     },
     "warning": {
-      "duplicate": "Ditemukan {{count}} lead duplikat, harap konfirmasi apakah akan melanjutkan"
+      "duplicate": "Ditemukan {{count}} lead duplikat, harap konfirmasi apakah akan melanjutkan",
+      "duplicateCompanyName": "*Lead duplikat tidak dapat disimpan"
     },
     "confirm": {
       "delete": "Apakah Anda yakin ingin menghapus lead ini?",
-      "moveToPool": "Apakah Anda yakin ingin memindahkan lead ini ke kolam publik?"
+      "moveToPool": "Apakah Anda yakin ingin memindahkan lead ini ke kolam publik?",
+      "convert": "Apakah Anda yakin ingin mengonversi lead ini menjadi lead saya?"
     },
     "success": {
       "create": "Lead berhasil dibuat",
       "update": "Lead berhasil diperbarui",
       "delete": "Lead berhasil dihapus",
       "assign": "Lead berhasil ditetapkan",
-      "moveToPool": "Lead berhasil dipindahkan ke kolam publik"
+      "moveToPool": "Lead berhasil dipindahkan ke kolam publik",
+      "convert": "Lead berhasil dikonversi"
     },
     "error": {
       "loadFailed": "Gagal memuat",
       "deleteFailed": "Gagal menghapus",
       "assignFailed": "Gagal menetapkan",
       "moveToPoolFailed": "Gagal memindahkan ke kolam publik",
+      "convertFailed": "Gagal mengonversi",
       "nameRequired": "Nama lead tidak boleh kosong",
       "invalidEmail": "Format email tidak valid",
-      "submitFailed": "Gagal mengirim"
+      "submitFailed": "Gagal mengirim",
+      "noOrganization": "Informasi organisasi tidak ditemukan",
+      "noUser": "Informasi pengguna tidak ditemukan",
+      "loadUsersFailed": "Gagal memuat daftar pengguna",
+      "selectUser": "Silakan pilih pengguna untuk ditransfer"
     },
+    "transfer": {
+      "title": "Transfer Lead",
+      "selectUser": "Pilih Penanggung Jawab",
+      "selectUserPlaceholder": "Silakan pilih pengguna untuk ditransfer",
+      "confirm": "Konfirmasi Transfer"
+    },
+    "checkingDuplicate": "Memeriksa duplikat...",
     "statistics": {
       "total": "Total Lead",
       "converted": "Dikonversi",

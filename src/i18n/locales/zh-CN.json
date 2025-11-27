@@ -1507,6 +1507,8 @@
       "view": "查看",
       "edit": "编辑",
       "assign": "分配",
+      "transfer": "转换",
+      "convert": "转化",
       "moveToPool": "移入公海池",
       "delete": "删除"
     },
@@ -1545,28 +1547,44 @@
       "selectOwner": "请输入负责人用户ID"
     },
     "warning": {
-      "duplicate": "检测到 {{count}} 条重复线索，请确认是否继续"
+      "duplicate": "检测到 {{count}} 条重复线索，请确认是否继续",
+      "duplicateCompanyName": "*重复线索无法保存"
     },
     "confirm": {
       "delete": "确定要删除该线索吗？",
-      "moveToPool": "确定要将该线索移入公海池吗？"
+      "moveToPool": "确定要将该线索移入公海池吗？",
+      "convert": "确定要将该线索转化为我的线索吗？"
     },
     "success": {
       "create": "线索创建成功",
       "update": "线索更新成功",
       "delete": "线索删除成功",
       "assign": "线索分配成功",
-      "moveToPool": "线索已移入公海池"
+      "moveToPool": "线索已移入公海池",
+      "convert": "线索转化成功"
     },
     "error": {
       "loadFailed": "加载失败",
       "deleteFailed": "删除失败",
       "assignFailed": "分配失败",
       "moveToPoolFailed": "移入公海池失败",
+      "convertFailed": "转化失败",
       "nameRequired": "线索名称不能为空",
       "invalidEmail": "邮箱格式不正确",
-      "submitFailed": "提交失败"
+      "submitFailed": "提交失败",
+      "noOrganization": "未找到组织信息",
+      "noUser": "未找到用户信息",
+      "loadUsersFailed": "加载用户列表失败",
+      "selectUser": "请选择要转换的用户"
     },
+    "transfer": {
+      "title": "转换线索",
+      "selectUser": "选择负责人",
+      "selectUserPlaceholder": "请选择要转换给的用户",
+      "confirm": "确认转换"
+    },
+    "checkingDuplicate": "正在检查重复...",
+    "checkingDuplicate": "正在检查重复...",
     "statistics": {
       "total": "总线索数",
       "converted": "已转化",

@@ -56,6 +56,15 @@ const AdminLayoutContent = ({ children }: AdminLayoutContentProps) => {
       }
     }
 
+    // 处理线索详情页面 - 初始标题为"线索详情"，后续会在页面加载后更新为线索名称
+    if (path.startsWith('/admin/leads/detail/')) {
+      const leadListMenuItem = findMenuItemByPath('/admin/leads')
+      return {
+        title: t('leadDetail.title'),
+        icon: leadListMenuItem?.icon,
+      }
+    }
+
     const menuItem = findMenuItemByPath(path)
     
     if (menuItem) {
