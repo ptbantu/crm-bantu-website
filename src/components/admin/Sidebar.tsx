@@ -25,7 +25,15 @@ import {
   Avatar,
   Image,
   Button,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerHeader,
+  DrawerBody,
+  DrawerCloseButton,
+  useDisclosure,
 } from '@chakra-ui/react'
+import UserInfo from '@/pages/admin/UserInfo'
 
 export const Sidebar = () => {
   const menu = useMenu()
@@ -36,6 +44,7 @@ export const Sidebar = () => {
   const { user } = useAuth()
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
   const [searchValue, setSearchValue] = useState('')
+  const { isOpen, onOpen, onClose } = useDisclosure()
   
   // Chakra UI 颜色模式 - Refined Glassmorphism
   const glassBg = useColorModeValue('whiteAlpha.900', 'blackAlpha.800')
@@ -473,7 +482,14 @@ export const Sidebar = () => {
             placement="right"
             hasArrow
           >
-            <Flex align="center" justify="center">
+            <Flex 
+              align="center" 
+              justify="center"
+              cursor="pointer"
+              onClick={onOpen}
+              _hover={{ opacity: 0.8 }}
+              transition="opacity 0.2s"
+            >
               <Avatar
                 size="sm"
                 name={user?.display_name || user?.username || 'User'}
@@ -504,6 +520,7 @@ export const Sidebar = () => {
             alignItems="center"
             justifyContent="space-between"
             cursor="pointer"
+            onClick={onOpen}
           >
             <HStack spacing={3} align="center" flex={1} minW={0}>
               <Avatar
@@ -548,6 +565,25 @@ export const Sidebar = () => {
           </Button>
         )}
       </Box>
+
+      {/* 个人信息抽屉 */}
+      <Drawer
+        isOpen={isOpen}
+        placement="right"
+        onClose={onClose}
+        size="lg"
+      >
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton />
+          <DrawerHeader borderBottomWidth="1px">
+            {t('userInfo.title')}
+          </DrawerHeader>
+          <DrawerBody p={0}>
+            <UserInfo />
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
     </Box>
   )
 }

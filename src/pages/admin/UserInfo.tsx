@@ -265,18 +265,19 @@ const UserInfo = () => {
   }
 
   return (
-    <Box w="full">
+    <Box w="full" p={4}>
       {/* 页面头部 */}
       <Flex justify="space-between" align="center" mb={4}>
-        <PageHeader
-          icon={User}
-          title={t('userInfo.title')}
-          subtitle={t('userInfo.subtitle')}
-        />
+        <Box>
+          <Text fontSize="sm" color="gray.500" mb={1}>
+            {t('userInfo.subtitle')}
+          </Text>
+        </Box>
         {!isEditing && (
           <Button
             leftIcon={<Edit size={16} />}
             colorScheme="blue"
+            size="sm"
             onClick={handleEdit}
           >
             {t('userInfo.edit')}
