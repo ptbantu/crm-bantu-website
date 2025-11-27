@@ -2,10 +2,10 @@
  * 线索详情页面
  * 显示线索信息、跟进记录、备注等
  */
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ArrowLeft, Plus, Edit, Target, Mail, Phone, UserCheck, Clock, TrendingUp, Users } from 'lucide-react'
+import { ArrowLeft, Plus, Edit, Target, Mail, Phone, UserCheck, Clock, TrendingUp, Users, FileText, Calendar } from 'lucide-react'
 import {
   getLeadDetail,
   updateLead,
@@ -253,6 +253,23 @@ const LeadDetail = () => {
       note: t('leadDetail.followUpType.note'),
     }
     return typeMap[type] || type
+  }
+
+  // 获取跟进类型图标组件
+  const getFollowUpTypeIcon = (type: LeadFollowUpType) => {
+    const iconMap: Record<LeadFollowUpType, React.ComponentType<{ size?: number; color?: string }>> = {
+      call: Phone,
+      meeting: Users,
+      email: Mail,
+      note: FileText,
+    }
+    const IconComponent = iconMap[type] || FileText
+    return IconComponent
+  }
+
+  // 获取备注类型图标组件
+  const getNoteTypeIcon = (type: LeadNoteType) => {
+    return FileText
   }
 
   // 获取备注类型标签
@@ -629,37 +646,78 @@ const LeadDetail = () => {
               <Text fontSize="sm" color="gray.500">{t('leadDetail.noFollowUps')}</Text>
             </Box>
           ) : (
-            <VStack spacing={3} align="stretch">
-              {followUps.map((followUp: LeadFollowUp) => (
-                <Box
-                  key={followUp.id}
-                  p={3}
-                  borderWidth="1px"
-                  borderRadius="md"
-                  borderColor={borderColor}
-                  bg={bgColor}
-                >
-                  <HStack justify="space-between" mb={2}>
-                    <HStack spacing={2}>
-                      <Badge colorScheme="blue" fontSize="xs">
-                        {getFollowUpTypeLabel(followUp.follow_up_type)}
-                      </Badge>
-                      <Text fontSize="xs" color="gray.500">
-                        {formatDateTime(followUp.follow_up_date)}
-                      </Text>
-                    </HStack>
-                    <Text fontSize="xs" color="gray.500">
-                      {followUp.created_by_name || '-'}
-                    </Text>
-                  </HStack>
-                  {followUp.content && (
-                    <Text fontSize="sm" color="gray.700" mt={2}>
-                      {followUp.content}
-                    </Text>
-                  )}
-                </Box>
-              ))}
-            </VStack>
+            <Box position="relative" pl={8}>
+              {/* 时间轴线条 */}
+              <Box
+                position="absolute"
+                left="15px"
+                top="0"
+                bottom="0"
+                width="2px"
+                bg="gray.200"
+              />
+              <VStack spacing={4} align="stretch">
+                {followUps.map((followUp: LeadFollowUp, index: number) => (
+                  <Box key={followUp.id} position="relative">
+                    {/* 时间点图标 */}
+                    <Box
+                      position="absolute"
+                      left="-23px"
+                      top="4px"
+                      width="16px"
+                      height="16px"
+                      borderRadius="full"
+                      bg="blue.500"
+                      borderWidth="2px"
+                      borderColor="white"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      zIndex={1}
+                    >
+                      {(() => {
+                        const IconComponent = getFollowUpTypeIcon(followUp.follow_up_type)
+                        return <IconComponent size={10} color="white" />
+                      })()}
+                    </Box>
+                    {/* 内容卡片 */}
+                    <Box
+                      p={3}
+                      borderWidth="1px"
+                      borderRadius="md"
+                      borderColor={borderColor}
+                      bg={bgColor}
+                      ml={2}
+                    >
+                      <HStack justify="space-between" mb={2}>
+                        <HStack spacing={2}>
+                          <Badge colorScheme="blue" fontSize="xs">
+                            {getFollowUpTypeLabel(followUp.follow_up_type)}
+                          </Badge>
+                          <HStack spacing={1}>
+                            <Clock size={12} color="gray" />
+                            <Text fontSize="xs" color="gray.500">
+                              {formatDateTime(followUp.follow_up_date)}
+                            </Text>
+                          </HStack>
+                        </HStack>
+                        <HStack spacing={1}>
+                          <UserCheck size={12} color="gray" />
+                          <Text fontSize="xs" color="gray.500">
+                            {followUp.created_by_name || '-'}
+                          </Text>
+                        </HStack>
+                      </HStack>
+                      {followUp.content && (
+                        <Text fontSize="sm" color="gray.700" mt={2}>
+                          {followUp.content}
+                        </Text>
+                      )}
+                    </Box>
+                  </Box>
+                ))}
+              </VStack>
+            </Box>
           )}
         </CardBody>
       </Card>
@@ -690,42 +748,83 @@ const LeadDetail = () => {
               <Text fontSize="sm" color="gray.500">{t('leadDetail.noNotes')}</Text>
             </Box>
           ) : (
-            <VStack spacing={3} align="stretch">
-              {notes.map((note: LeadNote) => (
-                <Box
-                  key={note.id}
-                  p={3}
-                  borderWidth="1px"
-                  borderRadius="md"
-                  borderColor={borderColor}
-                  bg={bgColor}
-                  borderLeftWidth={note.is_important ? '4px' : '1px'}
-                  borderLeftColor={note.is_important ? 'orange.500' : borderColor}
-                >
-                  <HStack justify="space-between" mb={2}>
-                    <HStack spacing={2}>
-                      <Badge colorScheme="purple" fontSize="xs">
-                        {getNoteTypeLabel(note.note_type)}
-                      </Badge>
-                      {note.is_important && (
-                        <Badge colorScheme="orange" fontSize="xs">
-                          {t('leadDetail.important')}
-                        </Badge>
-                      )}
-                      <Text fontSize="xs" color="gray.500">
-                        {formatDateTime(note.created_at)}
+            <Box position="relative" pl={8}>
+              {/* 时间轴线条 */}
+              <Box
+                position="absolute"
+                left="15px"
+                top="0"
+                bottom="0"
+                width="2px"
+                bg="gray.200"
+              />
+              <VStack spacing={4} align="stretch">
+                {notes.map((note: LeadNote, index: number) => (
+                  <Box key={note.id} position="relative">
+                    {/* 时间点图标 */}
+                    <Box
+                      position="absolute"
+                      left="-23px"
+                      top="4px"
+                      width="16px"
+                      height="16px"
+                      borderRadius="full"
+                      bg={note.is_important ? "orange.500" : "purple.500"}
+                      borderWidth="2px"
+                      borderColor="white"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      zIndex={1}
+                    >
+                      {(() => {
+                        const IconComponent = getNoteTypeIcon(note.note_type)
+                        return <IconComponent size={10} color="white" />
+                      })()}
+                    </Box>
+                    {/* 内容卡片 */}
+                    <Box
+                      p={3}
+                      borderWidth="1px"
+                      borderRadius="md"
+                      borderColor={note.is_important ? "orange.300" : borderColor}
+                      bg={bgColor}
+                      borderLeftWidth={note.is_important ? '4px' : '1px'}
+                      borderLeftColor={note.is_important ? 'orange.500' : borderColor}
+                      ml={2}
+                    >
+                      <HStack justify="space-between" mb={2}>
+                        <HStack spacing={2}>
+                          <Badge colorScheme="purple" fontSize="xs">
+                            {getNoteTypeLabel(note.note_type)}
+                          </Badge>
+                          {note.is_important && (
+                            <Badge colorScheme="orange" fontSize="xs">
+                              {t('leadDetail.important')}
+                            </Badge>
+                          )}
+                          <HStack spacing={1}>
+                            <Clock size={12} color="gray" />
+                            <Text fontSize="xs" color="gray.500">
+                              {formatDateTime(note.created_at)}
+                            </Text>
+                          </HStack>
+                        </HStack>
+                        <HStack spacing={1}>
+                          <UserCheck size={12} color="gray" />
+                          <Text fontSize="xs" color="gray.500">
+                            {note.created_by_name || '-'}
+                          </Text>
+                        </HStack>
+                      </HStack>
+                      <Text fontSize="sm" color="gray.700">
+                        {note.content}
                       </Text>
-                    </HStack>
-                    <Text fontSize="xs" color="gray.500">
-                      {note.created_by_name || '-'}
-                    </Text>
-                  </HStack>
-                  <Text fontSize="sm" color="gray.700">
-                    {note.content}
-                  </Text>
-                </Box>
-              ))}
-            </VStack>
+                    </Box>
+                  </Box>
+                ))}
+              </VStack>
+            </Box>
           )}
         </CardBody>
       </Card>
