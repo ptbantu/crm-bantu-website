@@ -85,6 +85,7 @@ const LeadList = () => {
   const { user } = useAuth()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { isOpen: isTransferOpen, onOpen: onTransferOpen, onClose: onTransferClose } = useDisclosure()
+  const { isOpen: isDuplicateModalOpen, onOpen: onDuplicateModalOpen, onClose: onDuplicateModalClose } = useDisclosure()
   
   // Chakra UI 颜色模式
   const bgColor = useColorModeValue('white', 'gray.800')
@@ -145,6 +146,7 @@ const LeadList = () => {
   const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null)
   const [isDuplicate, setIsDuplicate] = useState(false) // 标记是否存在重复线索（完全匹配公司名）
   const [checkingDuplicate, setCheckingDuplicate] = useState(false) // 标记是否正在查重
+  const [duplicateLeads, setDuplicateLeads] = useState<Lead[]>([]) // 存储重复线索列表
 
   // 下拉选项
   const [users, setUsers] = useState<UserListItem[]>([])
@@ -426,6 +428,7 @@ const LeadList = () => {
     // 如果公司名为空，重置重复状态
     if (!companyName) {
       setIsDuplicate(false)
+      setDuplicateLeads([])
       return
     }
     
@@ -441,10 +444,18 @@ const LeadList = () => {
       }
       const result = await checkLeadDuplicate(checkData)
       setIsDuplicate(result.has_duplicate)
+      if (result.has_duplicate && result.duplicates) {
+        setDuplicateLeads(result.duplicates)
+        // 打开重复线索详情弹窗
+        onDuplicateModalOpen()
+      } else {
+        setDuplicateLeads([])
+      }
     } catch (error: any) {
       console.error('[LeadList] 公司名查重失败:', error)
       // 查重失败时不阻止提交，只记录错误
       setIsDuplicate(false)
+      setDuplicateLeads([])
     } finally {
       setCheckingDuplicate(false)
     }
@@ -1325,6 +1336,103 @@ const LeadList = () => {
             </Button>
             <Button colorScheme="teal" onClick={handleTransfer} isDisabled={!selectedUserId || loadingUsers}>
               {t('leadList.transfer.confirm')}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* 重复线索详情弹窗 */}
+      <Modal isOpen={isDuplicateModalOpen} onClose={onDuplicateModalClose} size="lg">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <Alert status="warning" borderRadius="md" mb={2}>
+              <AlertIcon />
+              {t('leadList.duplicateModal.title')}
+            </Alert>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack align="stretch" spacing={4}>
+              <Text fontSize="sm" color="gray.600">
+                {t('leadList.duplicateModal.description', { count: duplicateLeads.length })}
+              </Text>
+              
+              {duplicateLeads.map((lead: Lead, index: number) => (
+                <Card key={lead.id || index} bg={bgColor} borderColor={borderColor} borderWidth={1}>
+                  <CardBody>
+                    <VStack align="stretch" spacing={2}>
+                      <HStack justify="space-between">
+                        <Text fontWeight="semibold" fontSize="sm">
+                          {lead.name || '-'}
+                        </Text>
+                        {getStatusBadge(lead.status)}
+                      </HStack>
+                      
+                      <HStack spacing={4} fontSize="xs" color="gray.600">
+                        <HStack spacing={1}>
+                          <Building2 size={14} />
+                          <Text>{lead.company_name || '-'}</Text>
+                        </HStack>
+                        {lead.phone && (
+                          <HStack spacing={1}>
+                            <Phone size={14} />
+                            <Text>{lead.phone}</Text>
+                          </HStack>
+                        )}
+                        {lead.email && (
+                          <HStack spacing={1}>
+                            <Mail size={14} />
+                            <Text>{lead.email}</Text>
+                          </HStack>
+                        )}
+                      </HStack>
+                      
+                      <HStack spacing={4} fontSize="xs" color="gray.500">
+                        {lead.owner_username && (
+                          <HStack spacing={1}>
+                            <UserCheck size={14} />
+                            <Text>{t('leadList.duplicateModal.owner')}: {lead.owner_username}</Text>
+                          </HStack>
+                        )}
+                        {lead.created_at && (
+                          <Text>
+                            {t('leadList.duplicateModal.createdAt')}: {formatDateTime(lead.created_at)}
+                          </Text>
+                        )}
+                        {lead.next_follow_up_at && (
+                          <Text>
+                            {t('leadList.duplicateModal.nextFollowUp')}: {formatDateTime(lead.next_follow_up_at)}
+                          </Text>
+                        )}
+                      </HStack>
+                    </VStack>
+                  </CardBody>
+                </Card>
+              ))}
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              variant="outline"
+              mr={3}
+              onClick={() => {
+                setModalFormData({ ...modalFormData, company_name: '' })
+                setIsDuplicate(false)
+                setDuplicateLeads([])
+                onDuplicateModalClose()
+              }}
+            >
+              {t('leadList.duplicateModal.cancel')}
+            </Button>
+            <Button
+              colorScheme="orange"
+              onClick={() => {
+                onDuplicateModalClose()
+                // 保持 isDuplicate 状态，提交时仍会阻止
+              }}
+            >
+              {t('leadList.duplicateModal.continue')}
             </Button>
           </ModalFooter>
         </ModalContent>

@@ -1614,7 +1614,15 @@
       "selectUserPlaceholder": "请选择要转换给的用户",
       "confirm": "确认转换"
     },
-    "checkingDuplicate": "正在检查重复...",
+    "duplicateModal": {
+      "title": "发现重复线索",
+      "description": "检测到 {{count}} 条完全匹配的线索，请确认是否继续创建",
+      "owner": "负责人",
+      "createdAt": "创建时间",
+      "nextFollowUp": "下次跟进",
+      "cancel": "取消",
+      "continue": "继续创建"
+    },
     "checkingDuplicate": "正在检查重复...",
     "statistics": {
       "total": "总线索数",

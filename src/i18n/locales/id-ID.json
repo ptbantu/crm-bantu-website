@@ -1603,6 +1603,15 @@
       "selectUserPlaceholder": "Silakan pilih pengguna untuk ditransfer",
       "confirm": "Konfirmasi Transfer"
     },
+    "duplicateModal": {
+      "title": "Lead Duplikat Ditemukan",
+      "description": "Ditemukan {{count}} lead yang cocok persis, silakan konfirmasi apakah akan melanjutkan pembuatan",
+      "owner": "Penanggung Jawab",
+      "createdAt": "Waktu Dibuat",
+      "nextFollowUp": "Tindak Lanjut Berikutnya",
+      "cancel": "Batal",
+      "continue": "Lanjutkan Membuat"
+    },
     "checkingDuplicate": "Memeriksa duplikat...",
     "statistics": {
       "total": "Total Lead",
