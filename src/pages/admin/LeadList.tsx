@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { Search, Plus, Edit, Trash2, Target, Mail, Phone, Building2, UserCheck, Eye, Filter, ChevronUp, ChevronDown } from 'lucide-react'
+import { Search, Plus, Target, Mail, Phone, Building2, UserCheck, X } from 'lucide-react'
 import {
   getLeadList,
   createLead,
@@ -47,7 +47,6 @@ import {
   Spinner,
   Text,
   Badge,
-  IconButton,
   useColorModeValue,
   Drawer,
   DrawerBody,
@@ -61,13 +60,6 @@ import {
   useDisclosure,
   Alert,
   AlertIcon,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverBody,
-  PopoverCloseButton,
-  Checkbox,
-  CheckboxGroup,
   Stack,
   Modal,
   ModalOverlay,
@@ -123,9 +115,6 @@ const LeadList = () => {
     owner_user_id: '',
   })
 
-  // 筛选状态管理（用于 Popover）
-  const [filterStatus, setFilterStatus] = useState<string[]>([])
-  const [filterOwner, setFilterOwner] = useState<string[]>([])
 
   // 弹窗状态
   const [editingLead, setEditingLead] = useState<Lead | null>(null)
@@ -336,7 +325,7 @@ const LeadList = () => {
     // 加载同组织的用户列表
     setLoadingUsers(true)
     try {
-      const result = await getUserList({ organization_id: organizationId, size: 1000 })
+      const result = await getUserList({ organization_id: organizationId, size: 20 })
       setOrganizationUsers(result.records || [])
       onTransferOpen()
     } catch (error: any) {
@@ -587,64 +576,215 @@ const LeadList = () => {
         }
       />
 
-      {/* 操作栏 */}
-      <Flex justify="flex-start" align="center" mb={4}>
-        <Text fontSize="sm" color="gray.600">
-          {t('leadList.total', { total })}
-        </Text>
-      </Flex>
+      {/* 查询表单 */}
+      <Card mb={4} bg={bgColor} borderColor={borderColor}>
+        <CardBody>
+          <VStack align="stretch" spacing={4}>
+            {/* 视图切换和统计信息 */}
+            <Flex justify="space-between" align="center" flexWrap="wrap" gap={3}>
+              <HStack spacing={2}>
+                <Box
+                  as="button"
+                  px={4}
+                  py={2}
+                  fontSize="sm"
+                  fontWeight={viewType === 'my' ? 'semibold' : 'normal'}
+                  color={viewType === 'my' ? 'teal.600' : 'gray.600'}
+                  bg={viewType === 'my' ? 'teal.50' : 'transparent'}
+                  border="1px solid"
+                  borderColor={viewType === 'my' ? 'teal.200' : 'gray.200'}
+                  borderRadius="md"
+                  cursor="pointer"
+                  _hover={{
+                    bg: viewType === 'my' ? 'teal.100' : 'gray.50',
+                  }}
+                  onClick={() => handleViewTypeChange('my')}
+                >
+                  {t('leadList.view.myLeads')}
+                </Box>
+                <Box
+                  as="button"
+                  px={4}
+                  py={2}
+                  fontSize="sm"
+                  fontWeight={viewType === 'public' ? 'semibold' : 'normal'}
+                  color={viewType === 'public' ? 'teal.600' : 'gray.600'}
+                  bg={viewType === 'public' ? 'teal.50' : 'transparent'}
+                  border="1px solid"
+                  borderColor={viewType === 'public' ? 'teal.200' : 'gray.200'}
+                  borderRadius="md"
+                  cursor="pointer"
+                  _hover={{
+                    bg: viewType === 'public' ? 'teal.100' : 'gray.50',
+                  }}
+                  onClick={() => handleViewTypeChange('public')}
+                >
+                  {t('leadList.view.publicLeads')}
+                </Box>
+              </HStack>
+              <Text fontSize="sm" color="gray.600" fontWeight="medium">
+                {t('leadList.total', { total })}
+              </Text>
+            </Flex>
+
+            {/* 筛选条件 */}
+            <HStack spacing={3} align="flex-end" flexWrap="wrap">
+              {/* 公司名称 */}
+              <Box flex={1} minW="200px">
+                <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                  {t('leadList.search.companyName')}
+                </Text>
+                <InputGroup size="sm">
+                  <InputLeftElement pointerEvents="none">
+                    <Building2 size={14} color="gray" />
+                  </InputLeftElement>
+                  <Input
+                    value={formData.company_name}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setFormData({ ...formData, company_name: e.target.value })
+                    }}
+                    placeholder={t('leadList.search.companyNamePlaceholder')}
+                    onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                      if (e.key === 'Enter') handleSearch()
+                    }}
+                    borderRadius="md"
+                  />
+                </InputGroup>
+              </Box>
+
+              {/* 电话 */}
+              <Box flex={1} minW="150px">
+                <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                  {t('leadList.search.phone')}
+                </Text>
+                <InputGroup size="sm">
+                  <InputLeftElement pointerEvents="none">
+                    <Phone size={14} color="gray" />
+                  </InputLeftElement>
+                  <Input
+                    value={formData.phone}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setFormData({ ...formData, phone: e.target.value })
+                    }}
+                    placeholder={t('leadList.search.phonePlaceholder')}
+                    onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                      if (e.key === 'Enter') handleSearch()
+                    }}
+                    borderRadius="md"
+                  />
+                </InputGroup>
+              </Box>
+
+              {/* 邮箱 */}
+              <Box flex={1} minW="200px">
+                <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                  {t('leadList.search.email')}
+                </Text>
+                <InputGroup size="sm">
+                  <InputLeftElement pointerEvents="none">
+                    <Mail size={14} color="gray" />
+                  </InputLeftElement>
+                  <Input
+                    value={formData.email}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setFormData({ ...formData, email: e.target.value })
+                    }}
+                    placeholder={t('leadList.search.emailPlaceholder')}
+                    onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                      if (e.key === 'Enter') handleSearch()
+                    }}
+                    borderRadius="md"
+                  />
+                </InputGroup>
+              </Box>
+
+              {/* 负责人 */}
+              <Box flex={1} minW="180px">
+                <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                  {t('leadList.search.owner')}
+                </Text>
+                <InputGroup size="sm">
+                  <InputLeftElement pointerEvents="none">
+                    <UserCheck size={14} color="gray" />
+                  </InputLeftElement>
+                  <Select
+                    value={formData.owner_user_id}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                      setFormData({ ...formData, owner_user_id: e.target.value })
+                      handleSearch()
+                    }}
+                    borderRadius="md"
+                    pl={8}
+                  >
+                    <option value="">{t('leadList.search.allOwners')}</option>
+                    {users.map((user: UserListItem) => (
+                      <option key={user.id} value={user.id}>
+                        {user.display_name || user.username}
+                      </option>
+                    ))}
+                  </Select>
+                </InputGroup>
+              </Box>
+
+              {/* 状态 */}
+              <Box flex={1} minW="150px">
+                <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                  {t('leadList.search.status')}
+                </Text>
+                <Select
+                  size="sm"
+                  value={formData.status}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                    setFormData({ ...formData, status: e.target.value as LeadStatus | '' })
+                    handleSearch()
+                  }}
+                  borderRadius="md"
+                >
+                  <option value="">{t('leadList.search.allStatus')}</option>
+                  {Object.entries({
+                    new: t('leadList.status.new'),
+                    contacted: t('leadList.status.contacted'),
+                    qualified: t('leadList.status.qualified'),
+                    converted: t('leadList.status.converted'),
+                    lost: t('leadList.status.lost'),
+                  }).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </Select>
+              </Box>
+
+              {/* 操作按钮 */}
+              <HStack spacing={2}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  colorScheme="gray"
+                  leftIcon={<X size={14} />}
+                  onClick={handleReset}
+                  borderRadius="md"
+                >
+                  {t('leadList.search.reset')}
+                </Button>
+                <Button
+                  size="sm"
+                  colorScheme="teal"
+                  leftIcon={<Search size={14} />}
+                  onClick={handleSearch}
+                  isLoading={loading}
+                  borderRadius="md"
+                >
+                  {t('leadList.search.search')}
+                </Button>
+              </HStack>
+            </HStack>
+          </VStack>
+        </CardBody>
+      </Card>
 
       {/* 线索列表 */}
       <Card bg={bgColor} borderColor={borderColor} overflow="hidden">
-        {/* 视图切换标签 - 始终显示在表格头部 */}
-        <Flex
-          px={4}
-          py={2}
-          bg="gray.50"
-          borderBottom="1px solid"
-          borderColor={borderColor}
-          align="center"
-          gap={2}
-        >
-          <Box
-            as="button"
-            px={3}
-            py={1}
-            fontSize="sm"
-            fontWeight={viewType === 'my' ? 'semibold' : 'normal'}
-            color={viewType === 'my' ? 'teal.600' : 'gray.600'}
-            bg={viewType === 'my' ? 'teal.50' : 'transparent'}
-            border="1px solid"
-            borderColor={viewType === 'my' ? 'teal.200' : 'transparent'}
-            borderRadius="md"
-            cursor="pointer"
-            _hover={{
-              bg: viewType === 'my' ? 'teal.100' : 'gray.100',
-            }}
-            onClick={() => handleViewTypeChange('my')}
-          >
-            {t('leadList.view.myLeads')}
-          </Box>
-          <Box
-            as="button"
-            px={3}
-            py={1}
-            fontSize="sm"
-            fontWeight={viewType === 'public' ? 'semibold' : 'normal'}
-            color={viewType === 'public' ? 'teal.600' : 'gray.600'}
-            bg={viewType === 'public' ? 'teal.50' : 'transparent'}
-            border="1px solid"
-            borderColor={viewType === 'public' ? 'teal.200' : 'transparent'}
-            borderRadius="md"
-            cursor="pointer"
-            _hover={{
-              bg: viewType === 'public' ? 'teal.100' : 'gray.100',
-            }}
-            onClick={() => handleViewTypeChange('public')}
-          >
-            {t('leadList.view.publicLeads')}
-          </Box>
-        </Flex>
 
         <Box overflowX="auto" minW="100%">
           <Table variant="simple" size="sm" w="100%" minW="1400px">
@@ -660,265 +800,6 @@ const LeadList = () => {
                 <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="150px">{t('leadList.table.nextFollowUp')}</Th>
                 <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="150px">{t('leadList.table.createdAt')}</Th>
                 <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="120px">{t('leadList.table.actions')}</Th>
-              </Tr>
-              {/* 第二行：筛选条件 */}
-              <Tr>
-                <Th py={1.5}></Th>
-                
-                {/* 公司名称 - 输入框 */}
-                <Th py={1.5} minW="200px">
-                  <Input
-                    size="xs"
-                    value={formData.company_name}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setFormData({ ...formData, company_name: e.target.value })
-                    }}
-                    placeholder={t('leadList.search.companyNamePlaceholder')}
-                    onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                      if (e.key === 'Enter') handleSearch()
-                    }}
-                    w="100%"
-                    borderRadius="md"
-                  />
-                </Th>
-                
-                {/* 联系方式 - 两个输入框 */}
-                <Th py={1.5} minW="280px">
-                  <HStack spacing={2}>
-                    <Input
-                      size="xs"
-                      value={formData.phone}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setFormData({ ...formData, phone: e.target.value })
-                      }}
-                      placeholder={t('leadList.search.phonePlaceholder')}
-                      onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                        if (e.key === 'Enter') handleSearch()
-                      }}
-                      flex={1}
-                      borderRadius="md"
-                    />
-                    <Input
-                      size="xs"
-                      value={formData.email}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setFormData({ ...formData, email: e.target.value })
-                      }}
-                      placeholder={t('leadList.search.emailPlaceholder')}
-                      onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                        if (e.key === 'Enter') handleSearch()
-                      }}
-                      flex={1}
-                      borderRadius="md"
-                    />
-                  </HStack>
-                </Th>
-                
-                {/* 负责人 - 筛选菜单 */}
-                <Th py={1.5} position="relative" minW="180px">
-                  <Popover 
-                    placement="bottom-start" 
-                    closeOnBlur={false}
-                    isLazy
-                    lazyBehavior="keepMounted"
-                  >
-                    {({ isOpen, onClose }) => (
-                      <>
-                        <PopoverTrigger>
-                          <HStack spacing={2} cursor="pointer" align="center">
-                            <Select
-                              size="xs"
-                              value={formData.owner_user_id}
-                              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                                setFormData({ ...formData, owner_user_id: e.target.value })
-                                handleSearch()
-                              }}
-                              flex={1}
-                              minW="140px"
-                            >
-                              <option value="">{t('leadList.search.allOwners')}</option>
-                              {users.map((user: UserListItem) => (
-                                <option key={user.id} value={user.id}>
-                                  {user.display_name || user.username}
-                                </option>
-                              ))}
-                            </Select>
-                            <IconButton
-                              aria-label={t('leadList.search.owner')}
-                              icon={<Filter size={12} />}
-                              size="xs"
-                              variant="ghost"
-                              colorScheme={formData.owner_user_id ? 'teal' : 'gray'}
-                            />
-                          </HStack>
-                        </PopoverTrigger>
-                        <PopoverContent 
-                          w="200px" 
-                          zIndex={1500}
-                          position="fixed"
-                          boxShadow="md"
-                          borderRadius="md"
-                          border="1px solid"
-                          borderColor="gray.200"
-                          bg="white"
-                        >
-                          <PopoverCloseButton size="sm" />
-                          <PopoverBody p={3}>
-                            <VStack align="stretch" spacing={3}>
-                              <Select
-                                size="sm"
-                                value={formData.owner_user_id}
-                                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                                  setFormData({ ...formData, owner_user_id: e.target.value })
-                                }}
-                                borderRadius="md"
-                              >
-                                <option value="">{t('leadList.search.allOwners')}</option>
-                                {users.map((user: UserListItem) => (
-                                  <option key={user.id} value={user.id}>
-                                    {user.display_name || user.username}
-                                  </option>
-                                ))}
-                              </Select>
-                              <HStack spacing={2} pt={2} borderTop="1px solid" borderColor="gray.200">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  colorScheme="blue"
-                                  flex={1}
-                                  borderRadius="md"
-                                  onClick={() => {
-                                    setFormData({ ...formData, owner_user_id: '' })
-                                    handleSearch()
-                                    onClose()
-                                  }}
-                                >
-                                  {t('leadList.search.reset')}
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  colorScheme="teal"
-                                  flex={1}
-                                  borderRadius="md"
-                                  onClick={() => {
-                                    handleSearch()
-                                    onClose()
-                                  }}
-                                >
-                                  {t('leadList.search.search')}
-                                </Button>
-                              </HStack>
-                            </VStack>
-                          </PopoverBody>
-                        </PopoverContent>
-                      </>
-                    )}
-                  </Popover>
-                </Th>
-                
-                {/* 状态 - 筛选菜单 */}
-                <Th py={1.5} position="relative" minW="150px">
-                  <Popover 
-                    placement="bottom-start" 
-                    closeOnBlur={false}
-                    isLazy
-                    lazyBehavior="keepMounted"
-                  >
-                    {({ isOpen, onClose }) => (
-                      <>
-                        <PopoverTrigger>
-                          <HStack spacing={2} cursor="pointer" align="center">
-                            <Text fontSize="xs" color="gray.600" minW="80px" noOfLines={1}>
-                              {formData.status ? t(`leadList.status.${formData.status}`) : t('leadList.search.allStatus')}
-                            </Text>
-                            <IconButton
-                              aria-label={t('leadList.search.status')}
-                              icon={<Filter size={12} />}
-                              size="xs"
-                              variant="ghost"
-                              colorScheme={formData.status || filterStatus.length > 0 ? 'teal' : 'gray'}
-                            />
-                          </HStack>
-                        </PopoverTrigger>
-                        <PopoverContent 
-                          w="200px" 
-                          zIndex={1500}
-                          position="fixed"
-                          boxShadow="md"
-                          borderRadius="md"
-                          border="1px solid"
-                          borderColor="gray.200"
-                          bg="white"
-                        >
-                          <PopoverCloseButton size="sm" />
-                          <PopoverBody p={3}>
-                            <VStack align="stretch" spacing={3}>
-                              <Box maxH="200px" overflowY="auto">
-                                <CheckboxGroup
-                                  value={filterStatus}
-                                  onChange={(values) => {
-                                    const statusValues = values as string[]
-                                    setFilterStatus(statusValues)
-                                    if (statusValues.length === 1) {
-                                      setFormData({ ...formData, status: statusValues[0] as LeadStatus })
-                                    } else if (statusValues.length === 0) {
-                                      setFormData({ ...formData, status: '' })
-                                    } else {
-                                      // 多个选择时，不设置单个状态
-                                      setFormData({ ...formData, status: '' })
-                                    }
-                                  }}
-                                >
-                                  <Stack spacing={2}>
-                                    <Checkbox value="new" size="sm">{t('leadList.status.new')}</Checkbox>
-                                    <Checkbox value="contacted" size="sm">{t('leadList.status.contacted')}</Checkbox>
-                                    <Checkbox value="qualified" size="sm">{t('leadList.status.qualified')}</Checkbox>
-                                    <Checkbox value="converted" size="sm">{t('leadList.status.converted')}</Checkbox>
-                                    <Checkbox value="lost" size="sm">{t('leadList.status.lost')}</Checkbox>
-                                  </Stack>
-                                </CheckboxGroup>
-                              </Box>
-                              <HStack spacing={2} pt={2} borderTop="1px solid" borderColor="gray.200">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  colorScheme="blue"
-                                  flex={1}
-                                  borderRadius="md"
-                                  onClick={() => {
-                                    setFilterStatus([])
-                                    setFormData({ ...formData, status: '' })
-                                    handleSearch()
-                                    onClose()
-                                  }}
-                                >
-                                  {t('leadList.search.reset')}
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  colorScheme="teal"
-                                  flex={1}
-                                  borderRadius="md"
-                                  onClick={() => {
-                                    handleSearch()
-                                    onClose()
-                                  }}
-                                >
-                                  {t('leadList.search.search')}
-                                </Button>
-                              </HStack>
-                            </VStack>
-                          </PopoverBody>
-                        </PopoverContent>
-                      </>
-                    )}
-                  </Popover>
-                </Th>
-                
-                <Th py={1.5}></Th>
-                <Th py={1.5}></Th>
-                <Th py={1.5}></Th>
-                <Th py={1.5}></Th>
               </Tr>
             </Thead>
             <Tbody>
