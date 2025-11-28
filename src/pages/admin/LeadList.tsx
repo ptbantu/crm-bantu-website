@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { Search, Plus, Target, Mail, Phone, Building2, UserCheck, X } from 'lucide-react'
+import { Search, Plus, Target, Mail, Phone, Building2, UserCheck, X, MessageSquare } from 'lucide-react'
 import {
   getLeadList,
   createLead,
@@ -14,11 +14,12 @@ import {
   assignLead,
   moveLeadToPool,
   checkLeadDuplicate,
+  createLeadFollowUp,
   CreateLeadRequest,
   UpdateLeadRequest,
   LeadDuplicateCheckRequest,
 } from '@/api/leads'
-import { LeadListParams, Lead, LeadStatus, UserListItem } from '@/api/types'
+import { LeadListParams, Lead, LeadStatus, LeadFollowUpType, LeadFollowUpCreateRequest, UserListItem } from '@/api/types'
 import { validateStatusTransition, getAvailableStatuses, getStatusTransitionErrorMessage } from '@/utils/leadStatusValidation'
 import { useToast } from '@/components/ToastContainer'
 import { getUserList } from '@/api/users'
@@ -58,6 +59,7 @@ import {
   DrawerCloseButton,
   FormControl,
   FormLabel,
+  Textarea,
   useDisclosure,
   Alert,
   AlertIcon,
@@ -79,6 +81,7 @@ const LeadList = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { isOpen: isTransferOpen, onOpen: onTransferOpen, onClose: onTransferClose } = useDisclosure()
   const { isOpen: isDuplicateModalOpen, onOpen: onDuplicateModalOpen, onClose: onDuplicateModalClose } = useDisclosure()
+  const { isOpen: isFollowUpOpen, onOpen: onFollowUpOpen, onClose: onFollowUpClose } = useDisclosure()
   
   // Chakra UI 颜色模式
   const bgColor = useColorModeValue('white', 'gray.800')
@@ -136,6 +139,16 @@ const LeadList = () => {
   const [isDuplicate, setIsDuplicate] = useState(false) // 标记是否存在重复线索（完全匹配公司名）
   const [checkingDuplicate, setCheckingDuplicate] = useState(false) // 标记是否正在查重
   const [duplicateLeads, setDuplicateLeads] = useState<Lead[]>([]) // 存储重复线索列表
+
+  // 跟进记录相关状态
+  const [followUpLeadId, setFollowUpLeadId] = useState<string | null>(null)
+  const [followUpLead, setFollowUpLead] = useState<Lead | null>(null)
+  const [followUpFormData, setFollowUpFormData] = useState<LeadFollowUpCreateRequest>({
+    follow_up_type: 'call',
+    content: '',
+    follow_up_date: new Date().toISOString().slice(0, 16),
+    status_after: undefined,
+  })
 
   // 下拉选项
   const [users, setUsers] = useState<UserListItem[]>([])
@@ -372,6 +385,48 @@ const LeadList = () => {
       loadLeads(queryParams)
     } catch (error: any) {
       showError(error.message || t('leadList.error.assignFailed'))
+    }
+  }
+
+  // 打开跟进表单
+  const handleOpenFollowUp = (lead: Lead) => {
+    setFollowUpLeadId(lead.id)
+    setFollowUpLead(lead)
+    setFollowUpFormData({
+      follow_up_type: 'call',
+      content: '',
+      follow_up_date: new Date().toISOString().slice(0, 16),
+      status_after: undefined,
+    })
+    onFollowUpOpen()
+  }
+
+  // 创建跟进记录
+  const handleCreateFollowUp = async () => {
+    if (!followUpLeadId) return
+    if (!followUpFormData.follow_up_date) {
+      showError(t('leadDetail.error.followUpDateRequired'))
+      return
+    }
+
+    try {
+      await createLeadFollowUp(followUpLeadId, {
+        ...followUpFormData,
+        follow_up_date: new Date(followUpFormData.follow_up_date).toISOString(),
+      })
+      showSuccess(t('leadDetail.success.createFollowUp'))
+      onFollowUpClose()
+      setFollowUpFormData({
+        follow_up_type: 'call',
+        content: '',
+        follow_up_date: new Date().toISOString().slice(0, 16),
+        status_after: undefined,
+      })
+      setFollowUpLeadId(null)
+      setFollowUpLead(null)
+      loadLeads(queryParams)
+    } catch (error: any) {
+      showError(error.message || t('leadDetail.error.createFollowUpFailed'))
     }
   }
 
@@ -839,10 +894,10 @@ const LeadList = () => {
                 <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="280px">{t('leadList.table.contact')}</Th>
                 <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="180px">{t('leadList.table.owner')}</Th>
                 <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="150px">{t('leadList.table.status')}</Th>
-                <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="120px">{t('leadList.table.pool')}</Th>
-                <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="150px">{t('leadList.table.nextFollowUp')}</Th>
+                <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="120px">{t('leadList.table.level')}</Th>
+                <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="150px">{t('leadList.table.lastFollowUp')}</Th>
                 <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="150px">{t('leadList.table.createdAt')}</Th>
-                <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="120px">{t('leadList.table.actions')}</Th>
+                <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="150px">{t('leadList.table.actions')}</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -892,14 +947,14 @@ const LeadList = () => {
                     <Td fontSize="sm">
                       {getStatusBadge(lead.status)}
                     </Td>
-                    <Td fontSize="sm">
-                      {lead.is_in_public_pool ? (
-                        <Badge colorScheme="orange" fontSize="xs">{t('leadList.table.inPool')}</Badge>
-                      ) : (
-                        <Text fontSize="xs" color="gray.500">-</Text>
-                      )}
+                    <Td fontSize="sm" color="gray.600">
+                      {(() => {
+                        const currentLang = i18n.language || 'zh-CN'
+                        const levelName = currentLang.startsWith('zh') ? lead.level_name_zh : lead.level_name_id
+                        return levelName || lead.level || '-'
+                      })()}
                     </Td>
-                    <Td fontSize="sm" color="gray.600">{formatDateTime(lead.next_follow_up_at)}</Td>
+                    <Td fontSize="sm" color="gray.600">{formatDateTime(lead.last_follow_up_at)}</Td>
                     <Td fontSize="sm" color="gray.600">{formatDateTime(lead.created_at)}</Td>
                     <Td fontSize="sm">
                       <HStack spacing={2} flexWrap="wrap">
@@ -918,6 +973,15 @@ const LeadList = () => {
                           onClick={() => handleEdit(lead)}
                         >
                           {t('leadList.actions.edit')}
+                        </Button>
+                        <Button
+                          size="xs"
+                          variant="link"
+                          colorScheme="purple"
+                          leftIcon={<MessageSquare size={12} />}
+                          onClick={() => handleOpenFollowUp(lead)}
+                        >
+                          {t('leadList.actions.followUp')}
                         </Button>
                         {viewType === 'public' && lead.is_in_public_pool && (
                           <Button
@@ -1373,6 +1437,91 @@ const LeadList = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      {/* 创建跟进记录 Drawer */}
+      <Drawer isOpen={isFollowUpOpen} onClose={onFollowUpClose} size="md" placement="right">
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton />
+          <DrawerHeader>{t('leadDetail.addFollowUp')}</DrawerHeader>
+          <DrawerBody>
+            <VStack spacing={4} align="stretch">
+              <FormControl isRequired>
+                <FormLabel>{t('leadDetail.followUpTypeLabel')}</FormLabel>
+                <Select
+                  value={followUpFormData.follow_up_type}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                    setFollowUpFormData({ ...followUpFormData, follow_up_type: e.target.value as LeadFollowUpType })
+                  }
+                >
+                  <option value="call">{t('leadDetail.followUpType.call')}</option>
+                  <option value="meeting">{t('leadDetail.followUpType.meeting')}</option>
+                  <option value="email">{t('leadDetail.followUpType.email')}</option>
+                  <option value="note">{t('leadDetail.followUpType.note')}</option>
+                </Select>
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel>{t('leadDetail.followUpDate')}</FormLabel>
+                <Input
+                  type="datetime-local"
+                  value={followUpFormData.follow_up_date}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setFollowUpFormData({ ...followUpFormData, follow_up_date: e.target.value })
+                  }
+                />
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>{t('leadDetail.followUpContent')}</FormLabel>
+                <Textarea
+                  value={followUpFormData.content || ''}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    setFollowUpFormData({ ...followUpFormData, content: e.target.value })
+                  }
+                  placeholder={t('leadDetail.followUpContentPlaceholder')}
+                  rows={4}
+                />
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>{t('leadDetail.followUpStatus')}</FormLabel>
+                <Select
+                  value={followUpFormData.status_after || followUpLead?.status || 'new'}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                    const newStatus = e.target.value as LeadStatus
+                    // 前端验证
+                    if (followUpLead?.status && !validateStatusTransition(followUpLead.status, newStatus)) {
+                      showError(getStatusTransitionErrorMessage(followUpLead.status, newStatus) || t('leadDetail.error.statusTransitionInvalid'))
+                      return
+                    }
+                    setFollowUpFormData({ ...followUpFormData, status_after: newStatus === followUpLead?.status ? undefined : newStatus })
+                  }}
+                >
+                  {followUpLead?.status && getAvailableStatuses(followUpLead.status).map((status) => (
+                    <option key={status} value={status}>
+                      {t(`leadList.status.${status}`)}
+                    </option>
+                  ))}
+                </Select>
+                {followUpLead?.status && (
+                  <Text fontSize="xs" color="gray.500" mt={1}>
+                    {t('leadDetail.currentStatus')}: {t(`leadList.status.${followUpLead.status}`)}
+                  </Text>
+                )}
+              </FormControl>
+            </VStack>
+          </DrawerBody>
+          <DrawerFooter>
+            <Button variant="outline" mr={3} onClick={onFollowUpClose}>
+              {t('leadList.modal.cancel')}
+            </Button>
+            <Button colorScheme="blue" onClick={handleCreateFollowUp}>
+              {t('leadList.modal.submit')}
+            </Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </Box>
   )
 }

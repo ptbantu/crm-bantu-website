@@ -1511,8 +1511,8 @@
       "contact": "Kontak",
       "owner": "Pemilik",
       "status": "Status",
-      "pool": "Kolam Publik",
-      "inPool": "Di Kolam Publik",
+      "level": "Tingkat Pelanggan",
+      "lastFollowUp": "Tindak Lanjut Terakhir",
       "nextFollowUp": "Tindak Lanjut Berikutnya",
       "createdAt": "Waktu Dibuat",
       "actions": "Tindakan"
@@ -1527,6 +1527,7 @@
     "actions": {
       "view": "Lihat",
       "edit": "Edit",
+      "followUp": "Tindak Lanjut",
       "assign": "Tetapkan",
       "transfer": "Transfer",
       "convert": "Konversi",

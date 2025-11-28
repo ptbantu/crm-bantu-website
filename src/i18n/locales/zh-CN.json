@@ -1522,8 +1522,8 @@
       "contact": "联系方式",
       "owner": "负责人",
       "status": "状态",
-      "pool": "公海池",
-      "inPool": "在公海池",
+      "level": "客户分级",
+      "lastFollowUp": "最近跟进",
       "nextFollowUp": "下次跟进",
       "createdAt": "创建时间",
       "actions": "操作"
@@ -1539,6 +1539,7 @@
     "actions": {
       "view": "查看",
       "edit": "编辑",
+      "followUp": "跟进",
       "assign": "分配",
       "transfer": "转换",
       "convert": "转化",
