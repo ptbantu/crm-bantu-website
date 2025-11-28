@@ -1484,7 +1484,8 @@
     "noData": "Tidak ada data lead",
     "view": {
       "myLeads": "Lead Saya",
-      "publicLeads": "Lead Publik"
+      "publicLeads": "Lead Publik",
+      "globalLeads": "Semua Lead"
     },
     "search": {
       "companyName": "Nama Perusahaan",

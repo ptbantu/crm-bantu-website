@@ -23,6 +23,7 @@ import { useToast } from '@/components/ToastContainer'
 import { getUserList } from '@/api/users'
 import { storage } from '@/utils/storage'
 import { useAuth } from '@/hooks/useAuth'
+import { isAdmin } from '@/utils/permissions'
 import { getCustomerList } from '@/api/customers'
 import { getCustomerLevelOptions, CustomerLevelOption } from '@/api/options'
 import { PageHeader } from '@/components/admin/PageHeader'
@@ -84,8 +85,8 @@ const LeadList = () => {
   const borderColor = useColorModeValue('gray.200', 'gray.700')
   const hoverBg = useColorModeValue('gray.50', 'gray.700')
 
-  // 视图类型：'my' 表示"我的线索"，'public' 表示"公海线索"
-  const [viewType, setViewType] = useState<'my' | 'public'>('my')
+  // 视图类型：'my' 表示"我的线索"，'public' 表示"公海线索"，'global' 表示"全局线索"（仅管理员）
+  const [viewType, setViewType] = useState<'my' | 'public' | 'global'>('my')
 
   // 查询参数
   const [queryParams, setQueryParams] = useState<LeadListParams>({
@@ -146,11 +147,28 @@ const LeadList = () => {
   const loadLeads = async (params: LeadListParams) => {
     setLoading(true)
     try {
-      // 根据视图类型自动设置 is_in_public_pool
       const finalParams: LeadListParams = {
         ...params,
-        is_in_public_pool: viewType === 'public' ? true : false,
       }
+      
+      // 根据视图类型设置查询参数
+      if (viewType === 'my') {
+        // 我的线索：只显示负责人是当前用户的线索
+        // 不传递 formData 中的 owner_user_id，强制使用当前用户ID
+        delete finalParams.owner_user_id
+        finalParams.owner_user_id = user?.id || ''
+        finalParams.is_in_public_pool = false
+      } else if (viewType === 'public') {
+        // 公海线索：只显示在公海池中的线索
+        // 不传递 owner_user_id
+        delete finalParams.owner_user_id
+        finalParams.is_in_public_pool = true
+      } else if (viewType === 'global') {
+        // 全局线索：显示组织内所有线索，可以按负责人筛选
+        // 不设置 is_in_public_pool，可以传递 owner_user_id（从 params 中保留）
+        delete finalParams.is_in_public_pool
+      }
+      
       const result = await getLeadList(finalParams)
       setLeads(result.records || [])
       setTotal(result.total || 0)
@@ -208,7 +226,10 @@ const LeadList = () => {
     if (formData.phone) params.phone = formData.phone
     if (formData.email) params.email = formData.email
     if (formData.status) params.status = formData.status
-    if (formData.owner_user_id) params.owner_user_id = formData.owner_user_id
+    // 只在全局线索视图中传递 owner_user_id
+    if (viewType === 'global' && formData.owner_user_id) {
+      params.owner_user_id = formData.owner_user_id
+    }
     // is_in_public_pool 由 viewType 控制，不需要从 formData 获取
     setQueryParams(params)
     loadLeads(params)
@@ -232,8 +253,12 @@ const LeadList = () => {
   }
 
   // 切换视图类型
-  const handleViewTypeChange = (type: 'my' | 'public') => {
+  const handleViewTypeChange = (type: 'my' | 'public' | 'global') => {
     setViewType(type)
+    // 切换到 'my' 或 'public' 时，清除 owner_user_id
+    if (type !== 'global') {
+      setFormData(prev => ({ ...prev, owner_user_id: '' }))
+    }
   }
 
   // 当视图类型改变时，重新加载数据
@@ -246,7 +271,10 @@ const LeadList = () => {
     if (formData.phone) params.phone = formData.phone
     if (formData.email) params.email = formData.email
     if (formData.status) params.status = formData.status
-    if (formData.owner_user_id) params.owner_user_id = formData.owner_user_id
+    // 只在全局线索视图中传递 owner_user_id
+    if (viewType === 'global' && formData.owner_user_id) {
+      params.owner_user_id = formData.owner_user_id
+    }
     setQueryParams(params)
     // 直接调用 loadLeads，它会使用最新的 viewType
     loadLeads(params)
@@ -621,6 +649,27 @@ const LeadList = () => {
                 >
                   {t('leadList.view.publicLeads')}
                 </Box>
+                {isAdmin(user?.roles || []) && (
+                  <Box
+                    as="button"
+                    px={4}
+                    py={2}
+                    fontSize="sm"
+                    fontWeight={viewType === 'global' ? 'semibold' : 'normal'}
+                    color={viewType === 'global' ? 'teal.600' : 'gray.600'}
+                    bg={viewType === 'global' ? 'teal.50' : 'transparent'}
+                    border="1px solid"
+                    borderColor={viewType === 'global' ? 'teal.200' : 'gray.200'}
+                    borderRadius="md"
+                    cursor="pointer"
+                    _hover={{
+                      bg: viewType === 'global' ? 'teal.100' : 'gray.50',
+                    }}
+                    onClick={() => handleViewTypeChange('global')}
+                  >
+                    {t('leadList.view.globalLeads')}
+                  </Box>
+                )}
               </HStack>
               <Text fontSize="sm" color="gray.600" fontWeight="medium">
                 {t('leadList.total', { total })}
@@ -698,33 +747,35 @@ const LeadList = () => {
                 </InputGroup>
               </Box>
 
-              {/* 负责人 */}
-              <Box flex={1} minW="180px">
-                <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
-                  {t('leadList.search.owner')}
-                </Text>
-                <InputGroup size="sm">
-                  <InputLeftElement pointerEvents="none">
-                    <UserCheck size={14} color="gray" />
-                  </InputLeftElement>
-                  <Select
-                    value={formData.owner_user_id}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                      setFormData({ ...formData, owner_user_id: e.target.value })
-                      handleSearch()
-                    }}
-                    borderRadius="md"
-                    pl={8}
-                  >
-                    <option value="">{t('leadList.search.allOwners')}</option>
-                    {users.map((user: UserListItem) => (
-                      <option key={user.id} value={user.id}>
-                        {user.display_name || user.username}
-                      </option>
-                    ))}
-                  </Select>
-                </InputGroup>
-              </Box>
+              {/* 负责人 - 只在全局线索视图中显示 */}
+              {viewType === 'global' && (
+                <Box flex={1} minW="180px">
+                  <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                    {t('leadList.search.owner')}
+                  </Text>
+                  <InputGroup size="sm">
+                    <InputLeftElement pointerEvents="none">
+                      <UserCheck size={14} color="gray" />
+                    </InputLeftElement>
+                    <Select
+                      value={formData.owner_user_id}
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                        setFormData({ ...formData, owner_user_id: e.target.value })
+                        handleSearch()
+                      }}
+                      borderRadius="md"
+                      pl={8}
+                    >
+                      <option value="">{t('leadList.search.allOwners')}</option>
+                      {users.map((user: UserListItem) => (
+                        <option key={user.id} value={user.id}>
+                          {user.display_name || user.username}
+                        </option>
+                      ))}
+                    </Select>
+                  </InputGroup>
+                </Box>
+              )}
 
               {/* 状态 */}
               <Box flex={1} minW="150px">

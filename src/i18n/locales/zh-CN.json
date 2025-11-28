@@ -1495,7 +1495,8 @@
     "noData": "暂无线索数据",
     "view": {
       "myLeads": "我的线索",
-      "publicLeads": "公海线索"
+      "publicLeads": "公海线索",
+      "globalLeads": "全局线索"
     },
     "search": {
       "companyName": "公司名称",
