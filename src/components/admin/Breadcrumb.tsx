@@ -1,7 +1,7 @@
 /**
  * 面包屑导航组件
  */
-import { useLocation, Link } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ChevronRight, Home } from 'lucide-react'
 import { useTabs } from '@/contexts/TabsContext'
@@ -94,19 +94,15 @@ export const Breadcrumb = () => {
 
   return (
     <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-4">
-      <Link to="/dashboard" className="hover:text-gray-900">
+      <span className="text-gray-600">
         <Home className="h-4 w-4" />
-      </Link>
+      </span>
       {breadcrumbItems.map((item, index) => (
         <div key={index} className="flex items-center space-x-2">
           <ChevronRight className="h-4 w-4" />
-          {item.isLast ? (
-            <span className="text-gray-900 font-medium">{item.label}</span>
-          ) : (
-            <Link to={item.path} className="hover:text-gray-900">
-              {item.label}
-            </Link>
-          )}
+          <span className={item.isLast ? "text-gray-900 font-medium" : "text-gray-600"}>
+            {item.label}
+          </span>
         </div>
       ))}
     </nav>

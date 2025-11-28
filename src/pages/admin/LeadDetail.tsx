@@ -18,10 +18,10 @@ import {
   convertLeadToCustomer,
   convertLeadToOpportunity,
 } from '@/api/leads'
-import { Lead, LeadFollowUp, LeadNote, LeadStatus, LeadFollowUpType, LeadNoteType, UserListItem, Customer, UpdateLeadRequest, LeadFollowUpCreateRequest, LeadNoteCreateRequest } from '@/api/types'
+import { Lead, LeadFollowUp, LeadNote, LeadStatus, LeadFollowUpType, LeadNoteType, UserListItem, UpdateLeadRequest, LeadFollowUpCreateRequest, LeadNoteCreateRequest } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
+import { validateStatusTransition, getAvailableStatuses, getStatusTransitionErrorMessage } from '@/utils/leadStatusValidation'
 import { getUserList } from '@/api/users'
-import { getCustomerList } from '@/api/customers'
 import { getCustomerLevelOptions, CustomerLevelOption } from '@/api/options'
 import { useTabs } from '@/contexts/TabsContext'
 import {
@@ -77,7 +77,6 @@ const LeadDetail = () => {
 
   // 下拉选项
   const [users, setUsers] = useState<UserListItem[]>([])
-  const [customers, setCustomers] = useState<Customer[]>([])
   const [customerLevels, setCustomerLevels] = useState<CustomerLevelOption[]>([])
 
   // 弹窗状态
@@ -96,7 +95,6 @@ const LeadDetail = () => {
     phone: '',
     email: '',
     address: '',
-    customer_id: '',
     owner_user_id: '',
     status: 'new' as LeadStatus,
     level: '',
@@ -108,6 +106,7 @@ const LeadDetail = () => {
     follow_up_type: 'call',
     content: '',
     follow_up_date: new Date().toISOString().slice(0, 16),
+    status_after: undefined,
   })
 
   // 备注表单
@@ -138,7 +137,6 @@ const LeadDetail = () => {
         phone: leadData.phone || '',
         email: leadData.email || '',
         address: leadData.address || '',
-        customer_id: leadData.customer_id || '',
         owner_user_id: leadData.owner_user_id || '',
         status: leadData.status,
         level: leadData.level || '',
@@ -187,13 +185,11 @@ const LeadDetail = () => {
         const currentLang = i18n.language || 'zh-CN'
         const apiLang = currentLang.startsWith('zh') ? 'zh' : 'id'
         
-        const [usersResult, customersResult, levelsResult] = await Promise.all([
+        const [usersResult, levelsResult] = await Promise.all([
           getUserList({ page: 1, size: 100 }),
-          getCustomerList({ page: 1, size: 100 }),
           getCustomerLevelOptions(apiLang),
         ])
         setUsers(usersResult.records || [])
-        setCustomers(customersResult.records || [])
         setCustomerLevels(levelsResult || [])
       } catch (error: any) {
         console.error('Failed to load options:', error)
@@ -298,7 +294,6 @@ const LeadDetail = () => {
         phone: editFormData.phone || null,
         email: editFormData.email || null,
         address: editFormData.address || null,
-        customer_id: editFormData.customer_id || null,
         owner_user_id: editFormData.owner_user_id || null,
         status: editFormData.status,
         level: editFormData.level || null,
@@ -332,6 +327,7 @@ const LeadDetail = () => {
         follow_up_type: 'call',
         content: '',
         follow_up_date: new Date().toISOString().slice(0, 16),
+        status_after: undefined,
       })
       loadFollowUps()
       loadLeadDetail() // 更新下次跟进时间
@@ -700,6 +696,26 @@ const LeadDetail = () => {
                               {formatDateTime(followUp.follow_up_date)}
                             </Text>
                           </HStack>
+                          {/* 状态变化显示 */}
+                          {followUp.status_before && followUp.status_after && (
+                            <HStack spacing={1}>
+                              {followUp.status_before !== followUp.status_after ? (
+                                <>
+                                  <Badge colorScheme="gray" fontSize="xs" variant="outline">
+                                    {t(`leadList.status.${followUp.status_before}`)}
+                                  </Badge>
+                                  <Text fontSize="xs" color="gray.400">→</Text>
+                                  <Badge colorScheme="green" fontSize="xs">
+                                    {t(`leadList.status.${followUp.status_after}`)}
+                                  </Badge>
+                                </>
+                              ) : (
+                                <Badge colorScheme="gray" fontSize="xs" variant="subtle">
+                                  {t(`leadList.status.${followUp.status_after}`)}
+                                </Badge>
+                              )}
+                            </HStack>
+                          )}
                         </HStack>
                         <HStack spacing={1}>
                           <UserCheck size={12} color="gray" />
@@ -905,23 +921,6 @@ const LeadDetail = () => {
               </FormControl>
 
               <FormControl>
-                <FormLabel>{t('leadList.modal.customer')}</FormLabel>
-                <Select
-                  value={editFormData.customer_id}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                    setEditFormData({ ...editFormData, customer_id: e.target.value })
-                  }
-                  placeholder={t('leadList.modal.selectCustomer')}
-                >
-                  {customers.map((customer: Customer) => (
-                    <option key={customer.id} value={customer.id}>
-                      {customer.name}
-                    </option>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <FormControl>
                 <FormLabel>{t('leadList.modal.owner')}</FormLabel>
                 <Select
                   value={editFormData.owner_user_id}
@@ -942,16 +941,30 @@ const LeadDetail = () => {
                 <FormLabel>{t('leadList.modal.status')}</FormLabel>
                 <Select
                   value={editFormData.status}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                    setEditFormData({ ...editFormData, status: e.target.value as LeadStatus })
-                  }
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                    const newStatus = e.target.value as LeadStatus
+                    const currentStatus = lead?.status || 'new'
+                    
+                    // 前端验证
+                    if (!validateStatusTransition(currentStatus, newStatus)) {
+                      showError(getStatusTransitionErrorMessage(currentStatus, newStatus) || t('leadDetail.error.statusTransitionInvalid'))
+                      return
+                    }
+                    
+                    setEditFormData({ ...editFormData, status: newStatus })
+                  }}
                 >
-                  <option value="new">{t('leadList.status.new')}</option>
-                  <option value="contacted">{t('leadList.status.contacted')}</option>
-                  <option value="qualified">{t('leadList.status.qualified')}</option>
-                  <option value="converted">{t('leadList.status.converted')}</option>
-                  <option value="lost">{t('leadList.status.lost')}</option>
+                  {lead?.status && getAvailableStatuses(lead.status).map((status) => (
+                    <option key={status} value={status}>
+                      {t(`leadList.status.${status}`)}
+                    </option>
+                  ))}
                 </Select>
+                {lead?.status && (
+                  <Text fontSize="xs" color="gray.500" mt={1}>
+                    {t('leadDetail.currentStatus')}: {t(`leadList.status.${lead.status}`)}
+                  </Text>
+                )}
               </FormControl>
 
               <FormControl>
@@ -1040,6 +1053,33 @@ const LeadDetail = () => {
                   placeholder={t('leadDetail.followUpContentPlaceholder')}
                   rows={4}
                 />
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>{t('leadDetail.followUpStatus')}</FormLabel>
+                <Select
+                  value={followUpFormData.status_after || lead?.status || 'new'}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                    const newStatus = e.target.value as LeadStatus
+                    // 前端验证
+                    if (lead?.status && !validateStatusTransition(lead.status, newStatus)) {
+                      showError(getStatusTransitionErrorMessage(lead.status, newStatus) || t('leadDetail.error.statusTransitionInvalid'))
+                      return
+                    }
+                    setFollowUpFormData({ ...followUpFormData, status_after: newStatus === lead?.status ? undefined : newStatus })
+                  }}
+                >
+                  {lead?.status && getAvailableStatuses(lead.status).map((status) => (
+                    <option key={status} value={status}>
+                      {t(`leadList.status.${status}`)}
+                    </option>
+                  ))}
+                </Select>
+                {lead?.status && (
+                  <Text fontSize="xs" color="gray.500" mt={1}>
+                    {t('leadDetail.currentStatus')}: {t(`leadList.status.${lead.status}`)}
+                  </Text>
+                )}
               </FormControl>
             </VStack>
           </DrawerBody>

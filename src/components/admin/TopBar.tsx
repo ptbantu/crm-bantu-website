@@ -5,7 +5,7 @@
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
-import { LogOut, User, Globe, Menu as MenuIcon, X } from 'lucide-react'
+import { LogOut, User, Globe, PanelLeft } from 'lucide-react'
 import { useSidebar } from '@/contexts/SidebarContext'
 import {
   Box,
@@ -55,7 +55,7 @@ export const TopBar = () => {
         {/* 侧边栏折叠按钮 */}
         <IconButton
           aria-label={isCollapsed ? t('common.sidebar.expand') : t('common.sidebar.collapse')}
-          icon={isCollapsed ? <MenuIcon size={20} /> : <X size={20} />}
+          icon={<PanelLeft size={20} />}
           onClick={toggleCollapse}
           variant="ghost"
           size="md"

@@ -18,13 +18,13 @@ import {
   UpdateLeadRequest,
   LeadDuplicateCheckRequest,
 } from '@/api/leads'
-import { LeadListParams, Lead, LeadStatus, UserListItem, Customer } from '@/api/types'
+import { LeadListParams, Lead, LeadStatus, UserListItem } from '@/api/types'
+import { validateStatusTransition, getAvailableStatuses, getStatusTransitionErrorMessage } from '@/utils/leadStatusValidation'
 import { useToast } from '@/components/ToastContainer'
 import { getUserList } from '@/api/users'
 import { storage } from '@/utils/storage'
 import { useAuth } from '@/hooks/useAuth'
 import { isAdmin } from '@/utils/permissions'
-import { getCustomerList } from '@/api/customers'
 import { getCustomerLevelOptions, CustomerLevelOption } from '@/api/options'
 import { PageHeader } from '@/components/admin/PageHeader'
 import {
@@ -126,7 +126,6 @@ const LeadList = () => {
     phone: '',
     email: '',
     address: '',
-    customer_id: '',
     owner_user_id: '',
     status: 'new' as LeadStatus,
     level: '',
@@ -140,7 +139,6 @@ const LeadList = () => {
 
   // 下拉选项
   const [users, setUsers] = useState<UserListItem[]>([])
-  const [customers, setCustomers] = useState<Customer[]>([])
   const [customerLevels, setCustomerLevels] = useState<CustomerLevelOption[]>([])
 
   // 加载线索列表
@@ -194,13 +192,11 @@ const LeadList = () => {
         const currentLang = i18n.language || 'zh-CN'
         const apiLang = currentLang.startsWith('zh') ? 'zh' : 'id'
         
-        const [usersResult, customersResult, levelsResult] = await Promise.all([
+        const [usersResult, levelsResult] = await Promise.all([
           getUserList({ page: 1, size: 100 }),
-          getCustomerList({ page: 1, size: 100 }),
           getCustomerLevelOptions(apiLang),
         ])
         setUsers(usersResult.records || [])
-        setCustomers(customersResult.records || [])
         setCustomerLevels(levelsResult || [])
       } catch (error: any) {
         console.error('[LeadList] 加载选项失败:', error)
@@ -291,7 +287,6 @@ const LeadList = () => {
       phone: '',
       email: '',
       address: '',
-      customer_id: '',
       owner_user_id: '',
       status: 'new',
       level: '',
@@ -312,7 +307,6 @@ const LeadList = () => {
       phone: lead.phone || '',
       email: lead.email || '',
       address: lead.address || '',
-      customer_id: lead.customer_id || '',
       owner_user_id: lead.owner_user_id || '',
       status: lead.status,
       level: lead.level || '',
@@ -511,7 +505,6 @@ const LeadList = () => {
           phone: modalFormData.phone || null,
           email: modalFormData.email || null,
           address: modalFormData.address || null,
-          customer_id: modalFormData.customer_id || null,
           owner_user_id: modalFormData.owner_user_id || null,
           status: modalFormData.status,
           level: modalFormData.level || null,
@@ -527,7 +520,6 @@ const LeadList = () => {
           phone: modalFormData.phone || null,
           email: modalFormData.email || null,
           address: modalFormData.address || null,
-          customer_id: modalFormData.customer_id || null,
           owner_user_id: modalFormData.owner_user_id || null,
           status: modalFormData.status,
           level: modalFormData.level || null,
@@ -1143,22 +1135,6 @@ const LeadList = () => {
                 />
               </FormControl>
 
-              {/* 关联客户 */}
-              <FormControl>
-                <FormLabel>{t('leadList.modal.customer')}</FormLabel>
-                <Select
-                  value={modalFormData.customer_id}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setModalFormData({ ...modalFormData, customer_id: e.target.value })}
-                  placeholder={t('leadList.modal.selectCustomer')}
-                >
-                  {customers.map((customer: Customer) => (
-                    <option key={customer.id} value={customer.id}>
-                      {customer.name}
-                    </option>
-                  ))}
-                </Select>
-              </FormControl>
-
               {/* 负责人 */}
               <FormControl>
                 <FormLabel>{t('leadList.modal.owner')}</FormLabel>
@@ -1180,14 +1156,42 @@ const LeadList = () => {
                 <FormLabel>{t('leadList.modal.status')}</FormLabel>
                 <Select
                   value={modalFormData.status}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setModalFormData({ ...modalFormData, status: e.target.value as LeadStatus })}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                    const newStatus = e.target.value as LeadStatus
+                    const currentStatus = editingLead?.status || 'new'
+                    
+                    // 前端验证（仅在编辑时验证）
+                    if (editingLead && !validateStatusTransition(currentStatus, newStatus)) {
+                      showError(getStatusTransitionErrorMessage(currentStatus, newStatus) || t('leadList.error.statusTransitionInvalid'))
+                      return
+                    }
+                    
+                    setModalFormData({ ...modalFormData, status: newStatus })
+                  }}
                 >
-                  <option value="new">{t('leadList.status.new')}</option>
-                  <option value="contacted">{t('leadList.status.contacted')}</option>
-                  <option value="qualified">{t('leadList.status.qualified')}</option>
-                  <option value="converted">{t('leadList.status.converted')}</option>
-                  <option value="lost">{t('leadList.status.lost')}</option>
+                  {editingLead ? (
+                    // 编辑模式：只显示可用状态
+                    getAvailableStatuses(editingLead.status).map((status) => (
+                      <option key={status} value={status}>
+                        {t(`leadList.status.${status}`)}
+                      </option>
+                    ))
+                  ) : (
+                    // 创建模式：显示所有状态
+                    <>
+                      <option value="new">{t('leadList.status.new')}</option>
+                      <option value="contacted">{t('leadList.status.contacted')}</option>
+                      <option value="qualified">{t('leadList.status.qualified')}</option>
+                      <option value="converted">{t('leadList.status.converted')}</option>
+                      <option value="lost">{t('leadList.status.lost')}</option>
+                    </>
+                  )}
                 </Select>
+                {editingLead && (
+                  <Text fontSize="xs" color="gray.500" mt={1}>
+                    {t('leadList.currentStatus')}: {t(`leadList.status.${editingLead.status}`)}
+                  </Text>
+                )}
               </FormControl>
 
               {/* 客户分级 */}

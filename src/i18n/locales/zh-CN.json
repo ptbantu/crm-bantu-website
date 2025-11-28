@@ -1535,6 +1535,7 @@
       "converted": "已转化",
       "lost": "已丢失"
     },
+    "currentStatus": "当前状态",
     "actions": {
       "view": "查看",
       "edit": "编辑",
@@ -1607,7 +1608,8 @@
       "noOrganization": "未找到组织信息",
       "noUser": "未找到用户信息",
       "loadUsersFailed": "加载用户列表失败",
-      "selectUser": "请选择要转换的用户"
+      "selectUser": "请选择要转换的用户",
+      "statusTransitionInvalid": "状态流转不合法"
     },
     "transfer": {
       "title": "转换线索",
@@ -1659,6 +1661,8 @@
     "followUpDate": "跟进日期",
     "followUpContent": "跟进内容",
     "followUpContentPlaceholder": "请输入跟进内容",
+    "followUpStatus": "跟进状态",
+    "currentStatus": "当前状态",
     "followUpType": {
       "call": "电话",
       "meeting": "会议",
@@ -1700,7 +1704,8 @@
       "createFollowUpFailed": "创建跟进记录失败",
       "createNoteFailed": "创建备注失败",
       "assignFailed": "分配失败",
-      "moveToPoolFailed": "移入公海池失败"
+      "moveToPoolFailed": "移入公海池失败",
+      "statusTransitionInvalid": "状态流转不合法"
     },
     "convert": {
       "toCustomer": "转换为客户",

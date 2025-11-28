@@ -1596,7 +1596,8 @@
       "noOrganization": "Informasi organisasi tidak ditemukan",
       "noUser": "Informasi pengguna tidak ditemukan",
       "loadUsersFailed": "Gagal memuat daftar pengguna",
-      "selectUser": "Silakan pilih pengguna untuk ditransfer"
+      "selectUser": "Silakan pilih pengguna untuk ditransfer",
+      "statusTransitionInvalid": "Transisi status tidak valid"
     },
     "transfer": {
       "title": "Transfer Lead",
@@ -1648,6 +1649,8 @@
     "followUpDate": "Tanggal Tindak Lanjut",
     "followUpContent": "Konten Tindak Lanjut",
     "followUpContentPlaceholder": "Masukkan konten tindak lanjut",
+    "followUpStatus": "Status Tindak Lanjut",
+    "currentStatus": "Status Saat Ini",
     "followUpType": {
       "call": "Telepon",
       "meeting": "Pertemuan",
@@ -1689,7 +1692,8 @@
       "createFollowUpFailed": "Gagal membuat catatan tindak lanjut",
       "createNoteFailed": "Gagal membuat catatan",
       "assignFailed": "Gagal menetapkan",
-      "moveToPoolFailed": "Gagal memindahkan ke kolam publik"
+      "moveToPoolFailed": "Gagal memindahkan ke kolam publik",
+      "statusTransitionInvalid": "Transisi status tidak valid"
     },
     "convert": {
       "toCustomer": "Konversi ke Pelanggan",

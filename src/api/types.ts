@@ -740,6 +740,8 @@ export interface LeadFollowUp {
   follow_up_type: LeadFollowUpType
   content?: string | null
   follow_up_date: string
+  status_before?: string | null
+  status_after?: string | null
   created_by?: string | null
   created_by_name?: string | null
   created_at: string
@@ -750,6 +752,7 @@ export interface LeadFollowUpCreateRequest {
   follow_up_type: LeadFollowUpType
   content?: string | null
   follow_up_date: string
+  status_after?: LeadStatus  // 新增：跟进后线索状态（可选）
 }
 
 // 备注类型
