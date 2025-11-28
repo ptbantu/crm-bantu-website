@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { Search, Plus, Edit, Trash2, Target, Mail, Phone, Building2, UserCheck, Eye, Filter, ChevronUp, ChevronDown } from 'lucide-react'
+import { Search, Plus, Target, Mail, Phone, Building2, UserCheck, X } from 'lucide-react'
 import {
   getLeadList,
   createLead,
@@ -23,6 +23,7 @@ import { useToast } from '@/components/ToastContainer'
 import { getUserList } from '@/api/users'
 import { storage } from '@/utils/storage'
 import { useAuth } from '@/hooks/useAuth'
+import { isAdmin } from '@/utils/permissions'
 import { getCustomerList } from '@/api/customers'
 import { getCustomerLevelOptions, CustomerLevelOption } from '@/api/options'
 import { PageHeader } from '@/components/admin/PageHeader'
@@ -47,7 +48,6 @@ import {
   Spinner,
   Text,
   Badge,
-  IconButton,
   useColorModeValue,
   Drawer,
   DrawerBody,
@@ -61,13 +61,6 @@ import {
   useDisclosure,
   Alert,
   AlertIcon,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverBody,
-  PopoverCloseButton,
-  Checkbox,
-  CheckboxGroup,
   Stack,
   Modal,
   ModalOverlay,
@@ -85,14 +78,15 @@ const LeadList = () => {
   const { user } = useAuth()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { isOpen: isTransferOpen, onOpen: onTransferOpen, onClose: onTransferClose } = useDisclosure()
+  const { isOpen: isDuplicateModalOpen, onOpen: onDuplicateModalOpen, onClose: onDuplicateModalClose } = useDisclosure()
   
   // Chakra UI 颜色模式
   const bgColor = useColorModeValue('white', 'gray.800')
   const borderColor = useColorModeValue('gray.200', 'gray.700')
   const hoverBg = useColorModeValue('gray.50', 'gray.700')
 
-  // 视图类型：'my' 表示"我的线索"，'public' 表示"公海线索"
-  const [viewType, setViewType] = useState<'my' | 'public'>('my')
+  // 视图类型：'my' 表示"我的线索"，'public' 表示"公海线索"，'global' 表示"全局线索"（仅管理员）
+  const [viewType, setViewType] = useState<'my' | 'public' | 'global'>('my')
 
   // 查询参数
   const [queryParams, setQueryParams] = useState<LeadListParams>({
@@ -122,9 +116,6 @@ const LeadList = () => {
     owner_user_id: '',
   })
 
-  // 筛选状态管理（用于 Popover）
-  const [filterStatus, setFilterStatus] = useState<string[]>([])
-  const [filterOwner, setFilterOwner] = useState<string[]>([])
 
   // 弹窗状态
   const [editingLead, setEditingLead] = useState<Lead | null>(null)
@@ -145,6 +136,7 @@ const LeadList = () => {
   const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null)
   const [isDuplicate, setIsDuplicate] = useState(false) // 标记是否存在重复线索（完全匹配公司名）
   const [checkingDuplicate, setCheckingDuplicate] = useState(false) // 标记是否正在查重
+  const [duplicateLeads, setDuplicateLeads] = useState<Lead[]>([]) // 存储重复线索列表
 
   // 下拉选项
   const [users, setUsers] = useState<UserListItem[]>([])
@@ -155,11 +147,28 @@ const LeadList = () => {
   const loadLeads = async (params: LeadListParams) => {
     setLoading(true)
     try {
-      // 根据视图类型自动设置 is_in_public_pool
       const finalParams: LeadListParams = {
         ...params,
-        is_in_public_pool: viewType === 'public' ? true : false,
       }
+      
+      // 根据视图类型设置查询参数
+      if (viewType === 'my') {
+        // 我的线索：只显示负责人是当前用户的线索
+        // 不传递 formData 中的 owner_user_id，强制使用当前用户ID
+        delete finalParams.owner_user_id
+        finalParams.owner_user_id = user?.id || ''
+        finalParams.is_in_public_pool = false
+      } else if (viewType === 'public') {
+        // 公海线索：只显示在公海池中的线索
+        // 不传递 owner_user_id
+        delete finalParams.owner_user_id
+        finalParams.is_in_public_pool = true
+      } else if (viewType === 'global') {
+        // 全局线索：显示组织内所有线索，可以按负责人筛选
+        // 不设置 is_in_public_pool，可以传递 owner_user_id（从 params 中保留）
+        delete finalParams.is_in_public_pool
+      }
+      
       const result = await getLeadList(finalParams)
       setLeads(result.records || [])
       setTotal(result.total || 0)
@@ -217,7 +226,10 @@ const LeadList = () => {
     if (formData.phone) params.phone = formData.phone
     if (formData.email) params.email = formData.email
     if (formData.status) params.status = formData.status
-    if (formData.owner_user_id) params.owner_user_id = formData.owner_user_id
+    // 只在全局线索视图中传递 owner_user_id
+    if (viewType === 'global' && formData.owner_user_id) {
+      params.owner_user_id = formData.owner_user_id
+    }
     // is_in_public_pool 由 viewType 控制，不需要从 formData 获取
     setQueryParams(params)
     loadLeads(params)
@@ -241,8 +253,12 @@ const LeadList = () => {
   }
 
   // 切换视图类型
-  const handleViewTypeChange = (type: 'my' | 'public') => {
+  const handleViewTypeChange = (type: 'my' | 'public' | 'global') => {
     setViewType(type)
+    // 切换到 'my' 或 'public' 时，清除 owner_user_id
+    if (type !== 'global') {
+      setFormData(prev => ({ ...prev, owner_user_id: '' }))
+    }
   }
 
   // 当视图类型改变时，重新加载数据
@@ -255,7 +271,10 @@ const LeadList = () => {
     if (formData.phone) params.phone = formData.phone
     if (formData.email) params.email = formData.email
     if (formData.status) params.status = formData.status
-    if (formData.owner_user_id) params.owner_user_id = formData.owner_user_id
+    // 只在全局线索视图中传递 owner_user_id
+    if (viewType === 'global' && formData.owner_user_id) {
+      params.owner_user_id = formData.owner_user_id
+    }
     setQueryParams(params)
     // 直接调用 loadLeads，它会使用最新的 viewType
     loadLeads(params)
@@ -334,7 +353,7 @@ const LeadList = () => {
     // 加载同组织的用户列表
     setLoadingUsers(true)
     try {
-      const result = await getUserList({ organization_id: organizationId, size: 1000 })
+      const result = await getUserList({ organization_id: organizationId, size: 20 })
       setOrganizationUsers(result.records || [])
       onTransferOpen()
     } catch (error: any) {
@@ -426,6 +445,7 @@ const LeadList = () => {
     // 如果公司名为空，重置重复状态
     if (!companyName) {
       setIsDuplicate(false)
+      setDuplicateLeads([])
       return
     }
     
@@ -441,10 +461,18 @@ const LeadList = () => {
       }
       const result = await checkLeadDuplicate(checkData)
       setIsDuplicate(result.has_duplicate)
+      if (result.has_duplicate && result.duplicates) {
+        setDuplicateLeads(result.duplicates)
+        // 打开重复线索详情弹窗
+        onDuplicateModalOpen()
+      } else {
+        setDuplicateLeads([])
+      }
     } catch (error: any) {
       console.error('[LeadList] 公司名查重失败:', error)
       // 查重失败时不阻止提交，只记录错误
       setIsDuplicate(false)
+      setDuplicateLeads([])
     } finally {
       setCheckingDuplicate(false)
     }
@@ -576,64 +604,238 @@ const LeadList = () => {
         }
       />
 
-      {/* 操作栏 */}
-      <Flex justify="flex-start" align="center" mb={4}>
-        <Text fontSize="sm" color="gray.600">
-          {t('leadList.total', { total })}
-        </Text>
-      </Flex>
+      {/* 查询表单 */}
+      <Card mb={4} bg={bgColor} borderColor={borderColor}>
+        <CardBody>
+          <VStack align="stretch" spacing={4}>
+            {/* 视图切换和统计信息 */}
+            <Flex justify="space-between" align="center" flexWrap="wrap" gap={3}>
+              <HStack spacing={2}>
+                <Box
+                  as="button"
+                  px={4}
+                  py={2}
+                  fontSize="sm"
+                  fontWeight={viewType === 'my' ? 'semibold' : 'normal'}
+                  color={viewType === 'my' ? 'teal.600' : 'gray.600'}
+                  bg={viewType === 'my' ? 'teal.50' : 'transparent'}
+                  border="1px solid"
+                  borderColor={viewType === 'my' ? 'teal.200' : 'gray.200'}
+                  borderRadius="md"
+                  cursor="pointer"
+                  _hover={{
+                    bg: viewType === 'my' ? 'teal.100' : 'gray.50',
+                  }}
+                  onClick={() => handleViewTypeChange('my')}
+                >
+                  {t('leadList.view.myLeads')}
+                </Box>
+                <Box
+                  as="button"
+                  px={4}
+                  py={2}
+                  fontSize="sm"
+                  fontWeight={viewType === 'public' ? 'semibold' : 'normal'}
+                  color={viewType === 'public' ? 'teal.600' : 'gray.600'}
+                  bg={viewType === 'public' ? 'teal.50' : 'transparent'}
+                  border="1px solid"
+                  borderColor={viewType === 'public' ? 'teal.200' : 'gray.200'}
+                  borderRadius="md"
+                  cursor="pointer"
+                  _hover={{
+                    bg: viewType === 'public' ? 'teal.100' : 'gray.50',
+                  }}
+                  onClick={() => handleViewTypeChange('public')}
+                >
+                  {t('leadList.view.publicLeads')}
+                </Box>
+                {isAdmin(user?.roles || []) && (
+                  <Box
+                    as="button"
+                    px={4}
+                    py={2}
+                    fontSize="sm"
+                    fontWeight={viewType === 'global' ? 'semibold' : 'normal'}
+                    color={viewType === 'global' ? 'teal.600' : 'gray.600'}
+                    bg={viewType === 'global' ? 'teal.50' : 'transparent'}
+                    border="1px solid"
+                    borderColor={viewType === 'global' ? 'teal.200' : 'gray.200'}
+                    borderRadius="md"
+                    cursor="pointer"
+                    _hover={{
+                      bg: viewType === 'global' ? 'teal.100' : 'gray.50',
+                    }}
+                    onClick={() => handleViewTypeChange('global')}
+                  >
+                    {t('leadList.view.globalLeads')}
+                  </Box>
+                )}
+              </HStack>
+              <Text fontSize="sm" color="gray.600" fontWeight="medium">
+                {t('leadList.total', { total })}
+              </Text>
+            </Flex>
+
+            {/* 筛选条件 */}
+            <HStack spacing={3} align="flex-end" flexWrap="wrap">
+              {/* 公司名称 */}
+              <Box flex={1} minW="200px">
+                <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                  {t('leadList.search.companyName')}
+                </Text>
+                <InputGroup size="sm">
+                  <InputLeftElement pointerEvents="none">
+                    <Building2 size={14} color="gray" />
+                  </InputLeftElement>
+                  <Input
+                    value={formData.company_name}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setFormData({ ...formData, company_name: e.target.value })
+                    }}
+                    placeholder={t('leadList.search.companyNamePlaceholder')}
+                    onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                      if (e.key === 'Enter') handleSearch()
+                    }}
+                    borderRadius="md"
+                  />
+                </InputGroup>
+              </Box>
+
+              {/* 电话 */}
+              <Box flex={1} minW="150px">
+                <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                  {t('leadList.search.phone')}
+                </Text>
+                <InputGroup size="sm">
+                  <InputLeftElement pointerEvents="none">
+                    <Phone size={14} color="gray" />
+                  </InputLeftElement>
+                  <Input
+                    value={formData.phone}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setFormData({ ...formData, phone: e.target.value })
+                    }}
+                    placeholder={t('leadList.search.phonePlaceholder')}
+                    onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                      if (e.key === 'Enter') handleSearch()
+                    }}
+                    borderRadius="md"
+                  />
+                </InputGroup>
+              </Box>
+
+              {/* 邮箱 */}
+              <Box flex={1} minW="200px">
+                <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                  {t('leadList.search.email')}
+                </Text>
+                <InputGroup size="sm">
+                  <InputLeftElement pointerEvents="none">
+                    <Mail size={14} color="gray" />
+                  </InputLeftElement>
+                  <Input
+                    value={formData.email}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setFormData({ ...formData, email: e.target.value })
+                    }}
+                    placeholder={t('leadList.search.emailPlaceholder')}
+                    onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                      if (e.key === 'Enter') handleSearch()
+                    }}
+                    borderRadius="md"
+                  />
+                </InputGroup>
+              </Box>
+
+              {/* 负责人 - 只在全局线索视图中显示 */}
+              {viewType === 'global' && (
+                <Box flex={1} minW="180px">
+                  <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                    {t('leadList.search.owner')}
+                  </Text>
+                  <InputGroup size="sm">
+                    <InputLeftElement pointerEvents="none">
+                      <UserCheck size={14} color="gray" />
+                    </InputLeftElement>
+                    <Select
+                      value={formData.owner_user_id}
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                        setFormData({ ...formData, owner_user_id: e.target.value })
+                        handleSearch()
+                      }}
+                      borderRadius="md"
+                      pl={8}
+                    >
+                      <option value="">{t('leadList.search.allOwners')}</option>
+                      {users.map((user: UserListItem) => (
+                        <option key={user.id} value={user.id}>
+                          {user.display_name || user.username}
+                        </option>
+                      ))}
+                    </Select>
+                  </InputGroup>
+                </Box>
+              )}
+
+              {/* 状态 */}
+              <Box flex={1} minW="150px">
+                <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                  {t('leadList.search.status')}
+                </Text>
+                <Select
+                  size="sm"
+                  value={formData.status}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                    setFormData({ ...formData, status: e.target.value as LeadStatus | '' })
+                    handleSearch()
+                  }}
+                  borderRadius="md"
+                >
+                  <option value="">{t('leadList.search.allStatus')}</option>
+                  {Object.entries({
+                    new: t('leadList.status.new'),
+                    contacted: t('leadList.status.contacted'),
+                    qualified: t('leadList.status.qualified'),
+                    converted: t('leadList.status.converted'),
+                    lost: t('leadList.status.lost'),
+                  }).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </Select>
+              </Box>
+
+              {/* 操作按钮 */}
+              <HStack spacing={2}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  colorScheme="gray"
+                  leftIcon={<X size={14} />}
+                  onClick={handleReset}
+                  borderRadius="md"
+                >
+                  {t('leadList.search.reset')}
+                </Button>
+                <Button
+                  size="sm"
+                  colorScheme="teal"
+                  leftIcon={<Search size={14} />}
+                  onClick={handleSearch}
+                  isLoading={loading}
+                  borderRadius="md"
+                >
+                  {t('leadList.search.search')}
+                </Button>
+              </HStack>
+            </HStack>
+          </VStack>
+        </CardBody>
+      </Card>
 
       {/* 线索列表 */}
       <Card bg={bgColor} borderColor={borderColor} overflow="hidden">
-        {/* 视图切换标签 - 始终显示在表格头部 */}
-        <Flex
-          px={4}
-          py={2}
-          bg="gray.50"
-          borderBottom="1px solid"
-          borderColor={borderColor}
-          align="center"
-          gap={2}
-        >
-          <Box
-            as="button"
-            px={3}
-            py={1}
-            fontSize="sm"
-            fontWeight={viewType === 'my' ? 'semibold' : 'normal'}
-            color={viewType === 'my' ? 'teal.600' : 'gray.600'}
-            bg={viewType === 'my' ? 'teal.50' : 'transparent'}
-            border="1px solid"
-            borderColor={viewType === 'my' ? 'teal.200' : 'transparent'}
-            borderRadius="md"
-            cursor="pointer"
-            _hover={{
-              bg: viewType === 'my' ? 'teal.100' : 'gray.100',
-            }}
-            onClick={() => handleViewTypeChange('my')}
-          >
-            {t('leadList.view.myLeads')}
-          </Box>
-          <Box
-            as="button"
-            px={3}
-            py={1}
-            fontSize="sm"
-            fontWeight={viewType === 'public' ? 'semibold' : 'normal'}
-            color={viewType === 'public' ? 'teal.600' : 'gray.600'}
-            bg={viewType === 'public' ? 'teal.50' : 'transparent'}
-            border="1px solid"
-            borderColor={viewType === 'public' ? 'teal.200' : 'transparent'}
-            borderRadius="md"
-            cursor="pointer"
-            _hover={{
-              bg: viewType === 'public' ? 'teal.100' : 'gray.100',
-            }}
-            onClick={() => handleViewTypeChange('public')}
-          >
-            {t('leadList.view.publicLeads')}
-          </Box>
-        </Flex>
 
         <Box overflowX="auto" minW="100%">
           <Table variant="simple" size="sm" w="100%" minW="1400px">
@@ -649,265 +851,6 @@ const LeadList = () => {
                 <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="150px">{t('leadList.table.nextFollowUp')}</Th>
                 <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="150px">{t('leadList.table.createdAt')}</Th>
                 <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="120px">{t('leadList.table.actions')}</Th>
-              </Tr>
-              {/* 第二行：筛选条件 */}
-              <Tr>
-                <Th py={1.5}></Th>
-                
-                {/* 公司名称 - 输入框 */}
-                <Th py={1.5} minW="200px">
-                  <Input
-                    size="xs"
-                    value={formData.company_name}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setFormData({ ...formData, company_name: e.target.value })
-                    }}
-                    placeholder={t('leadList.search.companyNamePlaceholder')}
-                    onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                      if (e.key === 'Enter') handleSearch()
-                    }}
-                    w="100%"
-                    borderRadius="md"
-                  />
-                </Th>
-                
-                {/* 联系方式 - 两个输入框 */}
-                <Th py={1.5} minW="280px">
-                  <HStack spacing={2}>
-                    <Input
-                      size="xs"
-                      value={formData.phone}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setFormData({ ...formData, phone: e.target.value })
-                      }}
-                      placeholder={t('leadList.search.phonePlaceholder')}
-                      onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                        if (e.key === 'Enter') handleSearch()
-                      }}
-                      flex={1}
-                      borderRadius="md"
-                    />
-                    <Input
-                      size="xs"
-                      value={formData.email}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setFormData({ ...formData, email: e.target.value })
-                      }}
-                      placeholder={t('leadList.search.emailPlaceholder')}
-                      onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                        if (e.key === 'Enter') handleSearch()
-                      }}
-                      flex={1}
-                      borderRadius="md"
-                    />
-                  </HStack>
-                </Th>
-                
-                {/* 负责人 - 筛选菜单 */}
-                <Th py={1.5} position="relative" minW="180px">
-                  <Popover 
-                    placement="bottom-start" 
-                    closeOnBlur={false}
-                    isLazy
-                    lazyBehavior="keepMounted"
-                  >
-                    {({ isOpen, onClose }) => (
-                      <>
-                        <PopoverTrigger>
-                          <HStack spacing={2} cursor="pointer" align="center">
-                            <Select
-                              size="xs"
-                              value={formData.owner_user_id}
-                              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                                setFormData({ ...formData, owner_user_id: e.target.value })
-                                handleSearch()
-                              }}
-                              flex={1}
-                              minW="140px"
-                            >
-                              <option value="">{t('leadList.search.allOwners')}</option>
-                              {users.map((user: UserListItem) => (
-                                <option key={user.id} value={user.id}>
-                                  {user.display_name || user.username}
-                                </option>
-                              ))}
-                            </Select>
-                            <IconButton
-                              aria-label={t('leadList.search.owner')}
-                              icon={<Filter size={12} />}
-                              size="xs"
-                              variant="ghost"
-                              colorScheme={formData.owner_user_id ? 'teal' : 'gray'}
-                            />
-                          </HStack>
-                        </PopoverTrigger>
-                        <PopoverContent 
-                          w="200px" 
-                          zIndex={1500}
-                          position="fixed"
-                          boxShadow="md"
-                          borderRadius="md"
-                          border="1px solid"
-                          borderColor="gray.200"
-                          bg="white"
-                        >
-                          <PopoverCloseButton size="sm" />
-                          <PopoverBody p={3}>
-                            <VStack align="stretch" spacing={3}>
-                              <Select
-                                size="sm"
-                                value={formData.owner_user_id}
-                                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                                  setFormData({ ...formData, owner_user_id: e.target.value })
-                                }}
-                                borderRadius="md"
-                              >
-                                <option value="">{t('leadList.search.allOwners')}</option>
-                                {users.map((user: UserListItem) => (
-                                  <option key={user.id} value={user.id}>
-                                    {user.display_name || user.username}
-                                  </option>
-                                ))}
-                              </Select>
-                              <HStack spacing={2} pt={2} borderTop="1px solid" borderColor="gray.200">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  colorScheme="blue"
-                                  flex={1}
-                                  borderRadius="md"
-                                  onClick={() => {
-                                    setFormData({ ...formData, owner_user_id: '' })
-                                    handleSearch()
-                                    onClose()
-                                  }}
-                                >
-                                  {t('leadList.search.reset')}
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  colorScheme="teal"
-                                  flex={1}
-                                  borderRadius="md"
-                                  onClick={() => {
-                                    handleSearch()
-                                    onClose()
-                                  }}
-                                >
-                                  {t('leadList.search.search')}
-                                </Button>
-                              </HStack>
-                            </VStack>
-                          </PopoverBody>
-                        </PopoverContent>
-                      </>
-                    )}
-                  </Popover>
-                </Th>
-                
-                {/* 状态 - 筛选菜单 */}
-                <Th py={1.5} position="relative" minW="150px">
-                  <Popover 
-                    placement="bottom-start" 
-                    closeOnBlur={false}
-                    isLazy
-                    lazyBehavior="keepMounted"
-                  >
-                    {({ isOpen, onClose }) => (
-                      <>
-                        <PopoverTrigger>
-                          <HStack spacing={2} cursor="pointer" align="center">
-                            <Text fontSize="xs" color="gray.600" minW="80px" noOfLines={1}>
-                              {formData.status ? t(`leadList.status.${formData.status}`) : t('leadList.search.allStatus')}
-                            </Text>
-                            <IconButton
-                              aria-label={t('leadList.search.status')}
-                              icon={<Filter size={12} />}
-                              size="xs"
-                              variant="ghost"
-                              colorScheme={formData.status || filterStatus.length > 0 ? 'teal' : 'gray'}
-                            />
-                          </HStack>
-                        </PopoverTrigger>
-                        <PopoverContent 
-                          w="200px" 
-                          zIndex={1500}
-                          position="fixed"
-                          boxShadow="md"
-                          borderRadius="md"
-                          border="1px solid"
-                          borderColor="gray.200"
-                          bg="white"
-                        >
-                          <PopoverCloseButton size="sm" />
-                          <PopoverBody p={3}>
-                            <VStack align="stretch" spacing={3}>
-                              <Box maxH="200px" overflowY="auto">
-                                <CheckboxGroup
-                                  value={filterStatus}
-                                  onChange={(values) => {
-                                    const statusValues = values as string[]
-                                    setFilterStatus(statusValues)
-                                    if (statusValues.length === 1) {
-                                      setFormData({ ...formData, status: statusValues[0] as LeadStatus })
-                                    } else if (statusValues.length === 0) {
-                                      setFormData({ ...formData, status: '' })
-                                    } else {
-                                      // 多个选择时，不设置单个状态
-                                      setFormData({ ...formData, status: '' })
-                                    }
-                                  }}
-                                >
-                                  <Stack spacing={2}>
-                                    <Checkbox value="new" size="sm">{t('leadList.status.new')}</Checkbox>
-                                    <Checkbox value="contacted" size="sm">{t('leadList.status.contacted')}</Checkbox>
-                                    <Checkbox value="qualified" size="sm">{t('leadList.status.qualified')}</Checkbox>
-                                    <Checkbox value="converted" size="sm">{t('leadList.status.converted')}</Checkbox>
-                                    <Checkbox value="lost" size="sm">{t('leadList.status.lost')}</Checkbox>
-                                  </Stack>
-                                </CheckboxGroup>
-                              </Box>
-                              <HStack spacing={2} pt={2} borderTop="1px solid" borderColor="gray.200">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  colorScheme="blue"
-                                  flex={1}
-                                  borderRadius="md"
-                                  onClick={() => {
-                                    setFilterStatus([])
-                                    setFormData({ ...formData, status: '' })
-                                    handleSearch()
-                                    onClose()
-                                  }}
-                                >
-                                  {t('leadList.search.reset')}
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  colorScheme="teal"
-                                  flex={1}
-                                  borderRadius="md"
-                                  onClick={() => {
-                                    handleSearch()
-                                    onClose()
-                                  }}
-                                >
-                                  {t('leadList.search.search')}
-                                </Button>
-                              </HStack>
-                            </VStack>
-                          </PopoverBody>
-                        </PopoverContent>
-                      </>
-                    )}
-                  </Popover>
-                </Th>
-                
-                <Th py={1.5}></Th>
-                <Th py={1.5}></Th>
-                <Th py={1.5}></Th>
-                <Th py={1.5}></Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -1325,6 +1268,103 @@ const LeadList = () => {
             </Button>
             <Button colorScheme="teal" onClick={handleTransfer} isDisabled={!selectedUserId || loadingUsers}>
               {t('leadList.transfer.confirm')}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* 重复线索详情弹窗 */}
+      <Modal isOpen={isDuplicateModalOpen} onClose={onDuplicateModalClose} size="lg">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <Alert status="warning" borderRadius="md" mb={2}>
+              <AlertIcon />
+              {t('leadList.duplicateModal.title')}
+            </Alert>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack align="stretch" spacing={4}>
+              <Text fontSize="sm" color="gray.600">
+                {t('leadList.duplicateModal.description', { count: duplicateLeads.length })}
+              </Text>
+              
+              {duplicateLeads.map((lead: Lead, index: number) => (
+                <Card key={lead.id || index} bg={bgColor} borderColor={borderColor} borderWidth={1}>
+                  <CardBody>
+                    <VStack align="stretch" spacing={2}>
+                      <HStack justify="space-between">
+                        <Text fontWeight="semibold" fontSize="sm">
+                          {lead.name || '-'}
+                        </Text>
+                        {getStatusBadge(lead.status)}
+                      </HStack>
+                      
+                      <HStack spacing={4} fontSize="xs" color="gray.600">
+                        <HStack spacing={1}>
+                          <Building2 size={14} />
+                          <Text>{lead.company_name || '-'}</Text>
+                        </HStack>
+                        {lead.phone && (
+                          <HStack spacing={1}>
+                            <Phone size={14} />
+                            <Text>{lead.phone}</Text>
+                          </HStack>
+                        )}
+                        {lead.email && (
+                          <HStack spacing={1}>
+                            <Mail size={14} />
+                            <Text>{lead.email}</Text>
+                          </HStack>
+                        )}
+                      </HStack>
+                      
+                      <HStack spacing={4} fontSize="xs" color="gray.500">
+                        {lead.owner_username && (
+                          <HStack spacing={1}>
+                            <UserCheck size={14} />
+                            <Text>{t('leadList.duplicateModal.owner')}: {lead.owner_username}</Text>
+                          </HStack>
+                        )}
+                        {lead.created_at && (
+                          <Text>
+                            {t('leadList.duplicateModal.createdAt')}: {formatDateTime(lead.created_at)}
+                          </Text>
+                        )}
+                        {lead.next_follow_up_at && (
+                          <Text>
+                            {t('leadList.duplicateModal.nextFollowUp')}: {formatDateTime(lead.next_follow_up_at)}
+                          </Text>
+                        )}
+                      </HStack>
+                    </VStack>
+                  </CardBody>
+                </Card>
+              ))}
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              variant="outline"
+              mr={3}
+              onClick={() => {
+                setModalFormData({ ...modalFormData, company_name: '' })
+                setIsDuplicate(false)
+                setDuplicateLeads([])
+                onDuplicateModalClose()
+              }}
+            >
+              {t('leadList.duplicateModal.cancel')}
+            </Button>
+            <Button
+              colorScheme="orange"
+              onClick={() => {
+                onDuplicateModalClose()
+                // 保持 isDuplicate 状态，提交时仍会阻止
+              }}
+            >
+              {t('leadList.duplicateModal.continue')}
             </Button>
           </ModalFooter>
         </ModalContent>
