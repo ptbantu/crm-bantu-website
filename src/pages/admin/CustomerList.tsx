@@ -667,14 +667,6 @@ const CustomerList = () => {
         <Text fontSize="sm" color="gray.600">
           {t('customerList.total', { total })}
         </Text>
-        <Button
-          size="sm"
-          colorScheme="blue"
-          leftIcon={<Plus size={16} />}
-          onClick={handleCreate}
-        >
-          {t('customerList.create')}
-        </Button>
       </Flex>
 
       {/* 客户列表 */}

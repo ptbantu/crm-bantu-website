@@ -566,14 +566,6 @@ const OrderList = () => {
         <Text fontSize="sm" color="gray.600">
           {t('orderList.total', { total })}
         </Text>
-        <Button
-          size="sm"
-          colorScheme="blue"
-          leftIcon={<Plus size={16} />}
-          onClick={handleCreate}
-        >
-          {t('orderList.create')}
-        </Button>
       </Flex>
 
       {/* 订单列表 */}
