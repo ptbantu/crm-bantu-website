@@ -293,7 +293,7 @@ export interface Customer {
   id: string
   name: string
   code?: string | null
-  customer_type: 'individual' | 'organization'
+  customer_type: 'B' | 'C'  // B (B端), C (C端)
   customer_source_type: 'own' | 'agent'
   parent_customer_id?: string | null
   parent_customer_name?: string | null
@@ -307,7 +307,11 @@ export interface Customer {
   channel_id?: string | null
   channel_name?: string | null
   level?: string | null
-  industry?: string | null
+  level_name_zh?: string | null
+  level_name_id?: string | null
+  industry_id?: string | null
+  industry_name_zh?: string | null
+  industry_name_id?: string | null
   description?: string | null
   tags?: string[]
   is_locked?: boolean
@@ -322,14 +326,16 @@ export interface CustomerListParams {
   size?: number
   name?: string
   code?: string
-  customer_type?: 'individual' | 'organization'
+  customer_type?: 'B' | 'C'  // B (B端), C (C端)
   customer_source_type?: 'own' | 'agent'
   parent_customer_id?: string
   owner_user_id?: string
   agent_id?: string
   source_id?: string
   channel_id?: string
+  industry_id?: string
   is_locked?: boolean
+  view_type?: 'my' | 'global'  // my: 我的客户, global: 全局客户（仅管理员）
 }
 
 // 联系人

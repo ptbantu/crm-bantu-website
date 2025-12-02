@@ -50,8 +50,14 @@ export async function getCustomerList(
   if (params.channel_id) {
     queryParams.append('channel_id', params.channel_id)
   }
+  if (params.industry_id) {
+    queryParams.append('industry_id', params.industry_id)
+  }
   if (params.is_locked !== undefined) {
     queryParams.append('is_locked', params.is_locked.toString())
+  }
+  if (params.view_type) {
+    queryParams.append('view_type', params.view_type)
   }
 
   const queryString = queryParams.toString()
@@ -83,8 +89,8 @@ export async function getCustomerDetail(id: string): Promise<Customer> {
  */
 export interface CreateCustomerRequest {
   name: string
-  code?: string | null
-  customer_type?: 'individual' | 'organization'
+  code?: string | null  // 可选，如果不提供则自动生成
+  customer_type?: 'B' | 'C'  // B (B端), C (C端)
   customer_source_type?: 'own' | 'agent'
   parent_customer_id?: string | null
   owner_user_id?: string | null
@@ -93,7 +99,7 @@ export interface CreateCustomerRequest {
   source_id?: string | null
   channel_id?: string | null
   level?: string | null
-  industry?: string | null
+  industry_id?: string | null  // 改为 industry_id
   description?: string | null
   tags?: string[]
   is_locked?: boolean
@@ -111,7 +117,7 @@ export async function createCustomer(data: CreateCustomerRequest): Promise<Custo
 export interface UpdateCustomerRequest {
   name?: string
   code?: string | null
-  customer_type?: 'individual' | 'organization'
+  customer_type?: 'B' | 'C'  // B (B端), C (C端)
   customer_source_type?: 'own' | 'agent'
   parent_customer_id?: string | null
   owner_user_id?: string | null
@@ -120,7 +126,7 @@ export interface UpdateCustomerRequest {
   source_id?: string | null
   channel_id?: string | null
   level?: string | null
-  industry?: string | null
+  industry_id?: string | null  // 改为 industry_id
   description?: string | null
   tags?: string[]
   is_locked?: boolean

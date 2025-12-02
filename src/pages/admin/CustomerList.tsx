@@ -4,7 +4,9 @@
  */
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Search, Plus, Edit, Trash2, X, Users, Building2, User, CheckCircle2, XCircle, Eye, Mail, Phone, Tag, TrendingUp, DollarSign, ShoppingCart } from 'lucide-react'
+import { useAuth } from '@/hooks/useAuth'
+import { isAdmin } from '@/utils/permissions'
+import { Search, Plus, Edit, Trash2, X, Users, Building2, User, XCircle, Eye, Mail, Phone, Tag } from 'lucide-react'
 import {
   getCustomerList,
   getCustomerDetail,
@@ -17,7 +19,7 @@ import {
 import { CustomerListParams, Customer } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
 import { PageHeader } from '@/components/admin/PageHeader'
-import { getCustomerLevelOptions, CustomerLevelOption } from '@/api/options'
+import { getCustomerLevelOptions, getIndustryOptions, CustomerLevelOption, IndustryOption } from '@/api/options'
 import {
   Button,
   Table,
@@ -41,26 +43,25 @@ import {
   Card,
   CardBody,
   useColorModeValue,
-  Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
-  SimpleGrid,
 } from '@chakra-ui/react'
 
 const CustomerList = () => {
   const { t, i18n } = useTranslation()
   const { showSuccess, showError } = useToast()
+  const { user } = useAuth()
   
   // Chakra UI 颜色模式
   const bgColor = useColorModeValue('white', 'gray.800')
   const borderColor = useColorModeValue('gray.200', 'gray.700')
   const hoverBg = useColorModeValue('gray.50', 'gray.700')
 
+  // 视图类型：'my' 表示"我的客户"，'global' 表示"全局客户"（仅管理员）
+  const [viewType, setViewType] = useState<'my' | 'global'>('my')
+
   // 查询参数
   const [queryParams, setQueryParams] = useState<CustomerListParams>({
     page: 1,
-    size: 10,
+    size: 20,
   })
 
   // 数据
@@ -70,20 +71,13 @@ const CustomerList = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [pages, setPages] = useState(0)
 
-  // 统计数据
-  const [statistics, setStatistics] = useState({
-    totalCustomers: 0,
-    activeCustomers: 0,
-    totalTransactionAmount: 0,
-    averageOrderValue: 0,
-  })
-  const [loadingStats, setLoadingStats] = useState(false)
+  // 统计数据已移除（不再需要）
 
   // 表单状态
   const [formData, setFormData] = useState({
     name: '',
     code: '',
-    customer_type: '' as '' | 'individual' | 'organization',
+    customer_type: '' as '' | 'B' | 'C',
     customer_source_type: '' as '' | 'own' | 'agent',
     is_locked: '' as '' | 'true' | 'false',
   })
@@ -93,8 +87,8 @@ const CustomerList = () => {
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null)
   const [modalFormData, setModalFormData] = useState({
     name: '',
-    code: '',
-    customer_type: 'individual' as 'individual' | 'organization',
+    code: '',  // 保留但不显示在表单中，由后端自动生成
+    customer_type: 'C' as 'B' | 'C',  // 默认为 C 端
     customer_source_type: 'own' as 'own' | 'agent',
     parent_customer_id: '',
     owner_user_id: '',
@@ -102,7 +96,7 @@ const CustomerList = () => {
     source_id: '',
     channel_id: '',
     level: '',
-    industry: '',
+    industry_id: '',  // 改为 industry_id
     description: '',
     tags: [] as string[],
     is_locked: false,
@@ -118,12 +112,30 @@ const CustomerList = () => {
 
   // 客户分级选项
   const [customerLevels, setCustomerLevels] = useState<CustomerLevelOption[]>([])
+  const [industries, setIndustries] = useState<IndustryOption[]>([])
+
+  // 处理视图切换
+  const handleViewTypeChange = (newViewType: 'my' | 'global') => {
+    setViewType(newViewType)
+    const params: CustomerListParams = {
+      page: 1,
+      size: queryParams.size || 20,
+      view_type: newViewType,
+    }
+    setQueryParams(params)
+    loadCustomers(params)
+  }
 
   // 加载客户列表
   const loadCustomers = async (params: CustomerListParams) => {
     setLoading(true)
     try {
-      const result = await getCustomerList(params)
+      // 根据视图类型设置 view_type
+      const requestParams: CustomerListParams = {
+        ...params,
+        view_type: viewType,
+      }
+      const result = await getCustomerList(requestParams)
       setCustomers(result.records)
       setTotal(result.total)
       setCurrentPage(result.current)
@@ -135,53 +147,7 @@ const CustomerList = () => {
     }
   }
 
-  // 加载统计数据
-  const loadStatistics = async () => {
-    setLoadingStats(true)
-    try {
-      // 获取总客户数（不筛选，使用较大的size以获取所有客户）
-      const allCustomersResult = await getCustomerList({ size: 10000 })
-      const allCustomers = allCustomersResult.records
-      const totalCustomers = allCustomersResult.total
-      
-      // 统计活跃客户（is_locked = false）
-      // 如果返回的记录数少于总数，需要重新计算
-      let activeCustomers = 0
-      if (allCustomers.length === totalCustomers) {
-        // 如果获取了所有客户，直接统计
-        activeCustomers = allCustomers.filter(c => !c.is_locked).length
-      } else {
-        // 如果客户数太多，需要单独查询活跃客户数
-        const activeResult = await getCustomerList({ size: 10000, is_locked: false })
-        activeCustomers = activeResult.total
-      }
-      
-      // TODO: 总交易额和平均客单价需要从服务记录或订单中获取
-      // 暂时使用 mock 数据
-      const totalTransactionAmount = 12500000 // Mock: 1250万
-      const averageOrderValue = activeCustomers > 0 
-        ? Math.round(totalTransactionAmount / activeCustomers) 
-        : 0
-
-      setStatistics({
-        totalCustomers,
-        activeCustomers,
-        totalTransactionAmount,
-        averageOrderValue,
-      })
-    } catch (error: any) {
-      console.error('Failed to load statistics:', error)
-      // 如果加载失败，使用默认值
-      setStatistics({
-        totalCustomers: total,
-        activeCustomers: 0,
-        totalTransactionAmount: 0,
-        averageOrderValue: 0,
-      })
-    } finally {
-      setLoadingStats(false)
-    }
-  }
+  // 统计数据功能已移除
 
   // 加载客户分级选项
   useEffect(() => {
@@ -198,17 +164,32 @@ const CustomerList = () => {
     loadCustomerLevels()
   }, [i18n.language])
 
+  // 加载行业选项
+  useEffect(() => {
+    const loadIndustries = async () => {
+      try {
+        const currentLang = i18n.language || 'zh-CN'
+        const apiLang = currentLang.startsWith('zh') ? 'zh' : 'id'
+        const industryList = await getIndustryOptions(apiLang)
+        setIndustries(industryList || [])
+      } catch (error: any) {
+        console.error('Failed to load industries:', error)
+      }
+    }
+    loadIndustries()
+  }, [i18n.language])
+
   // 初始加载
   useEffect(() => {
     loadCustomers(queryParams)
-    loadStatistics()
   }, [])
 
   // 处理查询
   const handleSearch = () => {
     const params: CustomerListParams = {
       page: 1,
-      size: queryParams.size || 10,
+      size: queryParams.size || 20,
+      view_type: viewType,
     }
 
     if (formData.name.trim()) {
@@ -236,8 +217,8 @@ const CustomerList = () => {
     setEditingCustomer(null)
     setModalFormData({
       name: '',
-      code: '',
-      customer_type: 'individual',
+      code: '',  // 不显示，由后端自动生成
+      customer_type: 'C',  // 默认为 C 端
       customer_source_type: 'own',
       parent_customer_id: '',
       owner_user_id: '',
@@ -245,7 +226,7 @@ const CustomerList = () => {
       source_id: '',
       channel_id: '',
       level: '',
-      industry: '',
+      industry_id: '',  // 改为 industry_id
       description: '',
       tags: [],
       is_locked: false,
@@ -259,7 +240,7 @@ const CustomerList = () => {
     setEditingCustomer(customer)
     setModalFormData({
       name: customer.name,
-      code: customer.code || '',
+      code: customer.code || '',  // 保留但不显示在表单中
       customer_type: customer.customer_type,
       customer_source_type: customer.customer_source_type,
       parent_customer_id: customer.parent_customer_id || '',
@@ -268,7 +249,7 @@ const CustomerList = () => {
       source_id: customer.source_id || '',
       channel_id: customer.channel_id || '',
       level: customer.level || '',
-      industry: customer.industry || '',
+      industry_id: customer.industry_id || '',  // 改为 industry_id
       description: customer.description || '',
       tags: customer.tags || [],
       is_locked: customer.is_locked || false,
@@ -313,7 +294,7 @@ const CustomerList = () => {
         // 更新
         const updateData: UpdateCustomerRequest = {
           name: modalFormData.name,
-          code: modalFormData.code || null,
+          code: modalFormData.code || null,  // 编辑时保留 code
           customer_type: modalFormData.customer_type,
           customer_source_type: modalFormData.customer_source_type,
           parent_customer_id: modalFormData.parent_customer_id || null,
@@ -322,7 +303,7 @@ const CustomerList = () => {
           source_id: modalFormData.source_id || null,
           channel_id: modalFormData.channel_id || null,
           level: modalFormData.level || null,
-          industry: modalFormData.industry || null,
+          industry_id: modalFormData.industry_id || null,  // 改为 industry_id
           description: modalFormData.description || null,
           tags: modalFormData.tags,
           is_locked: modalFormData.is_locked,
@@ -331,10 +312,10 @@ const CustomerList = () => {
         await updateCustomer(editingCustomer.id, updateData)
         showSuccess(t('customerList.success.updateSuccess'))
       } else {
-        // 创建
+        // 创建（不传 code，由后端自动生成）
         const createData: CreateCustomerRequest = {
           name: modalFormData.name,
-          code: modalFormData.code || null,
+          // code 不传，由后端自动生成
           customer_type: modalFormData.customer_type,
           customer_source_type: modalFormData.customer_source_type,
           parent_customer_id: modalFormData.parent_customer_id || null,
@@ -343,7 +324,7 @@ const CustomerList = () => {
           source_id: modalFormData.source_id || null,
           channel_id: modalFormData.channel_id || null,
           level: modalFormData.level || null,
-          industry: modalFormData.industry || null,
+          industry_id: modalFormData.industry_id || null,  // 行业ID，从下拉选择器选择
           description: modalFormData.description || null,
           tags: modalFormData.tags,
           is_locked: modalFormData.is_locked,
@@ -387,7 +368,7 @@ const CustomerList = () => {
     })
     const defaultParams: CustomerListParams = {
       page: 1,
-      size: 10,
+      size: 20,
     }
     setQueryParams(defaultParams)
     loadCustomers(defaultParams)
@@ -412,10 +393,7 @@ const CustomerList = () => {
     return num.toLocaleString()
   }
 
-  // 格式化金额
-  const formatCurrency = (amount: number) => {
-    return `¥${formatNumber(amount)}`
-  }
+  // 格式化金额函数已移除（不再需要）
 
   // 格式化日期时间
   const formatDateTime = (dateString: string | undefined) => {
@@ -440,116 +418,9 @@ const CustomerList = () => {
         icon={Users}
         title={t('customerList.title')}
         subtitle={t('customerList.subtitle')}
-        actions={
-          <Button
-            colorScheme="primary"
-            leftIcon={<Plus size={16} />}
-            onClick={handleCreate}
-            size="sm"
-          >
-            {t('customerList.create')}
-          </Button>
-        }
       />
 
-      {/* 统计卡片 */}
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={3} mb={4}>
-        {/* 总客户数 */}
-        <Card bg="blue.50" borderColor="blue.200" borderWidth={1} _hover={{ boxShadow: 'md', transform: 'translateY(-2px)' }} transition="all 0.2s">
-          <CardBody>
-            <Stat>
-              <Flex align="center" mb={2}>
-                <Box as={Users} size={5} color="blue.600" mr={2} />
-                <StatLabel fontSize="xs" fontWeight="semibold" color="blue.700">
-                  {t('customerList.statistics.totalCustomers')}
-                </StatLabel>
-              </Flex>
-              <StatNumber fontSize="2xl" fontWeight="bold" color="blue.900" mb={1}>
-                {loadingStats ? (
-                  <Spinner size="sm" color="blue.400" />
-                ) : (
-                  statistics.totalCustomers.toLocaleString()
-                )}
-              </StatNumber>
-              <StatHelpText fontSize="xs" color="blue.600" m={0}>
-                {t('customerList.statistics.totalCustomersDesc')}
-              </StatHelpText>
-            </Stat>
-          </CardBody>
-        </Card>
-
-        {/* 活跃客户 */}
-        <Card bg="green.50" borderColor="green.200" borderWidth={1} _hover={{ boxShadow: 'md', transform: 'translateY(-2px)' }} transition="all 0.2s">
-          <CardBody>
-            <Stat>
-              <Flex align="center" mb={2}>
-                <Box as={CheckCircle2} size={5} color="green.600" mr={2} />
-                <StatLabel fontSize="xs" fontWeight="semibold" color="green.700">
-                  {t('customerList.statistics.activeCustomers')}
-                </StatLabel>
-              </Flex>
-              <StatNumber fontSize="2xl" fontWeight="bold" color="green.900" mb={1}>
-                {loadingStats ? (
-                  <Spinner size="sm" color="green.400" />
-                ) : (
-                  statistics.activeCustomers.toLocaleString()
-                )}
-              </StatNumber>
-              <StatHelpText fontSize="xs" color="green.600" m={0}>
-                {t('customerList.statistics.activeCustomersDesc')}
-              </StatHelpText>
-            </Stat>
-          </CardBody>
-        </Card>
-
-        {/* 总交易额 */}
-        <Card bg="orange.50" borderColor="orange.200" borderWidth={1} _hover={{ boxShadow: 'md', transform: 'translateY(-2px)' }} transition="all 0.2s">
-          <CardBody>
-            <Stat>
-              <Flex align="center" mb={2}>
-                <Box as={DollarSign} size={5} color="orange.600" mr={2} />
-                <StatLabel fontSize="xs" fontWeight="semibold" color="orange.700">
-                  {t('customerList.statistics.totalTransactionAmount')}
-                </StatLabel>
-              </Flex>
-              <StatNumber fontSize="2xl" fontWeight="bold" color="orange.900" mb={1}>
-                {loadingStats ? (
-                  <Spinner size="sm" color="orange.400" />
-                ) : (
-                  formatCurrency(statistics.totalTransactionAmount)
-                )}
-              </StatNumber>
-              <StatHelpText fontSize="xs" color="orange.600" m={0}>
-                {t('customerList.statistics.totalTransactionAmountDesc')}
-              </StatHelpText>
-            </Stat>
-          </CardBody>
-        </Card>
-
-        {/* 平均客单价 */}
-        <Card bg="purple.50" borderColor="purple.200" borderWidth={1} _hover={{ boxShadow: 'md', transform: 'translateY(-2px)' }} transition="all 0.2s">
-          <CardBody>
-            <Stat>
-              <Flex align="center" mb={2}>
-                <Box as={ShoppingCart} size={5} color="purple.600" mr={2} />
-                <StatLabel fontSize="xs" fontWeight="semibold" color="purple.700">
-                  {t('customerList.statistics.averageOrderValue')}
-                </StatLabel>
-              </Flex>
-              <StatNumber fontSize="2xl" fontWeight="bold" color="purple.900" mb={1}>
-                {loadingStats ? (
-                  <Spinner size="sm" color="purple.400" />
-                ) : (
-                  formatCurrency(statistics.averageOrderValue)
-                )}
-              </StatNumber>
-              <StatHelpText fontSize="xs" color="purple.600" m={0}>
-                {t('customerList.statistics.averageOrderValueDesc')}
-              </StatHelpText>
-            </Stat>
-          </CardBody>
-        </Card>
-      </SimpleGrid>
+      {/* 统计卡片已移除 */}
 
       {/* 查询表单 */}
       <Card mb={4} bg={bgColor} borderColor={borderColor}>
@@ -599,11 +470,11 @@ const CustomerList = () => {
               <Select
                 size="sm"
                 value={formData.customer_type}
-                onChange={(e) => setFormData({ ...formData, customer_type: e.target.value as '' | 'individual' | 'organization' })}
+                onChange={(e) => setFormData({ ...formData, customer_type: e.target.value as '' | 'B' | 'C' })}
               >
                 <option value="">{t('customerList.search.allTypes')}</option>
-                <option value="individual">{t('customerList.search.individual')}</option>
-                <option value="organization">{t('customerList.search.organization')}</option>
+                <option value="B">{t('customerList.search.typeB')}</option>
+                <option value="C">{t('customerList.search.typeC')}</option>
               </Select>
             </Box>
 
@@ -664,9 +535,62 @@ const CustomerList = () => {
 
       {/* 操作栏 */}
       <Flex justify="space-between" align="center" mb={4}>
-        <Text fontSize="sm" color="gray.600">
-          {t('customerList.total', { total })}
-        </Text>
+        <HStack spacing={2}>
+          {/* 视图切换 */}
+          <HStack spacing={2}>
+            <Box
+              as="button"
+              px={4}
+              py={2}
+              fontSize="sm"
+              fontWeight={viewType === 'my' ? 'semibold' : 'normal'}
+              color={viewType === 'my' ? 'teal.600' : 'gray.600'}
+              bg={viewType === 'my' ? 'teal.50' : 'transparent'}
+              border="1px solid"
+              borderColor={viewType === 'my' ? 'teal.200' : 'gray.200'}
+              borderRadius="md"
+              cursor="pointer"
+              _hover={{
+                bg: viewType === 'my' ? 'teal.100' : 'gray.50',
+              }}
+              onClick={() => handleViewTypeChange('my')}
+            >
+              {t('customerList.view.myCustomers')}
+            </Box>
+            {isAdmin(user?.roles || []) && (
+              <Box
+                as="button"
+                px={4}
+                py={2}
+                fontSize="sm"
+                fontWeight={viewType === 'global' ? 'semibold' : 'normal'}
+                color={viewType === 'global' ? 'teal.600' : 'gray.600'}
+                bg={viewType === 'global' ? 'teal.50' : 'transparent'}
+                border="1px solid"
+                borderColor={viewType === 'global' ? 'teal.200' : 'gray.200'}
+                borderRadius="md"
+                cursor="pointer"
+                _hover={{
+                  bg: viewType === 'global' ? 'teal.100' : 'gray.50',
+                }}
+                onClick={() => handleViewTypeChange('global')}
+              >
+                {t('customerList.view.globalCustomers')}
+              </Box>
+            )}
+          </HStack>
+          <Text fontSize="sm" color="gray.600" fontWeight="medium">
+            {t('customerList.total', { total })}
+          </Text>
+        </HStack>
+        <Button
+          size="sm"
+          colorScheme="blue"
+          leftIcon={<Plus size={16} />}
+          onClick={handleCreate}
+        >
+          {t('customerList.create')}
+        </Button>
       </Flex>
 
       {/* 客户列表 */}
@@ -713,15 +637,15 @@ const CustomerList = () => {
                     <Td fontSize="sm" color="gray.600">{customer.code || '-'}</Td>
                     <Td fontSize="sm" color="gray.600">
                       <HStack spacing={1}>
-                        {customer.customer_type === 'individual' ? (
+                        {customer.customer_type === 'C' ? (
                           <>
                             <User size={14} />
-                            <Text>{t('customerList.table.individual')}</Text>
+                            <Text>{t('customerList.table.typeC')}</Text>
                           </>
                         ) : (
                           <>
                             <Building2 size={14} />
-                            <Text>{t('customerList.table.organization')}</Text>
+                            <Text>{t('customerList.table.typeB')}</Text>
                           </>
                         )}
                       </HStack>
@@ -731,7 +655,11 @@ const CustomerList = () => {
                     </Td>
                     <Td fontSize="sm" color="gray.600">{customer.source_name || '-'}</Td>
                     <Td fontSize="sm" color="gray.600">{customer.owner_user_name || '-'}</Td>
-                    <Td fontSize="sm" color="gray.600">{customer.level || '-'}</Td>
+                    <Td fontSize="sm" color="gray.600">
+                      {i18n.language.startsWith('zh') 
+                        ? (customer.level_name_zh || customer.level_name_id || customer.level || '-')
+                        : (customer.level_name_id || customer.level_name_zh || customer.level || '-')}
+                    </Td>
                     <Td fontSize="sm">
                       {customer.is_locked ? (
                         <Badge colorScheme="red" fontSize="xs">
@@ -786,7 +714,7 @@ const CustomerList = () => {
           <CardBody py={2}>
             <Flex justify="space-between" align="center">
               <Text fontSize="xs" color="gray.600">
-                {t('customerList.pagination.info', { current: currentPage, total: pages, size: queryParams.size || 10 })}
+                {t('customerList.pagination.info', { current: currentPage, total: pages, size: queryParams.size || 20 })}
               </Text>
               <HStack spacing={1}>
                 <Button
@@ -864,19 +792,21 @@ const CustomerList = () => {
                 />
               </div>
 
-              {/* 客户编码 */}
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">
-                  {t('customerList.modal.code')}
-                </label>
-                <input
-                  type="text"
-                  value={modalFormData.code}
-                  onChange={(e) => setModalFormData({ ...modalFormData, code: e.target.value })}
-                  className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                  placeholder={t('customerList.modal.codePlaceholder')}
-                />
-              </div>
+              {/* 客户编码 - 创建时隐藏，由后台自动生成 */}
+              {editingCustomer && (
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
+                    {t('customerList.modal.code')}
+                  </label>
+                  <input
+                    type="text"
+                    value={modalFormData.code}
+                    onChange={(e) => setModalFormData({ ...modalFormData, code: e.target.value })}
+                    className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                    placeholder={t('customerList.modal.codePlaceholder')}
+                  />
+                </div>
+              )}
 
               {/* 客户类型 */}
               <div>
@@ -885,11 +815,11 @@ const CustomerList = () => {
                 </label>
                 <select
                   value={modalFormData.customer_type}
-                  onChange={(e) => setModalFormData({ ...modalFormData, customer_type: e.target.value as 'individual' | 'organization' })}
+                  onChange={(e) => setModalFormData({ ...modalFormData, customer_type: e.target.value as 'B' | 'C' })}
                   className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
                 >
-                  <option value="individual">{t('customerList.modal.individual')}</option>
-                  <option value="organization">{t('customerList.modal.organization')}</option>
+                  <option value="B">{t('customerList.modal.typeB')}</option>
+                  <option value="C">{t('customerList.modal.typeC')}</option>
                 </select>
               </div>
 
@@ -929,18 +859,26 @@ const CustomerList = () => {
                 </select>
               </div>
 
-              {/* 行业 */}
+              {/* 行业 - 下拉选择器 */}
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
                   {t('customerList.modal.industry')}
                 </label>
-                <input
-                  type="text"
-                  value={modalFormData.industry}
-                  onChange={(e) => setModalFormData({ ...modalFormData, industry: e.target.value })}
-                  className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                  placeholder={t('customerList.modal.industryPlaceholder')}
-                />
+                <select
+                  value={modalFormData.industry_id}
+                  onChange={(e) => setModalFormData({ ...modalFormData, industry_id: e.target.value })}
+                  className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
+                >
+                  <option value="">{t('customerList.modal.industryPlaceholder')}</option>
+                  {industries
+                    .filter(industry => industry.is_active)
+                    .sort((a, b) => a.sort_order - b.sort_order)
+                    .map((industry) => (
+                      <option key={industry.id} value={industry.id}>
+                        {industry.name}
+                      </option>
+                    ))}
+                </select>
               </div>
 
               {/* 描述 */}
@@ -1026,7 +964,7 @@ const CustomerList = () => {
                     <div>
                       <span className="text-gray-600">{t('customerList.detail.type')}:</span>
                       <span className="ml-2 text-gray-900">
-                        {customerDetail.customer_type === 'individual' ? t('customerList.detail.individual') : t('customerList.detail.organization')}
+                        {customerDetail.customer_type === 'C' ? t('customerList.detail.typeC') : t('customerList.detail.typeB')}
                       </span>
                     </div>
                     <div>
@@ -1037,11 +975,19 @@ const CustomerList = () => {
                     </div>
                     <div>
                       <span className="text-gray-600">{t('customerList.detail.level')}:</span>
-                      <span className="ml-2 text-gray-900">{customerDetail.level || '-'}</span>
+                      <span className="ml-2 text-gray-900">
+                        {i18n.language.startsWith('zh') 
+                          ? (customerDetail.level_name_zh || customerDetail.level_name_id || customerDetail.level || '-')
+                          : (customerDetail.level_name_id || customerDetail.level_name_zh || customerDetail.level || '-')}
+                      </span>
                     </div>
                     <div>
                       <span className="text-gray-600">{t('customerList.detail.industry')}:</span>
-                      <span className="ml-2 text-gray-900">{customerDetail.industry || '-'}</span>
+                      <span className="ml-2 text-gray-900">
+                        {i18n.language.startsWith('zh') 
+                          ? (customerDetail.industry_name_zh || customerDetail.industry_name_id || '-')
+                          : (customerDetail.industry_name_id || customerDetail.industry_name_zh || '-')}
+                      </span>
                     </div>
                     {customerDetail.description && (
                       <div className="col-span-2">
