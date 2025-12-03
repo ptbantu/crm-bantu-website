@@ -13,7 +13,6 @@ import {
   Package,
   DollarSign,
   Settings,
-  Contact2,
   User,
   Activity,
   Folder,
@@ -64,13 +63,6 @@ export const adminMenuItems: MenuItem[] = [
         label: 'menu.customers',
         icon: Users,
         path: '/admin/customer/list',
-        role: [Role.SALES, Role.ADMIN],
-      },
-      {
-        key: 'contacts',
-        label: 'menu.contactList',
-        icon: Contact2,
-        path: '/admin/customer/contacts',
         role: [Role.SALES, Role.ADMIN],
       },
       {

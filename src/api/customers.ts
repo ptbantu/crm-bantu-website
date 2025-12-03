@@ -7,6 +7,8 @@ import {
   CustomerListParams,
   Customer,
   PaginatedResponse,
+  CustomerFollowUp,
+  CustomerFollowUpCreateRequest,
 } from './types'
 
 /**
@@ -90,7 +92,7 @@ export async function getCustomerDetail(id: string): Promise<Customer> {
 export interface CreateCustomerRequest {
   name: string
   code?: string | null  // 可选，如果不提供则自动生成
-  customer_type?: 'B' | 'C'  // B (B端), C (C端)
+  customer_type?: 'individual' | 'organization'  // individual (个人), organization (组织)
   customer_source_type?: 'own' | 'agent'
   parent_customer_id?: string | null
   owner_user_id?: string | null
@@ -117,7 +119,7 @@ export async function createCustomer(data: CreateCustomerRequest): Promise<Custo
 export interface UpdateCustomerRequest {
   name?: string
   code?: string | null
-  customer_type?: 'B' | 'C'  // B (B端), C (C端)
+  customer_type?: 'individual' | 'organization'  // individual (个人), organization (组织)
   customer_source_type?: 'own' | 'agent'
   parent_customer_id?: string | null
   owner_user_id?: string | null
@@ -146,5 +148,24 @@ export async function updateCustomer(
  */
 export async function deleteCustomer(id: string): Promise<void> {
   await del(API_PATHS.CUSTOMERS.BY_ID(id))
+}
+
+/**
+ * 获取客户跟进记录列表
+ */
+export async function getCustomerFollowUps(customerId: string): Promise<CustomerFollowUp[]> {
+  const result = await get<CustomerFollowUp[]>(`${API_PATHS.CUSTOMERS.BY_ID(customerId)}/follow-ups`)
+  return result.data || []
+}
+
+/**
+ * 创建客户跟进记录
+ */
+export async function createCustomerFollowUp(
+  customerId: string,
+  data: CustomerFollowUpCreateRequest
+): Promise<CustomerFollowUp> {
+  const result = await post<CustomerFollowUp>(`${API_PATHS.CUSTOMERS.BY_ID(customerId)}/follow-ups`, data)
+  return result.data!
 }
 

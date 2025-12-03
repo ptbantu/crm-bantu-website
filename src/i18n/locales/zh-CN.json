@@ -1075,6 +1075,8 @@
       "allTypes": "全部类型",
       "typeB": "B端客户",
       "typeC": "C端客户",
+      "typeIndividual": "个人客户",
+      "typeOrganization": "组织客户",
       "individual": "个人客户",
       "organization": "组织客户",
       "sourceType": "来源类型",
@@ -1096,10 +1098,13 @@
       "sourceName": "客户来源",
       "ownerUserName": "客户所有者",
       "level": "客户等级",
+      "industry": "行业",
       "status": "状态",
       "createdAt": "创建时间",
       "typeB": "B端",
       "typeC": "C端",
+      "typeIndividual": "个人",
+      "typeOrganization": "组织",
       "individual": "个人",
       "organization": "组织",
       "own": "内部",
@@ -1118,6 +1123,8 @@
       "customerType": "客户类型",
       "typeB": "B端客户",
       "typeC": "C端客户",
+      "typeIndividual": "个人客户",
+      "typeOrganization": "组织客户",
       "individual": "个人客户",
       "organization": "组织客户",
       "sourceType": "来源类型",
@@ -1156,7 +1163,8 @@
     "actions": {
       "view": "查看",
       "edit": "编辑",
-      "delete": "删除"
+      "delete": "删除",
+      "followUp": "跟进"
     },
     "confirm": {
       "delete": "确定要删除客户 {{name}} 吗？"
@@ -1180,6 +1188,53 @@
     },
     "loading": "加载中...",
     "noData": "暂无数据"
+  },
+  "customerDetail": {
+    "title": "客户详情",
+    "loading": "加载中...",
+    "notFound": "客户不存在",
+    "back": "返回",
+    "followUps": "跟进记录",
+    "addFollowUp": "添加跟进",
+    "noFollowUps": "暂无跟进记录",
+    "contacts": "客户专员",
+    "addContact": "新增客户专员",
+    "noContacts": "暂无客户专员",
+    "lastFollowUp": "最后跟进",
+    "nextFollowUp": "下次跟进",
+    "followUpTypeLabel": "跟进类型",
+    "followUpDate": "跟进日期",
+    "followUpContent": "跟进内容",
+    "followUpContentPlaceholder": "请输入跟进内容",
+    "nextFollowUpAt": "下次跟进时间",
+    "followUpType": {
+      "call": "电话",
+      "meeting": "会议",
+      "email": "邮件",
+      "note": "备注",
+      "visit": "拜访",
+      "wechat": "微信",
+      "whatsapp": "WhatsApp"
+    },
+    "success": {
+      "createFollowUp": "跟进记录创建成功",
+      "createContact": "客户专员创建成功",
+      "updateContact": "客户专员更新成功",
+      "deleteContact": "客户专员删除成功"
+    },
+    "error": {
+      "loadFailed": "加载失败",
+      "loadFollowUpsFailed": "加载跟进记录失败",
+      "loadContactsFailed": "加载客户专员失败",
+      "followUpDateRequired": "跟进日期不能为空",
+      "createFollowUpFailed": "创建跟进记录失败",
+      "contactNameRequired": "姓名不能为空",
+      "saveContactFailed": "保存客户专员失败",
+      "deleteContactFailed": "删除客户专员失败"
+    },
+    "confirm": {
+      "deleteContact": "确定要删除客户专员 {{name}} 吗？"
+    }
   },
   "contactList": {
     "title": "客户专员列表",

@@ -293,7 +293,7 @@ export interface Customer {
   id: string
   name: string
   code?: string | null
-  customer_type: 'B' | 'C'  // B (B端), C (C端)
+  customer_type: 'individual' | 'organization'  // individual (个人), organization (组织)
   customer_source_type: 'own' | 'agent'
   parent_customer_id?: string | null
   parent_customer_name?: string | null
@@ -326,7 +326,7 @@ export interface CustomerListParams {
   size?: number
   name?: string
   code?: string
-  customer_type?: 'B' | 'C'  // B (B端), C (C端)
+  customer_type?: 'individual' | 'organization'  // individual (个人), organization (组织)
   customer_source_type?: 'own' | 'agent'
   parent_customer_id?: string
   owner_user_id?: string
@@ -738,6 +738,28 @@ export interface LeadDuplicateCheckResponse {
 
 // 跟进类型
 export type LeadFollowUpType = 'call' | 'meeting' | 'email' | 'note'
+export type CustomerFollowUpType = 'call' | 'meeting' | 'email' | 'note' | 'visit' | 'wechat' | 'whatsapp'
+
+// 客户跟进记录
+export interface CustomerFollowUp {
+  id: string
+  customer_id: string
+  follow_up_type: CustomerFollowUpType
+  content: string | null
+  follow_up_date: string
+  next_follow_up_at: string | null
+  created_by: string | null
+  created_by_name: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface CustomerFollowUpCreateRequest {
+  follow_up_type: CustomerFollowUpType
+  content?: string | null
+  follow_up_date: string
+  next_follow_up_at?: string | null
+}
 
 // 线索跟进记录
 export interface LeadFollowUp {

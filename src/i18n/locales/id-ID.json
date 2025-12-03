@@ -1064,6 +1064,8 @@
       "allTypes": "Semua Jenis",
       "typeB": "Pelanggan B-end",
       "typeC": "Pelanggan C-end",
+      "typeIndividual": "Pelanggan Individu",
+      "typeOrganization": "Pelanggan Organisasi",
       "individual": "Pelanggan Individu",
       "organization": "Pelanggan Organisasi",
       "sourceType": "Jenis Sumber",
@@ -1085,10 +1087,13 @@
       "sourceName": "Sumber Pelanggan",
       "ownerUserName": "Pemilik Pelanggan",
       "level": "Tingkat Pelanggan",
+      "industry": "Industri",
       "status": "Status",
       "createdAt": "Waktu Dibuat",
       "typeB": "B-end",
       "typeC": "C-end",
+      "typeIndividual": "Individu",
+      "typeOrganization": "Organisasi",
       "individual": "Individu",
       "organization": "Organisasi",
       "own": "Internal",
@@ -1107,6 +1112,8 @@
       "customerType": "Jenis Pelanggan",
       "typeB": "Pelanggan B-end",
       "typeC": "Pelanggan C-end",
+      "typeIndividual": "Pelanggan Individu",
+      "typeOrganization": "Pelanggan Organisasi",
       "individual": "Pelanggan Individu",
       "organization": "Pelanggan Organisasi",
       "sourceType": "Jenis Sumber",
@@ -1145,7 +1152,8 @@
     "actions": {
       "view": "Lihat",
       "edit": "Edit",
-      "delete": "Hapus"
+      "delete": "Hapus",
+      "followUp": "Tindak Lanjut"
     },
     "confirm": {
       "delete": "Apakah Anda yakin ingin menghapus pelanggan {{name}}?"
@@ -1169,6 +1177,53 @@
     },
     "loading": "Memuat...",
     "noData": "Tidak ada data"
+  },
+  "customerDetail": {
+    "title": "Detail Pelanggan",
+    "loading": "Memuat...",
+    "notFound": "Pelanggan tidak ditemukan",
+    "back": "Kembali",
+    "followUps": "Catatan Tindak Lanjut",
+    "addFollowUp": "Tambah Tindak Lanjut",
+    "noFollowUps": "Tidak ada catatan tindak lanjut",
+    "contacts": "Spesialis Pelanggan",
+    "addContact": "Tambah Spesialis Pelanggan",
+    "noContacts": "Tidak ada spesialis pelanggan",
+    "lastFollowUp": "Tindak Lanjut Terakhir",
+    "nextFollowUp": "Tindak Lanjut Berikutnya",
+    "followUpTypeLabel": "Jenis Tindak Lanjut",
+    "followUpDate": "Tanggal Tindak Lanjut",
+    "followUpContent": "Konten Tindak Lanjut",
+    "followUpContentPlaceholder": "Masukkan konten tindak lanjut",
+    "nextFollowUpAt": "Waktu Tindak Lanjut Berikutnya",
+    "followUpType": {
+      "call": "Telepon",
+      "meeting": "Pertemuan",
+      "email": "Email",
+      "note": "Catatan",
+      "visit": "Kunjungan",
+      "wechat": "WeChat",
+      "whatsapp": "WhatsApp"
+    },
+    "success": {
+      "createFollowUp": "Catatan tindak lanjut berhasil dibuat",
+      "createContact": "Spesialis pelanggan berhasil dibuat",
+      "updateContact": "Spesialis pelanggan berhasil diperbarui",
+      "deleteContact": "Spesialis pelanggan berhasil dihapus"
+    },
+    "error": {
+      "loadFailed": "Gagal memuat",
+      "loadFollowUpsFailed": "Gagal memuat catatan tindak lanjut",
+      "loadContactsFailed": "Gagal memuat spesialis pelanggan",
+      "followUpDateRequired": "Tanggal tindak lanjut tidak boleh kosong",
+      "createFollowUpFailed": "Gagal membuat catatan tindak lanjut",
+      "contactNameRequired": "Nama tidak boleh kosong",
+      "saveContactFailed": "Gagal menyimpan spesialis pelanggan",
+      "deleteContactFailed": "Gagal menghapus spesialis pelanggan"
+    },
+    "confirm": {
+      "deleteContact": "Yakin ingin menghapus spesialis pelanggan {{name}}?"
+    }
   },
   "contactList": {
     "title": "Daftar Spesialis Pelanggan",

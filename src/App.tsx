@@ -25,7 +25,7 @@ import ProductManagement from './pages/admin/ProductManagement'
 import VendorProductList from './pages/admin/VendorProductList'
 import CategoryManagement from './pages/admin/CategoryManagement'
 import CustomerList from './pages/admin/CustomerList'
-import ContactList from './pages/admin/ContactList'
+import CustomerDetail from './pages/admin/CustomerDetail'
 import OrderList from './pages/admin/OrderList'
 import OrderDetail from './pages/admin/OrderDetail'
 import LeadList from './pages/admin/LeadList'
@@ -181,23 +181,23 @@ const AppContent = () => {
             }
           />
           
-          {/* 客户管理模块（仅 ADMIN） */}
+          {/* 客户管理模块（SALES, ADMIN） */}
           <Route
             path="/admin/customer/list"
             element={
               <AdminLayout>
-                <PermissionGuard role="ADMIN">
+                <PermissionGuard role={['SALES', 'ADMIN']}>
                   <CustomerList />
                 </PermissionGuard>
               </AdminLayout>
             }
           />
           <Route
-            path="/admin/customer/contacts"
+            path="/admin/customer/detail/:id"
             element={
               <AdminLayout>
-                <PermissionGuard role="ADMIN">
-                  <ContactList />
+                <PermissionGuard role={['SALES', 'ADMIN']}>
+                  <CustomerDetail />
                 </PermissionGuard>
               </AdminLayout>
             }

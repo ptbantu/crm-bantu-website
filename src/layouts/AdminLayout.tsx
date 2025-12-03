@@ -65,6 +65,15 @@ const AdminLayoutContent = ({ children }: AdminLayoutContentProps) => {
       }
     }
 
+    // 处理客户详情页面 - 初始标题为"客户详情"，后续会在页面加载后更新为客户名称
+    if (path.startsWith('/admin/customer/detail/')) {
+      const customerListMenuItem = findMenuItemByPath('/admin/customer/list')
+      return {
+        title: t('customerDetail.title'),
+        icon: customerListMenuItem?.icon,
+      }
+    }
+
     const menuItem = findMenuItemByPath(path)
     
     if (menuItem) {

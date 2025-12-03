@@ -4,15 +4,15 @@
  */
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { isAdmin } from '@/utils/permissions'
-import { Search, Plus, Edit, Trash2, X, Users, Building2, User, XCircle, Eye, Mail, Phone, Tag } from 'lucide-react'
+import { Search, Plus, X, Users, Building2, User, XCircle, Mail, Phone, Tag } from 'lucide-react'
 import {
   getCustomerList,
   getCustomerDetail,
   createCustomer,
   updateCustomer,
-  deleteCustomer,
   CreateCustomerRequest,
   UpdateCustomerRequest,
 } from '@/api/customers'
@@ -47,6 +47,7 @@ import {
 
 const CustomerList = () => {
   const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
   const { showSuccess, showError } = useToast()
   const { user } = useAuth()
   
@@ -62,6 +63,7 @@ const CustomerList = () => {
   const [queryParams, setQueryParams] = useState<CustomerListParams>({
     page: 1,
     size: 20,
+    view_type: 'my',  // 默认显示"我的客户"
   })
 
   // 数据
@@ -77,7 +79,7 @@ const CustomerList = () => {
   const [formData, setFormData] = useState({
     name: '',
     code: '',
-    customer_type: '' as '' | 'B' | 'C',
+    customer_type: '' as '' | 'individual' | 'organization',
     customer_source_type: '' as '' | 'own' | 'agent',
     is_locked: '' as '' | 'true' | 'false',
   })
@@ -88,7 +90,7 @@ const CustomerList = () => {
   const [modalFormData, setModalFormData] = useState({
     name: '',
     code: '',  // 保留但不显示在表单中，由后端自动生成
-    customer_type: 'C' as 'B' | 'C',  // 默认为 C 端
+    customer_type: 'individual' as 'individual' | 'organization',  // 默认为个人客户
     customer_source_type: 'own' as 'own' | 'agent',
     parent_customer_id: '',
     owner_user_id: '',
@@ -130,10 +132,11 @@ const CustomerList = () => {
   const loadCustomers = async (params: CustomerListParams) => {
     setLoading(true)
     try {
-      // 根据视图类型设置 view_type
+      // 使用传入的 params，确保 view_type 是最新的
+      // 如果 params 中没有 view_type，则使用当前的 viewType 状态
       const requestParams: CustomerListParams = {
         ...params,
-        view_type: viewType,
+        view_type: params.view_type || viewType,
       }
       const result = await getCustomerList(requestParams)
       setCustomers(result.records)
@@ -181,7 +184,8 @@ const CustomerList = () => {
 
   // 初始加载
   useEffect(() => {
-    loadCustomers(queryParams)
+    // 确保初始加载时包含 view_type
+    loadCustomers({ ...queryParams, view_type: viewType })
   }, [])
 
   // 处理查询
@@ -218,7 +222,7 @@ const CustomerList = () => {
     setModalFormData({
       name: '',
       code: '',  // 不显示，由后端自动生成
-      customer_type: 'C',  // 默认为 C 端
+      customer_type: 'individual',  // 默认为个人客户
       customer_source_type: 'own',
       parent_customer_id: '',
       owner_user_id: '',
@@ -281,6 +285,11 @@ const CustomerList = () => {
     setCustomerDetail(null)
   }
 
+  // 跟进客户 - 导航到客户详情页面
+  const handleFollowUp = (customerId: string) => {
+    navigate(`/admin/customer/detail/${customerId}`)
+  }
+
   // 提交表单
   const handleSubmit = async () => {
     if (!modalFormData.name.trim()) {
@@ -334,7 +343,8 @@ const CustomerList = () => {
         showSuccess(t('customerList.success.createSuccess'))
       }
       setShowModal(false)
-      loadCustomers(queryParams)
+      // 确保使用最新的 view_type
+      loadCustomers({ ...queryParams, view_type: viewType })
     } catch (error: any) {
       showError(error.message || t('customerList.error.submitFailed'))
     } finally {
@@ -342,20 +352,6 @@ const CustomerList = () => {
     }
   }
 
-  // 删除客户
-  const handleDelete = async (customer: Customer) => {
-    if (!window.confirm(t('customerList.confirm.delete', { name: customer.name }))) {
-      return
-    }
-
-    try {
-      await deleteCustomer(customer.id)
-      showSuccess(t('customerList.success.deleteSuccess'))
-      loadCustomers(queryParams)
-    } catch (error: any) {
-      showError(error.message || t('customerList.error.deleteFailed'))
-    }
-  }
 
   // 重置查询
   const handleReset = () => {
@@ -369,6 +365,7 @@ const CustomerList = () => {
     const defaultParams: CustomerListParams = {
       page: 1,
       size: 20,
+      view_type: viewType,  // 保持当前的视图类型
     }
     setQueryParams(defaultParams)
     loadCustomers(defaultParams)
@@ -376,7 +373,11 @@ const CustomerList = () => {
 
   // 分页
   const handlePageChange = (page: number) => {
-    const params = { ...queryParams, page }
+    const params = { 
+      ...queryParams, 
+      page,
+      view_type: viewType,  // 确保包含当前的 view_type
+    }
     setQueryParams(params)
     loadCustomers(params)
   }
@@ -470,11 +471,11 @@ const CustomerList = () => {
               <Select
                 size="sm"
                 value={formData.customer_type}
-                onChange={(e) => setFormData({ ...formData, customer_type: e.target.value as '' | 'B' | 'C' })}
+                onChange={(e) => setFormData({ ...formData, customer_type: e.target.value as '' | 'individual' | 'organization' })}
               >
                 <option value="">{t('customerList.search.allTypes')}</option>
-                <option value="B">{t('customerList.search.typeB')}</option>
-                <option value="C">{t('customerList.search.typeC')}</option>
+                  <option value="individual">{t('customerList.search.typeIndividual')}</option>
+                  <option value="organization">{t('customerList.search.typeOrganization')}</option>
               </Select>
             </Box>
 
@@ -625,6 +626,7 @@ const CustomerList = () => {
                   <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.sourceName')}</Th>
                   <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.ownerUserName')}</Th>
                   <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.level')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.industry')}</Th>
                   <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.status')}</Th>
                   <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.createdAt')}</Th>
                   <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.actions')}</Th>
@@ -637,15 +639,15 @@ const CustomerList = () => {
                     <Td fontSize="sm" color="gray.600">{customer.code || '-'}</Td>
                     <Td fontSize="sm" color="gray.600">
                       <HStack spacing={1}>
-                        {customer.customer_type === 'C' ? (
+                        {customer.customer_type === 'organization' ? (
                           <>
-                            <User size={14} />
-                            <Text>{t('customerList.table.typeC')}</Text>
+                            <Building2 size={14} />
+                            <Text>{t('customerList.table.typeOrganization')}</Text>
                           </>
                         ) : (
                           <>
-                            <Building2 size={14} />
-                            <Text>{t('customerList.table.typeB')}</Text>
+                            <User size={14} />
+                            <Text>{t('customerList.table.typeIndividual')}</Text>
                           </>
                         )}
                       </HStack>
@@ -660,6 +662,11 @@ const CustomerList = () => {
                         ? (customer.level_name_zh || customer.level_name_id || customer.level || '-')
                         : (customer.level_name_id || customer.level_name_zh || customer.level || '-')}
                     </Td>
+                    <Td fontSize="sm" color="gray.600">
+                      {i18n.language.startsWith('zh') 
+                        ? (customer.industry_name_zh || customer.industry_name_id || '-')
+                        : (customer.industry_name_id || customer.industry_name_zh || '-')}
+                    </Td>
                     <Td fontSize="sm">
                       {customer.is_locked ? (
                         <Badge colorScheme="red" fontSize="xs">
@@ -673,31 +680,31 @@ const CustomerList = () => {
                     </Td>
                     <Td fontSize="sm" color="gray.600">{formatDateTime(customer.created_at)}</Td>
                     <Td fontSize="sm">
-                      <HStack spacing={1}>
-                        <IconButton
-                          aria-label={t('customerList.actions.view')}
-                          icon={<Eye size={14} />}
+                      <HStack spacing={2}>
+                        <Button
                           size="xs"
                           variant="ghost"
                           colorScheme="blue"
                           onClick={() => handleViewDetail(customer.id)}
-                        />
-                        <IconButton
-                          aria-label={t('customerList.actions.edit')}
-                          icon={<Edit size={14} />}
+                        >
+                          {t('customerList.actions.view')}
+                        </Button>
+                        <Button
                           size="xs"
                           variant="ghost"
                           colorScheme="blue"
                           onClick={() => handleEdit(customer)}
-                        />
-                        <IconButton
-                          aria-label={t('customerList.actions.delete')}
-                          icon={<Trash2 size={14} />}
+                        >
+                          {t('customerList.actions.edit')}
+                        </Button>
+                        <Button
                           size="xs"
                           variant="ghost"
-                          colorScheme="red"
-                          onClick={() => handleDelete(customer)}
-                        />
+                          colorScheme="green"
+                          onClick={() => handleFollowUp(customer.id)}
+                        >
+                          {t('customerList.actions.followUp')}
+                        </Button>
                       </HStack>
                     </Td>
                   </Tr>
@@ -815,11 +822,11 @@ const CustomerList = () => {
                 </label>
                 <select
                   value={modalFormData.customer_type}
-                  onChange={(e) => setModalFormData({ ...modalFormData, customer_type: e.target.value as 'B' | 'C' })}
+                  onChange={(e) => setModalFormData({ ...modalFormData, customer_type: e.target.value as 'individual' | 'organization' })}
                   className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
                 >
-                  <option value="B">{t('customerList.modal.typeB')}</option>
-                  <option value="C">{t('customerList.modal.typeC')}</option>
+                  <option value="individual">{t('customerList.modal.typeIndividual')}</option>
+                  <option value="organization">{t('customerList.modal.typeOrganization')}</option>
                 </select>
               </div>
 
@@ -964,7 +971,7 @@ const CustomerList = () => {
                     <div>
                       <span className="text-gray-600">{t('customerList.detail.type')}:</span>
                       <span className="ml-2 text-gray-900">
-                        {customerDetail.customer_type === 'C' ? t('customerList.detail.typeC') : t('customerList.detail.typeB')}
+                        {customerDetail.customer_type === 'organization' ? t('customerList.table.typeOrganization') : t('customerList.table.typeIndividual')}
                       </span>
                     </div>
                     <div>
