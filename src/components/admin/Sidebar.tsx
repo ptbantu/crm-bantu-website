@@ -2,13 +2,13 @@
  * 侧边栏组件
  * 权限感知的导航菜单 - Refined Glassmorphism 设计风格
  */
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useMenu } from '@/hooks/useMenu'
 import { useSidebar } from '@/contexts/SidebarContext'
 import { useAuth } from '@/hooks/useAuth'
-import { ChevronDown, ChevronRight, Search, ChevronRight as ChevronRightIcon, Sparkles, LogOut } from 'lucide-react'
+import { ChevronDown, ChevronRight, Search, ChevronRight as ChevronRightIcon, LogOut } from 'lucide-react'
 import {
   Box,
   VStack,
@@ -23,7 +23,6 @@ import {
   InputGroup,
   InputLeftElement,
   Avatar,
-  Image,
   Button,
   Drawer,
   DrawerOverlay,
@@ -32,6 +31,8 @@ import {
   DrawerBody,
   DrawerCloseButton,
   useDisclosure,
+  useBreakpointValue,
+  Hide,
 } from '@chakra-ui/react'
 import UserInfo from '@/pages/admin/UserInfo'
 
@@ -40,7 +41,7 @@ export const Sidebar = () => {
   const { t } = useTranslation()
   const location = useLocation()
   const navigate = useNavigate()
-  const { isCollapsed } = useSidebar()
+  const { isCollapsed, toggleCollapse } = useSidebar()
   const { user } = useAuth()
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
   const [searchValue, setSearchValue] = useState('')
@@ -165,48 +166,84 @@ export const Sidebar = () => {
 
       // 父项是否直接激活（有路径且匹配，忽略查询参数）
       const isParentDirectlyActive = item.path && isPathMatch(location.pathname, item.path)
+      
+      // 父菜单项的样式处理逻辑
+      const parentBg = isParentDirectlyActive ? activeBg : hasActiveChild ? activeParentBg : 'transparent'
+      const parentColor = isParentDirectlyActive ? activeColor : hasActiveChild ? activeParentColor : groupTextColor
+      const parentHoverBg = isParentDirectlyActive ? activeBg : hasActiveChild ? activeParentBg : hoverBg
+
+      // 处理父菜单点击：如果折叠，先展开侧边栏再处理子菜单展开
+      const handleParentClick = () => {
+        if (isCollapsed) {
+          toggleCollapse() // 展开侧边栏
+          if (!expandedItems.has(item.key)) {
+             setExpandedItems(prev => new Set(prev).add(item.key))
+          }
+        } else {
+          toggleExpand()
+        }
+      }
 
       return (
         <Box key={item.key}>
           {/* 父菜单作为分组标题，可点击折叠/展开 */}
-          {!isCollapsed && (
+          <Tooltip 
+            label={isCollapsed ? t(item.label) : undefined} 
+            placement="right" 
+            hasArrow 
+            isDisabled={!isCollapsed}
+            bg="gray.900"
+            color="white"
+            fontSize="xs"
+          >
             <Box
               as="button"
-              onClick={toggleExpand}
+              onClick={handleParentClick}
               w="full"
-              px={3}
+              px={isCollapsed ? 2 : 3}
               py={2.5}
               display="flex"
               alignItems="center"
-              justifyContent="space-between"
+              justifyContent={isCollapsed ? 'center' : 'space-between'}
               fontSize="13px"
               fontWeight="600"
-              color={isParentDirectlyActive ? activeColor : hasActiveChild ? activeParentColor : groupTextColor}
+              color={parentColor}
               textTransform="uppercase"
               letterSpacing="wider"
-              bg={isParentDirectlyActive ? activeBg : hasActiveChild ? activeParentBg : 'transparent'}
+              bg={parentBg}
               boxShadow={isParentDirectlyActive ? 'md' : 'none'}
-              _hover={{
-                bg: isParentDirectlyActive ? activeBg : hasActiveChild ? activeParentBg : hoverBg,
-              }}
+              _hover={{ bg: parentHoverBg }}
               transition="all 0.3s ease-out"
               borderRadius="lg"
               mb={1}
               position="relative"
             >
-              <HStack spacing={2.5}>
+              <HStack 
+                spacing={isCollapsed ? 0 : 2.5} 
+                justify={isCollapsed ? 'center' : 'flex-start'} 
+                flex={1} 
+                minW={0}
+                w={isCollapsed ? 'full' : 'auto'}
+              >
                 <Box as={Icon} size={18} flexShrink={0} />
-                <Text>{t(item.label)}</Text>
+                {!isCollapsed && (
+                  <Text isTruncated>{t(item.label)}</Text>
+                )}
               </HStack>
-              <Box 
-                as={isExpanded ? ChevronDown : ChevronRight} 
-                size={14} 
-                transition="transform 0.3s ease-out"
-                transform={isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)'}
-              />
+              {!isCollapsed && (
+                <Box 
+                  as={isExpanded ? ChevronDown : ChevronRight} 
+                  size={14} 
+                  flexShrink={0}
+                  ml={2}
+                  transition="transform 0.3s ease-out"
+                  transform={isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)'}
+                />
+              )}
             </Box>
-          )}
-          {/* 子菜单列表 */}
+          </Tooltip>
+          
+          {/* 子菜单列表 - 仅在非折叠状态下且已展开时显示 */}
           {!isCollapsed && isExpanded ? (
             <VStack
               spacing={0}
@@ -361,51 +398,50 @@ export const Sidebar = () => {
     return false
   })
 
+  // 移除 JS 响应式变量，完全使用 CSS 响应式属性
+  
   return (
-    <Box
-      as="aside"
-      bg={glassBg}
-      backdropFilter="blur(24px)"
-      WebkitBackdropFilter="blur(24px)"
-      borderRightWidth={1}
-      borderColor={borderColor}
-      borderWidth="1px"
-      display="flex"
-      flexDirection="column"
-      h="100vh"
-      transition="all 0.3s ease-out"
-      w={isCollapsed ? 20 : 64}
-      minW={isCollapsed ? 20 : 64}
-      maxW={isCollapsed ? 20 : 64}
-      position="sticky"
-      top={0}
-      zIndex={10}
-      sx={{
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-      }}
-    >
-      {/* Logo 区域 */}
+    <>
+      {/* 移动端遮罩层 - 仅在移动端且展开时显示 */}
+      {!isCollapsed && (
+        <Box
+          display={{ base: 'block', md: 'none' }}
+          position="fixed"
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+          bg="blackAlpha.500"
+          zIndex={999}
+          onClick={toggleCollapse}
+        />
+      )}
+      
       <Box
-        borderBottomWidth={1}
+        as="aside"
+        bg={glassBg}
+        backdropFilter="blur(24px)"
+        WebkitBackdropFilter="blur(24px)"
+        borderRightWidth={1}
         borderColor={borderColor}
-        p={isCollapsed ? 3 : 4}
-        transition="all 0.3s ease-out"
+        borderWidth="1px"
+        display={{ base: isCollapsed ? 'none' : 'flex', md: 'flex' }}
+        flexDirection="column"
+        h="100vh"
+        transition="width 0.3s ease-out, min-width 0.3s ease-out, max-width 0.3s ease-out"
+        w={{ base: '280px', md: isCollapsed ? '80px' : '256px' }}
+        minW={{ base: '280px', md: isCollapsed ? '80px' : '256px' }}
+        maxW={{ base: '280px', md: isCollapsed ? '80px' : '256px' }}
+        flexShrink={0}
+        position={{ base: 'fixed', md: 'relative' }}
+        top={0}
+        left={0}
+        zIndex={{ base: 1000, md: 10 }}
+        sx={{
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+        }}
       >
-        <Flex align="center" justify={isCollapsed ? 'center' : 'flex-start'} gap={2}>
-          <Image
-            src="/pics/bantu/bantu_logo_blue.png"
-            alt="Bantu Logo"
-            h={isCollapsed ? 8 : 10}
-            w="auto"
-            objectFit="contain"
-          />
-          {!isCollapsed && (
-            <Box as={Sparkles} size={16} color="indigo.500" opacity={0.7} />
-          )}
-        </Flex>
-      </Box>
-
       {/* 搜索框 */}
       <Box p={isCollapsed ? 2 : 3} borderBottomWidth={1} borderColor={borderColor}>
         {isCollapsed ? (
@@ -566,6 +602,8 @@ export const Sidebar = () => {
         )}
       </Box>
 
+      </Box>
+
       {/* 个人信息抽屉 */}
       <Drawer
         isOpen={isOpen}
@@ -584,6 +622,6 @@ export const Sidebar = () => {
           </DrawerBody>
         </DrawerContent>
       </Drawer>
-    </Box>
+    </>
   )
 }

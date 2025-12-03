@@ -1,9 +1,9 @@
 /**
  * 顶部栏组件
- * 显示用户信息、退出登录等
+ * 显示 Logo、用户信息、退出登录等
  */
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { LogOut, User, Globe, PanelLeft } from 'lucide-react'
 import { useSidebar } from '@/contexts/SidebarContext'
@@ -18,6 +18,11 @@ import {
   Avatar,
   Text,
   useColorModeValue,
+  Image,
+  Flex,
+  useBreakpointValue,
+  Show,
+  Hide,
 } from '@chakra-ui/react'
 
 export const TopBar = () => {
@@ -27,6 +32,12 @@ export const TopBar = () => {
   const { isCollapsed, toggleCollapse } = useSidebar()
   const bg = useColorModeValue('white', 'gray.800')
   const borderColor = useColorModeValue('gray.200', 'gray.700')
+
+  // 响应式配置
+  const logoHeight = useBreakpointValue({ base: 6, sm: 7, md: 8 })
+  const headerPadding = useBreakpointValue({ base: 3, sm: 4, md: 6 })
+  const spacing = useBreakpointValue({ base: 2, sm: 3, md: 4 })
+  const iconSize = useBreakpointValue({ base: 16, md: 20 })
 
   const handleLogout = () => {
     logout()
@@ -42,36 +53,56 @@ export const TopBar = () => {
   return (
     <Box
       as="header"
-      h={16}
+      h={{ base: 14, md: 16 }}
       bg={bg}
       borderBottom="1px"
       borderColor={borderColor}
       display="flex"
       alignItems="center"
       justifyContent="space-between"
-      px={6}
+      px={headerPadding}
+      position="sticky"
+      top={0}
+      zIndex={100}
+      minW={0}
     >
-      <HStack spacing={4}>
+      <HStack spacing={spacing} flex={1} minW={0}>
         {/* 侧边栏折叠按钮 */}
         <IconButton
           aria-label={isCollapsed ? t('common.sidebar.expand') : t('common.sidebar.collapse')}
-          icon={<PanelLeft size={20} />}
+          icon={<PanelLeft size={iconSize} />}
           onClick={toggleCollapse}
           variant="ghost"
-          size="md"
+          size={{ base: 'sm', md: 'md' }}
+          flexShrink={0}
         />
+        
+        {/* Logo */}
+        <Link to="/dashboard" style={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
+          <Image
+            src="/pics/bantu/bantu_logo_blue.png"
+            alt="Bantu Logo"
+            h={logoHeight}
+            w="auto"
+            objectFit="contain"
+            maxW={{ base: '120px', sm: '140px', md: 'none' }}
+          />
+        </Link>
       </HStack>
 
-      <HStack spacing={4}>
+      <HStack spacing={spacing} flexShrink={0}>
         {/* 语言切换 */}
         <Menu>
           <MenuButton
             as={IconButton}
-            icon={<Globe size={16} />}
+            icon={<Globe size={useBreakpointValue({ base: 14, md: 16 })} />}
             variant="ghost"
-            size="md"
+            size={{ base: 'sm', md: 'md' }}
+            aria-label={t('common.language')}
           >
-            {currentLang === 'zh-CN' ? '中文' : 'ID'}
+            <Hide below="sm">
+              {currentLang === 'zh-CN' ? '中文' : 'ID'}
+            </Hide>
           </MenuButton>
           <MenuList>
             <MenuItem
@@ -96,15 +127,23 @@ export const TopBar = () => {
         {/* 用户菜单 */}
         <Menu>
           <MenuButton>
-            <HStack spacing={3}>
+            <HStack spacing={{ base: 1.5, md: 3 }} minW={0}>
               <Avatar
-                size="sm"
+                size={{ base: 'xs', md: 'sm' }}
                 bg="primary.100"
-                icon={<User size={16} />}
+                icon={<User size={useBreakpointValue({ base: 12, md: 16 })} />}
+                flexShrink={0}
               />
-              <Text fontSize="sm" fontWeight="medium">
-                {user?.display_name || user?.username || 'User'}
-              </Text>
+              <Show above="sm">
+                <Text 
+                  fontSize={{ base: 'xs', md: 'sm' }} 
+                  fontWeight="medium"
+                  noOfLines={1}
+                  maxW={{ base: '80px', md: '120px' }}
+                >
+                  {user?.display_name || user?.username || 'User'}
+                </Text>
+              </Show>
             </HStack>
           </MenuButton>
           <MenuList>
