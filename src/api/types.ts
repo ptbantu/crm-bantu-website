@@ -294,7 +294,7 @@ export interface Customer {
   name: string
   code?: string | null
   customer_type: 'individual' | 'organization'  // individual (个人), organization (组织)
-  customer_source_type: 'own' | 'agent'
+  customer_source_type?: 'own' | 'agent'  // 已废弃，保留以兼容旧数据
   parent_customer_id?: string | null
   parent_customer_name?: string | null
   owner_user_id?: string | null
@@ -302,7 +302,7 @@ export interface Customer {
   agent_user_id?: string | null
   agent_id?: string | null
   agent_name?: string | null
-  source_id?: string | null
+  source_id: string  // 必填
   source_name?: string | null
   channel_id?: string | null
   channel_name?: string | null
@@ -327,7 +327,7 @@ export interface CustomerListParams {
   name?: string
   code?: string
   customer_type?: 'individual' | 'organization'  // individual (个人), organization (组织)
-  customer_source_type?: 'own' | 'agent'
+  customer_source_type?: 'own' | 'agent'  // 已废弃，保留以兼容旧数据
   parent_customer_id?: string
   owner_user_id?: string
   agent_id?: string

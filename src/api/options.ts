@@ -47,6 +47,19 @@ export interface IndustryOption {
 }
 
 /**
+ * 客户来源选项
+ */
+export interface CustomerSourceOption {
+  id: string
+  code?: string | null
+  name_zh?: string | null
+  name_id?: string | null
+  name: string  // 根据 lang 参数返回对应语言
+  description?: string | null
+  display_order?: string | null
+}
+
+/**
  * 获取客户分级选项列表
  * @param lang 语言代码：'zh'（中文）或 'id'（印尼语），默认为 'zh'
  */
@@ -71,6 +84,15 @@ export async function getFollowUpStatusOptions(lang: 'zh' | 'id' = 'zh'): Promis
 export async function getIndustryOptions(lang: 'zh' | 'id' = 'zh'): Promise<IndustryOption[]> {
   // 暂时使用 service-management 的 industries 端点，后续可能需要移到 options API
   const result = await get<IndustryOption[]>(`/api/service-management/industries?lang=${lang}&is_active=true`)
+  return result.data || []
+}
+
+/**
+ * 获取客户来源选项列表
+ * @param lang 语言代码：'zh'（中文）或 'id'（印尼语），默认为 'zh'
+ */
+export async function getCustomerSourceOptions(lang: 'zh' | 'id' = 'zh'): Promise<CustomerSourceOption[]> {
+  const result = await get<CustomerSourceOption[]>(`/api/service-management/customer-sources?lang=${lang}`)
   return result.data || []
 }
 

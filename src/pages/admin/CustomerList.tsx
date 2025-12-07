@@ -19,7 +19,7 @@ import {
 import { CustomerListParams, Customer } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
 import { PageHeader } from '@/components/admin/PageHeader'
-import { getCustomerLevelOptions, getIndustryOptions, CustomerLevelOption, IndustryOption } from '@/api/options'
+import { getCustomerLevelOptions, getIndustryOptions, getCustomerSourceOptions, CustomerLevelOption, IndustryOption, CustomerSourceOption } from '@/api/options'
 import {
   Button,
   Table,
@@ -80,7 +80,7 @@ const CustomerList = () => {
     name: '',
     code: '',
     customer_type: '' as '' | 'individual' | 'organization',
-    customer_source_type: '' as '' | 'own' | 'agent',
+    source_id: '',  // 改为使用 source_id
     is_locked: '' as '' | 'true' | 'false',
   })
 
@@ -115,6 +115,7 @@ const CustomerList = () => {
   // 客户分级选项
   const [customerLevels, setCustomerLevels] = useState<CustomerLevelOption[]>([])
   const [industries, setIndustries] = useState<IndustryOption[]>([])
+  const [customerSources, setCustomerSources] = useState<CustomerSourceOption[]>([])
 
   // 处理视图切换
   const handleViewTypeChange = (newViewType: 'my' | 'global') => {
@@ -182,6 +183,21 @@ const CustomerList = () => {
     loadIndustries()
   }, [i18n.language])
 
+  // 加载客户来源选项
+  useEffect(() => {
+    const loadCustomerSources = async () => {
+      try {
+        const currentLang = i18n.language || 'zh-CN'
+        const apiLang = currentLang.startsWith('zh') ? 'zh' : 'id'
+        const sources = await getCustomerSourceOptions(apiLang)
+        setCustomerSources(sources || [])
+      } catch (error: any) {
+        console.error('Failed to load customer sources:', error)
+      }
+    }
+    loadCustomerSources()
+  }, [i18n.language])
+
   // 初始加载
   useEffect(() => {
     // 确保初始加载时包含 view_type
@@ -205,8 +221,8 @@ const CustomerList = () => {
     if (formData.customer_type) {
       params.customer_type = formData.customer_type
     }
-    if (formData.customer_source_type) {
-      params.customer_source_type = formData.customer_source_type
+    if (formData.source_id) {
+      params.source_id = formData.source_id
     }
     if (formData.is_locked !== '') {
       params.is_locked = formData.is_locked === 'true'
@@ -223,11 +239,11 @@ const CustomerList = () => {
       name: '',
       code: '',  // 不显示，由后端自动生成
       customer_type: 'individual',  // 默认为个人客户
-      customer_source_type: 'own',
+      customer_source_type: 'own',  // 已废弃，保留以兼容
       parent_customer_id: '',
       owner_user_id: '',
       agent_id: '',
-      source_id: '',
+      source_id: '',  // 必填，初始化为空字符串
       channel_id: '',
       level: '',
       industry_id: '',  // 改为 industry_id
@@ -246,11 +262,11 @@ const CustomerList = () => {
       name: customer.name,
       code: customer.code || '',  // 保留但不显示在表单中
       customer_type: customer.customer_type,
-      customer_source_type: customer.customer_source_type,
+      customer_source_type: customer.customer_source_type || 'own',  // 已废弃，保留以兼容
       parent_customer_id: customer.parent_customer_id || '',
       owner_user_id: customer.owner_user_id || '',
       agent_id: customer.agent_id || '',
-      source_id: customer.source_id || '',
+      source_id: customer.source_id || '',  // 必填
       channel_id: customer.channel_id || '',
       level: customer.level || '',
       industry_id: customer.industry_id || '',  // 改为 industry_id
@@ -297,6 +313,12 @@ const CustomerList = () => {
       return
     }
 
+    // 验证客户来源（必填）
+    if (!modalFormData.source_id || !modalFormData.source_id.trim()) {
+      showError(t('customerList.error.sourceRequired') || '请选择客户来源')
+      return
+    }
+
     setSubmitting(true)
     try {
       if (editingCustomer) {
@@ -305,7 +327,6 @@ const CustomerList = () => {
           name: modalFormData.name,
           code: modalFormData.code || null,  // 编辑时保留 code
           customer_type: modalFormData.customer_type,
-          customer_source_type: modalFormData.customer_source_type,
           parent_customer_id: modalFormData.parent_customer_id || null,
           owner_user_id: modalFormData.owner_user_id || null,
           agent_id: modalFormData.agent_id || null,
@@ -326,11 +347,10 @@ const CustomerList = () => {
           name: modalFormData.name,
           // code 不传，由后端自动生成
           customer_type: modalFormData.customer_type,
-          customer_source_type: modalFormData.customer_source_type,
           parent_customer_id: modalFormData.parent_customer_id || null,
           owner_user_id: modalFormData.owner_user_id || null,
           agent_id: modalFormData.agent_id || null,
-          source_id: modalFormData.source_id || null,
+          source_id: modalFormData.source_id,  // 必填
           channel_id: modalFormData.channel_id || null,
           level: modalFormData.level || null,
           industry_id: modalFormData.industry_id || null,  // 行业ID，从下拉选择器选择
@@ -359,7 +379,7 @@ const CustomerList = () => {
       name: '',
       code: '',
       customer_type: '',
-      customer_source_type: '',
+      source_id: '',
       is_locked: '',
     })
     const defaultParams: CustomerListParams = {
@@ -479,19 +499,28 @@ const CustomerList = () => {
               </Select>
             </Box>
 
-            {/* 客户来源类型 */}
+            {/* 客户来源 */}
             <Box flex={1} minW="120px">
               <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
-                {t('customerList.search.sourceType')}
+                {t('customerList.search.source')}
               </Text>
               <Select
                 size="sm"
-                value={formData.customer_source_type}
-                onChange={(e) => setFormData({ ...formData, customer_source_type: e.target.value as '' | 'own' | 'agent' })}
+                value={formData.source_id}
+                onChange={(e) => setFormData({ ...formData, source_id: e.target.value })}
               >
                 <option value="">{t('customerList.search.allSources')}</option>
-                <option value="own">{t('customerList.search.own')}</option>
-                <option value="agent">{t('customerList.search.agent')}</option>
+                {customerSources
+                  .sort((a, b) => {
+                    const orderA = parseInt(a.display_order || '0')
+                    const orderB = parseInt(b.display_order || '0')
+                    return orderA - orderB
+                  })
+                  .map((source) => (
+                    <option key={source.id} value={source.id}>
+                      {source.name}
+                    </option>
+                  ))}
               </Select>
             </Box>
 
@@ -830,18 +859,29 @@ const CustomerList = () => {
                 </select>
               </div>
 
-              {/* 客户来源类型 */}
+              {/* 客户来源 - 必填 */}
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
-                  {t('customerList.modal.sourceType')}
+                  {t('customerList.modal.source')} <span className="text-red-500">*</span>
                 </label>
                 <select
-                  value={modalFormData.customer_source_type}
-                  onChange={(e) => setModalFormData({ ...modalFormData, customer_source_type: e.target.value as 'own' | 'agent' })}
+                  required
+                  value={modalFormData.source_id}
+                  onChange={(e) => setModalFormData({ ...modalFormData, source_id: e.target.value })}
                   className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white"
                 >
-                  <option value="own">{t('customerList.modal.own')}</option>
-                  <option value="agent">{t('customerList.modal.agent')}</option>
+                  <option value="">{t('customerList.modal.sourcePlaceholder') || '请选择客户来源'}</option>
+                  {customerSources
+                    .sort((a, b) => {
+                      const orderA = parseInt(a.display_order || '0')
+                      const orderB = parseInt(b.display_order || '0')
+                      return orderA - orderB
+                    })
+                    .map((source) => (
+                      <option key={source.id} value={source.id}>
+                        {source.name}
+                      </option>
+                    ))}
                 </select>
               </div>
 

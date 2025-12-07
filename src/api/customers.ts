@@ -93,12 +93,12 @@ export interface CreateCustomerRequest {
   name: string
   code?: string | null  // 可选，如果不提供则自动生成
   customer_type?: 'individual' | 'organization'  // individual (个人), organization (组织)
-  customer_source_type?: 'own' | 'agent'
+  customer_source_type?: 'own' | 'agent'  // 已废弃，保留以兼容
   parent_customer_id?: string | null
   owner_user_id?: string | null
   agent_user_id?: string | null
   agent_id?: string | null
-  source_id?: string | null
+  source_id: string  // 必填
   channel_id?: string | null
   level?: string | null
   industry_id?: string | null  // 改为 industry_id
@@ -120,12 +120,12 @@ export interface UpdateCustomerRequest {
   name?: string
   code?: string | null
   customer_type?: 'individual' | 'organization'  // individual (个人), organization (组织)
-  customer_source_type?: 'own' | 'agent'
+  customer_source_type?: 'own' | 'agent'  // 已废弃，保留以兼容
   parent_customer_id?: string | null
   owner_user_id?: string | null
   agent_user_id?: string | null
   agent_id?: string | null
-  source_id?: string | null
+  source_id?: string | null  // 可选，编辑时可以不修改
   channel_id?: string | null
   level?: string | null
   industry_id?: string | null  // 改为 industry_id
