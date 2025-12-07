@@ -1,0 +1,42 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: crm-bantu-website
+  namespace: default
+  labels:
+    app: crm-bantu-website
+    environment: production
+  annotations:
+    # 使用 cert-manager 自动管理 SSL 证书
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    # Traefik Ingress Controller 配置
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  ingressClassName: traefik
+  tls:
+  - hosts:
+    - oa.bantuqifu.com
+    - www.oabantuqifu.com
+    secretName: crm-bantu-website-tls
+  rules:
+  - host: oa.bantuqifu.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: crm-bantu-website
+            port:
+              number: 80
+  - host: www.oabantuqifu.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: crm-bantu-website
+            port:
+              number: 80

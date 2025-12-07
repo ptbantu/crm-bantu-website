@@ -1,0 +1,75 @@
+# 生产环境 Dockerfile - 多阶段构建优化
+# 使用多阶段构建减少镜像大小，提高构建效率
+
+# 构建阶段
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# 复制 package 文件
+COPY package*.json ./
+COPY pnpm-lock.yaml* ./
+
+# 安装依赖（优先使用 pnpm，如果没有则使用 npm）
+RUN if [ -f pnpm-lock.yaml ]; then \
+      npm install -g pnpm && pnpm install --frozen-lockfile --prod=false; \
+    elif [ -f package-lock.json ]; then \
+      npm ci; \
+    else \
+      npm install; \
+    fi
+
+# 复制源代码
+COPY . .
+
+# 设置生产环境变量
+ENV NODE_ENV=production
+ENV VITE_API_BASE_URL=https://www.bantuqifu.xin
+ENV VITE_FRONTEND_URL=https://oa.bantuqifu.com
+
+# 构建应用（生产模式）
+RUN if [ -f pnpm-lock.yaml ]; then \
+      pnpm run build; \
+    else \
+      npm run build; \
+    fi
+
+# 生产阶段 - 使用 Nginx Alpine（最小化镜像）
+FROM nginx:alpine
+
+# 安装 curl 用于健康检查
+RUN apk add --no-cache curl
+
+# 复制构建产物到 Nginx
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# 复制 Nginx 配置
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# 创建 Nginx 缓存目录并设置权限
+RUN mkdir -p /var/cache/nginx/client_temp \
+    /var/cache/nginx/proxy_temp \
+    /var/cache/nginx/fastcgi_temp \
+    /var/cache/nginx/uwsgi_temp \
+    /var/cache/nginx/scgi_temp \
+    /var/log/nginx \
+    /var/run && \
+    chown -R nginx:nginx /usr/share/nginx/html \
+    /var/cache/nginx \
+    /var/log/nginx \
+    /var/run && \
+    chmod -R 755 /usr/share/nginx/html && \
+    chmod -R 755 /var/cache/nginx && \
+    chmod -R 755 /var/log/nginx && \
+    chmod -R 755 /var/run
+
+# 暴露端口
+EXPOSE 80
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost/health || exit 1
+
+# 启动 Nginx（生产模式）
+CMD ["nginx", "-g", "daemon off;"]
+

@@ -26,14 +26,13 @@ const getApiBaseUrl = (): string => {
   const envUrl = import.meta.env.VITE_API_BASE_URL
   if (envUrl && envUrl.trim() !== '') {
     const url = envUrl.trim()
-    // 确保环境变量中的地址是正确的
-    if (url.includes('bantu.sbs')) {
-      return url
-    }
     // 如果环境变量设置为空字符串，使用相对路径（代理）
     if (url === '' || url === 'proxy' || url === 'relative') {
       return ''
     }
+    // 生产环境：使用环境变量中的地址（构建时通过 Dockerfile.prod 设置）
+    // 支持 bantuqifu.xin 和 bantu.sbs 等域名
+    return url
   }
   
   // 开发模式：使用相对路径，通过Vite代理转发
@@ -50,9 +49,13 @@ const getApiBaseUrl = (): string => {
     return '' // 使用相对路径，通过Vite代理转发到 https://www.bantu.sbs
   }
   
-  // 生产环境：强制使用 https://www.bantu.sbs（不能使用当前域名）
-  // 无论什么情况，生产环境都必须使用这个地址
-  return 'https://www.bantu.sbs'
+  // 生产环境：优先使用环境变量，如果没有则使用默认值
+  // 生产环境构建时会通过 Dockerfile.prod 设置 VITE_API_BASE_URL
+  if (envUrl && envUrl.trim() !== '') {
+    return envUrl.trim()
+  }
+  // 默认生产环境地址
+  return 'https://www.bantuqifu.xin'
 }
 
 export const API_CONFIG = {
