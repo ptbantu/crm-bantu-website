@@ -271,8 +271,7 @@
       "revenue": "总收入",
       "growth": "增长率",
       "services": "服务数量",
-      "vendors": "供应商数",
-      "vsLastMonth": "较上月"
+      "vendors": "供应商数"
     },
     "revenueTrend": {
       "title": "收入趋势（最近7天）"
@@ -607,7 +606,7 @@
       "type": "组织类型",
       "email": "邮箱",
       "phone": "电话",
-      "isActive": "启用"
+      "isActive": "启用状态"
     },
     "validation": {
       "nameRequired": "组织名称不能为空"
@@ -674,12 +673,7 @@
     "serviceCatalog": "服务目录",
     "vendorManagement": "供应商管理",
     "vendorProductList": "供应商服务列表",
-    "categoryManagement": "服务分类管理",
-    "finance": "财务管理",
-    "receivables": "应收管理",
-    "invoicing": "开票管理",
-    "financeReports": "财务报表",
-    "agent": "渠道代理"
+    "categoryManagement": "服务分类管理"
   },
   "admin": {
     "title": "班兔 CRM 后台管理",
@@ -1156,10 +1150,6 @@
       "level": "客户等级",
       "industry": "行业",
       "description": "描述",
-      "individual": "个人客户",
-      "organization": "组织客户",
-      "own": "内部客户",
-      "agent": "渠道客户",
       "tags": "标签",
       "close": "关闭"
     },
@@ -1485,24 +1475,24 @@
     "noItems": "暂无订单项",
     "noComments": "暂无评论",
     "noFiles": "暂无文件",
-      "internal": "内部",
-      "download": "下载",
-      "uploadFile": "上传文件",
-      "upload": "上传",
-      "uploading": "上传中...",
-      "file": "文件",
-      "selectedFile": "已选择文件",
-      "fileCategory": "文件分类",
-      "categoryPassport": "护照",
-      "categoryVisa": "签证",
-      "categoryDocument": "文档",
-      "categoryOther": "其他",
-      "fileDescription": "文件描述",
-      "fileDescriptionPlaceholder": "请输入文件描述",
-      "verify": "验证",
-      "verified": "已验证",
-      "delete": "删除",
-      "selectProduct": "请选择产品",
+    "internal": "内部",
+    "download": "下载",
+    "uploadFile": "上传文件",
+    "upload": "上传",
+    "uploading": "上传中...",
+    "file": "文件",
+    "selectedFile": "已选择文件",
+    "fileCategory": "文件分类",
+    "categoryPassport": "护照",
+    "categoryVisa": "签证",
+    "categoryDocument": "文档",
+    "categoryOther": "其他",
+    "fileDescription": "文件描述",
+    "fileDescriptionPlaceholder": "请输入文件描述",
+    "verify": "验证",
+    "verified": "已验证",
+    "delete": "删除",
+    "selectProduct": "请选择产品",
     "comment": "评论内容",
     "internalComment": "内部评论（客户不可见）",
     "selectUser": "选择用户",
@@ -1605,6 +1595,10 @@
       "converted": "已转化",
       "lost": "已丢失"
     },
+    "statusRemark": {
+      "converted": "选择此选项会将线索转化为商机",
+      "lost": "选择此选项表示线索已丢失，不再跟进 并丢入公海池"
+    },
     "currentStatus": "当前状态",
     "actions": {
       "view": "查看",
@@ -1665,7 +1659,8 @@
       "delete": "线索删除成功",
       "assign": "线索分配成功",
       "moveToPool": "线索已移入公海池",
-      "convert": "线索转化成功"
+      "convert": "线索转化成功",
+      "convertToOpportunity": "线索已成功转化为商机"
     },
     "error": {
       "loadFailed": "加载失败",
@@ -1680,7 +1675,10 @@
       "noUser": "未找到用户信息",
       "loadUsersFailed": "加载用户列表失败",
       "selectUser": "请选择要转换的用户",
-      "statusTransitionInvalid": "状态流转不合法"
+      "statusTransitionInvalid": "状态流转不合法",
+      "leadNotFound": "线索不存在",
+      "opportunityNameRequired": "商机名称不能为空",
+      "loadProductsFailed": "加载产品列表失败"
     },
     "transfer": {
       "title": "转换线索",
@@ -1703,6 +1701,25 @@
       "converted": "已转化",
       "conversionRate": "转化率",
       "new": "新建线索"
+    },
+    "convert": {
+      "title": "转化商机",
+      "name": "商机名称",
+      "namePlaceholder": "请输入商机名称",
+      "stage": "商机阶段",
+      "stageInitialContact": "初次接触",
+      "stageNeedsAnalysis": "需求分析",
+      "stageProposal": "方案提案",
+      "stageNegotiation": "商务谈判",
+      "stageClosedWon": "成交",
+      "stageClosedLost": "失败",
+      "description": "描述",
+      "descriptionPlaceholder": "请输入描述",
+      "products": "目标产品",
+      "productsPlaceholder": "请选择目标产品（可多选）",
+      "productsHint": "按住 Ctrl (Windows) 或 Cmd (Mac) 键可多选",
+      "cancel": "取消",
+      "submit": "确认转化"
     }
   },
   "leadDetail": {
@@ -1955,4 +1972,3 @@
     }
   }
 }
-

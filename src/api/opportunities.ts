@@ -158,6 +158,26 @@ export async function createOpportunityNote(opportunityId: string, data: Opportu
   return result.data!
 }
 
+/**
+ * 线索转化商机
+ */
+export interface LeadConvertToOpportunityRequest {
+  name: string
+  stage?: string
+  description?: string
+  products?: Array<{
+    product_id: string
+    quantity?: number
+    unit_price?: number
+    execution_order?: number
+  }>
+}
+
+export async function convertLeadToOpportunity(leadId: string, data: LeadConvertToOpportunityRequest): Promise<Opportunity> {
+  const result = await post<Opportunity>(`/api/order-workflow/opportunities/convert-from-lead/${leadId}`, data)
+  return result.data!
+}
+
 // 导出类型
 export type {
   CreateOpportunityRequest,

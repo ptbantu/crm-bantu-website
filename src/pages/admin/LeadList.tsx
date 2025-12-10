@@ -27,6 +27,9 @@ import { storage } from '@/utils/storage'
 import { useAuth } from '@/hooks/useAuth'
 import { isAdmin } from '@/utils/permissions'
 import { getCustomerLevelOptions, CustomerLevelOption } from '@/api/options'
+import { convertLeadToOpportunity, LeadConvertToOpportunityRequest } from '@/api/opportunities'
+import { getProductList } from '@/api/products'
+import { Product } from '@/api/types'
 import { PageHeader } from '@/components/admin/PageHeader'
 import {
   Button,
@@ -82,6 +85,7 @@ const LeadList = () => {
   const { isOpen: isTransferOpen, onOpen: onTransferOpen, onClose: onTransferClose } = useDisclosure()
   const { isOpen: isDuplicateModalOpen, onOpen: onDuplicateModalOpen, onClose: onDuplicateModalClose } = useDisclosure()
   const { isOpen: isFollowUpOpen, onOpen: onFollowUpOpen, onClose: onFollowUpClose } = useDisclosure()
+  const { isOpen: isConvertOpen, onOpen: onConvertOpen, onClose: onConvertClose } = useDisclosure()
   
   // Chakra UI 颜色模式
   const bgColor = useColorModeValue('white', 'gray.800')
@@ -153,6 +157,18 @@ const LeadList = () => {
   // 下拉选项
   const [users, setUsers] = useState<UserListItem[]>([])
   const [customerLevels, setCustomerLevels] = useState<CustomerLevelOption[]>([])
+  const [products, setProducts] = useState<Product[]>([])
+  const [loadingProducts, setLoadingProducts] = useState(false)
+
+  // 转化表单状态
+  const [convertingLead, setConvertingLead] = useState<Lead | null>(null)
+  const [convertFormData, setConvertFormData] = useState({
+    name: '',
+    stage: 'initial_contact',
+    description: '',
+    product_ids: [] as string[],
+  })
+  const [submittingConvert, setSubmittingConvert] = useState(false)
 
   // 加载线索列表
   const loadLeads = async (params: LeadListParams) => {
@@ -181,7 +197,9 @@ const LeadList = () => {
       }
       
       const result = await getLeadList(finalParams)
-      setLeads(result.records || [])
+      // 过滤掉已转化的线索（converted 状态）
+      const filteredLeads = (result.records || []).filter(lead => lead.status !== 'converted')
+      setLeads(filteredLeads)
       setTotal(result.total || 0)
       setCurrentPage(result.current || 1)
       setPages(result.pages || 0)
@@ -300,7 +318,7 @@ const LeadList = () => {
       phone: '',
       email: '',
       address: '',
-      owner_user_id: '',
+      owner_user_id: user?.id || '',  // 默认设置为当前用户
       status: 'new',
       level: '',
       next_follow_up_at: '',
@@ -416,15 +434,27 @@ const LeadList = () => {
       })
       showSuccess(t('leadDetail.success.createFollowUp'))
       onFollowUpClose()
-      setFollowUpFormData({
-        follow_up_type: 'call',
-        content: '',
-        follow_up_date: new Date().toISOString().slice(0, 16),
-        status_after: undefined,
-      })
-      setFollowUpLeadId(null)
-      setFollowUpLead(null)
-      loadLeads(queryParams)
+      
+      // 如果状态更新为"已转化"，自动触发商机转化流程
+      if (followUpFormData.status_after === 'converted' && followUpLead) {
+        // 重新加载线索以获取最新状态
+        await loadLeads(queryParams)
+        // 延迟一下，确保状态已更新
+        setTimeout(() => {
+          handleOpenConvert(followUpLead.id)
+        }, 500)
+      } else {
+        // 重置表单并刷新列表
+        setFollowUpFormData({
+          follow_up_type: 'call',
+          content: '',
+          follow_up_date: new Date().toISOString().slice(0, 16),
+          status_after: undefined,
+        })
+        setFollowUpLeadId(null)
+        setFollowUpLead(null)
+        loadLeads(queryParams)
+      }
     } catch (error: any) {
       showError(error.message || t('leadDetail.error.createFollowUpFailed'))
     }
@@ -444,21 +474,75 @@ const LeadList = () => {
     }
   }
 
-  // 转化线索（从公海转化为我的线索）
-  const handleConvert = async (id: string) => {
-    if (!user?.id) {
-      showError(t('leadList.error.noUser'))
+  // 打开转化表单
+  const handleOpenConvert = async (id: string) => {
+    const lead = leads.find(l => l.id === id)
+    if (!lead) {
+      showError(t('leadList.error.leadNotFound'))
       return
     }
-    if (!window.confirm(t('leadList.confirm.convert'))) {
-      return
-    }
+    setConvertingLead(lead)
+    setConvertFormData({
+      name: lead.company_name || lead.name,
+      stage: 'initial_contact',
+      description: '',
+      product_ids: [],
+    })
+    // 加载产品列表
+    await loadProducts()
+    onConvertOpen()
+  }
+
+  // 加载产品列表
+  const loadProducts = async () => {
+    setLoadingProducts(true)
     try {
-      await assignLead(id, { owner_user_id: user.id })
-      showSuccess(t('leadList.success.convert'))
+      const result = await getProductList({ page: 1, size: 1000, is_active: true })
+      setProducts(result.records || [])
+    } catch (error: any) {
+      console.error('Failed to load products:', error)
+      showError(error.message || t('leadList.error.loadProductsFailed'))
+    } finally {
+      setLoadingProducts(false)
+    }
+  }
+
+  // 提交转化
+  const handleSubmitConvert = async () => {
+    if (!convertingLead) {
+      return
+    }
+    if (!convertFormData.name.trim()) {
+      showError(t('leadList.error.opportunityNameRequired'))
+      return
+    }
+    setSubmittingConvert(true)
+    try {
+      const request: LeadConvertToOpportunityRequest = {
+        name: convertFormData.name.trim(),
+        stage: convertFormData.stage,
+        description: convertFormData.description || undefined,
+        products: convertFormData.product_ids.map(productId => ({
+          product_id: productId,
+          quantity: 1,
+          execution_order: 1,
+        })),
+      }
+      await convertLeadToOpportunity(convertingLead.id, request)
+      showSuccess(t('leadList.success.convertToOpportunity'))
+      onConvertClose()
+      setConvertingLead(null)
+      setConvertFormData({
+        name: '',
+        stage: 'initial_contact',
+        description: '',
+        product_ids: [],
+      })
       loadLeads(queryParams)
     } catch (error: any) {
       showError(error.message || t('leadList.error.convertFailed'))
+    } finally {
+      setSubmittingConvert(false)
     }
   }
 
@@ -988,7 +1072,7 @@ const LeadList = () => {
                             size="xs"
                             variant="link"
                             colorScheme="teal"
-                            onClick={() => handleConvert(lead.id)}
+                            onClick={() => handleOpenConvert(lead.id)}
                           >
                             {t('leadList.actions.convert')}
                           </Button>
@@ -1199,21 +1283,23 @@ const LeadList = () => {
                 />
               </FormControl>
 
-              {/* 负责人 */}
-              <FormControl>
-                <FormLabel>{t('leadList.modal.owner')}</FormLabel>
-                <Select
-                  value={modalFormData.owner_user_id}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setModalFormData({ ...modalFormData, owner_user_id: e.target.value })}
-                  placeholder={t('leadList.modal.selectOwner')}
-                >
-                  {users.map((user: UserListItem) => (
-                    <option key={user.id} value={user.id}>
-                      {user.display_name || user.username}
-                    </option>
-                  ))}
-                </Select>
-              </FormControl>
+              {/* 负责人 - 仅在编辑时显示 */}
+              {editingLead && (
+                <FormControl>
+                  <FormLabel>{t('leadList.modal.owner')}</FormLabel>
+                  <Select
+                    value={modalFormData.owner_user_id}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setModalFormData({ ...modalFormData, owner_user_id: e.target.value })}
+                    placeholder={t('leadList.modal.selectOwner')}
+                  >
+                    {users.map((user: UserListItem) => (
+                      <option key={user.id} value={user.id}>
+                        {user.display_name || user.username}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
 
               {/* 状态 */}
               <FormControl>
@@ -1486,24 +1572,56 @@ const LeadList = () => {
 
               <FormControl>
                 <FormLabel>{t('leadDetail.followUpStatus')}</FormLabel>
-                <Select
-                  value={followUpFormData.status_after || followUpLead?.status || 'new'}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                    const newStatus = e.target.value as LeadStatus
-                    // 前端验证
-                    if (followUpLead?.status && !validateStatusTransition(followUpLead.status, newStatus)) {
-                      showError(getStatusTransitionErrorMessage(followUpLead.status, newStatus) || t('leadDetail.error.statusTransitionInvalid'))
-                      return
-                    }
-                    setFollowUpFormData({ ...followUpFormData, status_after: newStatus === followUpLead?.status ? undefined : newStatus })
-                  }}
-                >
-                  {followUpLead?.status && getAvailableStatuses(followUpLead.status).map((status) => (
-                    <option key={status} value={status}>
-                      {t(`leadList.status.${status}`)}
-                    </option>
-                  ))}
-                </Select>
+                {followUpLead?.status === 'new' ? (
+                  // For new leads, automatically set to contacted without dropdown
+                  <Input
+                    value={t('leadList.status.contacted')}
+                    isReadOnly={true}
+                  />
+                ) : followUpLead?.status === 'qualified' ? (
+                  // For qualified leads, show converted or lost options with remarks
+                  <Box>
+                    <Select
+                      value={followUpFormData.status_after || 'qualified'}
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                        const newStatus = e.target.value as LeadStatus
+                        setFollowUpFormData({ ...followUpFormData, status_after: newStatus })
+                      }}
+                    >
+                      <option value="qualified">{t('leadList.status.qualified')}</option>
+                      <option value="converted">{t('leadList.status.converted')}</option>
+                      <option value="lost">{t('leadList.status.lost')}</option>
+                    </Select>
+                    <VStack align="stretch" spacing={1} mt={2}>
+                      <Text fontSize="xs" color="red.500" ml={1}>
+                        {t('leadList.status.converted')}: {t('leadList.statusRemark.converted')}
+                      </Text>
+                      <Text fontSize="xs" color="red.500" ml={1}>
+                        {t('leadList.status.lost')}: {t('leadList.statusRemark.lost')}
+                      </Text>
+                    </VStack>
+                  </Box>
+                ) : (
+                  // For other statuses, show available transitions
+                  <Select
+                    value={followUpFormData.status_after || followUpLead?.status || 'new'}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                      const newStatus = e.target.value as LeadStatus
+                      // Frontend validation
+                      if (followUpLead?.status && !validateStatusTransition(followUpLead.status, newStatus)) {
+                        showError(getStatusTransitionErrorMessage(followUpLead.status, newStatus) || t('leadDetail.error.statusTransitionInvalid'))
+                        return
+                      }
+                      setFollowUpFormData({ ...followUpFormData, status_after: newStatus === followUpLead?.status ? undefined : newStatus })
+                    }}
+                  >
+                    {followUpLead?.status && getAvailableStatuses(followUpLead.status).map((status) => (
+                      <option key={status} value={status}>
+                        {t(`leadList.status.${status}`)}
+                      </option>
+                    ))}
+                  </Select>
+                )}
                 {followUpLead?.status && (
                   <Text fontSize="xs" color="gray.500" mt={1}>
                     {t('leadDetail.currentStatus')}: {t(`leadList.status.${followUpLead.status}`)}
@@ -1522,6 +1640,97 @@ const LeadList = () => {
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
+
+      {/* 转化商机表单弹窗 */}
+      <Modal isOpen={isConvertOpen} onClose={onConvertClose} size="lg">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{t('leadList.convert.title')}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack align="stretch" spacing={4}>
+              {/* 商机名称 */}
+              <FormControl isRequired>
+                <FormLabel>{t('leadList.convert.name')}</FormLabel>
+                <Input
+                  value={convertFormData.name}
+                  onChange={(e) => setConvertFormData({ ...convertFormData, name: e.target.value })}
+                  placeholder={t('leadList.convert.namePlaceholder')}
+                />
+              </FormControl>
+
+              {/* 商机阶段 */}
+              <FormControl>
+                <FormLabel>{t('leadList.convert.stage')}</FormLabel>
+                <Select
+                  value={convertFormData.stage}
+                  onChange={(e) => setConvertFormData({ ...convertFormData, stage: e.target.value })}
+                >
+                  <option value="initial_contact">{t('leadList.convert.stageInitialContact')}</option>
+                  <option value="needs_analysis">{t('leadList.convert.stageNeedsAnalysis')}</option>
+                  <option value="proposal">{t('leadList.convert.stageProposal')}</option>
+                  <option value="negotiation">{t('leadList.convert.stageNegotiation')}</option>
+                  <option value="closed_won">{t('leadList.convert.stageClosedWon')}</option>
+                  <option value="closed_lost">{t('leadList.convert.stageClosedLost')}</option>
+                </Select>
+              </FormControl>
+
+              {/* 描述 */}
+              <FormControl>
+                <FormLabel>{t('leadList.convert.description')}</FormLabel>
+                <Textarea
+                  value={convertFormData.description}
+                  onChange={(e) => setConvertFormData({ ...convertFormData, description: e.target.value })}
+                  placeholder={t('leadList.convert.descriptionPlaceholder')}
+                  rows={4}
+                />
+              </FormControl>
+
+              {/* 目标产品（多选） */}
+              <FormControl>
+                <FormLabel>{t('leadList.convert.products')}</FormLabel>
+                {loadingProducts ? (
+                  <Spinner size="sm" />
+                ) : (
+                  <Select
+                    multiple
+                    value={convertFormData.product_ids}
+                    onChange={(e) => {
+                      const selectedIds = Array.from(e.target.selectedOptions, option => option.value)
+                      setConvertFormData({ ...convertFormData, product_ids: selectedIds })
+                    }}
+                    placeholder={t('leadList.convert.productsPlaceholder')}
+                    size="md"
+                    height="120px"
+                  >
+                    {products.map((product) => (
+                      <option key={product.id} value={product.id}>
+                        {product.name} {product.code ? `(${product.code})` : ''}
+                      </option>
+                    ))}
+                  </Select>
+                )}
+                <Text fontSize="xs" color="gray.500" mt={1}>
+                  {t('leadList.convert.productsHint')}
+                </Text>
+              </FormControl>
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={onConvertClose}>
+              {t('leadList.convert.cancel')}
+            </Button>
+            <Button
+              colorScheme="teal"
+              onClick={handleSubmitConvert}
+              isLoading={submittingConvert}
+              isDisabled={!convertFormData.name.trim() || submittingConvert}
+            >
+              {t('leadList.convert.submit')}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   )
 }

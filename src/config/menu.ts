@@ -97,13 +97,6 @@ export const adminMenuItems: MenuItem[] = [
         path: '/admin/order/list',
         role: [Role.OPERATION, Role.SALES, Role.ADMIN],
       },
-      {
-        key: 'serviceManagement',
-        label: 'menu.serviceManagement',
-        icon: FileCheck,
-        path: '/admin/order/services',
-        role: [Role.OPERATION, Role.ADMIN],
-      },
     ],
   },
   
@@ -120,13 +113,6 @@ export const adminMenuItems: MenuItem[] = [
         label: 'menu.productManagement',
         icon: Package,
         path: '/admin/product/management',
-        role: [Role.OPERATION, Role.ADMIN],
-      },
-      {
-        key: 'serviceCatalog',
-        label: 'menu.serviceCatalog',
-        icon: Folder,
-        path: '/admin/product/catalog',
         role: [Role.OPERATION, Role.ADMIN],
       },
       {

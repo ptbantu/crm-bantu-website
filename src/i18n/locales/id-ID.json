@@ -1653,7 +1653,8 @@
       "delete": "Lead berhasil dihapus",
       "assign": "Lead berhasil ditetapkan",
       "moveToPool": "Lead berhasil dipindahkan ke kolam publik",
-      "convert": "Lead berhasil dikonversi"
+      "convert": "Lead berhasil dikonversi",
+      "convertToOpportunity": "Lead berhasil dikonversi menjadi peluang"
     },
     "error": {
       "loadFailed": "Gagal memuat",
@@ -1668,7 +1669,10 @@
       "noUser": "Informasi pengguna tidak ditemukan",
       "loadUsersFailed": "Gagal memuat daftar pengguna",
       "selectUser": "Silakan pilih pengguna untuk ditransfer",
-      "statusTransitionInvalid": "Transisi status tidak valid"
+      "statusTransitionInvalid": "Transisi status tidak valid",
+      "leadNotFound": "Lead tidak ditemukan",
+      "opportunityNameRequired": "Nama peluang tidak boleh kosong",
+      "loadProductsFailed": "Gagal memuat daftar produk"
     },
     "transfer": {
       "title": "Transfer Lead",
@@ -1691,8 +1695,28 @@
       "converted": "Dikonversi",
       "conversionRate": "Tingkat Konversi",
       "new": "Lead Baru"
+    },
+    "convert": {
+      "title": "Konversi ke Peluang",
+      "name": "Nama Peluang",
+      "namePlaceholder": "Masukkan nama peluang",
+      "stage": "Tahap Peluang",
+      "stageInitialContact": "Kontak Awal",
+      "stageNeedsAnalysis": "Analisis Kebutuhan",
+      "stageProposal": "Proposal",
+      "stageNegotiation": "Negosiasi",
+      "stageClosedWon": "Menang",
+      "stageClosedLost": "Kalah",
+      "description": "Deskripsi",
+      "descriptionPlaceholder": "Masukkan deskripsi",
+      "products": "Produk Target",
+      "productsPlaceholder": "Pilih produk target (dapat memilih beberapa)",
+      "productsHint": "Tahan Ctrl (Windows) atau Cmd (Mac) untuk memilih beberapa",
+      "cancel": "Batal",
+      "submit": "Konfirmasi Konversi"
     }
   },
+  "statusRemark":{"converted":"sudah dikonversi","lost":"lead hilang"},
   "leadDetail": {
     "title": "Detail Lead",
     "loading": "Memuat...",

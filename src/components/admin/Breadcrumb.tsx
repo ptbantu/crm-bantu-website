@@ -47,7 +47,6 @@ export const Breadcrumb = () => {
     'product-service': 'menu.productService',
     'product-management': 'menu.productManagement',
     'management': 'menu.productManagement',
-    'service-catalog': 'menu.serviceCatalog',
     'vendor-management': 'menu.vendorManagement',
     'vendor-list': 'menu.vendorProductList',
     'category-management': 'menu.categoryManagement',
