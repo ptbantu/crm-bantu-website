@@ -21,7 +21,7 @@ spec:
     solvers:
     - http01:
         ingress:
-          class: nginx  # 使用 nginx ingress controller
+          class: traefik  # 使用 traefik ingress controller
 ---
 # Let's Encrypt 测试环境 ClusterIssuer（可选，用于测试）
 apiVersion: cert-manager.io/v1

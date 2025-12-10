@@ -7,11 +7,10 @@ metadata:
     app: crm-bantu-website
     environment: production
   annotations:
-    # 使用 cert-manager 自动管理 SSL 证书
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
     # Traefik Ingress Controller 配置
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
+    # 注意：证书由 certificate.yaml 手动管理，不使用 ingress-shim 自动创建
 spec:
   ingressClassName: traefik
   tls:
