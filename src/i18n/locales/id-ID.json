@@ -1220,6 +1220,7 @@
       "loadFollowUpsFailed": "Gagal memuat catatan tindak lanjut",
       "loadContactsFailed": "Gagal memuat spesialis pelanggan",
       "followUpDateRequired": "Tanggal tindak lanjut tidak boleh kosong",
+      "followUpContentRequired": "Konten tindak lanjut tidak boleh kosong",
       "createFollowUpFailed": "Gagal membuat catatan tindak lanjut",
       "contactNameRequired": "Nama tidak boleh kosong",
       "saveContactFailed": "Gagal menyimpan spesialis pelanggan",
@@ -1716,7 +1717,9 @@
       "submit": "Konfirmasi Konversi"
     }
   },
-  "statusRemark":{"converted":"sudah dikonversi","lost":"lead hilang"},
+  "statusRemark":{"converted":
+  "sudah dikonversi",
+  "lost":"lead hilang "},
   "leadDetail": {
     "title": "Detail Lead",
     "loading": "Memuat...",
@@ -1781,6 +1784,7 @@
       "loadNotesFailed": "Gagal memuat catatan",
       "nameRequired": "Nama lead tidak boleh kosong",
       "followUpDateRequired": "Tanggal tindak lanjut tidak boleh kosong",
+      "followUpContentRequired": "Konten tindak lanjut tidak boleh kosong",
       "noteContentRequired": "Konten catatan tidak boleh kosong",
       "selectUser": "Harap pilih pengguna",
       "updateFailed": "Gagal memperbarui",

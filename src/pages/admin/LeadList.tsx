@@ -426,6 +426,10 @@ const LeadList = () => {
       showError(t('leadDetail.error.followUpDateRequired'))
       return
     }
+    if (!followUpFormData.content || followUpFormData.content.trim() === '') {
+      showError(t('leadDetail.error.followUpContentRequired'))
+      return
+    }
 
     try {
       await createLeadFollowUp(followUpLeadId, {
@@ -1558,7 +1562,7 @@ const LeadList = () => {
                 />
               </FormControl>
 
-              <FormControl>
+              <FormControl isRequired>
                 <FormLabel>{t('leadDetail.followUpContent')}</FormLabel>
                 <Textarea
                   value={followUpFormData.content || ''}
@@ -1568,6 +1572,11 @@ const LeadList = () => {
                   placeholder={t('leadDetail.followUpContentPlaceholder')}
                   rows={4}
                 />
+                {!followUpFormData.content && (
+                  <Text fontSize="xs" color="red.500" mt={1}>
+                    {t('leadDetail.error.followUpContentRequired')}
+                  </Text>
+                )}
               </FormControl>
 
               <FormControl>

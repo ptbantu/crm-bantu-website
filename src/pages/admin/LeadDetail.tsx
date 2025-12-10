@@ -119,6 +119,9 @@ const LeadDetail = () => {
   // 分配表单
   const [assignUserId, setAssignUserId] = useState('')
 
+  // 提交状态
+  const [isSubmittingFollowUp, setIsSubmittingFollowUp] = useState(false)
+
   // 加载线索详情
   const loadLeadDetail = async () => {
     if (!id) return
@@ -311,12 +314,21 @@ const LeadDetail = () => {
   // 创建跟进记录
   const handleCreateFollowUp = async () => {
     if (!id) return
+    
+    // 验证跟进日期
     if (!followUpFormData.follow_up_date) {
       showError(t('leadDetail.error.followUpDateRequired'))
       return
     }
+    
+    // 验证跟进内容（不能为空或仅空格）
+    if (!followUpFormData.content || followUpFormData.content.trim() === '') {
+      showError(t('leadDetail.error.followUpContentRequired'))
+      return
+    }
 
     try {
+      setIsSubmittingFollowUp(true)
       await createLeadFollowUp(id, {
         ...followUpFormData,
         follow_up_date: new Date(followUpFormData.follow_up_date).toISOString(),
@@ -333,6 +345,8 @@ const LeadDetail = () => {
       loadLeadDetail() // 更新下次跟进时间
     } catch (error: any) {
       showError(error.message || t('leadDetail.error.createFollowUpFailed'))
+    } finally {
+      setIsSubmittingFollowUp(false)
     }
   }
 
@@ -1043,7 +1057,7 @@ const LeadDetail = () => {
                 />
               </FormControl>
 
-              <FormControl>
+              <FormControl isRequired>
                 <FormLabel>{t('leadDetail.followUpContent')}</FormLabel>
                 <Textarea
                   value={followUpFormData.content || ''}
@@ -1053,6 +1067,11 @@ const LeadDetail = () => {
                   placeholder={t('leadDetail.followUpContentPlaceholder')}
                   rows={4}
                 />
+                {!followUpFormData.content && (
+                  <Text fontSize="xs" color="red.500" mt={1}>
+                    {t('leadDetail.error.followUpContentRequired')}
+                  </Text>
+                )}
               </FormControl>
 
               <FormControl>
@@ -1084,10 +1103,15 @@ const LeadDetail = () => {
             </VStack>
           </DrawerBody>
           <DrawerFooter>
-            <Button variant="outline" mr={3} onClick={onFollowUpClose}>
+            <Button variant="outline" mr={3} onClick={onFollowUpClose} isDisabled={isSubmittingFollowUp}>
               {t('leadList.modal.cancel')}
             </Button>
-            <Button colorScheme="blue" onClick={handleCreateFollowUp}>
+            <Button 
+              colorScheme="blue" 
+              onClick={handleCreateFollowUp}
+              isDisabled={!followUpFormData.content || followUpFormData.content.trim() === '' || !followUpFormData.follow_up_date}
+              isLoading={isSubmittingFollowUp}
+            >
               {t('leadList.modal.submit')}
             </Button>
           </DrawerFooter>
