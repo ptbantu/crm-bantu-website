@@ -59,14 +59,19 @@ export async function getOpportunityList(
     ? `${API_PATHS.OPPORTUNITIES.BASE}?${queryString}`
     : API_PATHS.OPPORTUNITIES.BASE
 
-  const result = await get<{ items: Opportunity[]; total: number; page: number; size: number }>(url)
+  const result = await get<{ records?: Opportunity[]; items?: Opportunity[]; total: number; page?: number; current?: number; size: number; pages?: number }>(url)
   // 转换响应格式为统一的 PaginatedResponse
-  const data = result.data || { items: [], total: 0, page: 1, size: 20 }
+  // 支持两种格式：{ records, total, current, pages, size } 或 { items, total, page, size }
+  const data = result.data || { records: [], items: [], total: 0, page: 1, current: 1, size: 20, pages: 0 }
+  const records = data.records || data.items || []
+  const currentPage = data.current || data.page || 1
+  const totalPages = data.pages !== undefined ? data.pages : (data.total && data.size ? Math.ceil(data.total / data.size) : 0)
+  
   return {
-    records: data.items || [],
+    records,
     total: data.total || 0,
-    current: data.page || 1,
-    pages: data.total && data.size ? Math.ceil(data.total / data.size) : 0,
+    current: currentPage,
+    pages: totalPages,
     size: data.size || 20,
   }
 }

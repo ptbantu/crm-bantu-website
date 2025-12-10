@@ -1814,6 +1814,34 @@
     "subtitle": "管理和查看所有商机信息",
     "create": "新建商机",
     "empty": "该阶段暂无商机",
+    "viewScope": {
+      "my": "我的商机",
+      "all": "全部商机"
+    },
+    "viewMode": {
+      "board": "看板",
+      "list": "列表"
+    },
+    "list": {
+      "batchActions": "批量操作",
+      "batchUpdateOwner": "批量改负责人",
+      "batchUpdateDate": "批量改日期",
+      "selectAll": "全选",
+      "selectedCount": "已选择 {{count}} 项"
+    },
+    "board": {
+      "stats": {
+        "count": "数量",
+        "amount": "金额",
+        "weightedAmount": "加权金额"
+      }
+    },
+    "pagination": {
+      "showing": "显示第 {{from}} - {{to}} 条，共 {{total}} 条",
+      "page": "第 {{current}} / {{total}} 页",
+      "previous": "上一页",
+      "next": "下一页"
+    },
     "search": {
       "name": "商机名称",
       "owner": "负责人",
@@ -1882,14 +1910,17 @@
       "update": "商机更新成功",
       "delete": "商机删除成功",
       "assign": "商机分配成功",
-      "stageUpdated": "阶段更新成功"
+      "stageUpdated": "阶段更新成功",
+      "batchUpdate": "批量更新成功"
     },
     "error": {
       "loadFailed": "加载失败",
       "deleteFailed": "删除失败",
       "nameRequired": "商机名称不能为空",
       "submitFailed": "提交失败",
-      "stageUpdateFailed": "阶段更新失败"
+      "stageUpdateFailed": "阶段更新失败",
+      "noSelection": "请先选择要操作的商机",
+      "batchUpdateFailed": "批量更新失败"
     },
     "statistics": {
       "total": "总商机数",
