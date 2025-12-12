@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-需要        // 保留原有primary色系（向后兼容）
+        // 保留原有primary色系（向后兼容）
         primary: {
           50: '#E6F7FF',
           100: '#BAE7FF',
