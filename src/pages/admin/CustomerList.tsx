@@ -42,7 +42,6 @@ import {
   IconButton,
   Card,
   CardBody,
-  useColorModeValue,
 } from '@chakra-ui/react'
 
 const CustomerList = () => {
@@ -51,10 +50,10 @@ const CustomerList = () => {
   const { showSuccess, showError } = useToast()
   const { user } = useAuth()
   
-  // Chakra UI 颜色模式
-  const bgColor = useColorModeValue('white', 'gray.800')
-  const borderColor = useColorModeValue('gray.200', 'gray.700')
-  const hoverBg = useColorModeValue('gray.50', 'gray.700')
+  // 阿里云ECS风格颜色（移除useColorModeValue）
+  const bgColor = 'white'
+  const borderColor = 'var(--ali-border)'
+  const hoverBg = 'var(--ali-primary-light)'
 
   // 视图类型：'my' 表示"我的客户"，'global' 表示"全局客户"（仅管理员）
   const [viewType, setViewType] = useState<'my' | 'global'>('my')
@@ -443,18 +442,18 @@ const CustomerList = () => {
 
       {/* 统计卡片已移除 */}
 
-      {/* 查询表单 */}
-      <Card mb={4} bg={bgColor} borderColor={borderColor}>
-        <CardBody>
+      {/* 查询表单 - 阿里云ECS风格 */}
+      <Card mb={4} variant="elevated">
+        <CardBody p={4}>
           <HStack spacing={3} align="flex-end" flexWrap="wrap">
-            {/* 客户名称 */}
+            {/* 客户名称 - 阿里云ECS风格 */}
             <Box flex={1} minW="150px">
-              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+              <Text fontSize="12px" fontWeight="normal" mb={1} color="var(--ali-text-secondary)" textAlign="right">
                 {t('customerList.search.name')}
               </Text>
-              <InputGroup size="sm">
+              <InputGroup size="md">
                 <InputLeftElement pointerEvents="none">
-                  <Users size={14} color="gray" />
+                  <Users size={14} color="var(--ali-text-secondary)" />
                 </InputLeftElement>
                 <Input
                   value={formData.name}
@@ -465,14 +464,14 @@ const CustomerList = () => {
               </InputGroup>
             </Box>
 
-            {/* 客户编码 */}
+            {/* 客户编码 - 阿里云ECS风格 */}
             <Box flex={1} minW="150px">
-              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+              <Text fontSize="12px" fontWeight="normal" mb={1} color="var(--ali-text-secondary)" textAlign="right">
                 {t('customerList.search.code')}
               </Text>
-              <InputGroup size="sm">
+              <InputGroup size="md">
                 <InputLeftElement pointerEvents="none">
-                  <Tag size={14} color="gray" />
+                  <Tag size={14} color="var(--ali-text-secondary)" />
                 </InputLeftElement>
                 <Input
                   value={formData.code}
@@ -483,13 +482,13 @@ const CustomerList = () => {
               </InputGroup>
             </Box>
 
-            {/* 客户类型 */}
+            {/* 客户类型 - 阿里云ECS风格 */}
             <Box flex={1} minW="120px">
-              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+              <Text fontSize="12px" fontWeight="normal" mb={1} color="var(--ali-text-secondary)" textAlign="right">
                 {t('customerList.search.customerType')}
               </Text>
               <Select
-                size="sm"
+                size="md"
                 value={formData.customer_type}
                 onChange={(e) => setFormData({ ...formData, customer_type: e.target.value as '' | 'individual' | 'organization' })}
               >
@@ -499,13 +498,13 @@ const CustomerList = () => {
               </Select>
             </Box>
 
-            {/* 客户来源 */}
+            {/* 客户来源 - 阿里云ECS风格 */}
             <Box flex={1} minW="120px">
-              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+              <Text fontSize="12px" fontWeight="normal" mb={1} color="var(--ali-text-secondary)" textAlign="right">
                 {t('customerList.search.source')}
               </Text>
               <Select
-                size="sm"
+                size="md"
                 value={formData.source_id}
                 onChange={(e) => setFormData({ ...formData, source_id: e.target.value })}
               >
@@ -524,13 +523,13 @@ const CustomerList = () => {
               </Select>
             </Box>
 
-            {/* 锁定状态 */}
+            {/* 锁定状态 - 阿里云ECS风格 */}
             <Box flex={1} minW="120px">
-              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+              <Text fontSize="12px" fontWeight="normal" mb={1} color="var(--ali-text-secondary)" textAlign="right">
                 {t('customerList.search.locked')}
               </Text>
               <Select
-                size="sm"
+                size="md"
                 value={formData.is_locked}
                 onChange={(e) => setFormData({ ...formData, is_locked: e.target.value as '' | 'true' | 'false' })}
               >
@@ -540,18 +539,17 @@ const CustomerList = () => {
               </Select>
             </Box>
 
-            {/* 操作按钮 */}
+            {/* 操作按钮 - 阿里云ECS风格 */}
             <HStack spacing={2}>
               <Button
-                size="sm"
+                size="md"
                 variant="outline"
                 onClick={handleReset}
               >
                 {t('customerList.search.reset')}
               </Button>
               <Button
-                size="sm"
-                colorScheme="blue"
+                size="md"
                 leftIcon={<Search size={14} />}
                 onClick={handleSearch}
                 isLoading={loading}
@@ -563,59 +561,36 @@ const CustomerList = () => {
         </CardBody>
       </Card>
 
-      {/* 操作栏 */}
+      {/* 操作栏 - 阿里云ECS风格 */}
       <Flex justify="space-between" align="center" mb={4}>
         <HStack spacing={2}>
           {/* 视图切换 */}
           <HStack spacing={2}>
-            <Box
-              as="button"
-              px={4}
-              py={2}
-              fontSize="sm"
-              fontWeight={viewType === 'my' ? 'semibold' : 'normal'}
-              color={viewType === 'my' ? 'teal.600' : 'gray.600'}
-              bg={viewType === 'my' ? 'teal.50' : 'transparent'}
-              border="1px solid"
-              borderColor={viewType === 'my' ? 'teal.200' : 'gray.200'}
-              borderRadius="md"
-              cursor="pointer"
-              _hover={{
-                bg: viewType === 'my' ? 'teal.100' : 'gray.50',
-              }}
+            <Button
+              size="sm"
+              variant={viewType === 'my' ? 'solid' : 'outline'}
+              colorScheme={viewType === 'my' ? 'primary' : 'gray'}
               onClick={() => handleViewTypeChange('my')}
             >
               {t('customerList.view.myCustomers')}
-            </Box>
+            </Button>
             {isAdmin(user?.roles || []) && (
-              <Box
-                as="button"
-                px={4}
-                py={2}
-                fontSize="sm"
-                fontWeight={viewType === 'global' ? 'semibold' : 'normal'}
-                color={viewType === 'global' ? 'teal.600' : 'gray.600'}
-                bg={viewType === 'global' ? 'teal.50' : 'transparent'}
-                border="1px solid"
-                borderColor={viewType === 'global' ? 'teal.200' : 'gray.200'}
-                borderRadius="md"
-                cursor="pointer"
-                _hover={{
-                  bg: viewType === 'global' ? 'teal.100' : 'gray.50',
-                }}
+              <Button
+                size="sm"
+                variant={viewType === 'global' ? 'solid' : 'outline'}
+                colorScheme={viewType === 'global' ? 'primary' : 'gray'}
                 onClick={() => handleViewTypeChange('global')}
               >
                 {t('customerList.view.globalCustomers')}
-              </Box>
+              </Button>
             )}
           </HStack>
-          <Text fontSize="sm" color="gray.600" fontWeight="medium">
+          <Text fontSize="14px" color="var(--ali-text-secondary)" fontWeight="500">
             {t('customerList.total', { total })}
           </Text>
         </HStack>
         <Button
-          size="sm"
-          colorScheme="blue"
+          size="md"
           leftIcon={<Plus size={16} />}
           onClick={handleCreate}
         >
@@ -623,50 +598,56 @@ const CustomerList = () => {
         </Button>
       </Flex>
 
-      {/* 客户列表 */}
+      {/* 客户列表 - 阿里云ECS风格 */}
       {loading ? (
-        <Card bg={bgColor} borderColor={borderColor}>
+        <Card variant="elevated">
           <CardBody>
             <Flex justify="center" align="center" py={8}>
-              <Spinner size="lg" color="blue.500" />
-              <Text ml={4} color="gray.500">{t('customerList.loading')}</Text>
+              <Spinner size="lg" color="var(--ali-primary)" />
+              <Text ml={4} color="var(--ali-text-secondary)">{t('customerList.loading')}</Text>
             </Flex>
           </CardBody>
         </Card>
       ) : customers.length === 0 ? (
-        <Card bg={bgColor} borderColor={borderColor}>
+        <Card variant="elevated">
           <CardBody>
             <VStack py={8} spacing={3}>
-              <Users size={48} color="gray" />
-              <Text color="gray.500">{t('customerList.noData')}</Text>
+              <Users size={48} color="var(--ali-text-secondary)" />
+              <Text color="var(--ali-text-secondary)">{t('customerList.noData')}</Text>
             </VStack>
           </CardBody>
         </Card>
       ) : (
-        <Card bg={bgColor} borderColor={borderColor} overflow="hidden">
+        <Card variant="elevated" overflow="hidden">
           <Box overflowX="auto">
             <Table variant="simple" size="sm">
-              <Thead bg="gray.50">
+              <Thead>
                 <Tr>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.name')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.code')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.type')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.sourceType')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.sourceName')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.ownerUserName')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.level')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.industry')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.status')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.createdAt')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('customerList.table.actions')}</Th>
+                  <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('customerList.table.name')}</Th>
+                  <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('customerList.table.code')}</Th>
+                  <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('customerList.table.type')}</Th>
+                  <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('customerList.table.sourceType')}</Th>
+                  <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('customerList.table.sourceName')}</Th>
+                  <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('customerList.table.ownerUserName')}</Th>
+                  <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('customerList.table.level')}</Th>
+                  <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('customerList.table.industry')}</Th>
+                  <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('customerList.table.status')}</Th>
+                  <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('customerList.table.createdAt')}</Th>
+                  <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('customerList.table.actions')}</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {customers.map((customer) => (
-                  <Tr key={customer.id} _hover={{ bg: hoverBg }} transition="background-color 0.2s">
-                    <Td fontSize="sm" color="gray.900">{customer.name}</Td>
-                    <Td fontSize="sm" color="gray.600">{customer.code || '-'}</Td>
-                    <Td fontSize="sm" color="gray.600">
+                {customers.map((customer, index) => (
+                  <Tr 
+                    key={customer.id} 
+                    h="52px"
+                    bg={index % 2 === 0 ? 'var(--ali-bg-light)' : 'white'}
+                    _hover={{ bg: hoverBg }} 
+                    transition="background-color 0.2s"
+                  >
+                    <Td fontSize="14px" color="var(--ali-text-primary)" fontWeight="500" py={4}>{customer.name}</Td>
+                    <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>{customer.code || '-'}</Td>
+                    <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>
                       <HStack spacing={1}>
                         {customer.customer_type === 'organization' ? (
                           <>
@@ -681,55 +662,55 @@ const CustomerList = () => {
                         )}
                       </HStack>
                     </Td>
-                    <Td fontSize="sm" color="gray.600">
+                    <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>
                       {customer.customer_source_type === 'own' ? t('customerList.table.own') : t('customerList.table.agent')}
                     </Td>
-                    <Td fontSize="sm" color="gray.600">{customer.source_name || '-'}</Td>
-                    <Td fontSize="sm" color="gray.600">{customer.owner_user_name || '-'}</Td>
-                    <Td fontSize="sm" color="gray.600">
+                    <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>{customer.source_name || '-'}</Td>
+                    <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>{customer.owner_user_name || '-'}</Td>
+                    <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>
                       {i18n.language.startsWith('zh') 
                         ? (customer.level_name_zh || customer.level_name_id || customer.level || '-')
                         : (customer.level_name_id || customer.level_name_zh || customer.level || '-')}
                     </Td>
-                    <Td fontSize="sm" color="gray.600">
+                    <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>
                       {i18n.language.startsWith('zh') 
                         ? (customer.industry_name_zh || customer.industry_name_id || '-')
                         : (customer.industry_name_id || customer.industry_name_zh || '-')}
                     </Td>
-                    <Td fontSize="sm">
+                    <Td fontSize="14px" py={4}>
                       {customer.is_locked ? (
-                        <Badge colorScheme="red" fontSize="xs">
+                        <Badge bg="var(--ali-error)" color="white" fontSize="12px">
                           {t('customerList.table.locked')}
                         </Badge>
                       ) : (
-                        <Badge colorScheme="green" fontSize="xs">
+                        <Badge bg="var(--ali-success)" color="white" fontSize="12px">
                           {t('customerList.table.active')}
                         </Badge>
                       )}
                     </Td>
-                    <Td fontSize="sm" color="gray.600">{formatDateTime(customer.created_at)}</Td>
-                    <Td fontSize="sm">
+                    <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>{formatDateTime(customer.created_at)}</Td>
+                    <Td fontSize="14px" py={4}>
                       <HStack spacing={2}>
                         <Button
                           size="xs"
-                          variant="ghost"
-                          colorScheme="blue"
+                          variant="link"
+                          color="var(--ali-primary)"
                           onClick={() => handleViewDetail(customer.id)}
                         >
                           {t('customerList.actions.view')}
                         </Button>
                         <Button
                           size="xs"
-                          variant="ghost"
-                          colorScheme="blue"
+                          variant="link"
+                          color="var(--ali-primary)"
                           onClick={() => handleEdit(customer)}
                         >
                           {t('customerList.actions.edit')}
                         </Button>
                         <Button
                           size="xs"
-                          variant="ghost"
-                          colorScheme="green"
+                          variant="link"
+                          color="var(--ali-primary)"
                           onClick={() => handleFollowUp(customer.id)}
                         >
                           {t('customerList.actions.followUp')}
@@ -744,17 +725,17 @@ const CustomerList = () => {
         </Card>
       )}
 
-      {/* 分页 */}
+      {/* 分页 - 阿里云ECS风格 */}
       {pages > 1 && (
-        <Card mt={4} bg={bgColor} borderColor={borderColor}>
-          <CardBody py={2}>
+        <Card mt={4} variant="elevated">
+          <CardBody py={3} px={4}>
             <Flex justify="space-between" align="center">
-              <Text fontSize="xs" color="gray.600">
+              <Text fontSize="12px" color="var(--ali-text-secondary)">
                 {t('customerList.pagination.info', { current: currentPage, total: pages, size: queryParams.size || 20 })}
               </Text>
               <HStack spacing={1}>
                 <Button
-                  size="xs"
+                  size="sm"
                   variant="outline"
                   onClick={() => handlePageChange(currentPage - 1)}
                   isDisabled={currentPage === 1}
@@ -775,9 +756,9 @@ const CustomerList = () => {
                   return (
                     <Button
                       key={pageNum}
-                      size="xs"
+                      size="sm"
                       variant={currentPage === pageNum ? 'solid' : 'outline'}
-                      colorScheme={currentPage === pageNum ? 'blue' : 'gray'}
+                      colorScheme={currentPage === pageNum ? 'primary' : 'gray'}
                       onClick={() => handlePageChange(pageNum)}
                     >
                       {pageNum}
@@ -785,7 +766,7 @@ const CustomerList = () => {
                   )
                 })}
                 <Button
-                  size="xs"
+                  size="sm"
                   variant="outline"
                   onClick={() => handlePageChange(currentPage + 1)}
                   isDisabled={currentPage === pages}

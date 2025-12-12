@@ -271,7 +271,8 @@
       "revenue": "总收入",
       "growth": "增长率",
       "services": "服务数量",
-      "vendors": "供应商数"
+      "vendors": "供应商数",
+      "vsLastMonth": "较上月"
     },
     "revenueTrend": {
       "title": "收入趋势（最近7天）"

@@ -119,13 +119,13 @@ const AdminLayoutContent = ({ children }: AdminLayoutContentProps) => {
   }, [location.pathname])
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-[var(--ali-bg-gray)] overflow-hidden">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden min-w-0 w-full">
         <TopBar />
         <Tabs />
         <div className="flex-1 overflow-y-auto overflow-x-hidden w-full">
-          <div className="w-full px-2 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 max-w-full box-border">
+          <div className="w-full px-4 py-4 max-w-full box-border">
             <Breadcrumb />
             {children}
           </div>

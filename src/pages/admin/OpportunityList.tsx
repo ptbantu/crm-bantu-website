@@ -39,7 +39,6 @@ import {
   Text,
   Badge,
   IconButton,
-  useColorModeValue,
   Drawer,
   DrawerBody,
   DrawerFooter,
@@ -95,10 +94,11 @@ const OpportunityList = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { user, roles } = useAuth()
   
-  // Chakra UI 颜色模式
-  const bgColor = useColorModeValue('white', 'gray.800')
-  const borderColor = useColorModeValue('gray.200', 'gray.700')
-  const columnBg = useColorModeValue('gray.50', 'gray.700')
+  // 阿里云ECS风格颜色（移除useColorModeValue）
+  const bgColor = 'white'
+  const borderColor = 'var(--ali-border)'
+  const columnBg = 'var(--ali-bg-light)'
+  const hoverBg = 'var(--ali-primary-light)'
 
   // 视图范围：我的商机 / 全部商机
   // 根据角色设置默认值：普通销售默认"我的商机"，管理员默认"全部商机"
@@ -647,20 +647,19 @@ const OpportunityList = () => {
             
             {/* 列表 ↔ 看板切换按钮 */}
             <Button
-              colorScheme={viewMode === 'board' ? 'blue' : 'gray'}
               variant={viewMode === 'board' ? 'solid' : 'outline'}
+              colorScheme={viewMode === 'board' ? 'primary' : 'gray'}
               leftIcon={viewMode === 'board' ? <LayoutGrid size={16} /> : <List size={16} />}
               onClick={() => handleViewModeChange(viewMode === 'board' ? 'list' : 'board')}
-              size="sm"
+              size="md"
             >
               {viewMode === 'board' ? t('opportunityList.viewMode.board') : t('opportunityList.viewMode.list')}
             </Button>
             
             <Button
-              colorScheme="primary"
               leftIcon={<Plus size={16} />}
               onClick={handleCreate}
-              size="sm"
+              size="md"
             >
               {t('opportunityList.create')}
             </Button>
@@ -668,67 +667,67 @@ const OpportunityList = () => {
         }
       />
 
-      {/* 统计卡片 */}
+      {/* 统计卡片 - 阿里云ECS风格 */}
       <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={3} mb={4}>
-        <Card bg="blue.50" borderColor="blue.200" borderWidth={1}>
-          <CardBody>
+        <Card variant="elevated">
+          <CardBody p={4}>
             <Stat>
-              <StatLabel fontSize="xs" fontWeight="semibold" color="blue.700">
+              <StatLabel fontSize="12px" fontWeight="500" color="var(--ali-text-secondary)">
                 {t('opportunityList.statistics.total')}
               </StatLabel>
-              <StatNumber fontSize="2xl" fontWeight="bold" color="blue.900">
+              <StatNumber fontSize="20px" fontWeight="600" color="var(--ali-text-primary)">
                 {loading ? <Spinner size="sm" /> : statistics.total}
               </StatNumber>
             </Stat>
           </CardBody>
         </Card>
 
-        <Card bg="green.50" borderColor="green.200" borderWidth={1}>
-          <CardBody>
+        <Card variant="elevated">
+          <CardBody p={4}>
             <Stat>
-              <StatLabel fontSize="xs" fontWeight="semibold" color="green.700">
+              <StatLabel fontSize="12px" fontWeight="500" color="var(--ali-text-secondary)">
                 {t('opportunityList.statistics.won')}
               </StatLabel>
-              <StatNumber fontSize="2xl" fontWeight="bold" color="green.900">
+              <StatNumber fontSize="20px" fontWeight="600" color="var(--ali-success)">
                 {loading ? <Spinner size="sm" /> : statistics.wonCount}
               </StatNumber>
             </Stat>
           </CardBody>
         </Card>
 
-        <Card bg="red.50" borderColor="red.200" borderWidth={1}>
-          <CardBody>
+        <Card variant="elevated">
+          <CardBody p={4}>
             <Stat>
-              <StatLabel fontSize="xs" fontWeight="semibold" color="red.700">
+              <StatLabel fontSize="12px" fontWeight="500" color="var(--ali-text-secondary)">
                 {t('opportunityList.statistics.lost')}
               </StatLabel>
-              <StatNumber fontSize="2xl" fontWeight="bold" color="red.900">
+              <StatNumber fontSize="20px" fontWeight="600" color="var(--ali-error)">
                 {loading ? <Spinner size="sm" /> : statistics.lostCount}
               </StatNumber>
             </Stat>
           </CardBody>
         </Card>
 
-        <Card bg="orange.50" borderColor="orange.200" borderWidth={1}>
-          <CardBody>
+        <Card variant="elevated">
+          <CardBody p={4}>
             <Stat>
-              <StatLabel fontSize="xs" fontWeight="semibold" color="orange.700">
+              <StatLabel fontSize="12px" fontWeight="500" color="var(--ali-text-secondary)">
                 {t('opportunityList.statistics.totalAmount')}
               </StatLabel>
-              <StatNumber fontSize="2xl" fontWeight="bold" color="orange.900">
+              <StatNumber fontSize="20px" fontWeight="600" color="var(--ali-text-primary)">
                 {loading ? <Spinner size="sm" /> : formatAmount(statistics.totalAmount)}
               </StatNumber>
             </Stat>
           </CardBody>
         </Card>
 
-        <Card bg="purple.50" borderColor="purple.200" borderWidth={1}>
-          <CardBody>
+        <Card variant="elevated">
+          <CardBody p={4}>
             <Stat>
-              <StatLabel fontSize="xs" fontWeight="semibold" color="purple.700">
+              <StatLabel fontSize="12px" fontWeight="500" color="var(--ali-text-secondary)">
                 {t('opportunityList.statistics.conversionRate')}
               </StatLabel>
-              <StatNumber fontSize="2xl" fontWeight="bold" color="purple.900">
+              <StatNumber fontSize="20px" fontWeight="600" color="var(--ali-text-primary)">
                 {loading ? <Spinner size="sm" /> : statistics.total > 0 
                   ? `${((statistics.wonCount / statistics.total) * 100).toFixed(1)}%`
                   : '0%'}
@@ -738,13 +737,13 @@ const OpportunityList = () => {
         </Card>
       </SimpleGrid>
 
-      {/* 搜索栏 */}
-      <Card mb={4}>
-        <CardBody>
+      {/* 搜索栏 - 阿里云ECS风格 */}
+      <Card mb={4} variant="elevated">
+        <CardBody p={4}>
           <HStack spacing={4} flexWrap="wrap">
-            <InputGroup flex="1" minW="200px">
+            <InputGroup flex="1" minW="200px" size="md">
               <InputLeftElement pointerEvents="none">
-                <Search size={16} />
+                <Search size={16} color="var(--ali-text-secondary)" />
               </InputLeftElement>
               <Input
                 placeholder={t('opportunityList.search.name')}
@@ -764,6 +763,7 @@ const OpportunityList = () => {
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, owner_user_id: e.target.value })}
               flex="1"
               minW="150px"
+              size="md"
             >
               {users.map((user: UserListItem) => (
                 <option key={user.id} value={user.id}>
@@ -778,6 +778,7 @@ const OpportunityList = () => {
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, customer_id: e.target.value })}
               flex="1"
               minW="150px"
+              size="md"
             >
               {customers.map((customer: Customer) => (
                 <option key={customer.id} value={customer.id}>
@@ -793,6 +794,7 @@ const OpportunityList = () => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, min_amount: e.target.value })}
               flex="1"
               minW="120px"
+              size="md"
             />
 
             <Input
@@ -802,9 +804,10 @@ const OpportunityList = () => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, max_amount: e.target.value })}
               flex="1"
               minW="120px"
+              size="md"
             />
 
-            <Button colorScheme="blue" onClick={handleSearch} leftIcon={<Search size={16} />}>
+            <Button onClick={handleSearch} leftIcon={<Search size={16} />} size="md">
               {t('common.search')}
             </Button>
           </HStack>
@@ -817,34 +820,32 @@ const OpportunityList = () => {
           <Spinner size="xl" />
         </Flex>
       ) : viewMode === 'list' ? (
-        /* 列表视图 */
-        <Card>
-          <CardBody>
+        /* 列表视图 - 阿里云ECS风格 */
+        <Card variant="elevated">
+          <CardBody p={4}>
             {/* 批量操作栏 */}
             {selectedOpportunities.length > 0 && (
-              <Box mb={4} p={3} bg={useColorModeValue('blue.50', 'blue.900')} borderRadius="md">
+              <Box mb={4} p={3} bg="var(--ali-primary-light)" borderRadius="4px">
                 <HStack spacing={3}>
                   <Text fontSize="sm" fontWeight="semibold">
                     {t('opportunityList.list.selectedCount', { count: selectedOpportunities.length })}
                   </Text>
                   <Button
-                    size="sm"
-                    colorScheme="blue"
+                    size="md"
                     variant="outline"
                     onClick={() => handleBatchAction('owner')}
                   >
                     {t('opportunityList.list.batchUpdateOwner')}
                   </Button>
                   <Button
-                    size="sm"
-                    colorScheme="blue"
+                    size="md"
                     variant="outline"
                     onClick={() => handleBatchAction('date')}
                   >
                     {t('opportunityList.list.batchUpdateDate')}
                   </Button>
                   <Button
-                    size="sm"
+                    size="md"
                     variant="ghost"
                     onClick={() => setSelectedOpportunities([])}
                   >
@@ -858,86 +859,95 @@ const OpportunityList = () => {
               <Table variant="simple" size="sm">
                 <Thead>
                   <Tr>
-                    <Th w="50px">
+                    <Th w="50px" fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>
                       <Checkbox
                         isChecked={selectedOpportunities.length > 0 && selectedOpportunities.length === opportunities.length}
                         isIndeterminate={selectedOpportunities.length > 0 && selectedOpportunities.length < opportunities.length}
                         onChange={(e) => handleSelectAll(e.target.checked)}
                       />
                     </Th>
-                    <Th>{t('opportunityList.table.name')}</Th>
-                    <Th>{t('opportunityList.table.customer')}</Th>
-                    <Th>{t('opportunityList.table.amount')}</Th>
-                    <Th>{t('opportunityList.table.stage')}</Th>
-                    <Th>{t('opportunityList.table.owner')}</Th>
-                    <Th>{t('opportunityList.table.expectedCloseDate')}</Th>
-                    <Th>{t('opportunityList.table.actions')}</Th>
+                    <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('opportunityList.table.name')}</Th>
+                    <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('opportunityList.table.customer')}</Th>
+                    <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('opportunityList.table.amount')}</Th>
+                    <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('opportunityList.table.stage')}</Th>
+                    <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('opportunityList.table.owner')}</Th>
+                    <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('opportunityList.table.expectedCloseDate')}</Th>
+                    <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('opportunityList.table.actions')}</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
                   {opportunities.length === 0 ? (
                     <Tr>
-                      <Td colSpan={8} textAlign="center" py={8} color="gray.500">
+                      <Td colSpan={8} textAlign="center" py={8} color="var(--ali-text-secondary)">
                         {t('opportunityList.empty')}
                       </Td>
                     </Tr>
                   ) : (
-                    opportunities.map((opportunity) => {
+                    opportunities.map((opportunity, index) => {
                       const stageConfig = OPPORTUNITY_STAGES.find(s => s.value === opportunity.stage)
                       const isSelected = selectedOpportunities.includes(opportunity.id)
                       return (
-                        <Tr key={opportunity.id} _hover={{ bg: useColorModeValue('gray.50', 'gray.700') }}>
-                          <Td>
+                        <Tr 
+                          key={opportunity.id} 
+                          h="52px"
+                          bg={index % 2 === 0 ? 'var(--ali-bg-light)' : 'white'}
+                          _hover={{ bg: hoverBg }}
+                        >
+                          <Td py={4}>
                             <Checkbox
                               isChecked={isSelected}
                               onChange={(e) => handleSelectOne(opportunity.id, e.target.checked)}
                             />
                           </Td>
-                          <Td>
+                          <Td py={4}>
                             <Text
-                              fontWeight="semibold"
+                              fontWeight="500"
+                              fontSize="14px"
                               cursor="pointer"
                               onClick={() => navigate(`/admin/opportunities/detail/${opportunity.id}`)}
-                              _hover={{ color: 'blue.500' }}
+                              color="var(--ali-text-primary)"
+                              _hover={{ color: 'var(--ali-primary)' }}
                             >
                               {opportunity.name}
                             </Text>
                           </Td>
-                          <Td>{opportunity.customer_name || '-'}</Td>
-                          <Td>{formatAmount(opportunity.amount)}</Td>
-                          <Td>
-                            <Badge colorScheme={stageConfig?.color || 'gray'}>
+                          <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>{opportunity.customer_name || '-'}</Td>
+                          <Td fontSize="14px" color="var(--ali-text-primary)" fontWeight="500" py={4}>{formatAmount(opportunity.amount)}</Td>
+                          <Td py={4}>
+                            <Badge bg="var(--ali-primary)" color="white" fontSize="12px">
                               {stageConfig?.label || opportunity.stage}
                             </Badge>
                           </Td>
-                          <Td>{opportunity.owner_username || '-'}</Td>
-                          <Td>
+                          <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>{opportunity.owner_username || '-'}</Td>
+                          <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>
                             {opportunity.expected_close_date
                               ? new Date(opportunity.expected_close_date).toLocaleDateString()
                               : '-'}
                           </Td>
-                          <Td>
+                          <Td py={4}>
                             <HStack spacing={1}>
                               <IconButton
                                 aria-label={t('common.view')}
                                 icon={<Eye size={14} />}
-                                size="xs"
+                                size="sm"
                                 variant="ghost"
+                                color="var(--ali-primary)"
                                 onClick={() => navigate(`/admin/opportunities/detail/${opportunity.id}`)}
                               />
                               <IconButton
                                 aria-label={t('common.edit')}
                                 icon={<Edit size={14} />}
-                                size="xs"
+                                size="sm"
                                 variant="ghost"
+                                color="var(--ali-primary)"
                                 onClick={() => handleEdit(opportunity)}
                               />
                               <IconButton
                                 aria-label={t('common.delete')}
                                 icon={<Trash2 size={14} />}
-                                size="xs"
+                                size="sm"
                                 variant="ghost"
-                                colorScheme="red"
+                                color="var(--ali-error)"
                                 onClick={() => handleDelete(opportunity)}
                               />
                             </HStack>
@@ -1000,10 +1010,10 @@ const OpportunityList = () => {
               height: '8px',
             },
             '&::-webkit-scrollbar-track': {
-              background: useColorModeValue('gray.100', 'gray.800'),
+              background: 'var(--ali-bg-gray)',
             },
             '&::-webkit-scrollbar-thumb': {
-              background: useColorModeValue('gray.400', 'gray.600'),
+              background: 'var(--ali-border-dark)',
               borderRadius: '4px',
             },
           }}
@@ -1018,7 +1028,7 @@ const OpportunityList = () => {
                   key={stageConfig.value}
                   minW="280px"
                   w="280px"
-                  bg={isDragOver ? useColorModeValue('blue.50', 'blue.900') : columnBg}
+                  bg={isDragOver ? 'var(--ali-primary-light)' : columnBg}
                   borderRadius="lg"
                   borderWidth="2px"
                   borderColor={isDragOver ? 'blue.300' : borderColor}
@@ -1028,7 +1038,7 @@ const OpportunityList = () => {
                   {/* 阶段标题和统计信息 */}
                   <Box
                     p={3}
-                    bg={useColorModeValue(`${stageConfig.color}.100`, `${stageConfig.color}.800`)}
+                    bg="var(--ali-bg-light)"
                     borderTopRadius="lg"
                     borderBottomWidth="1px"
                     borderBottomColor={borderColor}
@@ -1036,7 +1046,7 @@ const OpportunityList = () => {
                     <VStack align="stretch" spacing={2}>
                       <Flex justify="space-between" align="center">
                         <HStack spacing={2}>
-                          <Text fontWeight="bold" fontSize="sm" color={useColorModeValue(`${stageConfig.color}.800`, `${stageConfig.color}.200`)}>
+                          <Text fontWeight="bold" fontSize="14px" color="var(--ali-text-primary)">
                             {stageConfig.label}
                           </Text>
                           <Badge colorScheme={stageConfig.color} borderRadius="full">
@@ -1051,18 +1061,18 @@ const OpportunityList = () => {
                         return (
                           <VStack align="stretch" spacing={1} fontSize="xs">
                             <HStack justify="space-between">
-                              <Text color={useColorModeValue('gray.600', 'gray.300')}>
+                              <Text color="var(--ali-text-secondary)" fontSize="12px">
                                 {t('opportunityList.board.stats.amount')}:
                               </Text>
-                              <Text fontWeight="semibold" color={useColorModeValue('gray.800', 'gray.100')}>
+                              <Text fontWeight="semibold" color="var(--ali-text-primary)" fontSize="12px">
                                 {formatAmount(stats.totalAmount)}
                               </Text>
                             </HStack>
                             <HStack justify="space-between">
-                              <Text color={useColorModeValue('gray.600', 'gray.300')}>
+                              <Text color="var(--ali-text-secondary)" fontSize="12px">
                                 {t('opportunityList.board.stats.weightedAmount')}:
                               </Text>
-                              <Text fontWeight="bold" color={useColorModeValue('green.700', 'green.300')}>
+                              <Text fontWeight="bold" color="var(--ali-success)" fontSize="12px">
                                 {formatAmount(stats.weightedAmount)}
                               </Text>
                             </HStack>
@@ -1090,11 +1100,9 @@ const OpportunityList = () => {
                           onDragStart={(e: React.DragEvent) => handleDragStart(e, opportunity)}
                           onDragEnd={handleDragEnd}
                           cursor="move"
-                          bg={bgColor}
-                          borderWidth="1px"
-                          borderColor={borderColor}
+                          variant="elevated"
                           _hover={{
-                            boxShadow: 'md',
+                            boxShadow: 'var(--ali-card-shadow-hover)',
                             transform: 'translateY(-2px)',
                           }}
                           transition="all 0.2s"
@@ -1110,7 +1118,7 @@ const OpportunityList = () => {
                                   noOfLines={2}
                                   cursor="pointer"
                                   onClick={() => navigate(`/admin/opportunities/detail/${opportunity.id}`)}
-                                  _hover={{ color: 'blue.500' }}
+                                  _hover={{ color: 'var(--ali-primary)' }}
                                 >
                                   {opportunity.name}
                                 </Text>
@@ -1143,8 +1151,8 @@ const OpportunityList = () => {
                               {/* 客户信息 */}
                               {opportunity.customer_name && (
                                 <HStack spacing={1}>
-                                  <Box as={User} size={12} color="gray.500" />
-                                  <Text fontSize="xs" color="gray.600" noOfLines={1}>
+                                  <Box as={User} size={12} color="var(--ali-text-secondary)" />
+                                  <Text fontSize="12px" color="var(--ali-text-secondary)" noOfLines={1}>
                                     {opportunity.customer_name}
                                   </Text>
                                 </HStack>
@@ -1153,8 +1161,8 @@ const OpportunityList = () => {
                               {/* 金额 */}
                               {opportunity.amount && (
                                 <HStack spacing={1}>
-                                  <Box as={DollarSign} size={12} color="green.500" />
-                                  <Text fontSize="sm" fontWeight="bold" color="green.600">
+                                  <Box as={DollarSign} size={12} color="var(--ali-success)" />
+                                  <Text fontSize="14px" fontWeight="bold" color="var(--ali-success)">
                                     {formatAmount(opportunity.amount)}
                                   </Text>
                                 </HStack>
@@ -1163,20 +1171,20 @@ const OpportunityList = () => {
                               {/* 可能性 */}
                               {opportunity.probability !== null && opportunity.probability !== undefined && (
                                 <Box>
-                                  <Text fontSize="xs" color="gray.600" mb={1}>
+                                  <Text fontSize="12px" color="var(--ali-text-secondary)" mb={1}>
                                     {t('opportunityList.probability')}: {opportunity.probability}%
                                   </Text>
                                   <Box
                                     w="full"
                                     h="4px"
-                                    bg="gray.200"
+                                    bg="var(--ali-border)"
                                     borderRadius="full"
                                     overflow="hidden"
                                   >
                                     <Box
                                       w={`${opportunity.probability}%`}
                                       h="full"
-                                      bg="blue.500"
+                                      bg="var(--ali-primary)"
                                       transition="width 0.3s"
                                     />
                                   </Box>

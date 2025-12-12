@@ -1,6 +1,6 @@
 /**
  * 侧边栏组件
- * 权限感知的导航菜单 - Refined Glassmorphism 设计风格
+ * 权限感知的导航菜单 - 阿里云ECS风格
  */
 import { useState, useEffect, useMemo } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
@@ -16,7 +16,6 @@ import {
   Text,
   Badge,
   Tooltip,
-  useColorModeValue,
   Flex,
   IconButton,
   Input,
@@ -47,24 +46,17 @@ export const Sidebar = () => {
   const [searchValue, setSearchValue] = useState('')
   const { isOpen, onOpen, onClose } = useDisclosure()
   
-  // Chakra UI 颜色模式 - Refined Glassmorphism
-  const glassBg = useColorModeValue('whiteAlpha.900', 'blackAlpha.800')
-  const borderColor = useColorModeValue('gray.200', 'gray.700')
-  const ringColor = useColorModeValue('gray.100', 'gray.800')
-  const hoverBg = useColorModeValue('gray.50', 'whiteAlpha.100')
-  const activeBg = useColorModeValue('indigo.600', 'indigo.500')
-  const activeParentBg = useColorModeValue('indigo.50', 'indigo.900')
-  const activeColor = useColorModeValue('white', 'white')
-  const activeParentColor = useColorModeValue('indigo.700', 'indigo.200')
-  const textColor = useColorModeValue('gray.700', 'gray.300')
-  const groupTextColor = useColorModeValue('gray.500', 'gray.400')
-  const searchBg = useColorModeValue('gray.50', 'whiteAlpha.100')
-  const searchBorder = useColorModeValue('gray.200', 'gray.600')
-  const childActiveBg = useColorModeValue('indigo.50', 'indigo.900')
-  const childActiveColor = useColorModeValue('indigo.700', 'indigo.200')
-  const userCardBg = useColorModeValue('white', 'gray.800')
-  const userCardHoverBg = useColorModeValue('gray.50', 'gray.700')
-  const userNameColor = useColorModeValue('gray.900', 'white')
+  // 阿里云ECS风格颜色配置
+  const darkBg = '#001529' // 深色背景
+  const darkHover = '#112240' // 悬停背景
+  const activeBg = '#1890FF' // 选中背景（深蓝色）
+  const activeColor = '#FFFFFF' // 选中文字颜色
+  const textColor = 'rgba(255, 255, 255, 0.85)' // 默认文字颜色
+  const textColorSecondary = 'rgba(255, 255, 255, 0.65)' // 次要文字颜色
+  const childHoverBg = '#E6F7FF' // 子菜单悬停背景（淡蓝色）
+  const childActiveBg = '#1890FF' // 子菜单选中背景
+  const childActiveColor = '#FFFFFF' // 子菜单选中文字
+  const borderColor = 'rgba(255, 255, 255, 0.1)' // 边框颜色
 
   // 辅助函数：检查路径是否匹配（忽略查询参数）
   const isPathMatch = (path1: string, path2: string): boolean => {
@@ -167,10 +159,10 @@ export const Sidebar = () => {
       // 父项是否直接激活（有路径且匹配，忽略查询参数）
       const isParentDirectlyActive = item.path && isPathMatch(location.pathname, item.path)
       
-      // 父菜单项的样式处理逻辑
-      const parentBg = isParentDirectlyActive ? activeBg : hasActiveChild ? activeParentBg : 'transparent'
-      const parentColor = isParentDirectlyActive ? activeColor : hasActiveChild ? activeParentColor : groupTextColor
-      const parentHoverBg = isParentDirectlyActive ? activeBg : hasActiveChild ? activeParentBg : hoverBg
+      // 父菜单项的样式处理逻辑 - 阿里云ECS风格（确保文字为白色）
+      const parentBg = isParentDirectlyActive ? activeBg : hasActiveChild ? darkHover : 'transparent'
+      const parentColor = isParentDirectlyActive ? activeColor : hasActiveChild ? activeColor : textColor
+      const parentHoverBg = isParentDirectlyActive ? activeBg : hasActiveChild ? darkHover : darkHover
 
       // 处理父菜单点击：如果折叠，先展开侧边栏再处理子菜单展开
       const handleParentClick = () => {
@@ -186,7 +178,7 @@ export const Sidebar = () => {
 
       return (
         <Box key={item.key}>
-          {/* 父菜单作为分组标题，可点击折叠/展开 */}
+          {/* 父菜单作为分组标题，可点击折叠/展开 - 阿里云ECS风格 */}
           <Tooltip 
             label={isCollapsed ? t(item.label) : undefined} 
             placement="right" 
@@ -201,33 +193,41 @@ export const Sidebar = () => {
               onClick={handleParentClick}
               w="full"
               px={isCollapsed ? 2 : 3}
-              py={2.5}
+              h="50px"
               display="flex"
               alignItems="center"
               justifyContent={isCollapsed ? 'center' : 'space-between'}
-              fontSize="13px"
-              fontWeight="600"
+              fontSize="14px"
+              fontWeight="500"
               color={parentColor}
-              textTransform="uppercase"
-              letterSpacing="wider"
               bg={parentBg}
-              boxShadow={isParentDirectlyActive ? 'md' : 'none'}
               _hover={{ bg: parentHoverBg }}
-              transition="all 0.3s ease-out"
-              borderRadius="lg"
-              mb={1}
+              transition="all 0.2s"
+              mb={0}
               position="relative"
             >
+              {/* 左侧8px彩色竖条标识 */}
+              {!isCollapsed && (
+                <Box
+                  position="absolute"
+                  left={0}
+                  top={0}
+                  bottom={0}
+                  w="8px"
+                  bg={isParentDirectlyActive || hasActiveChild ? activeBg : 'transparent'}
+                />
+              )}
               <HStack 
-                spacing={isCollapsed ? 0 : 2.5} 
+                spacing={isCollapsed ? 0 : 3} 
                 justify={isCollapsed ? 'center' : 'flex-start'} 
                 flex={1} 
                 minW={0}
                 w={isCollapsed ? 'full' : 'auto'}
+                pl={isCollapsed ? 0 : '8px'}
               >
-                <Box as={Icon} size={18} flexShrink={0} />
+                <Box as={Icon} size={16} flexShrink={0} color={parentColor} />
                 {!isCollapsed && (
-                  <Text isTruncated>{t(item.label)}</Text>
+                  <Text isTruncated fontSize="14px" color={parentColor}>{t(item.label)}</Text>
                 )}
               </HStack>
               {!isCollapsed && (
@@ -236,22 +236,20 @@ export const Sidebar = () => {
                   size={14} 
                   flexShrink={0}
                   ml={2}
-                  transition="transform 0.3s ease-out"
+                  transition="transform 0.2s"
                   transform={isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)'}
+                  color={parentColor}
                 />
               )}
             </Box>
           </Tooltip>
           
-          {/* 子菜单列表 - 仅在非折叠状态下且已展开时显示 */}
+          {/* 子菜单列表 - 仅在非折叠状态下且已展开时显示 - 阿里云ECS风格 */}
           {!isCollapsed && isExpanded ? (
             <VStack
               spacing={0}
               align="stretch"
-              ml={4}
-              pl={3}
-              borderLeftWidth="1px"
-              borderColor={borderColor}
+              ml="16px"
               position="relative"
             >
               {item.children!.map((child, index) => (
@@ -271,16 +269,19 @@ export const Sidebar = () => {
     const isActive = isPathMatch(location.pathname, itemPath)
     const tooltipTitle = isCollapsed ? t(item.label) : undefined
 
-    // 子项使用不同的样式
+    // 阿里云ECS风格样式 - 子项和一级菜单项（确保文字为白色）
     const itemBg = isChild 
       ? (isActive ? childActiveBg : 'transparent')
       : (isActive ? activeBg : 'transparent')
     const itemColor = isChild
       ? (isActive ? childActiveColor : textColor)
       : (isActive ? activeColor : textColor)
-    const iconSize = isChild ? 15 : 18
-    const fontSize = isChild ? '13px' : '13px'
-    const py = isChild ? 2 : 2.5
+    const hoverBg = isChild ? childHoverBg : darkHover
+    const iconSize = isChild ? 14 : 16
+    const fontSize = '14px'
+    const itemHeight = isChild ? '40px' : '50px'
+    // 图标颜色：激活时使用activeColor（白色），非激活时使用textColor（白色）
+    const iconColor = isActive ? activeColor : textColor
 
     // 处理路径和查询参数
     const linkTo = itemSearch 
@@ -304,46 +305,56 @@ export const Sidebar = () => {
         display="flex"
         alignItems="center"
         justifyContent={isCollapsed ? 'center' : 'flex-start'}
-        px={isChild ? 2.5 : 3}
-        py={py}
-        borderRadius={isChild ? 'md' : 'lg'}
-        transition="all 0.3s ease-out"
+        px={isChild ? 4 : 3}
+        h={itemHeight}
+        transition="all 0.2s"
         fontSize={fontSize}
         position="relative"
         bg={itemBg}
         color={itemColor}
-        transform={isActive && isChild ? 'scale(1.02)' : 'scale(1)'}
-        boxShadow={isActive && !isChild ? 'md' : 'none'}
         _hover={{
           bg: isActive ? itemBg : hoverBg,
-          transform: isChild ? 'scale(1.01)' : 'scale(1)',
         }}
         _active={{
           bg: isChild ? childActiveBg : activeBg,
           color: isChild ? childActiveColor : activeColor,
         }}
-        mb={isChild ? 0.5 : 1}
-        ml={isChild ? 0 : 0}
+        mb={0}
+        ml={0}
       >
+        {/* 一级菜单左侧8px彩色竖条 */}
+        {!isChild && !isCollapsed && (
+          <Box
+            position="absolute"
+            left={0}
+            top={0}
+            bottom={0}
+            w="8px"
+            bg={isActive ? activeBg : 'transparent'}
+          />
+        )}
         <Box 
           as={Icon} 
           size={iconSize} 
           flexShrink={0}
-          color={isActive ? (isChild ? childActiveColor : activeColor) : textColor}
+          color={iconColor}
         />
         {!isCollapsed && (
           <>
             <Text
-              fontWeight={isActive ? '600' : '500'}
+              fontWeight={isActive ? '500' : '400'}
               flex={1}
               whiteSpace="nowrap"
-              ml={isChild ? 2.5 : 3}
+              ml={3}
+              fontSize="14px"
+              color={itemColor}
             >
               {t(item.label)}
             </Text>
             {item.badge && (
               <Badge
-                colorScheme="red"
+                bg="red.500"
+                color="white"
                 fontSize="10px"
                 borderRadius="full"
                 ml="auto"
@@ -419,30 +430,22 @@ export const Sidebar = () => {
       
       <Box
         as="aside"
-        bg={glassBg}
-        backdropFilter="blur(24px)"
-        WebkitBackdropFilter="blur(24px)"
-        borderRightWidth={1}
-        borderColor={borderColor}
-        borderWidth="1px"
+        bg={darkBg}
+        borderRightWidth={0}
         display={{ base: isCollapsed ? 'none' : 'flex', md: 'flex' }}
         flexDirection="column"
         h="100vh"
-        transition="width 0.3s ease-out, min-width 0.3s ease-out, max-width 0.3s ease-out"
-        w={{ base: '280px', md: isCollapsed ? '80px' : '256px' }}
-        minW={{ base: '280px', md: isCollapsed ? '80px' : '256px' }}
-        maxW={{ base: '280px', md: isCollapsed ? '80px' : '256px' }}
+        transition="width 0.2s ease-out, min-width 0.2s ease-out, max-width 0.2s ease-out"
+        w={{ base: '240px', md: isCollapsed ? '80px' : '240px' }}
+        minW={{ base: '240px', md: isCollapsed ? '80px' : '240px' }}
+        maxW={{ base: '240px', md: isCollapsed ? '80px' : '240px' }}
         flexShrink={0}
         position={{ base: 'fixed', md: 'relative' }}
         top={0}
         left={0}
         zIndex={{ base: 1000, md: 10 }}
-        sx={{
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-        }}
       >
-      {/* 搜索框 */}
+      {/* 搜索框 - 阿里云ECS风格 */}
       <Box p={isCollapsed ? 2 : 3} borderBottomWidth={1} borderColor={borderColor}>
         {isCollapsed ? (
           <Tooltip label={t('common.search')} placement="right" hasArrow>
@@ -452,56 +455,46 @@ export const Sidebar = () => {
               variant="ghost"
               size="sm"
               w="full"
+              color={textColor}
+              _hover={{ bg: darkHover }}
             />
           </Tooltip>
         ) : (
           <InputGroup size="sm">
             <InputLeftElement pointerEvents="none">
-              <Search size={16} color="gray" />
+              <Search size={16} color={textColorSecondary} />
             </InputLeftElement>
-              <Input
+            <Input
               placeholder={t('common.search')}
               value={searchValue}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchValue(e.target.value)}
-              bg={searchBg}
-              borderColor={searchBorder}
+              bg="rgba(255, 255, 255, 0.1)"
+              borderColor="rgba(255, 255, 255, 0.2)"
+              color={textColor}
+              _placeholder={{ color: textColorSecondary }}
               _focus={{
-                borderColor: 'blue.500',
-                boxShadow: '0 0 0 1px var(--chakra-colors-blue-500)',
+                borderColor: activeBg,
+                boxShadow: `0 0 0 2px rgba(24, 144, 255, 0.2)`,
               }}
             />
           </InputGroup>
         )}
       </Box>
       
-      {/* 导航菜单 */}
+      {/* 导航菜单 - 阿里云ECS风格 */}
       <Box
         as="nav"
         flex={1}
         overflowY="auto"
         overflowX="hidden"
-        p={2}
+        p={0}
       >
         <VStack spacing={0} align="stretch">
-          {!isCollapsed && (
-            <Text
-              fontSize="xs"
-              fontWeight="semibold"
-              color={groupTextColor}
-              textTransform="uppercase"
-              letterSpacing="wider"
-              px={3}
-              py={2}
-              mb={1}
-            >
-              {t('menu.menu')}
-            </Text>
-          )}
           {filteredMenu.map(item => renderMenuItem(item))}
         </VStack>
       </Box>
 
-      {/* 用户资料 - Polished Footer Card */}
+      {/* 用户资料 - 阿里云ECS风格 */}
       <Box
         p={3}
         borderTopWidth={1}
@@ -523,15 +516,15 @@ export const Sidebar = () => {
               justify="center"
               cursor="pointer"
               onClick={onOpen}
-              _hover={{ opacity: 0.8 }}
-              transition="opacity 0.2s"
+              _hover={{ bg: darkHover }}
+              transition="all 0.2s"
+              p={2}
+              borderRadius="4px"
             >
               <Avatar
                 size="sm"
                 name={user?.display_name || user?.username || 'User'}
-                src={user?.email ? `https://ui-avatars.com/api/?name=${encodeURIComponent(user.display_name || user.username || 'User')}&background=indigo&color=fff` : undefined}
-                borderWidth="2px"
-                borderColor="indigo.200"
+                src={user?.email ? `https://ui-avatars.com/api/?name=${encodeURIComponent(user.display_name || user.username || 'User')}&background=1890FF&color=fff` : undefined}
               />
             </Flex>
           </Tooltip>
@@ -540,37 +533,30 @@ export const Sidebar = () => {
             as={Box}
             w="full"
             variant="ghost"
-            p={3}
-            borderRadius="xl"
-            bg={userCardBg}
-            borderWidth="1px"
-            borderColor={borderColor}
-            boxShadow="sm"
+            p={2}
+            borderRadius="4px"
+            bg="transparent"
             _hover={{
-              bg: userCardHoverBg,
-              boxShadow: 'md',
-              transform: 'translateY(-1px)',
+              bg: darkHover,
             }}
-            transition="all 0.3s ease-out"
+            transition="all 0.2s"
             display="flex"
             alignItems="center"
             justifyContent="space-between"
             cursor="pointer"
             onClick={onOpen}
           >
-            <HStack spacing={3} align="center" flex={1} minW={0}>
+            <HStack spacing={2} align="center" flex={1} minW={0}>
               <Avatar
                 size="sm"
                 name={user?.display_name || user?.username || 'User'}
-                src={user?.email ? `https://ui-avatars.com/api/?name=${encodeURIComponent(user.display_name || user.username || 'User')}&background=indigo&color=fff` : undefined}
-                borderWidth="2px"
-                borderColor="indigo.200"
+                src={user?.email ? `https://ui-avatars.com/api/?name=${encodeURIComponent(user.display_name || user.username || 'User')}&background=1890FF&color=fff` : undefined}
               />
               <VStack spacing={0} align="flex-start" flex={1} minW={0}>
                 <Text
-                  fontSize="sm"
-                  fontWeight="600"
-                  color={userNameColor}
+                  fontSize="14px"
+                  fontWeight="500"
+                  color={textColor}
                   isTruncated
                   w="full"
                 >
@@ -578,8 +564,8 @@ export const Sidebar = () => {
                 </Text>
                 {user?.roles && user.roles.length > 0 && (
                   <Text
-                    fontSize="xs"
-                    color={textColor}
+                    fontSize="12px"
+                    color={textColorSecondary}
                     isTruncated
                     w="full"
                   >
@@ -590,13 +576,10 @@ export const Sidebar = () => {
             </HStack>
             <Box 
               as={ChevronRightIcon} 
-              size={16} 
-              color={textColor} 
+              size={14} 
+              color={textColorSecondary} 
               flexShrink={0}
-              transition="transform 0.3s ease-out"
-              _groupHover={{
-                transform: 'translateX(2px)',
-              }}
+              transition="transform 0.2s"
             />
           </Button>
         )}
