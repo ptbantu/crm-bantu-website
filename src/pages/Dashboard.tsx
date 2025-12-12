@@ -1,6 +1,6 @@
 /**
  * 仪表盘页面
- * 显示系统概览、统计数据、趋势图表等
+ * 显示系统概览、统计数据、趋势图表等 - 阿里云ECS风格优化
  */
 import { useTranslation } from 'react-i18next'
 import { 
@@ -42,7 +42,6 @@ import {
   Progress,
   Checkbox,
   Divider,
-  useColorModeValue,
 } from '@chakra-ui/react'
 
 interface StatCard {
@@ -82,9 +81,6 @@ interface OrderItem {
 
 const Dashboard = () => {
   const { t } = useTranslation()
-  const bgColor = useColorModeValue('white', 'gray.800')
-  const borderColor = useColorModeValue('gray.200', 'gray.700')
-  const hoverBg = useColorModeValue('gray.50', 'gray.700')
 
   // 统计数据
   const stats: StatCard[] = [
@@ -302,8 +298,8 @@ const Dashboard = () => {
   }
 
   return (
-    <Box minH="100vh" bg={useColorModeValue('gray.50', 'gray.900')}>
-      <Box w="full" py={2} px={1}>
+    <Box minH="100vh" bg="var(--ali-bg-gray)">
+      <Box w="full" py={4} px={6}>
         {/* 页面头部 */}
         <PageHeader
           icon={LayoutDashboard}
@@ -311,60 +307,74 @@ const Dashboard = () => {
           subtitle={t('dashboard.title')}
         />
 
-        {/* 统计数据网格 */}
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3, xl: 6 }} spacing={3} mb={3}>
+        {/* 统计数据网格 - 阿里云ECS风格 */}
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3, xl: 6 }} spacing={4} mb={4}>
           {stats.map((stat, index) => {
             const Icon = stat.icon
             const colorScheme = getColorScheme(stat.color)
+            const iconColor = 
+              colorScheme === 'blue' ? 'var(--ali-primary)' :
+              colorScheme === 'green' ? 'var(--ali-success)' :
+              colorScheme === 'purple' ? '#722ED1' :
+              colorScheme === 'orange' ? 'var(--ali-warning)' :
+              colorScheme === 'indigo' ? '#2F54EB' :
+              '#EB2F96'
+            const iconBg = 
+              colorScheme === 'blue' ? 'var(--ali-primary-light)' :
+              colorScheme === 'green' ? '#F6FFED' :
+              colorScheme === 'purple' ? '#F9F0FF' :
+              colorScheme === 'orange' ? '#FFFBE6' :
+              colorScheme === 'indigo' ? '#E6F7FF' :
+              '#FFF0F6'
+            
             return (
               <Card
                 key={index}
-                bg={`${colorScheme}.50`}
-                borderColor={`${colorScheme}.200`}
-                borderWidth={1}
-                _hover={{ boxShadow: 'md', transform: 'translateY(-2px)' }}
+                variant="elevated"
+                _hover={{ 
+                  boxShadow: 'var(--ali-card-shadow-hover)',
+                  transform: 'translateY(-2px)' 
+                }}
                 transition="all 0.2s"
               >
-                <CardBody>
-                  <Stat>
-                    <Flex align="start" justify="space-between" mb={2}>
-                      <Box flex={1}>
-                        <StatLabel fontSize="xs" fontWeight="medium" color="gray.500" mb={1}>
-                          {stat.label}
-                        </StatLabel>
-                        <StatNumber fontSize="xl" fontWeight="semibold" color="gray.900">
-                          {stat.value}
-                        </StatNumber>
-                      </Box>
-                      <Box
-                        as={Icon}
-                        size={5}
-                        color={`${colorScheme}.600`}
-                        bg={`${colorScheme}.100`}
-                        p={2}
-                        borderRadius="lg"
-                        flexShrink={0}
-                      />
-                    </Flex>
-                    <Divider my={2} />
-                    <HStack spacing={1}>
-                      {stat.changeType === 'positive' ? (
-                        <StatArrow type="increase" color="green.500" />
-                      ) : (
-                        <StatArrow type="decrease" color="red.500" />
-                      )}
-                      <Text
-                        fontSize="xs"
-                        fontWeight="medium"
-                        color={stat.changeType === 'positive' ? 'green.600' : 'red.600'}
-                      >
-                        {stat.change}
+                <CardBody p={4}>
+                  <Flex align="start" justify="space-between" mb={3}>
+                    <VStack align="flex-start" spacing={0} flex={1}>
+                      <Text fontSize="12px" fontWeight="normal" color="var(--ali-text-secondary)" mb={1}>
+                        {stat.label}
                       </Text>
-                      <Text fontSize="xs" color="gray.500">
-                        {t('dashboard.stats.vsLastMonth')}
+                      <Text fontSize="20px" fontWeight="600" color="var(--ali-text-primary)">
+                        {stat.value}
                       </Text>
-                    </HStack>
-                  </Stat>
+                    </VStack>
+                    <Box
+                      as={Icon}
+                      size={20}
+                      color={iconColor}
+                      bg={iconBg}
+                      p={2.5}
+                      borderRadius="4px"
+                      flexShrink={0}
+                    />
+                  </Flex>
+                  <Divider my={2} borderColor="var(--ali-border)" />
+                  <HStack spacing={1}>
+                    {stat.changeType === 'positive' ? (
+                      <ArrowUpRight size={14} color="var(--ali-success)" />
+                    ) : (
+                      <ArrowDownRight size={14} color="var(--ali-error)" />
+                    )}
+                    <Text
+                      fontSize="11px"
+                      fontWeight="500"
+                      color={stat.changeType === 'positive' ? 'var(--ali-success)' : 'var(--ali-error)'}
+                    >
+                      {stat.change}
+                    </Text>
+                    <Text fontSize="11px" color="var(--ali-text-secondary)">
+                      {t('dashboard.stats.vsLastMonth')}
+                    </Text>
+                  </HStack>
                 </CardBody>
               </Card>
             )
@@ -372,24 +382,26 @@ const Dashboard = () => {
         </SimpleGrid>
 
         {/* 主要内容区域 */}
-        <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={3} mb={3}>
+        <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={4} mb={4}>
           {/* 收入趋势 */}
-          <Card gridColumn={{ lg: 'span 2' }} bg={bgColor} borderColor={borderColor}>
-            <CardHeader pb={3}>
+          <Card gridColumn={{ lg: 'span 2' }} variant="elevated">
+            <CardHeader pb={3} borderBottom="1px solid" borderColor="var(--ali-border)">
               <HStack spacing={2}>
-                <Box as={TrendingUp} size={4} />
-                <Heading size="sm">{t('dashboard.revenueTrend.title')}</Heading>
+                <Box as={TrendingUp} size={16} color="var(--ali-primary)" />
+                <Heading size="sm" fontSize="14px" fontWeight="600" color="var(--ali-text-primary)">
+                  {t('dashboard.revenueTrend.title')}
+                </Heading>
               </HStack>
             </CardHeader>
-            <CardBody pt={0}>
-              <VStack spacing={2} align="stretch">
+            <CardBody pt={4}>
+              <VStack spacing={3} align="stretch">
                 {revenueTrend.map((item, index) => (
                   <Box key={index}>
-                    <HStack spacing={2} mb={1}>
-                      <Text fontSize="xs" color="gray.600" w={12}>
+                    <HStack spacing={3} mb={2}>
+                      <Text fontSize="12px" color="var(--ali-text-secondary)" w={12} fontWeight="normal">
                         {item.day}
                       </Text>
-                      <Text fontSize="xs" fontWeight="medium" color="gray.700">
+                      <Text fontSize="12px" fontWeight="500" color="var(--ali-text-primary)">
                         Rp {(item.value * 1).toFixed(1)}M
                       </Text>
                     </HStack>
@@ -398,7 +410,7 @@ const Dashboard = () => {
                       colorScheme="blue"
                       size="sm"
                       borderRadius="full"
-                      bg="gray.100"
+                      bg="var(--ali-border)"
                     />
                   </Box>
                 ))}
@@ -407,26 +419,28 @@ const Dashboard = () => {
           </Card>
 
           {/* 待办事项 */}
-          <Card bg={bgColor} borderColor={borderColor}>
-            <CardHeader pb={3}>
+          <Card variant="elevated">
+            <CardHeader pb={3} borderBottom="1px solid" borderColor="var(--ali-border)">
               <HStack spacing={2}>
-                <Box as={Bell} size={4} />
-                <Heading size="sm">{t('dashboard.todos.title')}</Heading>
+                <Box as={Bell} size={16} color="var(--ali-primary)" />
+                <Heading size="sm" fontSize="14px" fontWeight="600" color="var(--ali-text-primary)">
+                  {t('dashboard.todos.title')}
+                </Heading>
               </HStack>
             </CardHeader>
-            <CardBody pt={0}>
+            <CardBody pt={4}>
               <VStack spacing={2} align="stretch">
                 {todos.map((todo) => (
                   <Box
                     key={todo.id}
-                    p={2}
-                    borderRadius="lg"
-                    borderWidth={1}
-                    borderColor={borderColor}
-                    bg={todo.completed ? 'gray.50' : bgColor}
+                    p={3}
+                    borderRadius="4px"
+                    border="1px solid"
+                    borderColor="var(--ali-border)"
+                    bg={todo.completed ? 'var(--ali-bg-light)' : 'white'}
                     opacity={todo.completed ? 0.6 : 1}
                   >
-                    <Flex align="start" justify="space-between" mb={1}>
+                    <Flex align="start" justify="space-between" mb={1.5}>
                       <HStack spacing={2} flex={1}>
                         <Checkbox
                           isChecked={todo.completed}
@@ -435,9 +449,9 @@ const Dashboard = () => {
                           colorScheme="blue"
                         />
                         <Text
-                          fontSize="xs"
-                          fontWeight="medium"
-                          color={todo.completed ? 'gray.400' : 'gray.900'}
+                          fontSize="12px"
+                          fontWeight="500"
+                          color={todo.completed ? 'var(--ali-text-secondary)' : 'var(--ali-text-primary)'}
                           textDecoration={todo.completed ? 'line-through' : 'none'}
                         >
                           {todo.title}
@@ -445,14 +459,17 @@ const Dashboard = () => {
                       </HStack>
                       <Badge
                         colorScheme={getPriorityColorScheme(todo.priority)}
-                        fontSize="xs"
+                        fontSize="11px"
+                        px={2}
+                        py={0.5}
+                        borderRadius="4px"
                       >
                         {t(`dashboard.todos.priority.${todo.priority}`)}
                       </Badge>
                     </Flex>
                     <HStack spacing={1} ml={7} mt={1}>
-                      <Box as={Clock} size={3} color="gray.500" />
-                      <Text fontSize="xs" color="gray.500">
+                      <Box as={Clock} size={12} color="var(--ali-text-secondary)" />
+                      <Text fontSize="11px" color="var(--ali-text-secondary)">
                         {todo.dueDate}
                       </Text>
                     </HStack>
@@ -464,47 +481,50 @@ const Dashboard = () => {
         </SimpleGrid>
 
         {/* 最近活动和最近订单 */}
-        <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={3} mb={3}>
+        <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={4} mb={4}>
           {/* 最近活动 */}
-          <Card bg={bgColor} borderColor={borderColor}>
-            <CardHeader pb={3}>
+          <Card variant="elevated">
+            <CardHeader pb={3} borderBottom="1px solid" borderColor="var(--ali-border)">
               <HStack spacing={2}>
-                <Box as={Activity} size={4} />
-                <Heading size="sm">{t('dashboard.activities.title')}</Heading>
+                <Box as={Activity} size={16} color="var(--ali-primary)" />
+                <Heading size="sm" fontSize="14px" fontWeight="600" color="var(--ali-text-primary)">
+                  {t('dashboard.activities.title')}
+                </Heading>
               </HStack>
             </CardHeader>
-            <CardBody pt={0}>
+            <CardBody pt={4}>
               <VStack spacing={2} align="stretch">
                 {recentActivities.map((activity) => {
                   const Icon = activity.icon
                   return (
                     <HStack
                       key={activity.id}
-                      spacing={2}
-                      p={2}
-                      borderRadius="lg"
-                      _hover={{ bg: hoverBg }}
+                      spacing={3}
+                      p={3}
+                      borderRadius="4px"
+                      _hover={{ bg: 'var(--ali-primary-light)' }}
                       transition="background-color 0.2s"
                       align="start"
                     >
                       <Box
                         as={Icon}
-                        size={4}
-                        color="blue.600"
-                        bg="blue.50"
-                        p={1.5}
-                        borderRadius="lg"
+                        size={18}
+                        color="var(--ali-primary)"
+                        bg="var(--ali-primary-light)"
+                        p={2}
+                        borderRadius="4px"
+                        flexShrink={0}
                       />
                       <Box flex={1} minW={0}>
-                        <Text fontSize="xs" fontWeight="medium" color="gray.900" mb={0.5}>
+                        <Text fontSize="12px" fontWeight="500" color="var(--ali-text-primary)" mb={1}>
                           {activity.title}
                         </Text>
-                        <Text fontSize="xs" color="gray.600" mb={1}>
+                        <Text fontSize="12px" color="var(--ali-text-secondary)" mb={1.5}>
                           {activity.description}
                         </Text>
                         <HStack spacing={1}>
-                          <Box as={Clock} size={3} color="gray.500" />
-                          <Text fontSize="xs" color="gray.500">
+                          <Box as={Clock} size={12} color="var(--ali-text-secondary)" />
+                          <Text fontSize="11px" color="var(--ali-text-secondary)">
                             {activity.time}
                           </Text>
                         </HStack>
@@ -517,46 +537,51 @@ const Dashboard = () => {
           </Card>
 
           {/* 最近订单 */}
-          <Card bg={bgColor} borderColor={borderColor}>
-            <CardHeader pb={3}>
+          <Card variant="elevated">
+            <CardHeader pb={3} borderBottom="1px solid" borderColor="var(--ali-border)">
               <HStack spacing={2}>
-                <Box as={ShoppingCart} size={4} />
-                <Heading size="sm">{t('dashboard.recentOrders.title')}</Heading>
+                <Box as={ShoppingCart} size={16} color="var(--ali-primary)" />
+                <Heading size="sm" fontSize="14px" fontWeight="600" color="var(--ali-text-primary)">
+                  {t('dashboard.recentOrders.title')}
+                </Heading>
               </HStack>
             </CardHeader>
-            <CardBody pt={0}>
+            <CardBody pt={4}>
               <VStack spacing={2} align="stretch">
                 {recentOrders.map((order) => (
                   <Box
                     key={order.id}
-                    p={2}
-                    borderRadius="lg"
-                    borderWidth={1}
-                    borderColor={borderColor}
-                    _hover={{ bg: hoverBg }}
+                    p={3}
+                    borderRadius="4px"
+                    border="1px solid"
+                    borderColor="var(--ali-border)"
+                    _hover={{ bg: 'var(--ali-primary-light)' }}
                     transition="background-color 0.2s"
                   >
-                    <Flex align="start" justify="space-between" mb={1}>
+                    <Flex align="start" justify="space-between" mb={1.5}>
                       <Box flex={1}>
-                        <Text fontSize="xs" fontWeight="medium" color="gray.900" mb={0.5}>
+                        <Text fontSize="12px" fontWeight="500" color="var(--ali-text-primary)" mb={1}>
                           {order.id}
                         </Text>
-                        <Text fontSize="xs" color="gray.600" mb={1}>
+                        <Text fontSize="12px" color="var(--ali-text-secondary)" mb={1.5}>
                           {order.customer} - {order.service}
                         </Text>
                         <HStack spacing={2}>
-                          <Text fontSize="xs" fontWeight="semibold" color="gray.900">
+                          <Text fontSize="12px" fontWeight="600" color="var(--ali-text-primary)">
                             {order.amount}
                           </Text>
                           <Badge
                             colorScheme={getStatusColorScheme(order.status)}
-                            fontSize="xs"
+                            fontSize="11px"
+                            px={2}
+                            py={0.5}
+                            borderRadius="4px"
                           >
                             {t(`dashboard.recentOrders.status.${order.status}`)}
                           </Badge>
                         </HStack>
                       </Box>
-                      <Text fontSize="xs" color="gray.500">
+                      <Text fontSize="11px" color="var(--ali-text-secondary)">
                         {order.date}
                       </Text>
                     </Flex>
@@ -567,45 +592,75 @@ const Dashboard = () => {
           </Card>
         </SimpleGrid>
 
-        {/* 系统状态概览 */}
-        <Card bg={bgColor} borderColor={borderColor}>
-          <CardHeader pb={3}>
+        {/* 系统状态概览 - 阿里云ECS风格 */}
+        <Card variant="elevated">
+          <CardHeader pb={3} borderBottom="1px solid" borderColor="var(--ali-border)">
             <HStack spacing={2}>
-              <Box as={CheckCircle2} size={4} color="green.600" />
-              <Heading size="sm">{t('dashboard.systemStatus.title')}</Heading>
+              <Box as={CheckCircle2} size={16} color="var(--ali-success)" />
+              <Heading size="sm" fontSize="14px" fontWeight="600" color="var(--ali-text-primary)">
+                {t('dashboard.systemStatus.title')}
+              </Heading>
             </HStack>
           </CardHeader>
-          <CardBody pt={0}>
-            <SimpleGrid columns={{ base: 2, md: 4 }} spacing={3}>
-              <Box textAlign="center" p={2} bg="green.50" borderRadius="lg">
-                <Text fontSize="xs" color="gray.600" mb={1}>
+          <CardBody pt={4}>
+            <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
+              <Box 
+                textAlign="center" 
+                p={3} 
+                bg="#F6FFED" 
+                borderRadius="4px"
+                border="1px solid"
+                borderColor="#B7EB8F"
+              >
+                <Text fontSize="11px" color="var(--ali-success)" mb={1.5} fontWeight="normal">
                   {t('dashboard.systemStatus.allServices')}
                 </Text>
-                <Text fontSize="lg" fontWeight="semibold" color="green.700">
+                <Text fontSize="20px" fontWeight="600" color="var(--ali-success)">
                   6/6
                 </Text>
               </Box>
-              <Box textAlign="center" p={2} bg="blue.50" borderRadius="lg">
-                <Text fontSize="xs" color="gray.600" mb={1}>
+              <Box 
+                textAlign="center" 
+                p={3} 
+                bg="var(--ali-primary-light)" 
+                borderRadius="4px"
+                border="1px solid"
+                borderColor="var(--ali-primary)"
+              >
+                <Text fontSize="11px" color="var(--ali-primary)" mb={1.5} fontWeight="normal">
                   {t('dashboard.systemStatus.apiRequests')}
                 </Text>
-                <Text fontSize="lg" fontWeight="semibold" color="blue.700">
+                <Text fontSize="20px" fontWeight="600" color="var(--ali-primary)">
                   1,234
                 </Text>
               </Box>
-              <Box textAlign="center" p={2} bg="purple.50" borderRadius="lg">
-                <Text fontSize="xs" color="gray.600" mb={1}>
+              <Box 
+                textAlign="center" 
+                p={3} 
+                bg="#F9F0FF" 
+                borderRadius="4px"
+                border="1px solid"
+                borderColor="#D3ADF7"
+              >
+                <Text fontSize="11px" color="#722ED1" mb={1.5} fontWeight="normal">
                   {t('dashboard.systemStatus.activeUsers')}
                 </Text>
-                <Text fontSize="lg" fontWeight="semibold" color="purple.700">
+                <Text fontSize="20px" fontWeight="600" color="#722ED1">
                   156
                 </Text>
               </Box>
-              <Box textAlign="center" p={2} bg="orange.50" borderRadius="lg">
-                <Text fontSize="xs" color="gray.600" mb={1}>
+              <Box 
+                textAlign="center" 
+                p={3} 
+                bg="#FFFBE6" 
+                borderRadius="4px"
+                border="1px solid"
+                borderColor="#FFE58F"
+              >
+                <Text fontSize="11px" color="var(--ali-warning)" mb={1.5} fontWeight="normal">
                   {t('dashboard.systemStatus.uptime')}
                 </Text>
-                <Text fontSize="lg" fontWeight="semibold" color="orange.700">
+                <Text fontSize="20px" fontWeight="600" color="var(--ali-warning)">
                   15天
                 </Text>
               </Box>
