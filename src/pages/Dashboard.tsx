@@ -43,6 +43,15 @@ import {
   Checkbox,
   Divider,
 } from '@chakra-ui/react'
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts'
 
 interface StatCard {
   icon: typeof Users
@@ -394,27 +403,62 @@ const Dashboard = () => {
               </HStack>
             </CardHeader>
             <CardBody pt={4}>
-              <VStack spacing={3} align="stretch">
-                {revenueTrend.map((item, index) => (
-                  <Box key={index}>
-                    <HStack spacing={3} mb={2}>
-                      <Text fontSize="12px" color="var(--ali-text-secondary)" w={12} fontWeight="normal">
-                        {item.day}
-                      </Text>
-                      <Text fontSize="12px" fontWeight="500" color="var(--ali-text-primary)">
-                        Rp {(item.value * 1).toFixed(1)}M
-                      </Text>
-                    </HStack>
-                    <Progress
-                      value={(item.value / maxRevenue) * 100}
-                      colorScheme="blue"
-                      size="sm"
-                      borderRadius="full"
-                      bg="var(--ali-border)"
+              <Box w="full" h="280px">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={revenueTrend.map(item => ({
+                      day: item.day,
+                      value: item.value,
+                      revenue: `Rp ${(item.value * 1).toFixed(1)}M`
+                    }))}
+                    margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+                  >
+                    <CartesianGrid 
+                      strokeDasharray="3 3" 
+                      stroke="var(--ali-border)"
+                      vertical={false}
                     />
-                  </Box>
-                ))}
-              </VStack>
+                    <XAxis 
+                      dataKey="day" 
+                      tick={{ fontSize: 12, fill: 'var(--ali-text-secondary)' }}
+                      axisLine={{ stroke: 'var(--ali-border)' }}
+                      tickLine={{ stroke: 'var(--ali-border)' }}
+                    />
+                    <YAxis 
+                      tick={{ fontSize: 12, fill: 'var(--ali-text-secondary)' }}
+                      axisLine={{ stroke: 'var(--ali-border)' }}
+                      tickLine={{ stroke: 'var(--ali-border)' }}
+                      tickFormatter={(value) => `Rp ${value.toFixed(1)}M`}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'white',
+                        border: '1px solid var(--ali-border)',
+                        borderRadius: '4px',
+                        fontSize: '12px',
+                        padding: '8px 12px',
+                      }}
+                      labelStyle={{
+                        color: 'var(--ali-text-primary)',
+                        fontWeight: '500',
+                        marginBottom: '4px',
+                      }}
+                      itemStyle={{
+                        color: 'var(--ali-text-secondary)',
+                      }}
+                      formatter={(value: number) => [`Rp ${(value * 1).toFixed(1)}M`, '收入']}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="value"
+                      stroke="var(--ali-primary)"
+                      strokeWidth={2}
+                      dot={{ fill: 'var(--ali-primary)', r: 4 }}
+                      activeDot={{ r: 6, fill: 'var(--ali-primary)' }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </Box>
             </CardBody>
           </Card>
 
