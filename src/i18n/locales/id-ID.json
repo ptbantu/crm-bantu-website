@@ -869,6 +869,7 @@
       "deleteFailed": "Gagal menghapus"
     },
     "pagination": {
+      "info": "Halaman {{current}} / {{total}}, {{size}} item per halaman",
       "total": "Total {{total}} item",
       "page": "Halaman {{current}} / {{total}}",
       "prev": "Sebelumnya",

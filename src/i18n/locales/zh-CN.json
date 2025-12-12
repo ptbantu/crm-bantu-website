@@ -875,6 +875,7 @@
       "deleteFailed": "删除失败"
     },
     "pagination": {
+      "info": "第 {{current}} / {{total}} 页，每页 {{size}} 条",
       "total": "共 {{total}} 条",
       "page": "第 {{current}} / {{total}} 页",
       "prev": "上一页",
