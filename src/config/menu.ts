@@ -26,6 +26,7 @@ import {
   CreditCard,
   FileText as InvoiceIcon,
   Globe,
+  ShieldCheck,
 } from 'lucide-react'
 import { ComponentType } from 'react'
 
@@ -216,6 +217,13 @@ export const adminMenuItems: MenuItem[] = [
         label: 'menu.systemLogs',
         icon: FileText,
         path: '/admin/system-management/system-logs',
+        role: Role.ADMIN,
+      },
+      {
+        key: 'auditLogs',
+        label: 'menu.auditLogs',
+        icon: ShieldCheck,
+        path: '/admin/system-management/audit-logs',
         role: Role.ADMIN,
       },
     ],

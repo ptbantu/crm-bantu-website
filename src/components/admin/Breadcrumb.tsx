@@ -67,6 +67,7 @@ export const Breadcrumb = () => {
     const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(path)
     const isLeadDetailPath = index >= 2 && paths[index - 1] === 'detail' && paths[index - 2] === 'leads'
     const isCustomerDetailPath = index >= 2 && paths[index - 1] === 'detail' && paths[index - 2] === 'customer'
+    const isOpportunityDetailPath = index >= 2 && paths[index - 1] === 'detail' && paths[index - 2] === 'opportunities'
     
     let label: string
     if (isUUID && isLeadDetailPath) {
@@ -91,9 +92,23 @@ export const Breadcrumb = () => {
         // 否则使用默认的"客户详情"
         label = defaultTitle
       }
+    } else if (isUUID && isOpportunityDetailPath) {
+      // 如果是商机详情页面的 ID，尝试从标签页获取标题
+      const currentTab = tabs.find(tab => tab.key === location.pathname)
+      const defaultTitle = t('opportunityDetail.title')
+      if (currentTab && currentTab.title && currentTab.title !== defaultTitle && !currentTab.title.startsWith('menu.')) {
+        // 如果标签页标题已更新（不是默认标题，也不是翻译 key），使用标签页标题
+        label = currentTab.title
+      } else {
+        // 否则使用默认的"商机详情"
+        label = defaultTitle
+      }
     } else if (isCustomerDetailPath && path === 'detail') {
       // 如果是客户详情路径（detail），显示"客户详情"
       label = t('customerDetail.title')
+    } else if (isOpportunityDetailPath && path === 'detail') {
+      // 如果是商机详情路径（detail），显示"商机详情"
+      label = t('opportunityDetail.title')
     } else {
       const translationKey = pathToKeyMap[path] || `menu.${path}`
       label = t(translationKey) || path

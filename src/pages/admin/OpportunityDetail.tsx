@@ -35,6 +35,7 @@ import {
 import { useToast } from '@/components/ToastContainer'
 import { getUserList } from '@/api/users'
 import { getCustomerList } from '@/api/customers'
+import { useTabs } from '@/contexts/TabsContext'
 import {
   Box,
   Button,
@@ -83,6 +84,7 @@ const OpportunityDetail = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const { showSuccess, showError } = useToast()
+  const { updateTabTitle } = useTabs()
 
   // Chakra UI 颜色模式
   const bgColor = useColorModeValue('white', 'gray.800')
@@ -156,6 +158,10 @@ const OpportunityDetail = () => {
     try {
       const data = await getOpportunityDetail(id)
       setOpportunity(data)
+      // 更新标签页标题为商机名称
+      const opportunityTitle = data.name || id
+      updateTabTitle(`/admin/opportunities/detail/${id}`, opportunityTitle)
+      // 初始化编辑表单
       setEditFormData({
         name: data.name,
         customer_id: data.customer_id || '',
@@ -430,7 +436,7 @@ const OpportunityDetail = () => {
               <HStack>
                 <Text fontWeight="semibold" minW="100px">{t('opportunityDetail.status')}:</Text>
                 <Badge colorScheme={opportunity.status === 'won' ? 'green' : opportunity.status === 'lost' ? 'red' : 'blue'}>
-                  {t(`opportunityDetail.status.${opportunity.status}`)}
+                  {t(`opportunityDetail.statusValues.${opportunity.status}`) || opportunity.status}
                 </Badge>
               </HStack>
               <HStack>
@@ -515,7 +521,7 @@ const OpportunityDetail = () => {
                 >
                   <HStack justify="space-between" mb={2}>
                     <HStack>
-                      <Badge>{t(`opportunityDetail.followUpType.${followUp.follow_up_type}`)}</Badge>
+                      <Badge>{t(`opportunityDetail.followUpTypeValues.${followUp.follow_up_type}`) || followUp.follow_up_type}</Badge>
                       <Text fontSize="sm" color="gray.500">
                         {formatDateTime(followUp.follow_up_date)}
                       </Text>
@@ -570,7 +576,7 @@ const OpportunityDetail = () => {
                 >
                   <HStack justify="space-between" mb={2}>
                     <HStack>
-                      <Badge>{t(`opportunityDetail.noteType.${note.note_type}`)}</Badge>
+                      <Badge>{t(`opportunityDetail.noteTypeValues.${note.note_type}`) || note.note_type}</Badge>
                       {note.is_important && (
                         <Badge colorScheme="red">{t('opportunityDetail.important')}</Badge>
                       )}
@@ -658,10 +664,10 @@ const OpportunityDetail = () => {
                   value={editFormData.status}
                   onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setEditFormData({ ...editFormData, status: e.target.value as OpportunityStatus })}
                 >
-                  <option value="active">{t('opportunityDetail.status.active')}</option>
-                  <option value="won">{t('opportunityDetail.status.won')}</option>
-                  <option value="lost">{t('opportunityDetail.status.lost')}</option>
-                  <option value="cancelled">{t('opportunityDetail.status.cancelled')}</option>
+                  <option value="active">{t('opportunityDetail.statusValues.active')}</option>
+                  <option value="won">{t('opportunityDetail.statusValues.won')}</option>
+                  <option value="lost">{t('opportunityDetail.statusValues.lost')}</option>
+                  <option value="cancelled">{t('opportunityDetail.statusValues.cancelled')}</option>
                 </Select>
               </FormControl>
               <FormControl>
@@ -787,10 +793,10 @@ const OpportunityDetail = () => {
                   value={followUpFormData.follow_up_type}
                   onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFollowUpFormData({ ...followUpFormData, follow_up_type: e.target.value as OpportunityFollowUpType })}
                 >
-                  <option value="call">{t('opportunityDetail.followUpType.call')}</option>
-                  <option value="meeting">{t('opportunityDetail.followUpType.meeting')}</option>
-                  <option value="email">{t('opportunityDetail.followUpType.email')}</option>
-                  <option value="note">{t('opportunityDetail.followUpType.note')}</option>
+                  <option value="call">{t('opportunityDetail.followUpTypeValues.call')}</option>
+                  <option value="meeting">{t('opportunityDetail.followUpTypeValues.meeting')}</option>
+                  <option value="email">{t('opportunityDetail.followUpTypeValues.email')}</option>
+                  <option value="note">{t('opportunityDetail.followUpTypeValues.note')}</option>
                 </Select>
               </FormControl>
               <FormControl>
@@ -837,9 +843,9 @@ const OpportunityDetail = () => {
                   value={noteFormData.note_type}
                   onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setNoteFormData({ ...noteFormData, note_type: e.target.value as OpportunityNoteType })}
                 >
-                  <option value="comment">{t('opportunityDetail.noteType.comment')}</option>
-                  <option value="reminder">{t('opportunityDetail.noteType.reminder')}</option>
-                  <option value="task">{t('opportunityDetail.noteType.task')}</option>
+                  <option value="comment">{t('opportunityDetail.noteTypeValues.comment')}</option>
+                  <option value="reminder">{t('opportunityDetail.noteTypeValues.reminder')}</option>
+                  <option value="task">{t('opportunityDetail.noteTypeValues.task')}</option>
                 </Select>
               </FormControl>
               <FormControl isRequired>

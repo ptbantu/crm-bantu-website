@@ -21,6 +21,7 @@ import Organizations from './pages/admin/Organizations'
 import UserInfo from './pages/admin/UserInfo'
 import SystemStatus from './pages/admin/SystemStatus'
 import SystemLogs from './pages/admin/SystemLogs'
+import AuditLogs from './pages/admin/AuditLogs'
 import ProductManagement from './pages/admin/ProductManagement'
 import VendorProductList from './pages/admin/VendorProductList'
 import CategoryManagement from './pages/admin/CategoryManagement'
@@ -140,6 +141,16 @@ const AppContent = () => {
               <AdminLayout>
                 <PermissionGuard role="ADMIN">
                   <SystemLogs />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/system-management/audit-logs"
+            element={
+              <AdminLayout>
+                <PermissionGuard role="ADMIN">
+                  <AuditLogs />
                 </PermissionGuard>
               </AdminLayout>
             }

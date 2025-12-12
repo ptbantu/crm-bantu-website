@@ -4,7 +4,7 @@
  */
 import { useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Search, Plus, Shield, Users, RotateCcw, Save } from 'lucide-react'
+import { Search, Plus, Shield, Users, RotateCcw, Save, Calendar, Code, FileText } from 'lucide-react'
 import {
   getRoleList,
   Role,
@@ -31,6 +31,7 @@ import {
   Badge,
   Card,
   CardBody,
+  CardHeader,
   useColorModeValue,
   Tabs,
   TabList,
@@ -49,10 +50,11 @@ import {
   Checkbox,
   Divider,
   Heading,
+  SimpleGrid,
 } from '@chakra-ui/react'
 
 const RoleManagement = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { showSuccess, showError } = useToast()
   
   // Chakra UI 颜色模式
@@ -258,161 +260,312 @@ const RoleManagement = () => {
       {/* 主内容区域 */}
       <Flex flex={1} gap={4} mt={4} overflow="hidden">
         {/* 左侧：角色列表 */}
-        <Card w="300px" flexShrink={0} bg={bgColor} borderColor={borderColor}>
-          <CardBody p={4}>
-            <VStack spacing={4} align="stretch">
+        <Card w="320px" flexShrink={0} variant="elevated" bg={bgColor} borderColor={borderColor}>
+          <CardHeader pb={2} pt={3} px={4} borderBottom="1px solid" borderColor="var(--ali-border)">
+            <Heading size="sm" fontSize="14px" fontWeight="600" color="var(--ali-text-primary)">
+              角色列表
+            </Heading>
+          </CardHeader>
+          <CardBody p={3}>
+            <VStack spacing={3} align="stretch">
               {/* 搜索框 */}
               <InputGroup size="sm">
                 <InputLeftElement pointerEvents="none">
-                  <Search size={16} color="gray" />
+                  <Search size={14} color="gray" />
                 </InputLeftElement>
                 <Input
-                  placeholder="通过名称搜索"
+                  placeholder="搜索角色..."
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value)}
-                  bg={useColorModeValue('gray.50', 'gray.800')}
-                  borderColor={borderColor}
+                  bg="white"
+                  borderColor="var(--ali-border)"
+                  fontSize="13px"
+                  _focus={{
+                    borderColor: 'var(--ali-primary)',
+                    boxShadow: '0 0 0 1px var(--ali-primary)',
+                  }}
                 />
               </InputGroup>
 
               {/* 角色列表 */}
-              <VStack spacing={1} align="stretch" maxH="calc(100vh - 280px)" overflowY="auto">
-                {filteredRoles.map((role) => (
-                  <Box
-                    key={role.id}
-                    p={3}
-                    borderRadius="md"
-                    cursor="pointer"
-                    bg={selectedRole?.id === role.id ? selectedBg : 'transparent'}
-                    borderWidth={selectedRole?.id === role.id ? 2 : 1}
-                    borderColor={selectedRole?.id === role.id ? selectedBorder : borderColor}
-                    _hover={{ bg: hoverBg }}
-                    onClick={() => handleSelectRole(role)}
-                  >
-                    <Text fontWeight="medium" fontSize="sm">
-                      {role.name}
+              <VStack spacing={2} align="stretch" maxH="calc(100vh - 300px)" overflowY="auto">
+                {filteredRoles.length === 0 ? (
+                  <Flex justify="center" align="center" py={8}>
+                    <Text fontSize="sm" color="var(--ali-text-secondary)">
+                      暂无角色
                     </Text>
-                    {role.description && (
-                      <Text fontSize="xs" color="gray.500" mt={1} noOfLines={1}>
-                        {role.description}
-                      </Text>
-                    )}
-                  </Box>
-                ))}
+                  </Flex>
+                ) : (
+                  filteredRoles.map((role) => {
+                    const isSelected = selectedRole?.id === role.id
+                    const permCount = role.permissions?.length || 0
+                    return (
+                      <Box
+                        key={role.id}
+                        p={3}
+                        borderRadius="6px"
+                        cursor="pointer"
+                        bg={isSelected ? 'var(--ali-primary-light)' : 'white'}
+                        borderWidth={isSelected ? 2 : 1}
+                        borderColor={isSelected ? 'var(--ali-primary)' : 'var(--ali-border)'}
+                        _hover={{ 
+                          bg: isSelected ? 'var(--ali-primary-light)' : 'var(--ali-bg-light)',
+                          borderColor: 'var(--ali-primary)',
+                        }}
+                        onClick={() => handleSelectRole(role)}
+                        transition="all 0.2s"
+                      >
+                        <HStack justify="space-between" align="flex-start" mb={1}>
+                          <VStack align="flex-start" spacing={0.5} flex={1}>
+                            <HStack spacing={1.5}>
+                              <Shield size={14} color={isSelected ? 'var(--ali-primary)' : 'var(--ali-text-secondary)'} />
+                              <Text fontWeight="600" fontSize="13px" color="var(--ali-text-primary)">
+                                {role.name}
+                              </Text>
+                            </HStack>
+                            <HStack spacing={2} fontSize="11px" color="var(--ali-text-secondary)">
+                              <HStack spacing={0.5}>
+                                <Code size={10} />
+                                <Text>{role.code}</Text>
+                              </HStack>
+                              {permCount > 0 && (
+                                <Badge colorScheme="blue" fontSize="10px" px={1.5} py={0.5}>
+                                  {permCount} 权限
+                                </Badge>
+                              )}
+                            </HStack>
+                          </VStack>
+                        </HStack>
+                        {role.description && (
+                          <Text fontSize="11px" color="var(--ali-text-secondary)" mt={1.5} noOfLines={2}>
+                            {role.description}
+                          </Text>
+                        )}
+                        {role.created_at && (
+                          <HStack spacing={1} mt={1.5} fontSize="10px" color="var(--ali-text-secondary)">
+                            <Calendar size={10} />
+                            <Text>
+                              {new Date(role.created_at).toLocaleDateString(i18n.language === 'id-ID' ? 'id-ID' : 'zh-CN')}
+                            </Text>
+                          </HStack>
+                        )}
+                      </Box>
+                    )
+                  })
+                )}
               </VStack>
             </VStack>
           </CardBody>
         </Card>
 
         {/* 右侧：权限配置 */}
-        <Card flex={1} bg={bgColor} borderColor={borderColor} display="flex" flexDirection="column">
-          <CardBody flex={1} display="flex" flexDirection="column" overflow="hidden">
-            {!selectedRole ? (
+        <Card flex={1} variant="elevated" bg={bgColor} borderColor={borderColor} display="flex" flexDirection="column">
+          {!selectedRole ? (
+            <CardBody flex={1} display="flex" flexDirection="column" overflow="hidden">
               <Flex justify="center" align="center" h="full">
-                <Text color="gray.500">请选择一个角色</Text>
+                <VStack spacing={2}>
+                  <Shield size={48} color="var(--ali-text-secondary)" />
+                  <Text color="var(--ali-text-secondary)">请选择一个角色</Text>
+                </VStack>
               </Flex>
-            ) : loading ? (
-              <Flex justify="center" align="center" h="full">
-                <Spinner size="lg" />
-              </Flex>
-            ) : (
-              <Tabs flex={1} display="flex" flexDirection="column" overflow="hidden">
-                <TabList>
-                  <Tab>权限</Tab>
-                  <Tab>成员</Tab>
-                </TabList>
-
-                <TabPanels flex={1} overflowY="auto">
-                  {/* 权限标签页 */}
-                  <TabPanel p={6}>
-                    <VStack spacing={6} align="stretch">
-                      {/* 功能权限 */}
-                      <Box>
-                        <Heading size="md" mb={4}>功能权限</Heading>
-                        <Table variant="simple" size="sm">
-                          <Thead>
-                            <Tr>
-                              <Th>功能</Th>
-                              <Th>操作对象</Th>
-                              <Th>权限</Th>
-                            </Tr>
-                          </Thead>
-                          <Tbody>
-                            {Object.entries(groupedPermissions).map(([functionKey, objectGroups]) => {
-                              const objectEntries = Object.entries(objectGroups)
-                              return objectEntries.map(([objectKey, objectPerms], idx) => (
-                                <Tr key={`${functionKey}-${objectKey}-${idx}`}>
-                                  {idx === 0 && (
-                                    <Td rowSpan={objectEntries.length} verticalAlign="top" pt={4}>
-                                      <Text fontWeight="semibold">
-                                        {resourceTypeNames[functionKey] || functionKey}
-                                      </Text>
-                                    </Td>
-                                  )}
-                                  <Td>
-                                    <Text fontSize="sm">
-                                      {resourceTypeNames[objectKey] || objectKey}
-                                    </Text>
-                                  </Td>
-                                  <Td>
-                                    <HStack spacing={2} flexWrap="wrap">
-                                      {objectPerms.map(perm => (
-                                        <Checkbox
-                                          key={perm.id}
-                                          isChecked={rolePermissions.has(perm.id)}
-                                          onChange={() => togglePermission(perm.id)}
-                                          size="sm"
-                                        >
-                                          <Text fontSize="xs">
-                                            {actionNames[perm.action] || perm.action}
-                                          </Text>
-                                        </Checkbox>
-                                      ))}
-                                    </HStack>
-                                  </Td>
-                                </Tr>
-                              ))
-                            })}
-                          </Tbody>
-                        </Table>
-                      </Box>
+            </CardBody>
+          ) : (
+            <>
+              {/* 角色信息头部 - 紧凑布局 */}
+              <CardHeader pb={2} pt={3} px={3} borderBottom="1px solid" borderColor="var(--ali-border)">
+                <VStack align="stretch" spacing={2}>
+                  <HStack justify="space-between" align="flex-start">
+                    <VStack align="flex-start" spacing={0.5}>
+                      <HStack spacing={1.5}>
+                        <Shield size={16} color="var(--ali-primary)" />
+                        <Heading size="md" fontSize="15px" fontWeight="600" color="var(--ali-text-primary)">
+                          {selectedRole.name}
+                        </Heading>
+                      </HStack>
+                      {selectedRole.description && (
+                        <Text fontSize="11px" color="var(--ali-text-secondary)" mt={0.5}>
+                          {selectedRole.description}
+                        </Text>
+                      )}
                     </VStack>
-                  </TabPanel>
+                    <Badge colorScheme="blue" fontSize="10px" px={1.5} py={0.5}>
+                      {rolePermissions.size} 权限
+                    </Badge>
+                  </HStack>
+                  
+                  {/* 角色详情 - 紧凑布局 */}
+                  <SimpleGrid columns={3} spacing={3} pt={1.5} borderTop="1px solid" borderColor="var(--ali-border)">
+                    <Box>
+                      <Text fontSize="10px" fontWeight="500" color="var(--ali-text-secondary)" mb={0.5}>
+                        角色代码
+                      </Text>
+                      <HStack spacing={1}>
+                        <Code size={10} color="var(--ali-text-secondary)" />
+                        <Text fontSize="11px" color="var(--ali-text-primary)">
+                          {selectedRole.code}
+                        </Text>
+                      </HStack>
+                    </Box>
+                    {selectedRole.created_at && (
+                      <Box>
+                        <Text fontSize="10px" fontWeight="500" color="var(--ali-text-secondary)" mb={0.5}>
+                          创建时间
+                        </Text>
+                        <HStack spacing={1}>
+                          <Calendar size={10} color="var(--ali-text-secondary)" />
+                          <Text fontSize="11px" color="var(--ali-text-primary)">
+                            {new Date(selectedRole.created_at).toLocaleDateString(i18n.language === 'id-ID' ? 'id-ID' : 'zh-CN')}
+                          </Text>
+                        </HStack>
+                      </Box>
+                    )}
+                    {selectedRole.updated_at && (
+                      <Box>
+                        <Text fontSize="10px" fontWeight="500" color="var(--ali-text-secondary)" mb={0.5}>
+                          更新时间
+                        </Text>
+                        <HStack spacing={1}>
+                          <Calendar size={10} color="var(--ali-text-secondary)" />
+                          <Text fontSize="11px" color="var(--ali-text-primary)">
+                            {new Date(selectedRole.updated_at).toLocaleDateString(i18n.language === 'id-ID' ? 'id-ID' : 'zh-CN')}
+                          </Text>
+                        </HStack>
+                      </Box>
+                    )}
+                  </SimpleGrid>
+                </VStack>
+              </CardHeader>
 
-                  {/* 成员标签页 */}
-                  <TabPanel p={6}>
-                    <Flex justify="center" align="center" h="200px">
-                      <Text color="gray.500">成员管理功能开发中...</Text>
-                    </Flex>
-                  </TabPanel>
-                </TabPanels>
-              </Tabs>
-            )}
-          </CardBody>
+              <CardBody flex={1} display="flex" flexDirection="column" overflow="hidden" p={0}>
+                {loading ? (
+                  <Flex justify="center" align="center" h="full">
+                    <Spinner size="lg" color="var(--ali-primary)" />
+                  </Flex>
+                ) : (
+                  <Box flex={1} overflowY="auto" p={3}>
+                    <VStack spacing={2} align="stretch">
+                      {/* 功能权限 - 紧凑布局 */}
+                      {Object.entries(groupedPermissions).map(([functionKey, objectGroups]) => {
+                        const functionName = resourceTypeNames[functionKey] || functionKey
+                        const allPermsInFunction: Permission[] = []
+                        Object.values(objectGroups).forEach(perms => {
+                          allPermsInFunction.push(...perms)
+                        })
+                        const checkedCount = allPermsInFunction.filter(p => rolePermissions.has(p.id)).length
+                        
+                        return (
+                          <Card key={functionKey} variant="outline" borderColor="var(--ali-border)" size="sm">
+                            <CardHeader pb={1.5} pt={2} px={3} bg="var(--ali-bg-light)">
+                              <HStack justify="space-between">
+                                <Heading size="sm" fontSize="13px" fontWeight="600" color="var(--ali-text-primary)">
+                                  {functionName}
+                                </Heading>
+                                <Badge colorScheme={checkedCount === allPermsInFunction.length ? 'green' : checkedCount > 0 ? 'yellow' : 'gray'} fontSize="10px" px={1.5} py={0.5}>
+                                  {checkedCount} / {allPermsInFunction.length}
+                                </Badge>
+                              </HStack>
+                            </CardHeader>
+                            <CardBody p={2.5}>
+                              <VStack spacing={2} align="stretch">
+                                {Object.entries(objectGroups).map(([objectKey, objectPerms]) => {
+                                  const objectName = resourceTypeNames[objectKey] || objectKey
+                                  return (
+                                    <Box key={objectKey}>
+                                      <Text fontSize="11px" fontWeight="500" color="var(--ali-text-secondary)" mb={1.5}>
+                                        {objectName}
+                                      </Text>
+                                      <SimpleGrid columns={{ base: 3, md: 4, lg: 5, xl: 6 }} spacing={1.5}>
+                                        {objectPerms.map(perm => {
+                                          const isChecked = rolePermissions.has(perm.id)
+                                          const actionName = actionNames[perm.action] || perm.action
+                                          return (
+                                            <Checkbox
+                                              key={perm.id}
+                                              isChecked={isChecked}
+                                              onChange={() => togglePermission(perm.id)}
+                                              size="sm"
+                                              colorScheme="blue"
+                                            >
+                                              <Text fontSize="11px" color={isChecked ? 'var(--ali-text-primary)' : 'var(--ali-text-secondary)'}>
+                                                {actionName}
+                                              </Text>
+                                            </Checkbox>
+                                          )
+                                        })}
+                                      </SimpleGrid>
+                                    </Box>
+                                  )
+                                })}
+                              </VStack>
+                            </CardBody>
+                          </Card>
+                        )
+                      })}
+                      
+                      {Object.keys(groupedPermissions).length === 0 && (
+                        <Flex justify="center" align="center" py={8}>
+                          <VStack spacing={2}>
+                            <FileText size={36} color="var(--ali-text-secondary)" />
+                            <Text fontSize="13px" color="var(--ali-text-secondary)">
+                              暂无权限数据
+                            </Text>
+                          </VStack>
+                        </Flex>
+                      )}
+                    </VStack>
+                  </Box>
+                )}
+              </CardBody>
 
-          {/* 底部操作按钮 */}
-          {selectedRole && (
-            <Box p={4} borderTopWidth={1} borderColor={borderColor}>
-              <Flex justify="flex-end" gap={3}>
-                <Button
-                  leftIcon={<RotateCcw size={16} />}
-                  onClick={handleUndo}
-                  isDisabled={!hasChanges}
-                  variant="outline"
-                >
-                  撤销更改
-                </Button>
-                <Button
-                  leftIcon={<Save size={16} />}
-                  onClick={handleSave}
-                  isDisabled={!hasChanges}
-                  isLoading={loading}
-                  colorScheme="blue"
-                >
-                  更新
-                </Button>
-              </Flex>
-            </Box>
+              {/* 底部操作按钮 - 紧凑布局 */}
+              <Box p={2.5} borderTop="1px solid" borderColor="var(--ali-border)" bg="var(--ali-bg-light)">
+                <Flex justify="flex-end" gap={2}>
+                  <Button
+                    leftIcon={<RotateCcw size={12} />}
+                    onClick={handleUndo}
+                    isDisabled={!hasChanges}
+                    variant="outline"
+                    size="sm"
+                    fontSize="11px"
+                    borderColor="var(--ali-border)"
+                    color="var(--ali-text-primary)"
+                    px={3}
+                    h="28px"
+                    _hover={{
+                      bg: 'var(--ali-bg-light)',
+                      borderColor: 'var(--ali-primary)',
+                    }}
+                    _disabled={{
+                      opacity: 0.4,
+                      cursor: 'not-allowed',
+                    }}
+                  >
+                    撤销
+                  </Button>
+                  <Button
+                    leftIcon={<Save size={12} />}
+                    onClick={handleSave}
+                    isDisabled={!hasChanges}
+                    isLoading={loading}
+                    bg="var(--ali-primary)"
+                    color="white"
+                    size="sm"
+                    fontSize="11px"
+                    px={3}
+                    h="28px"
+                    _hover={{
+                      bg: 'var(--ali-primary-hover)',
+                    }}
+                    _disabled={{
+                      opacity: 0.4,
+                      cursor: 'not-allowed',
+                    }}
+                  >
+                    保存
+                  </Button>
+                </Flex>
+              </Box>
+            </>
           )}
         </Card>
       </Flex>
