@@ -1,6 +1,6 @@
 /**
  * 系统状态页面
- * 显示系统运行状态、性能指标等信息
+ * 显示系统运行状态、性能指标等信息 - 阿里云ECS风格优化
  */
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -18,7 +18,8 @@ import {
   Network,
   TrendingUp,
   Users,
-  Zap
+  Zap,
+  AlertTriangle
 } from 'lucide-react'
 import { PageHeader } from '@/components/admin/PageHeader'
 import {
@@ -33,11 +34,12 @@ import {
   Text,
   Badge,
   Progress,
-  useColorModeValue,
   Stat,
   StatLabel,
   StatNumber,
   StatHelpText,
+  Flex,
+  Divider,
 } from '@chakra-ui/react'
 
 interface ServiceStatus {
@@ -60,8 +62,6 @@ interface SystemInfo {
 
 const SystemStatus = () => {
   const { t } = useTranslation()
-  const bgColor = useColorModeValue('white', 'gray.800')
-  const borderColor = useColorModeValue('gray.200', 'gray.700')
   const [systemInfo, setSystemInfo] = useState<SystemInfo>({
     uptime: '15天 8小时 32分钟',
     cpuUsage: 45.2,
@@ -145,6 +145,7 @@ const SystemStatus = () => {
       case 'normal':
         return CheckCircle2
       case 'warning':
+        return AlertTriangle
       case 'error':
         return XCircle
       default:
@@ -163,8 +164,8 @@ const SystemStatus = () => {
   }
 
   return (
-    <Box minH="100vh" bg={useColorModeValue('gray.50', 'gray.900')}>
-      <Box w="full" py={2} px={1}>
+    <Box minH="100vh" bg="var(--ali-bg-gray)">
+      <Box w="full" py={4} px={6}>
         {/* 页面头部 */}
         <PageHeader
           icon={Activity}
@@ -172,345 +173,394 @@ const SystemStatus = () => {
           subtitle={t('systemStatus.subtitle')}
         />
 
-        {/* 系统运行时间与版本信息 */}
-        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3} mb={3}>
-          <Card bg="blue.50" borderColor="blue.200" borderWidth={1}>
-            <CardBody>
-              <HStack spacing={3} mb={3}>
-                <Box
-                  as={Clock}
-                  size={6}
-                  color="blue.600"
-                  bg="blue.100"
-                  p={2}
-                  borderRadius="lg"
-                />
-                <Text fontSize="sm" fontWeight="semibold" color="blue.700">
-                  {t('systemStatus.systemInfo.uptime')}
-                </Text>
-              </HStack>
-              <Text fontSize="lg" fontWeight="bold" color="blue.900">
-                {systemInfo.uptime}
-              </Text>
-            </CardBody>
-          </Card>
-          <Card bg="purple.50" borderColor="purple.200" borderWidth={1}>
-            <CardBody>
-              <HStack spacing={3} mb={3}>
-                <Box
-                  as={Zap}
-                  size={6}
-                  color="purple.600"
-                  bg="purple.100"
-                  p={2}
-                  borderRadius="lg"
-                />
-                <Text fontSize="sm" fontWeight="semibold" color="purple.700">
-                  {t('systemStatus.systemInfo.version')}
-                </Text>
-              </HStack>
-              <Text fontSize="lg" fontWeight="bold" color="purple.900">
-                {systemInfo.version}
-              </Text>
-            </CardBody>
-          </Card>
-        </SimpleGrid>
-
-        {/* 性能指标 */}
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={3} mb={3}>
-          {/* CPU使用率 */}
-          <Card bg={bgColor} borderColor={borderColor}>
-            <CardBody>
-              <HStack justify="space-between" mb={3}>
+        {/* 系统运行时间与版本信息 - 阿里云ECS风格 */}
+        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mb={4}>
+          <Card variant="elevated">
+            <CardBody p={4}>
+              <Flex align="center" justify="space-between">
                 <HStack spacing={3}>
                   <Box
-                    as={Cpu}
-                    size={5}
-                    color="blue.600"
-                    bg="blue.50"
-                    p={2}
-                    borderRadius="lg"
+                    as={Clock}
+                    size={20}
+                    color="var(--ali-primary)"
+                    bg="var(--ali-primary-light)"
+                    p={2.5}
+                    borderRadius="4px"
                   />
-                  <Text fontSize="xs" fontWeight="medium" color="gray.700">
-                    {t('systemStatus.performance.cpu')}
-                  </Text>
-                </HStack>
-                <Text fontSize="sm" fontWeight="bold" color="gray.900">
-                  {systemInfo.cpuUsage.toFixed(1)}%
-                </Text>
-              </HStack>
-              <Progress
-                value={systemInfo.cpuUsage}
-                colorScheme={getUsageColorScheme(systemInfo.cpuUsage)}
-                size="sm"
-                borderRadius="full"
-              />
-            </CardBody>
-          </Card>
-
-          {/* 内存使用率 */}
-          <Card bg={bgColor} borderColor={borderColor}>
-            <CardBody>
-              <HStack justify="space-between" mb={3}>
-                <HStack spacing={3}>
-                  <Box
-                    as={MemoryStick}
-                    size={5}
-                    color="green.600"
-                    bg="green.50"
-                    p={2}
-                    borderRadius="lg"
-                  />
-                  <Text fontSize="xs" fontWeight="medium" color="gray.700">
-                    {t('systemStatus.performance.memory')}
-                  </Text>
-                </HStack>
-                <Text fontSize="sm" fontWeight="bold" color="gray.900">
-                  {systemInfo.memoryUsage.toFixed(1)}%
-                </Text>
-              </HStack>
-              <Progress
-                value={systemInfo.memoryUsage}
-                colorScheme={getUsageColorScheme(systemInfo.memoryUsage)}
-                size="sm"
-                borderRadius="full"
-              />
-            </CardBody>
-          </Card>
-
-          {/* 磁盘使用率 */}
-          <Card bg={bgColor} borderColor={borderColor}>
-            <CardBody>
-              <HStack justify="space-between" mb={3}>
-                <HStack spacing={3}>
-                  <Box
-                    as={HardDrive}
-                    size={5}
-                    color="orange.600"
-                    bg="orange.50"
-                    p={2}
-                    borderRadius="lg"
-                  />
-                  <Text fontSize="xs" fontWeight="medium" color="gray.700">
-                    {t('systemStatus.performance.disk')}
-                  </Text>
-                </HStack>
-                <Text fontSize="sm" fontWeight="bold" color="gray.900">
-                  {systemInfo.diskUsage.toFixed(1)}%
-                </Text>
-              </HStack>
-              <Progress
-                value={systemInfo.diskUsage}
-                colorScheme={getUsageColorScheme(systemInfo.diskUsage)}
-                size="sm"
-                borderRadius="full"
-              />
-            </CardBody>
-          </Card>
-
-          {/* 数据库连接数 */}
-          <Card bg={bgColor} borderColor={borderColor}>
-            <CardBody>
-              <HStack justify="space-between" mb={2}>
-                <HStack spacing={3}>
-                  <Box
-                    as={Database}
-                    size={5}
-                    color="indigo.600"
-                    bg="indigo.50"
-                    p={2}
-                    borderRadius="lg"
-                  />
-                  <Text fontSize="xs" fontWeight="medium" color="gray.700">
-                    {t('systemStatus.performance.dbConnections')}
-                  </Text>
-                </HStack>
-                <Text fontSize="sm" fontWeight="bold" color="gray.900">
-                  {systemInfo.dbConnections}
-                </Text>
-              </HStack>
-              <Text fontSize="xs" color="gray.500" mt={1}>
-                {t('systemStatus.performance.maxConnections')}: 100
-              </Text>
-            </CardBody>
-          </Card>
-        </SimpleGrid>
-
-        {/* 服务状态卡片 */}
-        <Box mb={3}>
-          <Heading size="sm" mb={2} color="gray.900">
-            {t('systemStatus.services.title')}
-          </Heading>
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={3}>
-            {services.map((service, index) => {
-              const IconComponent = service.icon
-              const StatusIcon = getStatusIcon(service.status)
-              const colorScheme = getStatusColorScheme(service.status)
-              return (
-                <Card
-                  key={index}
-                  bg={`${colorScheme}.50`}
-                  borderColor={`${colorScheme}.200`}
-                  borderWidth={2}
-                  _hover={{ boxShadow: 'md', transform: 'translateY(-2px)' }}
-                  transition="all 0.2s"
-                >
-                  <CardBody>
-                    <HStack justify="space-between" mb={3}>
-                      <HStack spacing={3}>
-                        <Box
-                          as={IconComponent}
-                          size={6}
-                          color={`${colorScheme}.600`}
-                          bg={`${colorScheme}.100`}
-                          p={2}
-                          borderRadius="lg"
-                        />
-                        <Text fontSize="sm" fontWeight="semibold" color="gray.900">
-                          {service.name}
-                        </Text>
-                      </HStack>
-                      <Box
-                        as={StatusIcon}
-                        size={5}
-                        color={`${colorScheme}.600`}
-                        bg={`${colorScheme}.100`}
-                        p={1.5}
-                        borderRadius="md"
-                      />
-                    </HStack>
-                    <Text fontSize="xs" color="gray.600" fontWeight="medium">
-                      {service.message}
+                  <VStack align="flex-start" spacing={0}>
+                    <Text fontSize="12px" color="var(--ali-text-secondary)" fontWeight="normal">
+                      {t('systemStatus.systemInfo.uptime')}
                     </Text>
-                  </CardBody>
-                </Card>
-              )
-            })}
-          </SimpleGrid>
-        </Box>
+                    <Text fontSize="18px" fontWeight="600" color="var(--ali-text-primary)">
+                      {systemInfo.uptime}
+                    </Text>
+                  </VStack>
+                </HStack>
+              </Flex>
+            </CardBody>
+          </Card>
+          <Card variant="elevated">
+            <CardBody p={4}>
+              <Flex align="center" justify="space-between">
+                <HStack spacing={3}>
+                  <Box
+                    as={Zap}
+                    size={20}
+                    color="var(--ali-primary)"
+                    bg="var(--ali-primary-light)"
+                    p={2.5}
+                    borderRadius="4px"
+                  />
+                  <VStack align="flex-start" spacing={0}>
+                    <Text fontSize="12px" color="var(--ali-text-secondary)" fontWeight="normal">
+                      {t('systemStatus.systemInfo.version')}
+                    </Text>
+                    <Text fontSize="18px" fontWeight="600" color="var(--ali-text-primary)">
+                      {systemInfo.version}
+                    </Text>
+                  </VStack>
+                </HStack>
+              </Flex>
+            </CardBody>
+          </Card>
+        </SimpleGrid>
 
-        {/* 统计信息 */}
-        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={3} mb={3}>
-          {/* API请求统计 */}
-          <Card bg="blue.50" borderColor="blue.200" borderWidth={1}>
-            <CardBody>
-              <HStack spacing={3} mb={3}>
-                <Box
-                  as={TrendingUp}
-                  size={6}
-                  color="blue.600"
-                  bg="blue.100"
-                  p={2}
-                  borderRadius="lg"
+        {/* 性能指标 - 阿里云ECS风格 */}
+        <Card variant="elevated" mb={4}>
+          <CardHeader pb={3} borderBottom="1px solid" borderColor="var(--ali-border)">
+            <Heading size="sm" fontSize="14px" fontWeight="600" color="var(--ali-text-primary)">
+              {t('systemStatus.performance.cpu')} / {t('systemStatus.performance.memory')} / {t('systemStatus.performance.disk')}
+            </Heading>
+          </CardHeader>
+          <CardBody p={4}>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
+              {/* CPU使用率 */}
+              <Box>
+                <Flex justify="space-between" align="center" mb={2}>
+                  <HStack spacing={2}>
+                    <Box
+                      as={Cpu}
+                      size={16}
+                      color="var(--ali-primary)"
+                    />
+                    <Text fontSize="12px" fontWeight="500" color="var(--ali-text-secondary)">
+                      {t('systemStatus.performance.cpu')}
+                    </Text>
+                  </HStack>
+                  <Text fontSize="14px" fontWeight="600" color="var(--ali-text-primary)">
+                    {systemInfo.cpuUsage.toFixed(1)}%
+                  </Text>
+                </Flex>
+                <Progress
+                  value={systemInfo.cpuUsage}
+                  colorScheme={getUsageColorScheme(systemInfo.cpuUsage)}
+                  size="sm"
+                  borderRadius="full"
+                  bg="var(--ali-border)"
                 />
-                <Text fontSize="sm" fontWeight="semibold" color="blue.700">
-                  {t('systemStatus.stats.apiRequests')}
+              </Box>
+
+              {/* 内存使用率 */}
+              <Box>
+                <Flex justify="space-between" align="center" mb={2}>
+                  <HStack spacing={2}>
+                    <Box
+                      as={MemoryStick}
+                      size={16}
+                      color="var(--ali-success)"
+                    />
+                    <Text fontSize="12px" fontWeight="500" color="var(--ali-text-secondary)">
+                      {t('systemStatus.performance.memory')}
+                    </Text>
+                  </HStack>
+                  <Text fontSize="14px" fontWeight="600" color="var(--ali-text-primary)">
+                    {systemInfo.memoryUsage.toFixed(1)}%
+                  </Text>
+                </Flex>
+                <Progress
+                  value={systemInfo.memoryUsage}
+                  colorScheme={getUsageColorScheme(systemInfo.memoryUsage)}
+                  size="sm"
+                  borderRadius="full"
+                  bg="var(--ali-border)"
+                />
+              </Box>
+
+              {/* 磁盘使用率 */}
+              <Box>
+                <Flex justify="space-between" align="center" mb={2}>
+                  <HStack spacing={2}>
+                    <Box
+                      as={HardDrive}
+                      size={16}
+                      color="var(--ali-warning)"
+                    />
+                    <Text fontSize="12px" fontWeight="500" color="var(--ali-text-secondary)">
+                      {t('systemStatus.performance.disk')}
+                    </Text>
+                  </HStack>
+                  <Text fontSize="14px" fontWeight="600" color="var(--ali-text-primary)">
+                    {systemInfo.diskUsage.toFixed(1)}%
+                  </Text>
+                </Flex>
+                <Progress
+                  value={systemInfo.diskUsage}
+                  colorScheme={getUsageColorScheme(systemInfo.diskUsage)}
+                  size="sm"
+                  borderRadius="full"
+                  bg="var(--ali-border)"
+                />
+              </Box>
+
+              {/* 数据库连接数 */}
+              <Box>
+                <Flex justify="space-between" align="center" mb={2}>
+                  <HStack spacing={2}>
+                    <Box
+                      as={Database}
+                      size={16}
+                      color="var(--ali-primary)"
+                    />
+                    <Text fontSize="12px" fontWeight="500" color="var(--ali-text-secondary)">
+                      {t('systemStatus.performance.dbConnections')}
+                    </Text>
+                  </HStack>
+                  <Text fontSize="14px" fontWeight="600" color="var(--ali-text-primary)">
+                    {systemInfo.dbConnections}
+                  </Text>
+                </Flex>
+                <Text fontSize="11px" color="var(--ali-text-secondary)" mt={1}>
+                  {t('systemStatus.performance.maxConnections')}: 100
                 </Text>
-              </HStack>
-              <Stat>
-                <StatNumber fontSize="2xl" fontWeight="bold" color="blue.900" mb={1}>
+              </Box>
+            </SimpleGrid>
+          </CardBody>
+        </Card>
+
+        {/* 服务状态卡片 - 阿里云ECS风格 */}
+        <Card variant="elevated" mb={4}>
+          <CardHeader pb={3} borderBottom="1px solid" borderColor="var(--ali-border)">
+            <Heading size="sm" fontSize="14px" fontWeight="600" color="var(--ali-text-primary)">
+              {t('systemStatus.services.title')}
+            </Heading>
+          </CardHeader>
+          <CardBody p={4}>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={3}>
+              {services.map((service, index) => {
+                const IconComponent = service.icon
+                const StatusIcon = getStatusIcon(service.status)
+                const colorScheme = getStatusColorScheme(service.status)
+                const statusColor = 
+                  service.status === 'normal' ? 'var(--ali-success)' :
+                  service.status === 'warning' ? 'var(--ali-warning)' :
+                  'var(--ali-error)'
+                const statusBg = 
+                  service.status === 'normal' ? 'var(--ali-primary-light)' :
+                  service.status === 'warning' ? '#FFFBE6' :
+                  '#FFF1F0'
+                
+                return (
+                  <Card
+                    key={index}
+                    variant="elevated"
+                    borderLeft="4px solid"
+                    borderLeftColor={statusColor}
+                    _hover={{ 
+                      boxShadow: 'var(--ali-card-shadow-hover)',
+                      transform: 'translateY(-2px)' 
+                    }}
+                    transition="all 0.2s"
+                  >
+                    <CardBody p={3}>
+                      <Flex justify="space-between" align="flex-start">
+                        <HStack spacing={2.5} flex={1}>
+                          <Box
+                            as={IconComponent}
+                            size={18}
+                            color={statusColor}
+                          />
+                          <VStack align="flex-start" spacing={0} flex={1}>
+                            <Text fontSize="13px" fontWeight="500" color="var(--ali-text-primary)">
+                              {service.name}
+                            </Text>
+                            <Text fontSize="11px" color="var(--ali-text-secondary)" mt={0.5}>
+                              {service.message}
+                            </Text>
+                          </VStack>
+                        </HStack>
+                        <Box
+                          as={StatusIcon}
+                          size={16}
+                          color={statusColor}
+                          flexShrink={0}
+                        />
+                      </Flex>
+                    </CardBody>
+                  </Card>
+                )
+              })}
+            </SimpleGrid>
+          </CardBody>
+        </Card>
+
+        {/* 统计信息 - 阿里云ECS风格 */}
+        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4} mb={4}>
+          {/* API请求统计 */}
+          <Card variant="elevated">
+            <CardBody p={4}>
+              <Flex align="center" justify="space-between" mb={3}>
+                <HStack spacing={2.5}>
+                  <Box
+                    as={TrendingUp}
+                    size={18}
+                    color="var(--ali-primary)"
+                    bg="var(--ali-primary-light)"
+                    p={2}
+                    borderRadius="4px"
+                  />
+                  <Text fontSize="12px" fontWeight="500" color="var(--ali-text-secondary)">
+                    {t('systemStatus.stats.apiRequests')}
+                  </Text>
+                </HStack>
+              </Flex>
+              <VStack align="flex-start" spacing={0}>
+                <Text fontSize="24px" fontWeight="600" color="var(--ali-text-primary)" lineHeight="1.2">
                   {formatNumber(systemInfo.apiRequests)}
-                </StatNumber>
-                <StatHelpText fontSize="xs" color="blue.600" m={0}>
+                </Text>
+                <Text fontSize="11px" color="var(--ali-text-secondary)" mt={1}>
                   {t('systemStatus.stats.today')}
-                </StatHelpText>
-              </Stat>
+                </Text>
+              </VStack>
             </CardBody>
           </Card>
 
           {/* 活跃用户 */}
-          <Card bg="green.50" borderColor="green.200" borderWidth={1}>
-            <CardBody>
-              <HStack spacing={3} mb={3}>
-                <Box
-                  as={Users}
-                  size={6}
-                  color="green.600"
-                  bg="green.100"
-                  p={2}
-                  borderRadius="lg"
-                />
-                <Text fontSize="sm" fontWeight="semibold" color="green.700">
-                  {t('systemStatus.stats.activeUsers')}
-                </Text>
-              </HStack>
-              <Stat>
-                <StatNumber fontSize="2xl" fontWeight="bold" color="green.900" mb={1}>
+          <Card variant="elevated">
+            <CardBody p={4}>
+              <Flex align="center" justify="space-between" mb={3}>
+                <HStack spacing={2.5}>
+                  <Box
+                    as={Users}
+                    size={18}
+                    color="var(--ali-success)"
+                    bg="var(--ali-primary-light)"
+                    p={2}
+                    borderRadius="4px"
+                  />
+                  <Text fontSize="12px" fontWeight="500" color="var(--ali-text-secondary)">
+                    {t('systemStatus.stats.activeUsers')}
+                  </Text>
+                </HStack>
+              </Flex>
+              <VStack align="flex-start" spacing={0}>
+                <Text fontSize="24px" fontWeight="600" color="var(--ali-text-primary)" lineHeight="1.2">
                   {systemInfo.activeUsers}
-                </StatNumber>
-                <StatHelpText fontSize="xs" color="green.600" m={0}>
+                </Text>
+                <Text fontSize="11px" color="var(--ali-text-secondary)" mt={1}>
                   {t('systemStatus.stats.currentOnline')}
-                </StatHelpText>
-              </Stat>
+                </Text>
+              </VStack>
             </CardBody>
           </Card>
 
           {/* 网络状态 */}
-          <Card bg="purple.50" borderColor="purple.200" borderWidth={1}>
-            <CardBody>
-              <HStack spacing={3} mb={3}>
-                <Box
-                  as={Network}
-                  size={6}
-                  color="purple.600"
-                  bg="purple.100"
-                  p={2}
-                  borderRadius="lg"
-                />
-                <Text fontSize="sm" fontWeight="semibold" color="purple.700">
-                  {t('systemStatus.stats.network')}
-                </Text>
-              </HStack>
-              <Stat>
-                <StatNumber fontSize="2xl" fontWeight="bold" color="green.600" mb={1}>
+          <Card variant="elevated">
+            <CardBody p={4}>
+              <Flex align="center" justify="space-between" mb={3}>
+                <HStack spacing={2.5}>
+                  <Box
+                    as={Network}
+                    size={18}
+                    color="var(--ali-primary)"
+                    bg="var(--ali-primary-light)"
+                    p={2}
+                    borderRadius="4px"
+                  />
+                  <Text fontSize="12px" fontWeight="500" color="var(--ali-text-secondary)">
+                    {t('systemStatus.stats.network')}
+                  </Text>
+                </HStack>
+              </Flex>
+              <VStack align="flex-start" spacing={0}>
+                <Badge 
+                  colorScheme="green" 
+                  fontSize="12px" 
+                  px={2} 
+                  py={1}
+                  borderRadius="4px"
+                >
                   {t('systemStatus.status.normal')}
-                </StatNumber>
-                <StatHelpText fontSize="xs" color="purple.600" m={0}>
+                </Badge>
+                <Text fontSize="11px" color="var(--ali-text-secondary)" mt={2}>
                   {t('systemStatus.stats.latency')}: 12ms
-                </StatHelpText>
-              </Stat>
+                </Text>
+              </VStack>
             </CardBody>
           </Card>
         </SimpleGrid>
 
-        {/* 系统概览 */}
-        <Card bg={bgColor} borderColor={borderColor}>
-          <CardHeader pb={3}>
-            <Heading size="sm" color="gray.900">
+        {/* 系统概览 - 阿里云ECS风格 */}
+        <Card variant="elevated">
+          <CardHeader pb={3} borderBottom="1px solid" borderColor="var(--ali-border)">
+            <Heading size="sm" fontSize="14px" fontWeight="600" color="var(--ali-text-primary)">
               {t('systemStatus.overview.title')}
             </Heading>
           </CardHeader>
-          <CardBody pt={0}>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={3}>
-              <Box bg="gray.50" borderRadius="lg" p={2.5}>
-                <Text fontSize="xs" color="gray.500" mb={1}>
+          <CardBody p={4}>
+            <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
+              <Box 
+                bg="var(--ali-bg-light)" 
+                borderRadius="4px" 
+                p={3}
+                border="1px solid"
+                borderColor="var(--ali-border)"
+              >
+                <Text fontSize="11px" color="var(--ali-text-secondary)" mb={1.5} fontWeight="normal">
                   {t('systemStatus.overview.totalServices')}
                 </Text>
-                <Text fontSize="lg" fontWeight="semibold" color="gray.900">
+                <Text fontSize="20px" fontWeight="600" color="var(--ali-text-primary)">
                   {services.length}
                 </Text>
               </Box>
-              <Box bg="green.50" borderRadius="lg" p={2.5}>
-                <Text fontSize="xs" color="green.600" mb={1}>
+              <Box 
+                bg="#F6FFED" 
+                borderRadius="4px" 
+                p={3}
+                border="1px solid"
+                borderColor="#B7EB8F"
+              >
+                <Text fontSize="11px" color="var(--ali-success)" mb={1.5} fontWeight="normal">
                   {t('systemStatus.overview.normalServices')}
                 </Text>
-                <Text fontSize="lg" fontWeight="semibold" color="green.700">
+                <Text fontSize="20px" fontWeight="600" color="var(--ali-success)">
                   {services.filter(s => s.status === 'normal').length}
                 </Text>
               </Box>
-              <Box bg="yellow.50" borderRadius="lg" p={2.5}>
-                <Text fontSize="xs" color="yellow.600" mb={1}>
+              <Box 
+                bg="#FFFBE6" 
+                borderRadius="4px" 
+                p={3}
+                border="1px solid"
+                borderColor="#FFE58F"
+              >
+                <Text fontSize="11px" color="var(--ali-warning)" mb={1.5} fontWeight="normal">
                   {t('systemStatus.overview.warningServices')}
                 </Text>
-                <Text fontSize="lg" fontWeight="semibold" color="yellow.700">
+                <Text fontSize="20px" fontWeight="600" color="var(--ali-warning)">
                   {services.filter(s => s.status === 'warning').length}
                 </Text>
               </Box>
-              <Box bg="red.50" borderRadius="lg" p={2.5}>
-                <Text fontSize="xs" color="red.600" mb={1}>
+              <Box 
+                bg="#FFF1F0" 
+                borderRadius="4px" 
+                p={3}
+                border="1px solid"
+                borderColor="#FFCCC7"
+              >
+                <Text fontSize="11px" color="var(--ali-error)" mb={1.5} fontWeight="normal">
                   {t('systemStatus.overview.errorServices')}
                 </Text>
-                <Text fontSize="lg" fontWeight="semibold" color="red.700">
+                <Text fontSize="20px" fontWeight="600" color="var(--ali-error)">
                   {services.filter(s => s.status === 'error').length}
                 </Text>
               </Box>
