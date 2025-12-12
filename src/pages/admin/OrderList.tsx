@@ -43,7 +43,6 @@ import {
   Text,
   Badge,
   IconButton,
-  useColorModeValue,
 } from '@chakra-ui/react'
 
 const OrderList = () => {
@@ -51,10 +50,10 @@ const OrderList = () => {
   const { t } = useTranslation()
   const { showSuccess, showError } = useToast()
   
-  // Chakra UI 颜色模式
-  const bgColor = useColorModeValue('white', 'gray.800')
-  const borderColor = useColorModeValue('gray.200', 'gray.700')
-  const hoverBg = useColorModeValue('gray.50', 'gray.700')
+  // 阿里云ECS风格颜色（移除useColorModeValue）
+  const bgColor = 'white'
+  const borderColor = 'var(--ali-border)'
+  const hoverBg = 'var(--ali-primary-light)'
 
   // 查询参数
   const [queryParams, setQueryParams] = useState<OrderListParams>({
@@ -450,28 +449,27 @@ const OrderList = () => {
         subtitle={t('orderList.subtitle')}
         actions={
           <Button
-            colorScheme="primary"
             leftIcon={<Plus size={16} />}
             onClick={handleCreate}
-            size="sm"
+            size="md"
           >
             {t('orderList.create')}
           </Button>
         }
       />
 
-      {/* 查询表单 */}
-      <Card mb={4} bg={bgColor} borderColor={borderColor}>
-        <CardBody>
+      {/* 查询表单 - 阿里云ECS风格 */}
+      <Card mb={4} variant="elevated">
+        <CardBody p={4}>
           <HStack spacing={3} align="flex-end" flexWrap="wrap">
-            {/* 订单号 */}
+            {/* 订单号 - 阿里云ECS风格 */}
             <Box flex={1} minW="150px">
-              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+              <Text fontSize="12px" fontWeight="normal" mb={1} color="var(--ali-text-secondary)" textAlign="right">
                 {t('orderList.search.orderNumber')}
               </Text>
-              <InputGroup size="sm">
+              <InputGroup size="md">
                 <InputLeftElement pointerEvents="none">
-                  <FileText size={14} color="gray" />
+                  <FileText size={14} color="var(--ali-text-secondary)" />
                 </InputLeftElement>
                 <Input
                   value={formData.order_number}
@@ -482,14 +480,14 @@ const OrderList = () => {
               </InputGroup>
             </Box>
 
-            {/* 订单标题 */}
+            {/* 订单标题 - 阿里云ECS风格 */}
             <Box flex={1} minW="150px">
-              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+              <Text fontSize="12px" fontWeight="normal" mb={1} color="var(--ali-text-secondary)" textAlign="right">
                 {t('orderList.search.title')}
               </Text>
-              <InputGroup size="sm">
+              <InputGroup size="md">
                 <InputLeftElement pointerEvents="none">
-                  <ShoppingCart size={14} color="gray" />
+                  <ShoppingCart size={14} color="var(--ali-text-secondary)" />
                 </InputLeftElement>
                 <Input
                   value={formData.title}
@@ -500,14 +498,14 @@ const OrderList = () => {
               </InputGroup>
             </Box>
 
-            {/* 客户名称 */}
+            {/* 客户名称 - 阿里云ECS风格 */}
             <Box flex={1} minW="150px">
-              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+              <Text fontSize="12px" fontWeight="normal" mb={1} color="var(--ali-text-secondary)" textAlign="right">
                 {t('orderList.search.customerName')}
               </Text>
-              <InputGroup size="sm">
+              <InputGroup size="md">
                 <InputLeftElement pointerEvents="none">
-                  <User size={14} color="gray" />
+                  <User size={14} color="var(--ali-text-secondary)" />
                 </InputLeftElement>
                 <Input
                   value={formData.customer_name}
@@ -518,13 +516,13 @@ const OrderList = () => {
               </InputGroup>
             </Box>
 
-            {/* 订单状态 */}
+            {/* 订单状态 - 阿里云ECS风格 */}
             <Box flex={1} minW="120px">
-              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+              <Text fontSize="12px" fontWeight="normal" mb={1} color="var(--ali-text-secondary)" textAlign="right">
                 {t('orderList.search.status')}
               </Text>
               <Select
-                size="sm"
+                size="md"
                 value={formData.status_code}
                 onChange={(e) => setFormData({ ...formData, status_code: e.target.value as '' | OrderStatus })}
               >
@@ -538,18 +536,17 @@ const OrderList = () => {
               </Select>
             </Box>
 
-            {/* 操作按钮 */}
+            {/* 操作按钮 - 阿里云ECS风格 */}
             <HStack spacing={2}>
               <Button
-                size="sm"
+                size="md"
                 variant="outline"
                 onClick={handleReset}
               >
                 {t('orderList.search.reset')}
               </Button>
               <Button
-                size="sm"
-                colorScheme="blue"
+                size="md"
                 leftIcon={<Search size={14} />}
                 onClick={handleSearch}
                 isLoading={loading}
@@ -561,86 +558,92 @@ const OrderList = () => {
         </CardBody>
       </Card>
 
-      {/* 操作栏 */}
+      {/* 操作栏 - 阿里云ECS风格 */}
       <Flex justify="space-between" align="center" mb={4}>
-        <Text fontSize="sm" color="gray.600">
+        <Text fontSize="14px" color="var(--ali-text-secondary)" fontWeight="500">
           {t('orderList.total', { total })}
         </Text>
       </Flex>
 
-      {/* 订单列表 */}
+      {/* 订单列表 - 阿里云ECS风格 */}
       {loading ? (
-        <Card bg={bgColor} borderColor={borderColor}>
+        <Card variant="elevated">
           <CardBody>
             <Flex justify="center" align="center" py={8}>
-              <Spinner size="lg" color="blue.500" />
-              <Text ml={4} color="gray.500">{t('orderList.loading')}</Text>
+              <Spinner size="lg" color="var(--ali-primary)" />
+              <Text ml={4} color="var(--ali-text-secondary)">{t('orderList.loading')}</Text>
             </Flex>
           </CardBody>
         </Card>
       ) : !orders || orders.length === 0 ? (
-        <Card bg={bgColor} borderColor={borderColor}>
+        <Card variant="elevated">
           <CardBody>
             <VStack py={8} spacing={3}>
-              <ShoppingCart size={48} color="gray" />
-              <Text color="gray.500">{t('orderList.noData')}</Text>
+              <ShoppingCart size={48} color="var(--ali-text-secondary)" />
+              <Text color="var(--ali-text-secondary)">{t('orderList.noData')}</Text>
             </VStack>
           </CardBody>
         </Card>
       ) : (
-        <Card bg={bgColor} borderColor={borderColor} overflow="hidden">
+        <Card variant="elevated" overflow="hidden">
           <Box overflowX="auto">
             <Table variant="simple" size="sm">
-              <Thead bg="gray.50">
+              <Thead>
                 <Tr>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('orderList.table.orderNumber')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('orderList.table.title')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('orderList.table.customerName')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('orderList.table.salesUser')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('orderList.table.totalAmount')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('orderList.table.status')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('orderList.table.createdAt')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('orderList.table.actions')}</Th>
+                  <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('orderList.table.orderNumber')}</Th>
+                  <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('orderList.table.title')}</Th>
+                  <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('orderList.table.customerName')}</Th>
+                  <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('orderList.table.salesUser')}</Th>
+                  <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('orderList.table.totalAmount')}</Th>
+                  <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('orderList.table.status')}</Th>
+                  <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('orderList.table.createdAt')}</Th>
+                  <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3}>{t('orderList.table.actions')}</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {orders.map((order) => (
-                  <Tr key={order.id} _hover={{ bg: hoverBg }} transition="background-color 0.2s">
-                    <Td fontSize="sm" color="gray.900" fontWeight="medium">{order.order_number || '-'}</Td>
-                    <Td fontSize="sm" color="gray.900">{order.title || '-'}</Td>
-                    <Td fontSize="sm" color="gray.600">{order.customer_name || '-'}</Td>
-                    <Td fontSize="sm" color="gray.600">{order.sales_username || '-'}</Td>
-                    <Td fontSize="sm" color="gray.900" fontWeight="medium">
+                {orders.map((order, index) => (
+                  <Tr 
+                    key={order.id} 
+                    h="52px"
+                    bg={index % 2 === 0 ? 'var(--ali-bg-light)' : 'white'}
+                    _hover={{ bg: hoverBg }} 
+                    transition="background-color 0.2s"
+                  >
+                    <Td fontSize="14px" color="var(--ali-text-primary)" fontWeight="500" py={4}>{order.order_number || '-'}</Td>
+                    <Td fontSize="14px" color="var(--ali-text-primary)" py={4}>{order.title || '-'}</Td>
+                    <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>{order.customer_name || '-'}</Td>
+                    <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>{order.sales_username || '-'}</Td>
+                    <Td fontSize="14px" color="var(--ali-text-primary)" fontWeight="500" py={4}>
                       {formatCurrency(order.final_amount ?? order.total_amount, order.currency_code)}
                     </Td>
-                    <Td fontSize="sm">
+                    <Td fontSize="14px" py={4}>
                       {getStatusBadge(order.status_code || 'submitted')}
                     </Td>
-                    <Td fontSize="sm" color="gray.600">{formatDateTime(order.created_at)}</Td>
-                    <Td fontSize="sm">
+                    <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>{formatDateTime(order.created_at)}</Td>
+                    <Td fontSize="14px" py={4}>
                       <HStack spacing={1}>
                         <IconButton
                           aria-label={t('orderList.actions.view')}
                           icon={<Eye size={14} />}
-                          size="xs"
+                          size="sm"
                           variant="ghost"
-                          colorScheme="blue"
+                          color="var(--ali-primary)"
                           onClick={() => handleViewDetail(order.id)}
                         />
                         <IconButton
                           aria-label={t('orderList.actions.edit')}
                           icon={<Edit size={14} />}
-                          size="xs"
+                          size="sm"
                           variant="ghost"
-                          colorScheme="blue"
+                          color="var(--ali-primary)"
                           onClick={() => handleEdit(order)}
                         />
                         <IconButton
                           aria-label={t('orderList.actions.delete')}
                           icon={<Trash2 size={14} />}
-                          size="xs"
+                          size="sm"
                           variant="ghost"
-                          colorScheme="red"
+                          color="var(--ali-error)"
                           onClick={() => handleDelete(order.id)}
                         />
                       </HStack>
@@ -653,12 +656,12 @@ const OrderList = () => {
         </Card>
       )}
 
-      {/* 分页 */}
+      {/* 分页 - 阿里云ECS风格 */}
       {pages > 1 && (
-        <Card mt={4} bg={bgColor} borderColor={borderColor}>
-          <CardBody py={2}>
+        <Card mt={4} variant="elevated">
+          <CardBody py={3} px={4}>
             <Flex justify="space-between" align="center">
-              <Text fontSize="xs" color="gray.600">
+              <Text fontSize="12px" color="var(--ali-text-secondary)">
                 {t('orderList.pagination.showing', {
                   from: (currentPage - 1) * (queryParams.size || 10) + 1,
                   to: Math.min(currentPage * (queryParams.size || 10), total),
@@ -667,7 +670,7 @@ const OrderList = () => {
               </Text>
               <HStack spacing={1}>
                 <Button
-                  size="xs"
+                  size="sm"
                   variant="outline"
                   onClick={() => handlePageChange(currentPage - 1)}
                   isDisabled={currentPage === 1}
@@ -688,9 +691,9 @@ const OrderList = () => {
                   return (
                     <Button
                       key={pageNum}
-                      size="xs"
+                      size="sm"
                       variant={currentPage === pageNum ? 'solid' : 'outline'}
-                      colorScheme={currentPage === pageNum ? 'blue' : 'gray'}
+                      colorScheme={currentPage === pageNum ? 'primary' : 'gray'}
                       onClick={() => handlePageChange(pageNum)}
                     >
                       {pageNum}
@@ -698,7 +701,7 @@ const OrderList = () => {
                   )
                 })}
                 <Button
-                  size="xs"
+                  size="sm"
                   variant="outline"
                   onClick={() => handlePageChange(currentPage + 1)}
                   isDisabled={currentPage === pages}

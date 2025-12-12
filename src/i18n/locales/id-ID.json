@@ -1811,6 +1811,34 @@
     "subtitle": "Kelola dan lihat semua informasi peluang",
     "create": "Buat Peluang Baru",
     "empty": "Tidak ada peluang di tahap ini",
+    "viewScope": {
+      "my": "Peluang Saya",
+      "all": "Semua Peluang"
+    },
+    "viewMode": {
+      "board": "Papan",
+      "list": "Daftar"
+    },
+    "list": {
+      "batchActions": "Tindakan Massal",
+      "batchUpdateOwner": "Ubah Pemilik Massal",
+      "batchUpdateDate": "Ubah Tanggal Massal",
+      "selectAll": "Pilih Semua",
+      "selectedCount": "{{count}} item dipilih"
+    },
+    "board": {
+      "stats": {
+        "count": "Jumlah",
+        "amount": "Jumlah",
+        "weightedAmount": "Jumlah Tertimbang"
+      }
+    },
+    "pagination": {
+      "showing": "Menampilkan {{from}} - {{to}} dari {{total}} item",
+      "page": "Halaman {{current}} / {{total}}",
+      "previous": "Sebelumnya",
+      "next": "Selanjutnya"
+    },
     "search": {
       "name": "Nama Peluang",
       "owner": "Pemilik",
@@ -1879,14 +1907,17 @@
       "update": "Peluang berhasil diperbarui",
       "delete": "Peluang berhasil dihapus",
       "assign": "Peluang berhasil ditetapkan",
-      "stageUpdated": "Tahap berhasil diperbarui"
+      "stageUpdated": "Tahap berhasil diperbarui",
+      "batchUpdate": "Pembaruan massal berhasil"
     },
     "error": {
       "loadFailed": "Gagal memuat",
       "deleteFailed": "Gagal menghapus",
       "nameRequired": "Nama peluang tidak boleh kosong",
       "submitFailed": "Gagal mengirim",
-      "stageUpdateFailed": "Gagal memperbarui tahap"
+      "stageUpdateFailed": "Gagal memperbarui tahap",
+      "noSelection": "Silakan pilih peluang terlebih dahulu",
+      "batchUpdateFailed": "Gagal memperbarui massal"
     },
     "statistics": {
       "total": "Total Peluang",

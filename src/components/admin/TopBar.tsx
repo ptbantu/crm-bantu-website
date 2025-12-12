@@ -30,12 +30,9 @@ export const TopBar = () => {
   const navigate = useNavigate()
   const { user, logout } = useAuth()
   const { isCollapsed, toggleCollapse } = useSidebar()
-  const bg = useColorModeValue('white', 'gray.800')
-  const borderColor = useColorModeValue('gray.200', 'gray.700')
 
   // 响应式配置
   const logoHeight = useBreakpointValue({ base: 6, sm: 7, md: 8 })
-  const headerPadding = useBreakpointValue({ base: 3, sm: 4, md: 6 })
   const spacing = useBreakpointValue({ base: 2, sm: 3, md: 4 })
   const iconSize = useBreakpointValue({ base: 16, md: 20 })
 
@@ -53,14 +50,15 @@ export const TopBar = () => {
   return (
     <Box
       as="header"
-      h={{ base: 14, md: 16 }}
-      bg={bg}
+      h="56px"
+      bg="white"
       borderBottom="1px"
-      borderColor={borderColor}
+      borderColor="var(--ali-border)"
+      boxShadow="0 1px 4px rgba(0, 21, 41, 0.08)"
       display="flex"
       alignItems="center"
       justifyContent="space-between"
-      px={headerPadding}
+      px={6}
       position="sticky"
       top={0}
       zIndex={100}
@@ -108,16 +106,16 @@ export const TopBar = () => {
             <MenuItem
               icon={<span>🇨🇳</span>}
               onClick={() => handleLanguageChange('zh-CN')}
-              bg={currentLang === 'zh-CN' ? 'primary.50' : 'transparent'}
-              color={currentLang === 'zh-CN' ? 'primary.600' : 'inherit'}
+              bg={currentLang === 'zh-CN' ? 'var(--ali-primary-light)' : 'transparent'}
+              color={currentLang === 'zh-CN' ? 'var(--ali-primary)' : 'inherit'}
             >
               {t('common.chinese')}
             </MenuItem>
             <MenuItem
               icon={<span>🇮🇩</span>}
               onClick={() => handleLanguageChange('id-ID')}
-              bg={currentLang === 'id-ID' ? 'primary.50' : 'transparent'}
-              color={currentLang === 'id-ID' ? 'primary.600' : 'inherit'}
+              bg={currentLang === 'id-ID' ? 'var(--ali-primary-light)' : 'transparent'}
+              color={currentLang === 'id-ID' ? 'var(--ali-primary)' : 'inherit'}
             >
               {t('common.indonesian')}
             </MenuItem>
@@ -130,7 +128,8 @@ export const TopBar = () => {
             <HStack spacing={{ base: 1.5, md: 3 }} minW={0}>
               <Avatar
                 size={{ base: 'xs', md: 'sm' }}
-                bg="primary.100"
+                bg="var(--ali-primary-light)"
+                color="var(--ali-primary)"
                 icon={<User size={useBreakpointValue({ base: 12, md: 16 })} />}
                 flexShrink={0}
               />
@@ -158,8 +157,8 @@ export const TopBar = () => {
             <MenuItem
               icon={<LogOut size={16} />}
               onClick={handleLogout}
-              color="red.600"
-              _hover={{ bg: 'red.50' }}
+              color="var(--ali-error)"
+              _hover={{ bg: 'rgba(255, 77, 79, 0.1)' }}
             >
               {t('admin.logout')}
             </MenuItem>

@@ -52,7 +52,6 @@ import {
   Spinner,
   Text,
   Badge,
-  useColorModeValue,
   Drawer,
   DrawerBody,
   DrawerFooter,
@@ -87,10 +86,10 @@ const LeadList = () => {
   const { isOpen: isFollowUpOpen, onOpen: onFollowUpOpen, onClose: onFollowUpClose } = useDisclosure()
   const { isOpen: isConvertOpen, onOpen: onConvertOpen, onClose: onConvertClose } = useDisclosure()
   
-  // Chakra UI 颜色模式
-  const bgColor = useColorModeValue('white', 'gray.800')
-  const borderColor = useColorModeValue('gray.200', 'gray.700')
-  const hoverBg = useColorModeValue('gray.50', 'gray.700')
+  // 阿里云ECS风格颜色（移除useColorModeValue）
+  const bgColor = 'white'
+  const borderColor = 'var(--ali-border)'
+  const hoverBg = 'var(--ali-primary-light)'
 
   // 视图类型：'my' 表示"我的线索"，'public' 表示"公海线索"，'global' 表示"全局线索"（仅管理员）
   const [viewType, setViewType] = useState<'my' | 'public' | 'global'>('my')
@@ -729,98 +728,64 @@ const LeadList = () => {
         subtitle={t('leadList.subtitle')}
         actions={
           <Button
-            colorScheme="primary"
             leftIcon={<Plus size={16} />}
             onClick={handleCreate}
-            size="sm"
+            size="md"
           >
             {t('leadList.create')}
           </Button>
         }
       />
 
-      {/* 查询表单 */}
-      <Card mb={4} bg={bgColor} borderColor={borderColor}>
-        <CardBody>
+      {/* 查询表单 - 阿里云ECS风格 */}
+      <Card mb={4} variant="elevated">
+        <CardBody p={4}>
           <VStack align="stretch" spacing={4}>
-            {/* 视图切换和统计信息 */}
+            {/* 视图切换和统计信息 - 阿里云ECS风格 */}
             <Flex justify="space-between" align="center" flexWrap="wrap" gap={3}>
               <HStack spacing={2}>
-                <Box
-                  as="button"
-                  px={4}
-                  py={2}
-                  fontSize="sm"
-                  fontWeight={viewType === 'my' ? 'semibold' : 'normal'}
-                  color={viewType === 'my' ? 'teal.600' : 'gray.600'}
-                  bg={viewType === 'my' ? 'teal.50' : 'transparent'}
-                  border="1px solid"
-                  borderColor={viewType === 'my' ? 'teal.200' : 'gray.200'}
-                  borderRadius="md"
-                  cursor="pointer"
-                  _hover={{
-                    bg: viewType === 'my' ? 'teal.100' : 'gray.50',
-                  }}
+                <Button
+                  size="sm"
+                  variant={viewType === 'my' ? 'solid' : 'outline'}
+                  colorScheme={viewType === 'my' ? 'primary' : 'gray'}
                   onClick={() => handleViewTypeChange('my')}
                 >
                   {t('leadList.view.myLeads')}
-                </Box>
-                <Box
-                  as="button"
-                  px={4}
-                  py={2}
-                  fontSize="sm"
-                  fontWeight={viewType === 'public' ? 'semibold' : 'normal'}
-                  color={viewType === 'public' ? 'teal.600' : 'gray.600'}
-                  bg={viewType === 'public' ? 'teal.50' : 'transparent'}
-                  border="1px solid"
-                  borderColor={viewType === 'public' ? 'teal.200' : 'gray.200'}
-                  borderRadius="md"
-                  cursor="pointer"
-                  _hover={{
-                    bg: viewType === 'public' ? 'teal.100' : 'gray.50',
-                  }}
+                </Button>
+                <Button
+                  size="sm"
+                  variant={viewType === 'public' ? 'solid' : 'outline'}
+                  colorScheme={viewType === 'public' ? 'primary' : 'gray'}
                   onClick={() => handleViewTypeChange('public')}
                 >
                   {t('leadList.view.publicLeads')}
-                </Box>
+                </Button>
                 {isAdmin(user?.roles || []) && (
-                  <Box
-                    as="button"
-                    px={4}
-                    py={2}
-                    fontSize="sm"
-                    fontWeight={viewType === 'global' ? 'semibold' : 'normal'}
-                    color={viewType === 'global' ? 'teal.600' : 'gray.600'}
-                    bg={viewType === 'global' ? 'teal.50' : 'transparent'}
-                    border="1px solid"
-                    borderColor={viewType === 'global' ? 'teal.200' : 'gray.200'}
-                    borderRadius="md"
-                    cursor="pointer"
-                    _hover={{
-                      bg: viewType === 'global' ? 'teal.100' : 'gray.50',
-                    }}
+                  <Button
+                    size="sm"
+                    variant={viewType === 'global' ? 'solid' : 'outline'}
+                    colorScheme={viewType === 'global' ? 'primary' : 'gray'}
                     onClick={() => handleViewTypeChange('global')}
                   >
                     {t('leadList.view.globalLeads')}
-                  </Box>
+                  </Button>
                 )}
               </HStack>
-              <Text fontSize="sm" color="gray.600" fontWeight="medium">
+              <Text fontSize="14px" color="var(--ali-text-secondary)" fontWeight="500">
                 {t('leadList.total', { total })}
               </Text>
             </Flex>
 
             {/* 筛选条件 */}
             <HStack spacing={3} align="flex-end" flexWrap="wrap">
-              {/* 公司名称 */}
+              {/* 公司名称 - 阿里云ECS风格 */}
               <Box flex={1} minW="200px">
-                <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                <Text fontSize="12px" fontWeight="normal" mb={1} color="var(--ali-text-secondary)" textAlign="right">
                   {t('leadList.search.companyName')}
                 </Text>
-                <InputGroup size="sm">
+                <InputGroup size="md">
                   <InputLeftElement pointerEvents="none">
-                    <Building2 size={14} color="gray" />
+                    <Building2 size={14} color="var(--ali-text-secondary)" />
                   </InputLeftElement>
                   <Input
                     value={formData.company_name}
@@ -831,19 +796,18 @@ const LeadList = () => {
                     onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
                       if (e.key === 'Enter') handleSearch()
                     }}
-                    borderRadius="md"
                   />
                 </InputGroup>
               </Box>
 
-              {/* 电话 */}
+              {/* 电话 - 阿里云ECS风格 */}
               <Box flex={1} minW="150px">
-                <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                <Text fontSize="12px" fontWeight="normal" mb={1} color="var(--ali-text-secondary)" textAlign="right">
                   {t('leadList.search.phone')}
                 </Text>
-                <InputGroup size="sm">
+                <InputGroup size="md">
                   <InputLeftElement pointerEvents="none">
-                    <Phone size={14} color="gray" />
+                    <Phone size={14} color="var(--ali-text-secondary)" />
                   </InputLeftElement>
                   <Input
                     value={formData.phone}
@@ -854,19 +818,18 @@ const LeadList = () => {
                     onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
                       if (e.key === 'Enter') handleSearch()
                     }}
-                    borderRadius="md"
                   />
                 </InputGroup>
               </Box>
 
-              {/* 邮箱 */}
+              {/* 邮箱 - 阿里云ECS风格 */}
               <Box flex={1} minW="200px">
-                <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                <Text fontSize="12px" fontWeight="normal" mb={1} color="var(--ali-text-secondary)" textAlign="right">
                   {t('leadList.search.email')}
                 </Text>
-                <InputGroup size="sm">
+                <InputGroup size="md">
                   <InputLeftElement pointerEvents="none">
-                    <Mail size={14} color="gray" />
+                    <Mail size={14} color="var(--ali-text-secondary)" />
                   </InputLeftElement>
                   <Input
                     value={formData.email}
@@ -877,28 +840,27 @@ const LeadList = () => {
                     onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
                       if (e.key === 'Enter') handleSearch()
                     }}
-                    borderRadius="md"
                   />
                 </InputGroup>
               </Box>
 
-              {/* 负责人 - 只在全局线索视图中显示 */}
+              {/* 负责人 - 只在全局线索视图中显示 - 阿里云ECS风格 */}
               {viewType === 'global' && (
                 <Box flex={1} minW="180px">
-                  <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                  <Text fontSize="12px" fontWeight="normal" mb={1} color="var(--ali-text-secondary)" textAlign="right">
                     {t('leadList.search.owner')}
                   </Text>
-                  <InputGroup size="sm">
+                  <InputGroup size="md">
                     <InputLeftElement pointerEvents="none">
-                      <UserCheck size={14} color="gray" />
+                      <UserCheck size={14} color="var(--ali-text-secondary)" />
                     </InputLeftElement>
                     <Select
+                      size="md"
                       value={formData.owner_user_id}
                       onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                         setFormData({ ...formData, owner_user_id: e.target.value })
                         handleSearch()
                       }}
-                      borderRadius="md"
                       pl={8}
                     >
                       <option value="">{t('leadList.search.allOwners')}</option>
@@ -912,19 +874,18 @@ const LeadList = () => {
                 </Box>
               )}
 
-              {/* 状态 */}
+              {/* 状态 - 阿里云ECS风格 */}
               <Box flex={1} minW="150px">
-                <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
+                <Text fontSize="12px" fontWeight="normal" mb={1} color="var(--ali-text-secondary)" textAlign="right">
                   {t('leadList.search.status')}
                 </Text>
                 <Select
-                  size="sm"
+                  size="md"
                   value={formData.status}
                   onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                     setFormData({ ...formData, status: e.target.value as LeadStatus | '' })
                     handleSearch()
                   }}
-                  borderRadius="md"
                 >
                   <option value="">{t('leadList.search.allStatus')}</option>
                   {Object.entries({
@@ -941,25 +902,21 @@ const LeadList = () => {
                 </Select>
               </Box>
 
-              {/* 操作按钮 */}
+              {/* 操作按钮 - 阿里云ECS风格 */}
               <HStack spacing={2}>
                 <Button
-                  size="sm"
+                  size="md"
                   variant="outline"
-                  colorScheme="gray"
                   leftIcon={<X size={14} />}
                   onClick={handleReset}
-                  borderRadius="md"
                 >
                   {t('leadList.search.reset')}
                 </Button>
                 <Button
-                  size="sm"
-                  colorScheme="teal"
+                  size="md"
                   leftIcon={<Search size={14} />}
                   onClick={handleSearch}
                   isLoading={loading}
-                  borderRadius="md"
                 >
                   {t('leadList.search.search')}
                 </Button>
@@ -969,23 +926,23 @@ const LeadList = () => {
         </CardBody>
       </Card>
 
-      {/* 线索列表 */}
-      <Card bg={bgColor} borderColor={borderColor} overflow="hidden">
+      {/* 线索列表 - 阿里云ECS风格 */}
+      <Card variant="elevated" overflow="hidden">
 
         <Box overflowX="auto" minW="100%">
           <Table variant="simple" size="sm" w="100%" minW="1400px">
-            <Thead bg="gray.50">
-              {/* 第一行：列标题 */}
+            <Thead>
+              {/* 第一行：列标题 - 阿里云ECS风格 */}
               <Tr>
-                <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="150px">{t('leadList.table.name')}</Th>
-                <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="200px">{t('leadList.table.companyName')}</Th>
-                <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="280px">{t('leadList.table.contact')}</Th>
-                <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="180px">{t('leadList.table.owner')}</Th>
-                <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="150px">{t('leadList.table.status')}</Th>
-                <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="120px">{t('leadList.table.level')}</Th>
-                <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="150px">{t('leadList.table.lastFollowUp')}</Th>
-                <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="150px">{t('leadList.table.createdAt')}</Th>
-                <Th fontSize="xs" fontWeight="semibold" color="gray.700" py={2} minW="150px">{t('leadList.table.actions')}</Th>
+                <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3} minW="150px">{t('leadList.table.name')}</Th>
+                <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3} minW="200px">{t('leadList.table.companyName')}</Th>
+                <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3} minW="280px">{t('leadList.table.contact')}</Th>
+                <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3} minW="180px">{t('leadList.table.owner')}</Th>
+                <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3} minW="150px">{t('leadList.table.status')}</Th>
+                <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3} minW="120px">{t('leadList.table.level')}</Th>
+                <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3} minW="150px">{t('leadList.table.lastFollowUp')}</Th>
+                <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3} minW="150px">{t('leadList.table.createdAt')}</Th>
+                <Th fontSize="14px" fontWeight="600" color="var(--ali-text-primary)" py={3} minW="150px">{t('leadList.table.actions')}</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -993,8 +950,8 @@ const LeadList = () => {
                 <Tr>
                   <Td colSpan={9} textAlign="center" py={8}>
                     <Flex justify="center" align="center">
-                      <Spinner size="lg" color="blue.500" />
-                      <Text ml={4} color="gray.500">{t('leadList.loading')}</Text>
+                      <Spinner size="lg" color="var(--ali-primary)" />
+                      <Text ml={4} color="var(--ali-text-secondary)">{t('leadList.loading')}</Text>
                     </Flex>
                   </Td>
                 </Tr>
@@ -1002,54 +959,60 @@ const LeadList = () => {
                 <Tr>
                   <Td colSpan={9} textAlign="center" py={8}>
                     <VStack spacing={3}>
-                      <Target size={48} color="gray" />
-                      <Text color="gray.500">{t('leadList.noData')}</Text>
+                      <Target size={48} color="var(--ali-text-secondary)" />
+                      <Text color="var(--ali-text-secondary)">{t('leadList.noData')}</Text>
                     </VStack>
                   </Td>
                 </Tr>
               ) : (
-                leads.map((lead: Lead) => (
-                  <Tr key={lead.id} _hover={{ bg: hoverBg }} transition="background-color 0.2s">
-                    <Td fontSize="sm" color="gray.900" fontWeight="medium">{lead.name || '-'}</Td>
-                    <Td fontSize="sm" color="gray.900">{lead.company_name || '-'}</Td>
-                    <Td fontSize="sm" color="gray.600">
+                leads.map((lead: Lead, index: number) => (
+                  <Tr 
+                    key={lead.id} 
+                    h="52px"
+                    bg={index % 2 === 0 ? 'var(--ali-bg-light)' : 'white'}
+                    _hover={{ bg: hoverBg }} 
+                    transition="background-color 0.2s"
+                  >
+                    <Td fontSize="14px" color="var(--ali-text-primary)" fontWeight="500" py={4}>{lead.name || '-'}</Td>
+                    <Td fontSize="14px" color="var(--ali-text-primary)" py={4}>{lead.company_name || '-'}</Td>
+                    <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>
                       <VStack align="flex-start" spacing={0.5}>
                         {lead.contact_name && (
-                          <Text fontSize="xs">{lead.contact_name}</Text>
+                          <Text fontSize="12px">{lead.contact_name}</Text>
                         )}
                         {lead.phone && (
                           <HStack spacing={1}>
                             <Phone size={12} />
-                            <Text fontSize="xs">{lead.phone}</Text>
+                            <Text fontSize="12px">{lead.phone}</Text>
                           </HStack>
                         )}
                         {lead.email && (
                           <HStack spacing={1}>
                             <Mail size={12} />
-                            <Text fontSize="xs">{lead.email}</Text>
+                            <Text fontSize="12px">{lead.email}</Text>
                           </HStack>
                         )}
                       </VStack>
                     </Td>
-                    <Td fontSize="sm" color="gray.600">{lead.owner_username || '-'}</Td>
-                    <Td fontSize="sm">
+                    <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>{lead.owner_username || '-'}</Td>
+                    <Td fontSize="14px" py={4}>
                       {getStatusBadge(lead.status)}
                     </Td>
-                    <Td fontSize="sm" color="gray.600">
+                    <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>
                       {(() => {
                         const currentLang = i18n.language || 'zh-CN'
                         const levelName = currentLang.startsWith('zh') ? lead.level_name_zh : lead.level_name_id
                         return levelName || lead.level || '-'
                       })()}
                     </Td>
-                    <Td fontSize="sm" color="gray.600">{formatDateTime(lead.last_follow_up_at)}</Td>
-                    <Td fontSize="sm" color="gray.600">{formatDateTime(lead.created_at)}</Td>
-                    <Td fontSize="sm">
+                    <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>{formatDateTime(lead.last_follow_up_at)}</Td>
+                    <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>{formatDateTime(lead.created_at)}</Td>
+                    <Td fontSize="14px" py={4}>
                       <HStack spacing={2} flexWrap="wrap">
                         <Button
                           size="xs"
                           variant="link"
-                          colorScheme="blue"
+                          color="var(--ali-primary)"
                           onClick={() => navigate(`/admin/leads/detail/${lead.id}`)}
                         >
                           {t('leadList.actions.view')}
@@ -1057,7 +1020,7 @@ const LeadList = () => {
                         <Button
                           size="xs"
                           variant="link"
-                          colorScheme="blue"
+                          color="var(--ali-primary)"
                           onClick={() => handleEdit(lead)}
                         >
                           {t('leadList.actions.edit')}
@@ -1065,7 +1028,7 @@ const LeadList = () => {
                         <Button
                           size="xs"
                           variant="link"
-                          colorScheme="purple"
+                          color="var(--ali-primary)"
                           leftIcon={<MessageSquare size={12} />}
                           onClick={() => handleOpenFollowUp(lead)}
                         >
@@ -1075,7 +1038,7 @@ const LeadList = () => {
                           <Button
                             size="xs"
                             variant="link"
-                            colorScheme="teal"
+                            color="var(--ali-success)"
                             onClick={() => handleOpenConvert(lead.id)}
                           >
                             {t('leadList.actions.convert')}
@@ -1085,7 +1048,7 @@ const LeadList = () => {
                           <Button
                             size="xs"
                             variant="link"
-                            colorScheme="green"
+                            color="var(--ali-primary)"
                             onClick={() => handleOpenTransfer(lead.id)}
                           >
                             {t('leadList.actions.transfer')}
@@ -1095,7 +1058,7 @@ const LeadList = () => {
                           <Button
                             size="xs"
                             variant="link"
-                            colorScheme="orange"
+                            color="var(--ali-warning)"
                             onClick={() => handleMoveToPool(lead.id)}
                           >
                             {t('leadList.actions.moveToPool')}
@@ -1104,7 +1067,7 @@ const LeadList = () => {
                         <Button
                           size="xs"
                           variant="link"
-                          colorScheme="red"
+                          color="var(--ali-error)"
                           onClick={() => handleDelete(lead.id)}
                         >
                           {t('leadList.actions.delete')}
@@ -1119,12 +1082,12 @@ const LeadList = () => {
         </Box>
       </Card>
 
-      {/* 分页 */}
+      {/* 分页 - 阿里云ECS风格 */}
       {pages > 1 && (
-        <Card mt={4} bg={bgColor} borderColor={borderColor}>
-          <CardBody py={2}>
+        <Card mt={4} variant="elevated">
+          <CardBody py={3} px={4}>
             <Flex justify="space-between" align="center">
-              <Text fontSize="xs" color="gray.600">
+              <Text fontSize="12px" color="var(--ali-text-secondary)">
                 {t('leadList.pagination.showing', {
                   from: (currentPage - 1) * (queryParams.size || 20) + 1,
                   to: Math.min(currentPage * (queryParams.size || 20), total),
@@ -1133,7 +1096,7 @@ const LeadList = () => {
               </Text>
               <HStack spacing={1}>
                 <Button
-                  size="xs"
+                  size="sm"
                   variant="outline"
                   onClick={() => handlePageChange(currentPage - 1)}
                   isDisabled={currentPage === 1}
@@ -1154,9 +1117,9 @@ const LeadList = () => {
                   return (
                     <Button
                       key={pageNum}
-                      size="xs"
+                      size="sm"
                       variant={currentPage === pageNum ? 'solid' : 'outline'}
-                      colorScheme={currentPage === pageNum ? 'blue' : 'gray'}
+                      colorScheme={currentPage === pageNum ? 'primary' : 'gray'}
                       onClick={() => handlePageChange(pageNum)}
                     >
                       {pageNum}
@@ -1164,7 +1127,7 @@ const LeadList = () => {
                   )
                 })}
                 <Button
-                  size="xs"
+                  size="sm"
                   variant="outline"
                   onClick={() => handlePageChange(currentPage + 1)}
                   isDisabled={currentPage === pages}
@@ -1383,7 +1346,6 @@ const LeadList = () => {
               {t('leadList.modal.cancel')}
             </Button>
             <Button
-              colorScheme="blue"
               onClick={handleSubmit}
               isLoading={submitting}
               isDisabled={isDuplicate || submitting}
@@ -1421,10 +1383,10 @@ const LeadList = () => {
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onTransferClose}>
+            <Button variant="outline" mr={3} onClick={onTransferClose}>
               {t('common.cancel')}
             </Button>
-            <Button colorScheme="teal" onClick={handleTransfer} isDisabled={!selectedUserId || loadingUsers}>
+            <Button onClick={handleTransfer} isDisabled={!selectedUserId || loadingUsers}>
               {t('leadList.transfer.confirm')}
             </Button>
           </ModalFooter>
@@ -1449,8 +1411,8 @@ const LeadList = () => {
               </Text>
               
               {duplicateLeads.map((lead: Lead, index: number) => (
-                <Card key={lead.id || index} bg={bgColor} borderColor={borderColor} borderWidth={1}>
-                  <CardBody>
+                <Card key={lead.id || index} variant="elevated">
+                  <CardBody p={4}>
                     <VStack align="stretch" spacing={2}>
                       <HStack justify="space-between">
                         <Text fontWeight="semibold" fontSize="sm">
@@ -1516,7 +1478,6 @@ const LeadList = () => {
               {t('leadList.duplicateModal.cancel')}
             </Button>
             <Button
-              colorScheme="orange"
               onClick={() => {
                 onDuplicateModalClose()
                 // 保持 isDuplicate 状态，提交时仍会阻止
@@ -1643,7 +1604,7 @@ const LeadList = () => {
             <Button variant="outline" mr={3} onClick={onFollowUpClose}>
               {t('leadList.modal.cancel')}
             </Button>
-            <Button colorScheme="blue" onClick={handleCreateFollowUp}>
+            <Button onClick={handleCreateFollowUp}>
               {t('leadList.modal.submit')}
             </Button>
           </DrawerFooter>
@@ -1726,11 +1687,10 @@ const LeadList = () => {
             </VStack>
           </ModalBody>
           <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onConvertClose}>
+            <Button variant="outline" mr={3} onClick={onConvertClose}>
               {t('leadList.convert.cancel')}
             </Button>
             <Button
-              colorScheme="teal"
               onClick={handleSubmitConvert}
               isLoading={submittingConvert}
               isDisabled={!convertFormData.name.trim() || submittingConvert}

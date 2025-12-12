@@ -10,7 +10,6 @@ import {
   VStack,
   Text,
   Icon,
-  useColorModeValue,
 } from '@chakra-ui/react'
 
 interface PageHeaderProps {
@@ -36,12 +35,11 @@ export const PageHeader = ({
   sticky = true,
   bg,
 }: PageHeaderProps) => {
-  const defaultBg = useColorModeValue('white', 'gray.800')
-  const iconBg = useColorModeValue('primary.50', 'primary.900')
-  const iconColor = useColorModeValue('primary.600', 'primary.200')
-  const titleColor = useColorModeValue('gray.900', 'white')
-  const subtitleColor = useColorModeValue('gray.500', 'gray.400')
-  const borderColor = useColorModeValue('gray.200', 'gray.700')
+  // 阿里云ECS风格样式
+  const defaultBg = 'white'
+  const titleColor = 'var(--ali-text-primary)'
+  const subtitleColor = 'var(--ali-text-secondary)'
+  const borderColor = 'var(--ali-border)'
 
   return (
     <Box
@@ -51,50 +49,51 @@ export const PageHeader = ({
       bg={bg || defaultBg}
       borderBottom="1px"
       borderColor={borderColor}
-      py={4}
+      h="56px"
       px={6}
       mb={4}
-      shadow={sticky ? 'sm' : 'none'}
+      boxShadow={sticky ? '0 1px 4px rgba(0, 21, 41, 0.08)' : 'none'}
+      display="flex"
+      alignItems="center"
     >
-      <HStack spacing={4} justify="space-between" align="flex-start">
+      <HStack spacing={4} justify="space-between" align="center" w="full">
         {/* 左侧：图标 + 标题区域 */}
-        <HStack spacing={4} flex={1} minW={0}>
+        <HStack spacing={3} flex={1} minW={0}>
           {IconComponent && (
             <Box
-              boxSize={10}
-              p={2}
-              bg={iconBg}
-              color={iconColor}
-              borderRadius="lg"
+              boxSize={8}
+              p={1.5}
+              bg="var(--ali-primary-light)"
+              color="var(--ali-primary)"
+              borderRadius="4px"
               flexShrink={0}
               display="flex"
               alignItems="center"
               justifyContent="center"
             >
-              <IconComponent size={20} />
+              <IconComponent size={16} />
             </Box>
           )}
-          <VStack align="flex-start" spacing={1} flex={1} minW={0}>
+          <VStack align="flex-start" spacing={0} flex={1} minW={0}>
             <Text
-              fontSize="2xl"
-              fontWeight="semibold"
+              fontSize="16px"
+              fontWeight="600"
               color={titleColor}
-              lineHeight="shorter"
+              lineHeight="1.5"
               noOfLines={1}
             >
               {title}
             </Text>
             {subtitle && (
-              <HStack spacing={1.5}>
-                <Text
-                  fontSize="sm"
-                  color={subtitleColor}
-                  fontWeight="medium"
-                  noOfLines={1}
-                >
-                  {subtitle}
-                </Text>
-              </HStack>
+              <Text
+                fontSize="12px"
+                color={subtitleColor}
+                fontWeight="normal"
+                noOfLines={1}
+                mt={0.5}
+              >
+                {subtitle}
+              </Text>
             )}
           </VStack>
         </HStack>
