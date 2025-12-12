@@ -266,8 +266,6 @@ const Dashboard = () => {
     { day: '周日', value: 2.2 },
   ]
 
-  const maxRevenue = Math.max(...revenueTrend.map(r => r.value))
-
   const getStatusColorScheme = (status: string): string => {
     switch (status) {
       case 'completed':
@@ -415,46 +413,47 @@ const Dashboard = () => {
                   >
                     <CartesianGrid 
                       strokeDasharray="3 3" 
-                      stroke="var(--ali-border)"
+                      stroke="#F0F0F0"
                       vertical={false}
                     />
                     <XAxis 
                       dataKey="day" 
-                      tick={{ fontSize: 12, fill: 'var(--ali-text-secondary)' }}
-                      axisLine={{ stroke: 'var(--ali-border)' }}
-                      tickLine={{ stroke: 'var(--ali-border)' }}
+                      tick={{ fontSize: 12, fill: '#8C8C8C' }}
+                      axisLine={{ stroke: '#F0F0F0' }}
+                      tickLine={{ stroke: '#F0F0F0' }}
                     />
                     <YAxis 
-                      tick={{ fontSize: 12, fill: 'var(--ali-text-secondary)' }}
-                      axisLine={{ stroke: 'var(--ali-border)' }}
-                      tickLine={{ stroke: 'var(--ali-border)' }}
+                      tick={{ fontSize: 12, fill: '#8C8C8C' }}
+                      axisLine={{ stroke: '#F0F0F0' }}
+                      tickLine={{ stroke: '#F0F0F0' }}
                       tickFormatter={(value) => `Rp ${value.toFixed(1)}M`}
                     />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: 'white',
-                        border: '1px solid var(--ali-border)',
+                        border: '1px solid #F0F0F0',
                         borderRadius: '4px',
                         fontSize: '12px',
                         padding: '8px 12px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                       }}
                       labelStyle={{
-                        color: 'var(--ali-text-primary)',
+                        color: '#262626',
                         fontWeight: '500',
                         marginBottom: '4px',
                       }}
                       itemStyle={{
-                        color: 'var(--ali-text-secondary)',
+                        color: '#8C8C8C',
                       }}
                       formatter={(value: number) => [`Rp ${(value * 1).toFixed(1)}M`, '收入']}
                     />
                     <Line
                       type="monotone"
                       dataKey="value"
-                      stroke="var(--ali-primary)"
+                      stroke="#1890FF"
                       strokeWidth={2}
-                      dot={{ fill: 'var(--ali-primary)', r: 4 }}
-                      activeDot={{ r: 6, fill: 'var(--ali-primary)' }}
+                      dot={{ fill: '#1890FF', r: 4 }}
+                      activeDot={{ r: 6, fill: '#1890FF' }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
