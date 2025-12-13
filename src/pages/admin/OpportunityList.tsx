@@ -5,7 +5,7 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { Search, Plus, Edit, Trash2, TrendingUp, DollarSign, User, Eye, GripVertical, ChevronDown, LayoutGrid, List } from 'lucide-react'
+import { Search, Plus, TrendingUp, DollarSign, User, GripVertical, ChevronDown, LayoutGrid, List } from 'lucide-react'
 import {
   getOpportunityList,
   createOpportunity,
@@ -38,7 +38,6 @@ import {
   Spinner,
   Text,
   Badge,
-  IconButton,
   Drawer,
   DrawerBody,
   DrawerFooter,
@@ -925,32 +924,41 @@ const OpportunityList = () => {
                               : '-'}
                           </Td>
                           <Td py={4}>
-                            <HStack spacing={1}>
-                              <IconButton
-                                aria-label={t('common.view')}
-                                icon={<Eye size={14} />}
-                                size="sm"
-                                variant="ghost"
+                            <Flex wrap="wrap" gap={2}>
+                              <Button
+                                size="xs"
+                                variant="link"
                                 color="var(--ali-primary)"
                                 onClick={() => navigate(`/admin/opportunities/detail/${opportunity.id}`)}
-                              />
-                              <IconButton
-                                aria-label={t('common.edit')}
-                                icon={<Edit size={14} />}
-                                size="sm"
-                                variant="ghost"
+                                fontSize="12px"
+                                px={2}
+                                py={1}
+                              >
+                                {t('common.view')}
+                              </Button>
+                              <Button
+                                size="xs"
+                                variant="link"
                                 color="var(--ali-primary)"
                                 onClick={() => handleEdit(opportunity)}
-                              />
-                              <IconButton
-                                aria-label={t('common.delete')}
-                                icon={<Trash2 size={14} />}
-                                size="sm"
-                                variant="ghost"
+                                fontSize="12px"
+                                px={2}
+                                py={1}
+                              >
+                                {t('common.edit')}
+                              </Button>
+                              <Button
+                                size="xs"
+                                variant="link"
                                 color="var(--ali-error)"
                                 onClick={() => handleDelete(opportunity)}
-                              />
-                            </HStack>
+                                fontSize="12px"
+                                px={2}
+                                py={1}
+                              >
+                                {t('common.delete')}
+                              </Button>
+                            </Flex>
                           </Td>
                         </Tr>
                       )
@@ -1122,30 +1130,41 @@ const OpportunityList = () => {
                                 >
                                   {opportunity.name}
                                 </Text>
-                                <HStack spacing={1}>
-                                  <IconButton
-                                    aria-label={t('common.view')}
-                                    icon={<Eye size={14} />}
+                                <Flex wrap="wrap" gap={2}>
+                                  <Button
                                     size="xs"
-                                    variant="ghost"
+                                    variant="link"
+                                    color="var(--ali-primary)"
                                     onClick={() => navigate(`/admin/opportunities/detail/${opportunity.id}`)}
-                                  />
-                                  <IconButton
-                                    aria-label={t('common.edit')}
-                                    icon={<Edit size={14} />}
+                                    fontSize="12px"
+                                    px={2}
+                                    py={1}
+                                  >
+                                    {t('common.view')}
+                                  </Button>
+                                  <Button
                                     size="xs"
-                                    variant="ghost"
+                                    variant="link"
+                                    color="var(--ali-primary)"
                                     onClick={() => handleEdit(opportunity)}
-                                  />
-                                  <IconButton
-                                    aria-label={t('common.delete')}
-                                    icon={<Trash2 size={14} />}
+                                    fontSize="12px"
+                                    px={2}
+                                    py={1}
+                                  >
+                                    {t('common.edit')}
+                                  </Button>
+                                  <Button
                                     size="xs"
-                                    variant="ghost"
-                                    colorScheme="red"
+                                    variant="link"
+                                    color="var(--ali-error)"
                                     onClick={() => handleDelete(opportunity)}
-                                  />
-                                </HStack>
+                                    fontSize="12px"
+                                    px={2}
+                                    py={1}
+                                  >
+                                    {t('common.delete')}
+                                  </Button>
+                                </Flex>
                               </Flex>
 
                               {/* 客户信息 */}

@@ -1008,71 +1008,95 @@ const LeadList = () => {
                     <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>{formatDateTime(lead.last_follow_up_at)}</Td>
                     <Td fontSize="14px" color="var(--ali-text-secondary)" py={4}>{formatDateTime(lead.created_at)}</Td>
                     <Td fontSize="14px" py={4}>
-                      <HStack spacing={2} flexWrap="wrap">
-                        <Button
-                          size="xs"
-                          variant="link"
-                          color="var(--ali-primary)"
-                          onClick={() => navigate(`/admin/leads/detail/${lead.id}`)}
-                        >
-                          {t('leadList.actions.view')}
-                        </Button>
-                        <Button
-                          size="xs"
-                          variant="link"
-                          color="var(--ali-primary)"
-                          onClick={() => handleEdit(lead)}
-                        >
-                          {t('leadList.actions.edit')}
-                        </Button>
-                        <Button
-                          size="xs"
-                          variant="link"
-                          color="var(--ali-primary)"
-                          leftIcon={<MessageSquare size={12} />}
-                          onClick={() => handleOpenFollowUp(lead)}
-                        >
-                          {t('leadList.actions.followUp')}
-                        </Button>
-                        {viewType === 'public' && lead.is_in_public_pool && (
-                          <Button
-                            size="xs"
-                            variant="link"
-                            color="var(--ali-success)"
-                            onClick={() => handleOpenConvert(lead.id)}
-                          >
-                            {t('leadList.actions.convert')}
-                          </Button>
-                        )}
-                        {!lead.is_in_public_pool && (
+                      <VStack spacing={1} align="flex-start">
+                        <HStack spacing={2}>
                           <Button
                             size="xs"
                             variant="link"
                             color="var(--ali-primary)"
-                            onClick={() => handleOpenTransfer(lead.id)}
+                            onClick={() => navigate(`/admin/leads/detail/${lead.id}`)}
+                            fontSize="12px"
+                            px={2}
+                            py={1}
                           >
-                            {t('leadList.actions.transfer')}
+                            {t('leadList.actions.view')}
                           </Button>
-                        )}
-                        {!lead.is_in_public_pool && (
                           <Button
                             size="xs"
                             variant="link"
-                            color="var(--ali-warning)"
-                            onClick={() => handleMoveToPool(lead.id)}
+                            color="var(--ali-primary)"
+                            onClick={() => handleEdit(lead)}
+                            fontSize="12px"
+                            px={2}
+                            py={1}
                           >
-                            {t('leadList.actions.moveToPool')}
+                            {t('leadList.actions.edit')}
                           </Button>
-                        )}
-                        <Button
-                          size="xs"
-                          variant="link"
-                          color="var(--ali-error)"
-                          onClick={() => handleDelete(lead.id)}
-                        >
-                          {t('leadList.actions.delete')}
-                        </Button>
-                      </HStack>
+                          <Button
+                            size="xs"
+                            variant="link"
+                            color="var(--ali-primary)"
+                            onClick={() => handleOpenFollowUp(lead)}
+                            fontSize="12px"
+                            px={2}
+                            py={1}
+                          >
+                            {t('leadList.actions.followUp')}
+                          </Button>
+                        </HStack>
+                        <HStack spacing={2}>
+                          {viewType === 'public' && lead.is_in_public_pool && (
+                            <Button
+                              size="xs"
+                              variant="link"
+                              color="var(--ali-success)"
+                              onClick={() => handleOpenConvert(lead.id)}
+                              fontSize="12px"
+                              px={2}
+                              py={1}
+                            >
+                              {t('leadList.actions.convert')}
+                            </Button>
+                          )}
+                          {!lead.is_in_public_pool && (
+                            <Button
+                              size="xs"
+                              variant="link"
+                              color="var(--ali-primary)"
+                              onClick={() => handleOpenTransfer(lead.id)}
+                              fontSize="12px"
+                              px={2}
+                              py={1}
+                            >
+                              {t('leadList.actions.transfer')}
+                            </Button>
+                          )}
+                          {!lead.is_in_public_pool && (
+                            <Button
+                              size="xs"
+                              variant="link"
+                              color="var(--ali-warning)"
+                              onClick={() => handleMoveToPool(lead.id)}
+                              fontSize="12px"
+                              px={2}
+                              py={1}
+                            >
+                              {t('leadList.actions.moveToPool')}
+                            </Button>
+                          )}
+                          <Button
+                            size="xs"
+                            variant="link"
+                            color="var(--ali-error)"
+                            onClick={() => handleDelete(lead.id)}
+                            fontSize="12px"
+                            px={2}
+                            py={1}
+                          >
+                            {t('leadList.actions.delete')}
+                          </Button>
+                        </HStack>
+                      </VStack>
                     </Td>
                   </Tr>
                 ))
