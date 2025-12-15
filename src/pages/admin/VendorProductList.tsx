@@ -14,6 +14,7 @@ import { getProductList } from '@/api/products'
 import { Product, Organization } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
 import { PageHeader } from '@/components/admin/PageHeader'
+import { formatPrice } from '@/utils/formatPrice'
 import {
   Button,
   Card,
@@ -259,13 +260,6 @@ const VendorProductList = () => {
     }
   }
 
-  // 格式化价格
-  const formatPrice = (amount: number, currency: 'IDR' | 'CNY') => {
-    if (currency === 'IDR') {
-      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount)
-    }
-    return new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY' }).format(amount)
-  }
 
   const bgColor = useColorModeValue('white', 'gray.800')
   const borderColor = useColorModeValue('gray.200', 'gray.700')

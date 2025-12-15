@@ -23,6 +23,7 @@ import { getCustomerList } from '@/api/customers'
 import { PageHeader } from '@/components/admin/PageHeader'
 import { useAuth } from '@/hooks/useAuth'
 import { isAdmin } from '@/utils/permissions'
+import { formatPrice } from '@/utils/formatPrice'
 import {
   Button,
   Card,
@@ -543,12 +544,7 @@ const OpportunityList = () => {
 
   // 格式化金额
   const formatAmount = (amount: number | null | undefined): string => {
-    if (!amount) return '-'
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(amount)
+    return formatPrice(amount, 'IDR')
   }
 
   // 列表模式：全选/取消全选

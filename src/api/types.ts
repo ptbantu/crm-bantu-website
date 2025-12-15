@@ -196,12 +196,17 @@ export interface Product {
   id: string
   name: string
   code: string
+  enterprise_service_code?: string | null  // 企业服务编码（系统自动生成）
   category_id?: string | null
   category_name?: string | null
   service_type?: string | null
   service_subtype?: string | null
   processing_days?: number | null
   processing_time_text?: string | null
+  price_cost_idr?: number | null
+  price_cost_cny?: number | null
+  price_channel_idr?: number | null
+  price_channel_cny?: number | null
   price_direct_idr?: number | null
   price_direct_cny?: number | null
   price_list_idr?: number | null
