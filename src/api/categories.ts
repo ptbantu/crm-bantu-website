@@ -102,3 +102,50 @@ export async function deleteCategory(id: string): Promise<void> {
   await del(API_PATHS.CATEGORIES.BY_ID(id))
 }
 
+/**
+ * 分类树节点（包含产品）
+ */
+export interface CategoryTreeNode {
+  id: string
+  code: string
+  name: string
+  description?: string | null
+  parent_id?: string | null
+  display_order: number
+  is_active: boolean
+  product_count: number
+  children: CategoryTreeNode[]
+  products?: Array<{
+    id: string
+    name: string
+    code?: string | null
+    enterprise_service_code?: string | null
+    is_active: boolean
+  }>
+}
+
+/**
+ * 分类树响应
+ */
+export interface CategoryTreeResponse {
+  categories: CategoryTreeNode[]
+}
+
+/**
+ * 获取分类树（包含产品列表）
+ */
+export async function getCategoryTreeWithProducts(
+  includeProducts: boolean = true,
+  isActive?: boolean
+): Promise<CategoryTreeResponse> {
+  const queryParams = new URLSearchParams()
+  queryParams.append('include_products', includeProducts.toString())
+  if (isActive !== undefined) {
+    queryParams.append('is_active', isActive.toString())
+  }
+  
+  const url = `${API_PATHS.CATEGORIES.BASE}/tree?${queryParams.toString()}`
+  const result = await get<CategoryTreeResponse>(url)
+  return result.data!
+}
+

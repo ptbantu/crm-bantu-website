@@ -22,8 +22,9 @@ import UserInfo from './pages/admin/UserInfo'
 import SystemStatus from './pages/admin/SystemStatus'
 import SystemLogs from './pages/admin/SystemLogs'
 import AuditLogs from './pages/admin/AuditLogs'
-import ProductManagement from './pages/admin/ProductManagement'
+import EnterpriseServiceProduct from './pages/admin/EnterpriseServiceProduct'
 import VendorProductList from './pages/admin/VendorProductList'
+import EnterpriseServiceSupplier from './pages/admin/EnterpriseServiceSupplier'
 import CategoryManagement from './pages/admin/CategoryManagement'
 import CustomerList from './pages/admin/CustomerList'
 import CustomerDetail from './pages/admin/CustomerDetail'
@@ -162,7 +163,19 @@ const AppContent = () => {
             element={
               <AdminLayout>
                 <PermissionGuard role="ADMIN">
-                  <ProductManagement />
+                  <EnterpriseServiceProduct />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          
+          {/* 企服供应商（仅 ADMIN） */}
+          <Route
+            path="/admin/product/supplier-list"
+            element={
+              <AdminLayout>
+                <PermissionGuard role="ADMIN">
+                  <EnterpriseServiceSupplier />
                 </PermissionGuard>
               </AdminLayout>
             }
@@ -192,6 +205,7 @@ const AppContent = () => {
             }
           />
           
+          {/* 价格管理（仅 ADMIN） */}
           {/* 客户管理模块（SALES, ADMIN） */}
           <Route
             path="/admin/customer/list"
