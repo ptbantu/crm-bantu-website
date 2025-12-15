@@ -33,6 +33,7 @@ import {
   OpportunityConvertRequest,
 } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
+import { formatPrice } from '@/utils/formatPrice'
 import { getUserList } from '@/api/users'
 import { getCustomerList } from '@/api/customers'
 import { useTabs } from '@/contexts/TabsContext'
@@ -336,12 +337,7 @@ const OpportunityDetail = () => {
 
   // 格式化金额
   const formatAmount = (amount: number | null | undefined): string => {
-    if (!amount) return '-'
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(amount)
+    return formatPrice(amount, 'IDR')
   }
 
   // 获取阶段标签

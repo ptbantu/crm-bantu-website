@@ -101,26 +101,26 @@ export const adminMenuItems: MenuItem[] = [
     ],
   },
   
-  // 4. 产品服务 - 中台执行、管理员
+  // 4. 企服列表 - 中台执行、管理员
   {
     key: 'product-service',
-    label: 'menu.productService',
+    label: 'menu.enterpriseServiceList',
     icon: Package,
     path: '/admin/product-service',
     role: [Role.OPERATION, Role.ADMIN],
     children: [
       {
-        key: 'productManagement',
-        label: 'menu.productManagement',
+        key: 'enterpriseServiceProduct',
+        label: 'menu.enterpriseServiceProduct',
         icon: Package,
         path: '/admin/product/management',
         role: [Role.OPERATION, Role.ADMIN],
       },
       {
-        key: 'vendorManagement',
-        label: 'menu.vendorManagement',
+        key: 'enterpriseServiceSupplier',
+        label: 'menu.enterpriseServiceSupplier',
         icon: Building2,
-        path: '/admin/product/vendor-list',
+        path: '/admin/product/supplier-list',
         role: [Role.OPERATION, Role.ADMIN],
       },
       {

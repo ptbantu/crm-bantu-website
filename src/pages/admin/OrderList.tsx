@@ -21,6 +21,7 @@ import { getCustomerList } from '@/api/customers'
 import { getProductList } from '@/api/products'
 import { getUserList } from '@/api/users'
 import { PageHeader } from '@/components/admin/PageHeader'
+import { formatPrice as formatCurrency } from '@/utils/formatPrice'
 import {
   Button,
   Card,
@@ -384,20 +385,7 @@ const OrderList = () => {
     }
   }
 
-  // 格式化金额
-  const formatCurrency = (amount: number | null | undefined, currency: string = 'IDR') => {
-    if (amount === null || amount === undefined || isNaN(amount)) {
-      return '-'
-    }
-    const numAmount = Number(amount)
-    if (isNaN(numAmount)) {
-      return '-'
-    }
-    if (currency === 'IDR') {
-      return `Rp ${numAmount.toLocaleString('id-ID')}`
-    }
-    return `¥ ${numAmount.toLocaleString('zh-CN')}`
-  }
+  // formatCurrency 已从 @/utils/formatPrice 导入
 
   // 格式化日期时间
   const formatDateTime = (dateString: string | null | undefined) => {

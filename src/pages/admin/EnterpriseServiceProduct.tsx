@@ -2,9 +2,9 @@
  * 产品/服务管理页面
  * 包含：服务列表、供应商关联、价格管理
  */
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Search, Plus, Edit, Trash2, X, Package, Tag, DollarSign, Building2, CheckCircle2, XCircle, Save, Eye } from 'lucide-react'
+import { Search, Plus, X, Package, Tag, DollarSign, CheckCircle2, XCircle, Save, Download } from 'lucide-react'
 import {
   getProductList,
   getProductDetail,
@@ -38,18 +38,13 @@ import {
   Spinner,
   Text,
   Badge,
-  IconButton,
   Card,
   CardBody,
   useColorModeValue,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
+  Checkbox,
 } from '@chakra-ui/react'
 
-const ProductManagement = () => {
+const EnterpriseServiceProduct = () => {
   const { t } = useTranslation()
   const { showSuccess, showError } = useToast()
   
@@ -71,12 +66,16 @@ const ProductManagement = () => {
   const [total, setTotal] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
   const [pages, setPages] = useState(0)
+  
+  // 选中状态
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
 
   // 表单状态
   const [formData, setFormData] = useState({
     name: '',
     code: '',
     category_id: '',
+    service_type: '',
     status: '',
     is_active: '' as '' | 'true' | 'false',
   })
@@ -88,6 +87,7 @@ const ProductManagement = () => {
     name: '',
     code: '',
     category_id: '',
+    service_type: '',
     service_subtype: '',
     processing_days: '',
     processing_time_text: '',
@@ -128,6 +128,8 @@ const ProductManagement = () => {
       setTotal(result.total)
       setCurrentPage(result.current)
       setPages(result.pages)
+      // 清空选中状态（切换页面时）
+      setSelectedIds([])
     } catch (error: any) {
       showError(error.message || t('productManagement.error.loadFailed'))
     } finally {
@@ -156,6 +158,9 @@ const ProductManagement = () => {
     if (formData.category_id) {
       params.category_id = formData.category_id
     }
+    if (formData.service_type) {
+      params.service_type = formData.service_type
+    }
     if (formData.status) {
       params.status = formData.status
     }
@@ -173,6 +178,7 @@ const ProductManagement = () => {
       name: '',
       code: '',
       category_id: '',
+      service_type: '',
       status: '',
       is_active: '',
     })
@@ -198,6 +204,7 @@ const ProductManagement = () => {
       name: '',
       code: '',
       category_id: '',
+      service_type: '',
       service_subtype: '',
       processing_days: '',
       processing_time_text: '',
@@ -220,6 +227,7 @@ const ProductManagement = () => {
         name: detail.name,
         code: detail.code || '',
         category_id: detail.category_id || '',
+        service_type: detail.service_type || '',
         service_subtype: detail.service_subtype || '',
         processing_days: detail.processing_days?.toString() || '',
         processing_time_text: detail.processing_time_text || '',
@@ -244,6 +252,7 @@ const ProductManagement = () => {
       name: '',
       code: '',
       category_id: '',
+      service_type: '',
       service_subtype: '',
       processing_days: '',
       processing_time_text: '',
@@ -271,6 +280,7 @@ const ProductManagement = () => {
           name: modalFormData.name.trim(),
           code: modalFormData.code || undefined,
           category_id: modalFormData.category_id || undefined,
+          service_type: modalFormData.service_type || undefined,
           service_subtype: modalFormData.service_subtype || undefined,
           processing_days: modalFormData.processing_days ? parseInt(modalFormData.processing_days) : undefined,
           processing_time_text: modalFormData.processing_time_text || undefined,
@@ -289,6 +299,7 @@ const ProductManagement = () => {
           name: modalFormData.name.trim(),
           code: modalFormData.code || undefined,
           category_id: modalFormData.category_id || undefined,
+          service_type: modalFormData.service_type || undefined,
           service_subtype: modalFormData.service_subtype || undefined,
           processing_days: modalFormData.processing_days ? parseInt(modalFormData.processing_days) : undefined,
           processing_time_text: modalFormData.processing_time_text || undefined,
@@ -303,6 +314,7 @@ const ProductManagement = () => {
         showSuccess(t('productManagement.success.create'))
       }
       handleCloseModal()
+      setSelectedIds([])
       loadProducts(queryParams)
     } catch (error: any) {
       showError(error.message || t('productManagement.error.saveFailed'))
@@ -320,6 +332,7 @@ const ProductManagement = () => {
     try {
       await deleteProduct(product.id)
       showSuccess(t('productManagement.success.delete'))
+      setSelectedIds(selectedIds.filter(id => id !== product.id))
       loadProducts(queryParams)
     } catch (error: any) {
       showError(error.message || t('productManagement.error.deleteFailed'))
@@ -349,50 +362,164 @@ const ProductManagement = () => {
     setProductDetail(null)
   }
 
-  // 按分类分组产品
-  const productsByCategory = useMemo(() => {
-    const grouped: Record<string, Product[]> = {}
-    
-    products.forEach((product) => {
-      const categoryKey = product.category_id || 'uncategorized'
-      const categoryName = product.category_name || t('productManagement.table.uncategorized')
-      
-      if (!grouped[categoryKey]) {
-        grouped[categoryKey] = []
-      }
-      grouped[categoryKey].push(product)
-    })
-    
-    return Object.entries(grouped)
-      .map(([categoryId, products]) => ({
-        categoryId,
-        categoryName: products[0]?.category_name || t('productManagement.table.uncategorized'),
-        products,
-      }))
-      .sort((a, b) => {
-        if (a.categoryId === 'uncategorized') return 1
-        if (b.categoryId === 'uncategorized') return -1
-        return a.categoryName.localeCompare(b.categoryName)
-      })
-  }, [products, t])
 
+  // 全选/取消全选
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(products.map(p => p.id))
+    } else {
+      setSelectedIds([])
+    }
+  }
+
+  // 单个选择
+  const handleSelect = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedIds([...selectedIds, id])
+    } else {
+      setSelectedIds(selectedIds.filter(i => i !== id))
+    }
+  }
+
+  // 导出功能（Excel格式）
+  const handleExport = () => {
+    if (selectedIds.length === 0) {
+      showError(t('productManagement.selectAtLeastOne'))
+      return
+    }
+
+    // 获取选中的产品数据
+    const selectedProducts = products.filter(p => selectedIds.includes(p.id))
+    
+    // 准备Excel数据
+    const headers = [
+      t('productManagement.table.name'),
+      t('productManagement.table.code'),
+      t('productManagement.table.enterpriseServiceCode'),
+      t('productManagement.table.category'),
+      t('productManagement.table.serviceType'),
+      t('productManagement.form.serviceSubtype'),
+      t('productManagement.form.processingDays'),
+      t('productManagement.form.priceDirectIdr'),
+      t('productManagement.form.priceDirectCny'),
+      t('productManagement.form.priceListIdr'),
+      t('productManagement.form.priceListCny'),
+      t('productManagement.table.status'),
+      t('productManagement.form.isActive'),
+    ]
+    
+    const rows = selectedProducts.map(product => [
+      product.name || '',
+      product.code || '',
+      product.enterprise_service_code || '',
+      product.category_name || '',
+      product.service_type || '',
+      product.service_subtype || '',
+      product.processing_days?.toString() || '',
+      product.price_direct_idr?.toString() || '',
+      product.price_direct_cny?.toString() || '',
+      product.price_list_idr?.toString() || '',
+      product.price_list_cny?.toString() || '',
+      product.status || '',
+      product.is_active ? t('productManagement.table.active') : t('productManagement.table.inactive'),
+    ])
+    
+    // 创建Excel内容（使用HTML表格格式，浏览器会自动识别为Excel）
+    let htmlContent = `
+      <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+          <meta charset="utf-8">
+          <!--[if gte mso 9]>
+          <xml>
+            <x:ExcelWorkbook>
+              <x:ExcelWorksheets>
+                <x:ExcelWorksheet>
+                  <x:Name>企服产品</x:Name>
+                  <x:WorksheetOptions>
+                    <x:DisplayGridlines/>
+                  </x:WorksheetOptions>
+                </x:ExcelWorksheet>
+              </x:ExcelWorksheets>
+            </x:ExcelWorkbook>
+          </xml>
+          <![endif]-->
+          <style>
+            table {
+              border-collapse: collapse;
+              width: 100%;
+            }
+            th {
+              background-color: #f0f0f0;
+              font-weight: bold;
+              border: 1px solid #ccc;
+              padding: 8px;
+              text-align: center;
+            }
+            td {
+              border: 1px solid #ccc;
+              padding: 6px;
+            }
+          </style>
+        </head>
+        <body>
+          <table>
+            <thead>
+              <tr>
+                ${headers.map(h => `<th>${h}</th>`).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('')}
+            </tbody>
+          </table>
+        </body>
+      </html>
+    `
+    
+    // 创建Blob并下载
+    const blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    link.setAttribute('href', url)
+    const dateStr = new Date().toISOString().split('T')[0]
+    link.setAttribute('download', `企服产品_${dateStr}.xls`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+    
+    showSuccess(t('productManagement.exportSuccess', { count: selectedIds.length }))
+  }
 
   return (
     <div className="w-full">
       {/* 页面头部 */}
       <PageHeader
         icon={Package}
-        title={t('productManagement.title')}
+        title={t('menu.enterpriseServiceProduct')}
         subtitle={t('productManagement.subtitle')}
         actions={
-          <Button
-            colorScheme="primary"
-            leftIcon={<Plus size={16} />}
-            onClick={handleCreate}
-            size="sm"
-          >
-            {t('productManagement.create')}
-          </Button>
+          <HStack spacing={2}>
+            <Button
+              size="sm"
+              variant="outline"
+              leftIcon={<Download size={14} />}
+              onClick={handleExport}
+              isDisabled={selectedIds.length === 0}
+            >
+              {t('productManagement.export')}
+              {selectedIds.length > 0 && ` (${selectedIds.length})`}
+            </Button>
+            <Button
+              colorScheme="primary"
+              leftIcon={<Plus size={16} />}
+              onClick={handleCreate}
+              size="sm"
+            >
+              {t('productManagement.create')}
+            </Button>
+          </HStack>
         }
       />
 
@@ -516,148 +643,110 @@ const ProductManagement = () => {
       ) : (
         <Card bg={bgColor} borderColor={borderColor} overflow="hidden">
           <Box overflowX="auto">
-            <Accordion allowMultiple defaultIndex={[]}>
-              {productsByCategory.map((categoryGroup) => (
-                <AccordionItem key={categoryGroup.categoryId} border="none">
-                  <AccordionButton
-                    px={4}
-                    py={3}
-                    bg="gray.50"
-                    _hover={{ bg: 'gray.100' }}
-                    _expanded={{ bg: 'blue.50', color: 'blue.700' }}
-                  >
-                    <Box flex="1" textAlign="left">
-                      <Text fontSize="sm" fontWeight="semibold">
-                        {categoryGroup.categoryName}
-                      </Text>
-                      <Text fontSize="xs" color="gray.500" mt={0.5}>
-                        {categoryGroup.products.length} {t('productManagement.table.items')}
-                      </Text>
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                  <AccordionPanel px={0} pb={0}>
-                    <Table variant="simple" size="sm">
-                      <Thead bg="gray.50">
-                        <Tr>
-                          <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.name')}</Th>
-                          <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.code')}</Th>
-                          <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.priceCost')}</Th>
-                          <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.priceChannel')}</Th>
-                          <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.priceDirect')}</Th>
-                          <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.priceList')}</Th>
-                          <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.status')}</Th>
-                          <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.actions')}</Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                        {categoryGroup.products.map((product) => (
-                          <Tr key={product.id} _hover={{ bg: hoverBg }} transition="background-color 0.2s">
-                            <Td fontSize="sm" color="gray.900" fontWeight="medium">{product.name}</Td>
-                            <Td fontSize="sm" color="gray.600">{product.code || '-'}</Td>
-                            <Td fontSize="sm" color="gray.600">
-                              <VStack spacing={0.5} align="flex-start">
-                                {product.price_cost_idr ? (
-                                  <Text fontSize="xs">{formatPrice(product.price_cost_idr, 'IDR')}</Text>
-                                ) : (
-                                  <Text fontSize="xs" color="gray.400">-</Text>
-                                )}
-                                {product.price_cost_cny ? (
-                                  <Text fontSize="xs">{formatPrice(product.price_cost_cny, 'CNY')}</Text>
-                                ) : (
-                                  <Text fontSize="xs" color="gray.400">-</Text>
-                                )}
-                              </VStack>
-                            </Td>
-                            <Td fontSize="sm" color="gray.600">
-                              <VStack spacing={0.5} align="flex-start">
-                                {product.price_channel_idr ? (
-                                  <Text fontSize="xs">{formatPrice(product.price_channel_idr, 'IDR')}</Text>
-                                ) : (
-                                  <Text fontSize="xs" color="gray.400">-</Text>
-                                )}
-                                {product.price_channel_cny ? (
-                                  <Text fontSize="xs">{formatPrice(product.price_channel_cny, 'CNY')}</Text>
-                                ) : (
-                                  <Text fontSize="xs" color="gray.400">-</Text>
-                                )}
-                              </VStack>
-                            </Td>
-                            <Td fontSize="sm" color="gray.600">
-                              <VStack spacing={0.5} align="flex-start">
-                                {product.price_direct_idr ? (
-                                  <Text fontSize="xs">{formatPrice(product.price_direct_idr, 'IDR')}</Text>
-                                ) : (
-                                  <Text fontSize="xs" color="gray.400">-</Text>
-                                )}
-                                {product.price_direct_cny ? (
-                                  <Text fontSize="xs">{formatPrice(product.price_direct_cny, 'CNY')}</Text>
-                                ) : (
-                                  <Text fontSize="xs" color="gray.400">-</Text>
-                                )}
-                              </VStack>
-                            </Td>
-                            <Td fontSize="sm" color="gray.600">
-                              <VStack spacing={0.5} align="flex-start">
-                                {product.price_list_idr ? (
-                                  <Text fontSize="xs">{formatPrice(product.price_list_idr, 'IDR')}</Text>
-                                ) : (
-                                  <Text fontSize="xs" color="gray.400">-</Text>
-                                )}
-                                {product.price_list_cny ? (
-                                  <Text fontSize="xs">{formatPrice(product.price_list_cny, 'CNY')}</Text>
-                                ) : (
-                                  <Text fontSize="xs" color="gray.400">-</Text>
-                                )}
-                              </VStack>
-                            </Td>
-                            <Td fontSize="sm">
-                              {product.is_active ? (
-                                <Badge colorScheme="green" fontSize="xs">
-                                  {t('productManagement.table.active')}
-                                </Badge>
-                              ) : (
-                                <Badge colorScheme="red" fontSize="xs">
-                                  {t('productManagement.table.inactive')}
-                                </Badge>
-                              )}
-                            </Td>
-                            <Td fontSize="sm">
-                              <HStack spacing={1}>
-                                <IconButton
-                                  aria-label={t('productManagement.viewDetail')}
-                                  icon={<Eye size={14} />}
-                                  size="xs"
-                                  variant="ghost"
-                                  colorScheme="blue"
-                                  onClick={() => handleViewDetail(product.id)}
-                                />
-                                <IconButton
-                                  aria-label={t('productManagement.edit')}
-                                  icon={<Edit size={14} />}
-                                  size="xs"
-                                  variant="ghost"
-                                  colorScheme="blue"
-                                  onClick={() => handleEdit(product)}
-                                />
-                                <IconButton
-                                  aria-label={t('productManagement.delete')}
-                                  icon={<Trash2 size={14} />}
-                                  size="xs"
-                                  variant="ghost"
-                                  colorScheme="red"
-                                  onClick={() => handleDelete(product)}
-                                />
-                              </HStack>
-                            </Td>
-                          </Tr>
-                        ))}
-                      </Tbody>
-                    </Table>
-                  </AccordionPanel>
-                </AccordionItem>
-              ))}
-            </Accordion>
+            <Table variant="simple" size="sm">
+              <Thead bg="gray.50">
+                <Tr>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" w="40px">
+                    <Checkbox
+                      isChecked={selectedIds.length === products.length && products.length > 0}
+                      isIndeterminate={selectedIds.length > 0 && selectedIds.length < products.length}
+                      onChange={(e) => handleSelectAll(e.target.checked)}
+                    />
+                  </Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.name')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.code')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.enterpriseServiceCode')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.category')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.serviceType')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.price')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.status')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.actions')}</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {products.map((product) => (
+                  <Tr key={product.id} _hover={{ bg: hoverBg }} transition="background-color 0.2s">
+                    <Td fontSize="sm">
+                      <Checkbox
+                        isChecked={selectedIds.includes(product.id)}
+                        onChange={(e) => handleSelect(product.id, e.target.checked)}
+                      />
+                    </Td>
+                    <Td fontSize="sm" color="gray.900" fontWeight="medium">{product.name}</Td>
+                    <Td fontSize="sm" color="gray.600">{product.code || '-'}</Td>
+                    <Td fontSize="sm" color="gray.600">{product.enterprise_service_code || '-'}</Td>
+                    <Td fontSize="sm" color="gray.600">{product.category_name || '-'}</Td>
+                    <Td fontSize="sm" color="gray.600">
+                      <HStack spacing={1}>
+                        <Tag size={14} />
+                        <Text>{product.service_type || '-'}</Text>
+                        {product.service_subtype && (
+                          <Text fontSize="xs" color="gray.500">({product.service_subtype})</Text>
+                        )}
+                      </HStack>
+                    </Td>
+                    <Td fontSize="sm" color="gray.600">
+                      <VStack spacing={0.5} align="flex-start">
+                        {product.price_direct_idr && (
+                          <HStack spacing={1}>
+                            <DollarSign size={14} />
+                            <Text fontSize="xs">{formatPrice(product.price_direct_idr, 'IDR')}</Text>
+                          </HStack>
+                        )}
+                        {product.price_direct_cny && (
+                          <HStack spacing={1}>
+                            <DollarSign size={14} />
+                            <Text fontSize="xs">{formatPrice(product.price_direct_cny, 'CNY')}</Text>
+                          </HStack>
+                        )}
+                        {!product.price_direct_idr && !product.price_direct_cny && (
+                          <Text>-</Text>
+                        )}
+                      </VStack>
+                    </Td>
+                    <Td fontSize="sm">
+                      {product.is_active ? (
+                        <Badge colorScheme="green" fontSize="xs">
+                          {t('productManagement.table.active')}
+                        </Badge>
+                      ) : (
+                        <Badge colorScheme="red" fontSize="xs">
+                          {t('productManagement.table.inactive')}
+                        </Badge>
+                      )}
+                    </Td>
+                    <Td fontSize="sm">
+                      <HStack spacing={2}>
+                        <Button
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="blue"
+                          onClick={() => handleViewDetail(product.id)}
+                        >
+                          {t('productManagement.viewDetail')}
+                        </Button>
+                        <Button
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="blue"
+                          onClick={() => handleEdit(product)}
+                        >
+                          {t('productManagement.edit')}
+                        </Button>
+                        <Button
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="red"
+                          onClick={() => handleDelete(product)}
+                        >
+                          {t('productManagement.delete')}
+                        </Button>
+                      </HStack>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
           </Box>
         </Card>
       )}
@@ -762,6 +851,22 @@ const ProductManagement = () => {
                       className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
                     />
                   </div>
+                  {editingProduct && editingProduct.enterprise_service_code && (
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                        {t('productManagement.table.enterpriseServiceCode')}
+                      </label>
+                      <input
+                        type="text"
+                        value={editingProduct.enterprise_service_code}
+                        disabled
+                        className="w-full px-3 py-1.5 border border-gray-200 rounded-lg bg-gray-50 text-sm text-gray-600 cursor-not-allowed"
+                      />
+                      <div className="text-xs text-gray-500 mt-1">
+                        {t('productManagement.form.enterpriseServiceCodeHint')}
+                      </div>
+                    </div>
+                  )}
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       {t('productManagement.form.category')}
@@ -780,17 +885,31 @@ const ProductManagement = () => {
                     </select>
                   </div>
                 </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    {t('productManagement.form.serviceSubtype')}
-                  </label>
-                  <input
-                    type="text"
-                    value={modalFormData.service_subtype}
-                    onChange={(e) => setModalFormData({ ...modalFormData, service_subtype: e.target.value })}
-                    placeholder={t('productManagement.form.serviceSubtypePlaceholder')}
-                    className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                  />
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      {t('productManagement.form.serviceType')}
+                    </label>
+                    <input
+                      type="text"
+                      value={modalFormData.service_type}
+                      onChange={(e) => setModalFormData({ ...modalFormData, service_type: e.target.value })}
+                      placeholder={t('productManagement.form.serviceTypePlaceholder')}
+                      className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      {t('productManagement.form.serviceSubtype')}
+                    </label>
+                    <input
+                      type="text"
+                      value={modalFormData.service_subtype}
+                      onChange={(e) => setModalFormData({ ...modalFormData, service_subtype: e.target.value })}
+                      placeholder={t('productManagement.form.serviceSubtypePlaceholder')}
+                      className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                    />
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
@@ -963,20 +1082,32 @@ const ProductManagement = () => {
                       </label>
                       <div className="text-sm text-gray-900">{productDetail.code || '-'}</div>
                     </div>
+                    {productDetail.enterprise_service_code && (
+                      <div>
+                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
+                          {t('productManagement.table.enterpriseServiceCode')}
+                        </label>
+                        <div className="text-sm text-gray-900">{productDetail.enterprise_service_code}</div>
+                        <div className="text-xs text-gray-500 mt-0.5">
+                          {t('productManagement.form.enterpriseServiceCodeHint')}
+                        </div>
+                      </div>
+                    )}
                     <div>
                       <label className="block text-xs font-medium text-gray-500 mb-0.5">
                         {t('productManagement.table.category')}
                       </label>
                       <div className="text-sm text-gray-900">{productDetail.category_name || '-'}</div>
                     </div>
-                    {productDetail.service_subtype && (
-                      <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                          {t('productManagement.form.serviceSubtype')}
-                        </label>
-                        <div className="text-sm text-gray-900">{productDetail.service_subtype}</div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
+                        {t('productManagement.table.serviceType')}
+                      </label>
+                      <div className="text-sm text-gray-900">
+                        {productDetail.service_type || '-'}
+                        {productDetail.service_subtype && ` (${productDetail.service_subtype})`}
                       </div>
-                    )}
+                    </div>
                     {productDetail.processing_days && (
                       <div>
                         <label className="block text-xs font-medium text-gray-500 mb-0.5">
@@ -1101,5 +1232,5 @@ const ProductManagement = () => {
   )
 }
 
-export default ProductManagement
+export default EnterpriseServiceProduct
 

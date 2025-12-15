@@ -15,6 +15,7 @@ import { getProductList } from '@/api/products'
 import { getUserList } from '@/api/users'
 import { Order, OrderItem, OrderComment, OrderFile, Customer, Product, UserListItem, CreateOrderItemRequest, UpdateOrderRequest, AssignOrderRequest, OrderStatus } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
+import { formatPrice as formatCurrency } from '@/utils/formatPrice'
 
 const OrderDetail = () => {
   const { id } = useParams<{ id: string }>()
@@ -151,13 +152,7 @@ const OrderDetail = () => {
     }
   }, [id])
 
-  // 格式化金额
-  const formatCurrency = (amount: number, currency: string = 'IDR') => {
-    if (currency === 'IDR') {
-      return `Rp ${amount.toLocaleString('id-ID')}`
-    }
-    return `¥ ${amount.toLocaleString('zh-CN')}`
-  }
+  // formatCurrency 已从 @/utils/formatPrice 导入
 
   // 格式化日期时间
   const formatDateTime = (dateString: string | undefined) => {

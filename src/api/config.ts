@@ -111,6 +111,19 @@ export const API_PATHS = {
     BY_ID: (id: string) => `/api/service-management/products/${id}`,
     BY_VENDOR: (vendorId: string) => `/api/service-management/products/vendors/${vendorId}`,
   },
+  // 服务管理 - 企服供应商
+  SUPPLIERS: {
+    BASE: '/api/service-management/suppliers',
+    BY_ID: (id: string) => `/api/service-management/suppliers/${id}`,
+    SERVICES: (id: string) => `/api/service-management/suppliers/${id}/services`,
+    SERVICE_PRICES: (supplierId: string, productId: string) => `/api/service-management/suppliers/${supplierId}/services/${productId}/prices`,
+  },
+  // 服务管理 - 价格管理
+  PRICES: {
+    BASE: '/api/service-management/prices',
+    BY_ID: (id: string) => `/api/service-management/prices/${id}`,
+    HISTORY: (productId: string) => `/api/service-management/prices/history/${productId}`,
+  },
   // 服务管理 - 客户
   CUSTOMERS: {
     BASE: '/api/service-management/customers',
