@@ -45,6 +45,9 @@ export async function getProductList(
   if (params.is_active !== undefined) {
     queryParams.append('is_active', params.is_active.toString())
   }
+  if (params.group_by_category !== undefined) {
+    queryParams.append('group_by_category', params.group_by_category.toString())
+  }
 
   const queryString = queryParams.toString()
   const url = queryString

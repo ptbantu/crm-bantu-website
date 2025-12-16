@@ -285,6 +285,7 @@ export interface ProductListParams {
   service_subtype?: string
   status?: string
   is_active?: boolean
+  group_by_category?: boolean
 }
 
 // 供应商-产品关联

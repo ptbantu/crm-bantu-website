@@ -2,9 +2,10 @@
  * 产品/服务管理页面
  * 包含：服务列表、供应商关联、价格管理
  */
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { Search, Plus, X, Package, Tag, DollarSign, CheckCircle2, XCircle, Save, Download } from 'lucide-react'
+import { Search, Plus, X, Package, Tag, DollarSign, CheckCircle2, XCircle, Save, Download, ChevronDown, ChevronRight } from 'lucide-react'
 import {
   getProductList,
   getProductDetail,
@@ -53,10 +54,11 @@ const EnterpriseServiceProduct = () => {
   const borderColor = useColorModeValue('gray.200', 'gray.700')
   const hoverBg = useColorModeValue('gray.50', 'gray.700')
 
-  // 查询参数
+  // 查询参数（使用后端分组功能）
   const [queryParams, setQueryParams] = useState<ProductListParams>({
     page: 1,
-    size: 10,
+    size: 100, // 使用后端分组时，size会被忽略，但需要设置一个有效值
+    group_by_category: true, // 启用后端分组
   })
 
   // 数据
@@ -69,13 +71,15 @@ const EnterpriseServiceProduct = () => {
   
   // 选中状态
   const [selectedIds, setSelectedIds] = useState<string[]>([])
+  
+  // 分类折叠状态（key: categoryName, value: isExpanded）
+  const [categoryExpanded, setCategoryExpanded] = useState<Record<string, boolean>>({})
 
   // 表单状态
   const [formData, setFormData] = useState({
     name: '',
     code: '',
     category_id: '',
-    service_type: '',
     status: '',
     is_active: '' as '' | 'true' | 'false',
   })
@@ -87,7 +91,6 @@ const EnterpriseServiceProduct = () => {
     name: '',
     code: '',
     category_id: '',
-    service_type: '',
     service_subtype: '',
     processing_days: '',
     processing_time_text: '',
@@ -130,6 +133,18 @@ const EnterpriseServiceProduct = () => {
       setPages(result.pages)
       // 清空选中状态（切换页面时）
       setSelectedIds([])
+      
+      // 初始化所有分类为展开状态（如果还没有设置过）
+      const newExpanded: Record<string, boolean> = {}
+      result.records.forEach((product) => {
+        const categoryName = product.category_name || '未分类'
+        if (categoryExpanded[categoryName] === undefined) {
+          newExpanded[categoryName] = true
+        }
+      })
+      if (Object.keys(newExpanded).length > 0) {
+        setCategoryExpanded(prev => ({ ...prev, ...newExpanded }))
+      }
     } catch (error: any) {
       showError(error.message || t('productManagement.error.loadFailed'))
     } finally {
@@ -146,7 +161,8 @@ const EnterpriseServiceProduct = () => {
   const handleSearch = () => {
     const params: ProductListParams = {
       page: 1,
-      size: queryParams.size || 10,
+      size: 100, // 使用后端分组时，size会被忽略
+      group_by_category: true, // 启用后端分组
     }
 
     if (formData.name.trim()) {
@@ -157,9 +173,6 @@ const EnterpriseServiceProduct = () => {
     }
     if (formData.category_id) {
       params.category_id = formData.category_id
-    }
-    if (formData.service_type) {
-      params.service_type = formData.service_type
     }
     if (formData.status) {
       params.status = formData.status
@@ -178,24 +191,24 @@ const EnterpriseServiceProduct = () => {
       name: '',
       code: '',
       category_id: '',
-      service_type: '',
       status: '',
       is_active: '',
     })
     const defaultParams: ProductListParams = {
       page: 1,
-      size: 10,
+      size: 100, // 使用后端分组时，size会被忽略
+      group_by_category: true, // 启用后端分组
     }
     setQueryParams(defaultParams)
     loadProducts(defaultParams)
   }
 
-  // 分页
-  const handlePageChange = (page: number) => {
-    const params = { ...queryParams, page }
-    setQueryParams(params)
-    loadProducts(params)
-  }
+  // 分页（分组展示时不需要分页）
+  // const handlePageChange = (page: number) => {
+  //   const params = { ...queryParams, page }
+  //   setQueryParams(params)
+  //   loadProducts(params)
+  // }
 
   // 打开创建弹窗
   const handleCreate = () => {
@@ -204,7 +217,6 @@ const EnterpriseServiceProduct = () => {
       name: '',
       code: '',
       category_id: '',
-      service_type: '',
       service_subtype: '',
       processing_days: '',
       processing_time_text: '',
@@ -227,7 +239,6 @@ const EnterpriseServiceProduct = () => {
         name: detail.name,
         code: detail.code || '',
         category_id: detail.category_id || '',
-        service_type: detail.service_type || '',
         service_subtype: detail.service_subtype || '',
         processing_days: detail.processing_days?.toString() || '',
         processing_time_text: detail.processing_time_text || '',
@@ -252,7 +263,6 @@ const EnterpriseServiceProduct = () => {
       name: '',
       code: '',
       category_id: '',
-      service_type: '',
       service_subtype: '',
       processing_days: '',
       processing_time_text: '',
@@ -280,7 +290,6 @@ const EnterpriseServiceProduct = () => {
           name: modalFormData.name.trim(),
           code: modalFormData.code || undefined,
           category_id: modalFormData.category_id || undefined,
-          service_type: modalFormData.service_type || undefined,
           service_subtype: modalFormData.service_subtype || undefined,
           processing_days: modalFormData.processing_days ? parseInt(modalFormData.processing_days) : undefined,
           processing_time_text: modalFormData.processing_time_text || undefined,
@@ -299,7 +308,6 @@ const EnterpriseServiceProduct = () => {
           name: modalFormData.name.trim(),
           code: modalFormData.code || undefined,
           category_id: modalFormData.category_id || undefined,
-          service_type: modalFormData.service_type || undefined,
           service_subtype: modalFormData.service_subtype || undefined,
           processing_days: modalFormData.processing_days ? parseInt(modalFormData.processing_days) : undefined,
           processing_time_text: modalFormData.processing_time_text || undefined,
@@ -395,9 +403,7 @@ const EnterpriseServiceProduct = () => {
     const headers = [
       t('productManagement.table.name'),
       t('productManagement.table.code'),
-      t('productManagement.table.enterpriseServiceCode'),
       t('productManagement.table.category'),
-      t('productManagement.table.serviceType'),
       t('productManagement.form.serviceSubtype'),
       t('productManagement.form.processingDays'),
       t('productManagement.form.priceDirectIdr'),
@@ -411,9 +417,7 @@ const EnterpriseServiceProduct = () => {
     const rows = selectedProducts.map(product => [
       product.name || '',
       product.code || '',
-      product.enterprise_service_code || '',
       product.category_name || '',
-      product.service_type || '',
       product.service_subtype || '',
       product.processing_days?.toString() || '',
       product.price_direct_idr?.toString() || '',
@@ -655,151 +659,158 @@ const EnterpriseServiceProduct = () => {
                   </Th>
                   <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.name')}</Th>
                   <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.code')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.enterpriseServiceCode')}</Th>
                   <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.category')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.serviceType')}</Th>
                   <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.price')}</Th>
                   <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.status')}</Th>
                   <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.actions')}</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {products.map((product) => (
-                  <Tr key={product.id} _hover={{ bg: hoverBg }} transition="background-color 0.2s">
-                    <Td fontSize="sm">
-                      <Checkbox
-                        isChecked={selectedIds.includes(product.id)}
-                        onChange={(e) => handleSelect(product.id, e.target.checked)}
-                      />
-                    </Td>
-                    <Td fontSize="sm" color="gray.900" fontWeight="medium">{product.name}</Td>
-                    <Td fontSize="sm" color="gray.600">{product.code || '-'}</Td>
-                    <Td fontSize="sm" color="gray.600">{product.enterprise_service_code || '-'}</Td>
-                    <Td fontSize="sm" color="gray.600">{product.category_name || '-'}</Td>
-                    <Td fontSize="sm" color="gray.600">
-                      <HStack spacing={1}>
-                        <Tag size={14} />
-                        <Text>{product.service_type || '-'}</Text>
-                        {product.service_subtype && (
-                          <Text fontSize="xs" color="gray.500">({product.service_subtype})</Text>
+                {(() => {
+                  // 后端已经按分类和code排序，前端只需要检测分类变化来显示分组标题
+                  let currentCategory: string | null = null
+                  let categoryProductCount = 0
+                  
+                  // 切换分类展开/折叠状态
+                  const toggleCategory = (categoryName: string, e: React.MouseEvent) => {
+                    e.stopPropagation()
+                    setCategoryExpanded(prev => ({
+                      ...prev,
+                      [categoryName]: !(prev[categoryName] ?? true) // 默认展开
+                    }))
+                  }
+                  
+                  return products.map((product, index) => {
+                    const categoryName = product.category_name || '未分类'
+                    const isNewCategory = categoryName !== currentCategory
+                    const isExpanded = categoryExpanded[categoryName] ?? true // 默认展开
+                    
+                    // 如果是新分类，重置计数
+                    if (isNewCategory) {
+                      currentCategory = categoryName
+                      categoryProductCount = 1
+                      // 计算当前分类的产品数量
+                      for (let i = index + 1; i < products.length; i++) {
+                        const nextCategoryName = products[i].category_name || '未分类'
+                        if (nextCategoryName === categoryName) {
+                          categoryProductCount++
+                        } else {
+                          break
+                        }
+                      }
+                    }
+                    
+                    return (
+                      <React.Fragment key={product.id}>
+                        {/* 分类标题行（仅在新分类开始时显示） */}
+                        {isNewCategory && (
+                          <Tr bg="blue.50" _hover={{ bg: 'blue.100' }} cursor="pointer" onClick={(e) => toggleCategory(categoryName, e)}>
+                            <Td colSpan={7} fontSize="sm" fontWeight="bold" color="blue.700" py={3}>
+                              <HStack spacing={2}>
+                                {isExpanded ? (
+                                  <ChevronDown size={16} />
+                                ) : (
+                                  <ChevronRight size={16} />
+                                )}
+                                <Tag size={16} />
+                                <Text>{categoryName}</Text>
+                                <Text fontSize="xs" color="gray.500" fontWeight="normal">
+                                  ({categoryProductCount} 个产品)
+                                </Text>
+                              </HStack>
+                            </Td>
+                          </Tr>
                         )}
-                      </HStack>
-                    </Td>
-                    <Td fontSize="sm" color="gray.600">
-                      <VStack spacing={0.5} align="flex-start">
-                        {product.price_direct_idr && (
-                          <HStack spacing={1}>
-                            <DollarSign size={14} />
-                            <Text fontSize="xs">{formatPrice(product.price_direct_idr, 'IDR')}</Text>
-                          </HStack>
+                        {/* 产品行（仅在分类展开时显示） */}
+                        {isExpanded && (
+                          <Tr _hover={{ bg: hoverBg }} transition="background-color 0.2s">
+                            <Td fontSize="sm">
+                              <Checkbox
+                                isChecked={selectedIds.includes(product.id)}
+                                onChange={(e) => handleSelect(product.id, e.target.checked)}
+                              />
+                            </Td>
+                            <Td fontSize="sm" color="gray.900" fontWeight="medium">{product.name}</Td>
+                            <Td fontSize="sm" color="gray.600" fontFamily="mono">{product.code || '-'}</Td>
+                            <Td fontSize="sm" color="gray.600">{product.category_name || '-'}</Td>
+                            <Td fontSize="sm" color="gray.600">
+                              <VStack spacing={0.5} align="flex-start">
+                                {product.price_direct_idr && (
+                                  <HStack spacing={1}>
+                                    <DollarSign size={14} />
+                                    <Text fontSize="xs">{formatPrice(product.price_direct_idr, 'IDR')}</Text>
+                                  </HStack>
+                                )}
+                                {product.price_direct_cny && (
+                                  <HStack spacing={1}>
+                                    <DollarSign size={14} />
+                                    <Text fontSize="xs">{formatPrice(product.price_direct_cny, 'CNY')}</Text>
+                                  </HStack>
+                                )}
+                                {!product.price_direct_idr && !product.price_direct_cny && (
+                                  <Text>-</Text>
+                                )}
+                              </VStack>
+                            </Td>
+                            <Td fontSize="sm">
+                              {product.is_active ? (
+                                <Badge colorScheme="green" fontSize="xs">
+                                  {t('productManagement.table.active')}
+                                </Badge>
+                              ) : (
+                                <Badge colorScheme="red" fontSize="xs">
+                                  {t('productManagement.table.inactive')}
+                                </Badge>
+                              )}
+                            </Td>
+                            <Td fontSize="sm">
+                              <HStack spacing={2}>
+                                <Button
+                                  size="xs"
+                                  variant="ghost"
+                                  colorScheme="blue"
+                                  onClick={() => handleViewDetail(product.id)}
+                                >
+                                  {t('productManagement.viewDetail')}
+                                </Button>
+                                <Button
+                                  size="xs"
+                                  variant="ghost"
+                                  colorScheme="blue"
+                                  onClick={() => handleEdit(product)}
+                                >
+                                  {t('productManagement.edit')}
+                                </Button>
+                                <Button
+                                  size="xs"
+                                  variant="ghost"
+                                  colorScheme="red"
+                                  onClick={() => handleDelete(product)}
+                                >
+                                  {t('productManagement.delete')}
+                                </Button>
+                              </HStack>
+                            </Td>
+                          </Tr>
                         )}
-                        {product.price_direct_cny && (
-                          <HStack spacing={1}>
-                            <DollarSign size={14} />
-                            <Text fontSize="xs">{formatPrice(product.price_direct_cny, 'CNY')}</Text>
-                          </HStack>
-                        )}
-                        {!product.price_direct_idr && !product.price_direct_cny && (
-                          <Text>-</Text>
-                        )}
-                      </VStack>
-                    </Td>
-                    <Td fontSize="sm">
-                      {product.is_active ? (
-                        <Badge colorScheme="green" fontSize="xs">
-                          {t('productManagement.table.active')}
-                        </Badge>
-                      ) : (
-                        <Badge colorScheme="red" fontSize="xs">
-                          {t('productManagement.table.inactive')}
-                        </Badge>
-                      )}
-                    </Td>
-                    <Td fontSize="sm">
-                      <HStack spacing={2}>
-                        <Button
-                          size="xs"
-                          variant="ghost"
-                          colorScheme="blue"
-                          onClick={() => handleViewDetail(product.id)}
-                        >
-                          {t('productManagement.viewDetail')}
-                        </Button>
-                        <Button
-                          size="xs"
-                          variant="ghost"
-                          colorScheme="blue"
-                          onClick={() => handleEdit(product)}
-                        >
-                          {t('productManagement.edit')}
-                        </Button>
-                        <Button
-                          size="xs"
-                          variant="ghost"
-                          colorScheme="red"
-                          onClick={() => handleDelete(product)}
-                        >
-                          {t('productManagement.delete')}
-                        </Button>
-                      </HStack>
-                    </Td>
-                  </Tr>
-                ))}
+                      </React.Fragment>
+                    )
+                  })
+                })()}
               </Tbody>
             </Table>
           </Box>
         </Card>
       )}
 
-      {/* 分页 */}
-      {pages > 1 && (
+      {/* 分组展示时不需要分页，显示总数即可 */}
+      {products.length > 0 && (
         <Card mt={4} bg={bgColor} borderColor={borderColor}>
           <CardBody py={2}>
             <Flex justify="space-between" align="center">
               <Text fontSize="xs" color="gray.600">
-                {t('productManagement.pagination.info', { current: currentPage, total: pages, size: queryParams.size || 10 })}
+                共 {total} 个产品，已按分类分组展示
               </Text>
-              <HStack spacing={1}>
-                <Button
-                  size="xs"
-                  variant="outline"
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  isDisabled={currentPage === 1}
-                >
-                  {t('productManagement.pagination.prev')}
-                </Button>
-                {Array.from({ length: Math.min(pages, 5) }, (_, i) => {
-                  let pageNum: number
-                  if (pages <= 5) {
-                    pageNum = i + 1
-                  } else if (currentPage <= 3) {
-                    pageNum = i + 1
-                  } else if (currentPage >= pages - 2) {
-                    pageNum = pages - 4 + i
-                  } else {
-                    pageNum = currentPage - 2 + i
-                  }
-                  return (
-                    <Button
-                      key={pageNum}
-                      size="xs"
-                      variant={currentPage === pageNum ? 'solid' : 'outline'}
-                      colorScheme={currentPage === pageNum ? 'blue' : 'gray'}
-                      onClick={() => handlePageChange(pageNum)}
-                    >
-                      {pageNum}
-                    </Button>
-                  )
-                })}
-                <Button
-                  size="xs"
-                  variant="outline"
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  isDisabled={currentPage === pages}
-                >
-                  {t('productManagement.pagination.next')}
-                </Button>
-              </HStack>
             </Flex>
           </CardBody>
         </Card>
@@ -851,22 +862,6 @@ const EnterpriseServiceProduct = () => {
                       className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
                     />
                   </div>
-                  {editingProduct && editingProduct.enterprise_service_code && (
-                    <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
-                        {t('productManagement.table.enterpriseServiceCode')}
-                      </label>
-                      <input
-                        type="text"
-                        value={editingProduct.enterprise_service_code}
-                        disabled
-                        className="w-full px-3 py-1.5 border border-gray-200 rounded-lg bg-gray-50 text-sm text-gray-600 cursor-not-allowed"
-                      />
-                      <div className="text-xs text-gray-500 mt-1">
-                        {t('productManagement.form.enterpriseServiceCodeHint')}
-                      </div>
-                    </div>
-                  )}
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       {t('productManagement.form.category')}
@@ -886,18 +881,6 @@ const EnterpriseServiceProduct = () => {
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      {t('productManagement.form.serviceType')}
-                    </label>
-                    <input
-                      type="text"
-                      value={modalFormData.service_type}
-                      onChange={(e) => setModalFormData({ ...modalFormData, service_type: e.target.value })}
-                      placeholder={t('productManagement.form.serviceTypePlaceholder')}
-                      className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                    />
-                  </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       {t('productManagement.form.serviceSubtype')}
@@ -1082,32 +1065,22 @@ const EnterpriseServiceProduct = () => {
                       </label>
                       <div className="text-sm text-gray-900">{productDetail.code || '-'}</div>
                     </div>
-                    {productDetail.enterprise_service_code && (
-                      <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                          {t('productManagement.table.enterpriseServiceCode')}
-                        </label>
-                        <div className="text-sm text-gray-900">{productDetail.enterprise_service_code}</div>
-                        <div className="text-xs text-gray-500 mt-0.5">
-                          {t('productManagement.form.enterpriseServiceCodeHint')}
-                        </div>
-                      </div>
-                    )}
                     <div>
                       <label className="block text-xs font-medium text-gray-500 mb-0.5">
                         {t('productManagement.table.category')}
                       </label>
                       <div className="text-sm text-gray-900">{productDetail.category_name || '-'}</div>
                     </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                        {t('productManagement.table.serviceType')}
-                      </label>
-                      <div className="text-sm text-gray-900">
-                        {productDetail.service_type || '-'}
-                        {productDetail.service_subtype && ` (${productDetail.service_subtype})`}
+                    {productDetail.service_subtype && (
+                      <div>
+                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
+                          {t('productManagement.form.serviceSubtype')}
+                        </label>
+                        <div className="text-sm text-gray-900">
+                          {productDetail.service_subtype}
+                        </div>
                       </div>
-                    </div>
+                    )}
                     {productDetail.processing_days && (
                       <div>
                         <label className="block text-xs font-medium text-gray-500 mb-0.5">
