@@ -4,7 +4,7 @@
  */
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Search, Plus, Edit, Trash2, X, Building2, Mail, Phone, CheckCircle2, XCircle, Save, Eye, Globe, Users, Calendar, Lock, Shield } from 'lucide-react'
+import { Search, Plus, Edit, Trash2, Building2, Mail, Phone, CheckCircle2, XCircle, Save, Eye, Globe, Users, Calendar, Lock, Shield } from 'lucide-react'
 import {
   getOrganizationList,
   getOrganizationDetail,
@@ -21,6 +21,7 @@ import {
 import { OrganizationListParams, Organization, OrganizationDetail } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
 import { PageHeader } from '@/components/admin/PageHeader'
+import EcsModal from '@/components/admin/EcsModal'
 import {
   Button,
   Table,
@@ -94,6 +95,17 @@ const Organizations = () => {
   const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null)
   const [orgDetail, setOrgDetail] = useState<OrganizationDetail | null>(null)
   const [loadingDetail, setLoadingDetail] = useState(false)
+
+  // 确认弹窗状态
+  const [confirmModal, setConfirmModal] = useState<{
+    open: boolean
+    type: 'delete' | 'lock' | 'unlock' | 'disable' | null
+    org: Organization | null
+  }>({
+    open: false,
+    type: null,
+    org: null,
+  })
 
   // 加载组织列表
   const loadOrganizations = async (params: OrganizationListParams) => {
@@ -253,49 +265,62 @@ const Organizations = () => {
     }
   }
 
-  // 删除组织
-  const handleDelete = async (org: Organization) => {
-    if (!window.confirm(t('organizations.confirm.delete', { name: org.name }))) {
-      return
-    }
+  // 打开确认弹窗
+  const openConfirmModal = (type: 'delete' | 'lock' | 'unlock' | 'disable', org: Organization) => {
+    setConfirmModal({ open: true, type, org })
+  }
+
+  // 关闭确认弹窗
+  const closeConfirmModal = () => {
+    setConfirmModal({ open: false, type: null, org: null })
+  }
+
+  // 确认操作
+  const handleConfirmAction = async () => {
+    if (!confirmModal.org || !confirmModal.type) return
+
+    const { type, org } = confirmModal
 
     try {
-      await deleteOrganization(org.id)
-      showSuccess(t('organizations.success.delete'))
+      switch (type) {
+        case 'delete':
+          await deleteOrganization(org.id)
+          showSuccess(t('organizations.success.delete'))
+          break
+        case 'lock':
+          await lockOrganization(org.id)
+          showSuccess(t('organizations.success.lock'))
+          break
+        case 'unlock':
+          await unlockOrganization(org.id)
+          showSuccess(t('organizations.success.unlock'))
+          break
+        case 'disable':
+          await disableOrganization(org.id)
+          showSuccess(t('organizations.success.disable'))
+          break
+      }
+      closeConfirmModal()
       loadOrganizations(queryParams)
     } catch (error: any) {
-      showError(error.message || t('organizations.error.deleteFailed'))
+      const errorKey = `organizations.error.${type}Failed` as const
+      showError(error.message || t(errorKey))
     }
+  }
+
+  // 删除组织
+  const handleDelete = (org: Organization) => {
+    openConfirmModal('delete', org)
   }
 
   // 锁定组织
-  const handleLock = async (org: Organization) => {
-    if (!window.confirm(t('organizations.confirm.lock', { name: org.name }))) {
-      return
-    }
-
-    try {
-      await lockOrganization(org.id)
-      showSuccess(t('organizations.success.lock'))
-      loadOrganizations(queryParams)
-    } catch (error: any) {
-      showError(error.message || t('organizations.error.lockFailed'))
-    }
+  const handleLock = (org: Organization) => {
+    openConfirmModal('lock', org)
   }
 
   // 解锁组织
-  const handleUnlock = async (org: Organization) => {
-    if (!window.confirm(t('organizations.confirm.unlock', { name: org.name }))) {
-      return
-    }
-
-    try {
-      await unlockOrganization(org.id)
-      showSuccess(t('organizations.success.unlock'))
-      loadOrganizations(queryParams)
-    } catch (error: any) {
-      showError(error.message || t('organizations.error.unlockFailed'))
-    }
+  const handleUnlock = (org: Organization) => {
+    openConfirmModal('unlock', org)
   }
 
   // 启用组织
@@ -310,18 +335,8 @@ const Organizations = () => {
   }
 
   // 禁用组织
-  const handleDisable = async (org: Organization) => {
-    if (!window.confirm(t('organizations.confirm.disable', { name: org.name }))) {
-      return
-    }
-
-    try {
-      await disableOrganization(org.id)
-      showSuccess(t('organizations.success.disable'))
-      loadOrganizations(queryParams)
-    } catch (error: any) {
-      showError(error.message || t('organizations.error.disableFailed'))
-    }
+  const handleDisable = (org: Organization) => {
+    openConfirmModal('disable', org)
   }
 
   // 打开详情弹窗
@@ -730,314 +745,338 @@ const Organizations = () => {
       )}
 
       {/* 创建/编辑弹窗 */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={handleCloseModal}>
-          <div
-            className="bg-white rounded-xl shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* 弹窗头部 */}
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-2.5 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900 tracking-tight">
-                {editingOrg ? t('organizations.edit') : t('organizations.create')}
-              </h2>
-              <button
-                onClick={handleCloseModal}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            {/* 弹窗内容 */}
-            <div className="p-4">
-              <div className="space-y-3">
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    {t('organizations.form.name')} <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={modalFormData.name}
-                    onChange={(e) => setModalFormData({ ...modalFormData, name: e.target.value })}
-                    className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    {t('organizations.form.code')}
-                  </label>
-                  <input
-                    type="text"
-                    value={modalFormData.code}
-                    onChange={(e) => setModalFormData({ ...modalFormData, code: e.target.value })}
-                    className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    {t('organizations.form.type')} {!editingOrg && <span className="text-red-500">*</span>}
-                  </label>
-                  <select
-                    value={modalFormData.organization_type}
-                    onChange={(e) => setModalFormData({ ...modalFormData, organization_type: e.target.value as 'internal' | 'vendor' | 'agent' })}
-                    disabled={!!editingOrg}
-                    className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm bg-white disabled:bg-gray-100"
-                  >
-                    <option value="internal">{t('organizations.type.internal')}</option>
-                    <option value="vendor">{t('organizations.type.vendor')}</option>
-                    <option value="agent">{t('organizations.type.agent')}</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    {t('organizations.form.email')}
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-                    <input
-                      type="email"
-                      value={modalFormData.email}
-                      onChange={(e) => setModalFormData({ ...modalFormData, email: e.target.value })}
-                      className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    {t('organizations.form.phone')}
-                  </label>
-                  <div className="relative">
-                    <Phone className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-                    <input
-                      type="tel"
-                      value={modalFormData.phone}
-                      onChange={(e) => setModalFormData({ ...modalFormData, phone: e.target.value })}
-                      className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="flex items-center space-x-1.5 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={modalFormData.is_active}
-                      onChange={(e) => setModalFormData({ ...modalFormData, is_active: e.target.checked })}
-                      className="w-3.5 h-3.5 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
-                    />
-                    <span className="text-xs font-medium text-gray-700">
-                      {t('organizations.form.isActive')}
-                    </span>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            {/* 弹窗底部 */}
-            <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-4 py-2.5 flex justify-end space-x-2">
-              <button
-                onClick={handleCloseModal}
-                className="px-4 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                {t('organizations.cancel')}
-              </button>
-              <button
-                onClick={handleSubmit}
-                disabled={submitting}
-                className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5"
-              >
-                <Save className="h-3.5 w-3.5" />
-                <span>{t('organizations.save')}</span>
-              </button>
+      <EcsModal
+        open={showModal}
+        onClose={handleCloseModal}
+        title={editingOrg ? t('organizations.edit') : t('organizations.create')}
+        width="large"
+        type="form"
+        onConfirm={handleSubmit}
+        confirmText={t('organizations.save')}
+        cancelText={t('organizations.cancel')}
+        confirmButtonProps={{
+          isLoading: submitting,
+          leftIcon: <Save size={14} />,
+        }}
+      >
+        <div className="space-y-3">
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('organizations.form.name')} <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={modalFormData.name}
+              onChange={(e) => setModalFormData({ ...modalFormData, name: e.target.value })}
+              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('organizations.form.code')}
+            </label>
+            <input
+              type="text"
+              value={modalFormData.code}
+              onChange={(e) => setModalFormData({ ...modalFormData, code: e.target.value })}
+              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('organizations.form.type')} {!editingOrg && <span className="text-red-500">*</span>}
+            </label>
+            <select
+              value={modalFormData.organization_type}
+              onChange={(e) => setModalFormData({ ...modalFormData, organization_type: e.target.value as 'internal' | 'vendor' | 'agent' })}
+              disabled={!!editingOrg}
+              className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-white disabled:bg-gray-100"
+            >
+              <option value="internal">{t('organizations.type.internal')}</option>
+              <option value="vendor">{t('organizations.type.vendor')}</option>
+              <option value="agent">{t('organizations.type.agent')}</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('organizations.form.email')}
+            </label>
+            <div className="relative">
+              <Mail className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+              <input
+                type="email"
+                value={modalFormData.email}
+                onChange={(e) => setModalFormData({ ...modalFormData, email: e.target.value })}
+                className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              />
             </div>
           </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('organizations.form.phone')}
+            </label>
+            <div className="relative">
+              <Phone className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+              <input
+                type="tel"
+                value={modalFormData.phone}
+                onChange={(e) => setModalFormData({ ...modalFormData, phone: e.target.value })}
+                className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="flex items-center space-x-1.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={modalFormData.is_active}
+                onChange={(e) => setModalFormData({ ...modalFormData, is_active: e.target.checked })}
+                className="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <span className="text-xs font-medium text-gray-700">
+                {t('organizations.form.isActive')}
+              </span>
+            </label>
+          </div>
         </div>
-      )}
+      </EcsModal>
 
       {/* 详情弹窗 */}
-      {showDetailModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={handleCloseDetail}>
-          <div
-            className="bg-white rounded-xl shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* 弹窗头部 */}
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-2.5 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900 tracking-tight">
-                {t('organizations.detail.title')}
-              </h2>
-              <button
-                onClick={handleCloseDetail}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <X className="h-4 w-4" />
-              </button>
+      <EcsModal
+        open={showDetailModal}
+        onClose={handleCloseDetail}
+        title={t('organizations.detail.title')}
+        width="large"
+        showFooter={false}
+      >
+        {loadingDetail ? (
+          <div className="p-6 text-center">
+            <div className="text-sm text-gray-500">{t('organizations.loading')}</div>
+          </div>
+        ) : orgDetail ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* 基本信息 */}
+            <div className="space-y-2.5">
+              <h3 className="text-sm font-semibold text-gray-900 border-b border-gray-200 pb-1.5">
+                {t('organizations.detail.basicInfo')}
+              </h3>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-0.5">
+                  {t('organizations.table.name')}
+                </label>
+                <div className="text-sm text-gray-900 font-medium">{orgDetail.name}</div>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-0.5">
+                  {t('organizations.table.code')}
+                </label>
+                <div className="text-sm text-gray-900">{orgDetail.code || '-'}</div>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-0.5">
+                  {t('organizations.table.type')}
+                </label>
+                <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded ${getOrganizationTypeColor(orgDetail.organization_type)}`}>
+                  {getOrganizationTypeLabel(orgDetail.organization_type)}
+                </span>
+              </div>
+              {orgDetail.description && (
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-0.5">
+                    {t('organizations.detail.description')}
+                  </label>
+                  <div className="text-sm text-gray-900 whitespace-pre-wrap">{orgDetail.description}</div>
+                </div>
+              )}
             </div>
 
-            {/* 弹窗内容 */}
-            {loadingDetail ? (
-              <div className="p-6 text-center">
-                <div className="text-sm text-gray-500">{t('organizations.loading')}</div>
-              </div>
-            ) : orgDetail ? (
-              <div className="p-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* 基本信息 */}
-                  <div className="space-y-2.5">
-                    <h3 className="text-sm font-semibold text-gray-900 border-b border-gray-200 pb-1.5">
-                      {t('organizations.detail.basicInfo')}
-                    </h3>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                        {t('organizations.table.name')}
-                      </label>
-                      <div className="text-sm text-gray-900 font-medium">{orgDetail.name}</div>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                        {t('organizations.table.code')}
-                      </label>
-                      <div className="text-sm text-gray-900">{orgDetail.code || '-'}</div>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                        {t('organizations.table.type')}
-                      </label>
-                      <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded ${getOrganizationTypeColor(orgDetail.organization_type)}`}>
-                        {getOrganizationTypeLabel(orgDetail.organization_type)}
-                      </span>
-                    </div>
-                    {orgDetail.description && (
-                      <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                          {t('organizations.detail.description')}
-                        </label>
-                        <div className="text-sm text-gray-900 whitespace-pre-wrap">{orgDetail.description}</div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* 联系信息 */}
-                  <div className="space-y-2.5">
-                    <h3 className="text-sm font-semibold text-gray-900 border-b border-gray-200 pb-1.5">
-                      {t('organizations.detail.contactInfo')}
-                    </h3>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                        {t('organizations.table.email')}
-                      </label>
-                      <div className="flex items-center space-x-1.5 text-sm text-gray-900">
-                        <Mail className="h-3.5 w-3.5 text-gray-400" />
-                        <span>{orgDetail.email || '-'}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                        {t('organizations.table.phone')}
-                      </label>
-                      <div className="flex items-center space-x-1.5 text-sm text-gray-900">
-                        <Phone className="h-3.5 w-3.5 text-gray-400" />
-                        <span>{orgDetail.phone || '-'}</span>
-                      </div>
-                    </div>
-                    {orgDetail.website && (
-                      <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                          {t('organizations.table.website')}
-                        </label>
-                        <a
-                          href={orgDetail.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center space-x-1.5 text-sm text-primary-600 hover:text-primary-700"
-                        >
-                          <Globe className="h-3.5 w-3.5" />
-                          <span>{orgDetail.website}</span>
-                        </a>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* 状态信息 */}
-                  <div className="space-y-2.5">
-                    <h3 className="text-sm font-semibold text-gray-900 border-b border-gray-200 pb-1.5">
-                      {t('organizations.detail.statusInfo')}
-                    </h3>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                        {t('organizations.table.status')}
-                      </label>
-                      <div className="flex flex-wrap gap-1.5">
-                        {orgDetail.is_active ? (
-                          <span className="inline-flex items-center space-x-1 text-xs text-green-600">
-                            <CheckCircle2 className="h-3.5 w-3.5" />
-                            <span>{t('organizations.table.active')}</span>
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center space-x-1 text-xs text-red-600">
-                            <XCircle className="h-3.5 w-3.5" />
-                            <span>{t('organizations.table.inactive')}</span>
-                          </span>
-                        )}
-                        {orgDetail.is_locked && (
-                          <span className="inline-flex items-center space-x-1 text-xs text-orange-600">
-                            <Lock className="h-3 w-3" />
-                            <span>{t('organizations.table.locked')}</span>
-                          </span>
-                        )}
-                        {orgDetail.is_verified && (
-                          <span className="inline-flex items-center space-x-1 text-xs text-blue-600">
-                            <Shield className="h-3 w-3" />
-                            <span>{t('organizations.table.verified')}</span>
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                        {t('organizations.table.employees')}
-                      </label>
-                      <div className="flex items-center space-x-1.5 text-sm text-gray-900">
-                        <Users className="h-3.5 w-3.5 text-gray-400" />
-                        <span>{orgDetail.employees_count ?? 0}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 时间信息 */}
-                  <div className="space-y-2.5">
-                    <h3 className="text-sm font-semibold text-gray-900 border-b border-gray-200 pb-1.5">
-                      {t('organizations.detail.timeInfo')}
-                    </h3>
-                    {orgDetail.created_at && (
-                      <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                          {t('organizations.detail.createdAt')}
-                        </label>
-                        <div className="flex items-center space-x-1.5 text-sm text-gray-900">
-                          <Calendar className="h-3.5 w-3.5 text-gray-400" />
-                          <span>{new Date(orgDetail.created_at).toLocaleString()}</span>
-                        </div>
-                      </div>
-                    )}
-                    {orgDetail.updated_at && (
-                      <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                          {t('organizations.detail.updatedAt')}
-                        </label>
-                        <div className="flex items-center space-x-1.5 text-sm text-gray-900">
-                          <Calendar className="h-3.5 w-3.5 text-gray-400" />
-                          <span>{new Date(orgDetail.updated_at).toLocaleString()}</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+            {/* 联系信息 */}
+            <div className="space-y-2.5">
+              <h3 className="text-sm font-semibold text-gray-900 border-b border-gray-200 pb-1.5">
+                {t('organizations.detail.contactInfo')}
+              </h3>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-0.5">
+                  {t('organizations.table.email')}
+                </label>
+                <div className="flex items-center space-x-1.5 text-sm text-gray-900">
+                  <Mail className="h-3.5 w-3.5 text-gray-400" />
+                  <span>{orgDetail.email || '-'}</span>
                 </div>
               </div>
-            ) : null}
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-0.5">
+                  {t('organizations.table.phone')}
+                </label>
+                <div className="flex items-center space-x-1.5 text-sm text-gray-900">
+                  <Phone className="h-3.5 w-3.5 text-gray-400" />
+                  <span>{orgDetail.phone || '-'}</span>
+                </div>
+              </div>
+              {orgDetail.website && (
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-0.5">
+                    {t('organizations.table.website')}
+                  </label>
+                  <a
+                    href={orgDetail.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-1.5 text-sm text-blue-600 hover:text-blue-700"
+                  >
+                    <Globe className="h-3.5 w-3.5" />
+                    <span>{orgDetail.website}</span>
+                  </a>
+                </div>
+              )}
+            </div>
+
+            {/* 状态信息 */}
+            <div className="space-y-2.5">
+              <h3 className="text-sm font-semibold text-gray-900 border-b border-gray-200 pb-1.5">
+                {t('organizations.detail.statusInfo')}
+              </h3>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-0.5">
+                  {t('organizations.table.status')}
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {orgDetail.is_active ? (
+                    <span className="inline-flex items-center space-x-1 text-xs text-green-600">
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                      <span>{t('organizations.table.active')}</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center space-x-1 text-xs text-red-600">
+                      <XCircle className="h-3.5 w-3.5" />
+                      <span>{t('organizations.table.inactive')}</span>
+                    </span>
+                  )}
+                  {orgDetail.is_locked && (
+                    <span className="inline-flex items-center space-x-1 text-xs text-orange-600">
+                      <Lock className="h-3 w-3" />
+                      <span>{t('organizations.table.locked')}</span>
+                    </span>
+                  )}
+                  {orgDetail.is_verified && (
+                    <span className="inline-flex items-center space-x-1 text-xs text-blue-600">
+                      <Shield className="h-3 w-3" />
+                      <span>{t('organizations.table.verified')}</span>
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-0.5">
+                  {t('organizations.table.employees')}
+                </label>
+                <div className="flex items-center space-x-1.5 text-sm text-gray-900">
+                  <Users className="h-3.5 w-3.5 text-gray-400" />
+                  <span>{orgDetail.employees_count ?? 0}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 时间信息 */}
+            <div className="space-y-2.5">
+              <h3 className="text-sm font-semibold text-gray-900 border-b border-gray-200 pb-1.5">
+                {t('organizations.detail.timeInfo')}
+              </h3>
+              {orgDetail.created_at && (
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-0.5">
+                    {t('organizations.detail.createdAt')}
+                  </label>
+                  <div className="flex items-center space-x-1.5 text-sm text-gray-900">
+                    <Calendar className="h-3.5 w-3.5 text-gray-400" />
+                    <span>{new Date(orgDetail.created_at).toLocaleString()}</span>
+                  </div>
+                </div>
+              )}
+              {orgDetail.updated_at && (
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-0.5">
+                    {t('organizations.detail.updatedAt')}
+                  </label>
+                  <div className="flex items-center space-x-1.5 text-sm text-gray-900">
+                    <Calendar className="h-3.5 w-3.5 text-gray-400" />
+                    <span>{new Date(orgDetail.updated_at).toLocaleString()}</span>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        ) : null}
+      </EcsModal>
+
+      {/* 确认弹窗 */}
+      {confirmModal.type && confirmModal.org && (() => {
+        const getConfirmConfig = () => {
+          const orgName = confirmModal.org!.name
+          const confirmMsg = 
+            confirmModal.type === 'delete'
+              ? t('organizations.confirm.delete', { name: orgName })
+              : confirmModal.type === 'lock'
+              ? t('organizations.confirm.lock', { name: orgName })
+              : confirmModal.type === 'unlock'
+              ? t('organizations.confirm.unlock', { name: orgName })
+              : t('organizations.confirm.disable', { name: orgName })
+          
+          // 从消息中提取标题（去掉组织名称和问号后的内容）
+          const title = confirmMsg.split('？')[0] + '？'
+          
+          switch (confirmModal.type) {
+            case 'delete':
+              return {
+                title,
+                message: confirmMsg,
+                confirmText: t('organizations.delete'),
+                colorScheme: 'red' as const,
+              }
+            case 'lock':
+              return {
+                title,
+                message: confirmMsg,
+                confirmText: t('organizations.lock'),
+                colorScheme: 'orange' as const,
+              }
+            case 'unlock':
+              return {
+                title,
+                message: confirmMsg,
+                confirmText: t('organizations.unlock'),
+                colorScheme: 'blue' as const,
+              }
+            case 'disable':
+              return {
+                title,
+                message: confirmMsg,
+                confirmText: t('organizations.disable'),
+                colorScheme: 'red' as const,
+              }
+            default:
+              return {
+                title: t('organizations.confirm'),
+                message: '',
+                confirmText: t('organizations.confirm'),
+                colorScheme: 'blue' as const,
+              }
+          }
+        }
+        const config = getConfirmConfig()
+        return (
+          <EcsModal
+            open={confirmModal.open}
+            onClose={closeConfirmModal}
+            title={config.title}
+            type="confirm"
+            message={config.message}
+            confirmText={config.confirmText}
+            confirmButtonProps={{ colorScheme: config.colorScheme }}
+            onConfirm={handleConfirmAction}
+          />
+        )
+      })()}
     </div>
   )
 }

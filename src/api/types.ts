@@ -118,7 +118,8 @@ export interface OrganizationListParams {
 export interface Organization {
   id: string
   name: string
-  code: string
+  code?: string | null
+  external_id?: string | null
   organization_type: 'internal' | 'vendor' | 'agent'
   email?: string | null
   phone?: string | null
@@ -135,26 +136,56 @@ export interface Organization {
 
 // 组织详情（完整信息）
 export interface OrganizationDetail extends Organization {
-  external_id?: string | null
-  parent_id?: string | null
-  website?: string | null
-  logo_url?: string | null
-  description?: string | null
+  // 地址信息
   street?: string | null
   city?: string | null
   state_province?: string | null
   postal_code?: string | null
+  country_region?: string | null
   country?: string | null
   country_code?: string | null
+  
+  // 公司属性
   company_size?: string | null
   company_nature?: string | null
   company_type?: string | null
   industry?: string | null
+  industry_code?: string | null
+  sub_industry?: string | null
+  business_scope?: string | null
+  
+  // 工商信息
   registration_number?: string | null
   tax_id?: string | null
   legal_representative?: string | null
-  is_locked?: boolean
-  is_verified?: boolean
+  established_date?: string | null
+  registered_capital?: number | null
+  registered_capital_currency?: string | null
+  company_status?: string | null
+  
+  // 财务信息
+  annual_revenue?: number | null
+  annual_revenue_currency?: string | null
+  employee_count?: number | null
+  revenue_year?: number | null
+  
+  // 认证信息
+  certifications?: string[] | null
+  business_license_url?: string | null
+  tax_certificate_url?: string | null
+  
+  // 验证信息
+  verified_at?: string | null
+  verified_by?: string | null
+  
+  // 领域信息
+  domains?: Array<{
+    id: string
+    code: string
+    name_zh: string
+    name_id: string
+    is_primary: boolean
+  }> | null
 }
 
 // 角色信息

@@ -56,14 +56,43 @@ export async function getOrganizationDetail(id: string): Promise<OrganizationDet
 }
 
 /**
- * 创建组织
+ * 创建组织 - 完整字段支持
  */
 export interface CreateOrganizationRequest {
   name: string
   code?: string
+  external_id?: string
   organization_type: 'internal' | 'vendor' | 'agent'
+  company_nature?: string
+  
+  // 联系与地址
   email?: string
   phone?: string
+  website?: string
+  country?: string
+  country_code?: string
+  state_province?: string
+  city?: string
+  street?: string
+  postal_code?: string
+  
+  // 工商与财务
+  registration_number?: string
+  tax_id?: string
+  legal_representative?: string
+  established_date?: string // YYYY-MM-DD
+  company_status?: string
+  registered_capital?: number
+  registered_capital_currency?: string
+  employee_count?: number
+  company_size?: string
+  industry?: string
+  industry_code?: string
+  sub_industry?: string
+  
+  // 补充信息
+  business_scope?: string
+  description?: string
   is_active?: boolean
 }
 
@@ -73,13 +102,42 @@ export async function createOrganization(data: CreateOrganizationRequest): Promi
 }
 
 /**
- * 更新组织
+ * 更新组织 - 完整字段支持
  */
 export interface UpdateOrganizationRequest {
   name?: string
   code?: string
+  external_id?: string
+  company_nature?: string
+  
+  // 联系与地址
   email?: string
   phone?: string
+  website?: string
+  country?: string
+  country_code?: string
+  state_province?: string
+  city?: string
+  street?: string
+  postal_code?: string
+  
+  // 工商与财务
+  registration_number?: string
+  tax_id?: string
+  legal_representative?: string
+  established_date?: string // YYYY-MM-DD
+  company_status?: string
+  registered_capital?: number
+  registered_capital_currency?: string
+  employee_count?: number
+  company_size?: string
+  industry?: string
+  industry_code?: string
+  sub_industry?: string
+  
+  // 补充信息
+  business_scope?: string
+  description?: string
   is_active?: boolean
 }
 
@@ -121,19 +179,4 @@ export async function unlockOrganization(id: string): Promise<Organization> {
   return result.data!
 }
 
-/**
- * 启用组织
- */
-export async function enableOrganization(id: string): Promise<Organization> {
-  const result = await post<Organization>(API_PATHS.ORGANIZATIONS.BY_ID(id) + '/enable', {})
-  return result.data!
-}
-
-/**
- * 禁用组织
- */
-export async function disableOrganization(id: string): Promise<Organization> {
-  const result = await post<Organization>(API_PATHS.ORGANIZATIONS.BY_ID(id) + '/disable', {})
-  return result.data!
-}
 

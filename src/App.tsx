@@ -18,6 +18,7 @@ import EmployeeList from './pages/admin/EmployeeList'
 import EmployeeManagement from './pages/admin/EmployeeManagement'
 import RoleManagement from './pages/admin/RoleManagement'
 import Organizations from './pages/admin/Organizations'
+import OrganizationsNew from './pages/admin/OrganizationsNew'
 import UserInfo from './pages/admin/UserInfo'
 import SystemStatus from './pages/admin/SystemStatus'
 import SystemLogs from './pages/admin/SystemLogs'
@@ -89,7 +90,7 @@ const AppContent = () => {
             element={
               <AdminLayout>
                 <PermissionGuard role="ADMIN">
-                  <Organizations />
+                  <OrganizationsNew />
                 </PermissionGuard>
               </AdminLayout>
             }
