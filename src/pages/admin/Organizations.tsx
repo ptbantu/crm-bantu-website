@@ -11,6 +11,10 @@ import {
   createOrganization,
   updateOrganization,
   deleteOrganization,
+  lockOrganization,
+  unlockOrganization,
+  enableOrganization,
+  disableOrganization,
   CreateOrganizationRequest,
   UpdateOrganizationRequest,
 } from '@/api/organizations'
@@ -261,6 +265,62 @@ const Organizations = () => {
       loadOrganizations(queryParams)
     } catch (error: any) {
       showError(error.message || t('organizations.error.deleteFailed'))
+    }
+  }
+
+  // 锁定组织
+  const handleLock = async (org: Organization) => {
+    if (!window.confirm(t('organizations.confirm.lock', { name: org.name }))) {
+      return
+    }
+
+    try {
+      await lockOrganization(org.id)
+      showSuccess(t('organizations.success.lock'))
+      loadOrganizations(queryParams)
+    } catch (error: any) {
+      showError(error.message || t('organizations.error.lockFailed'))
+    }
+  }
+
+  // 解锁组织
+  const handleUnlock = async (org: Organization) => {
+    if (!window.confirm(t('organizations.confirm.unlock', { name: org.name }))) {
+      return
+    }
+
+    try {
+      await unlockOrganization(org.id)
+      showSuccess(t('organizations.success.unlock'))
+      loadOrganizations(queryParams)
+    } catch (error: any) {
+      showError(error.message || t('organizations.error.unlockFailed'))
+    }
+  }
+
+  // 启用组织
+  const handleEnable = async (org: Organization) => {
+    try {
+      await enableOrganization(org.id)
+      showSuccess(t('organizations.success.enable'))
+      loadOrganizations(queryParams)
+    } catch (error: any) {
+      showError(error.message || t('organizations.error.enableFailed'))
+    }
+  }
+
+  // 禁用组织
+  const handleDisable = async (org: Organization) => {
+    if (!window.confirm(t('organizations.confirm.disable', { name: org.name }))) {
+      return
+    }
+
+    try {
+      await disableOrganization(org.id)
+      showSuccess(t('organizations.success.disable'))
+      loadOrganizations(queryParams)
+    } catch (error: any) {
+      showError(error.message || t('organizations.error.disableFailed'))
     }
   }
 
@@ -555,6 +615,48 @@ const Organizations = () => {
                           colorScheme="blue"
                           onClick={() => handleEdit(org)}
                         />
+                        {org.is_active ? (
+                          <IconButton
+                            aria-label={t('organizations.disable')}
+                            icon={<XCircle size={14} />}
+                            size="xs"
+                            variant="ghost"
+                            colorScheme="orange"
+                            onClick={() => handleDisable(org)}
+                            title={t('organizations.disable')}
+                          />
+                        ) : (
+                          <IconButton
+                            aria-label={t('organizations.enable')}
+                            icon={<CheckCircle2 size={14} />}
+                            size="xs"
+                            variant="ghost"
+                            colorScheme="green"
+                            onClick={() => handleEnable(org)}
+                            title={t('organizations.enable')}
+                          />
+                        )}
+                        {org.is_locked ? (
+                          <IconButton
+                            aria-label={t('organizations.unlock')}
+                            icon={<Lock size={14} />}
+                            size="xs"
+                            variant="ghost"
+                            colorScheme="yellow"
+                            onClick={() => handleUnlock(org)}
+                            title={t('organizations.unlock')}
+                          />
+                        ) : (
+                          <IconButton
+                            aria-label={t('organizations.lock')}
+                            icon={<Lock size={14} />}
+                            size="xs"
+                            variant="ghost"
+                            colorScheme="orange"
+                            onClick={() => handleLock(org)}
+                            title={t('organizations.lock')}
+                          />
+                        )}
                         <IconButton
                           aria-label={t('organizations.delete')}
                           icon={<Trash2 size={14} />}

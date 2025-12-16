@@ -105,3 +105,35 @@ export async function restoreOrganization(id: string): Promise<void> {
   await put<Organization>(API_PATHS.ORGANIZATIONS.BY_ID(id) + '/restore', {})
 }
 
+/**
+ * 锁定组织（断开合作）
+ */
+export async function lockOrganization(id: string): Promise<Organization> {
+  const result = await post<Organization>(API_PATHS.ORGANIZATIONS.BY_ID(id) + '/lock', {})
+  return result.data!
+}
+
+/**
+ * 解锁组织（恢复合作）
+ */
+export async function unlockOrganization(id: string): Promise<Organization> {
+  const result = await post<Organization>(API_PATHS.ORGANIZATIONS.BY_ID(id) + '/unlock', {})
+  return result.data!
+}
+
+/**
+ * 启用组织
+ */
+export async function enableOrganization(id: string): Promise<Organization> {
+  const result = await post<Organization>(API_PATHS.ORGANIZATIONS.BY_ID(id) + '/enable', {})
+  return result.data!
+}
+
+/**
+ * 禁用组织
+ */
+export async function disableOrganization(id: string): Promise<Organization> {
+  const result = await post<Organization>(API_PATHS.ORGANIZATIONS.BY_ID(id) + '/disable', {})
+  return result.data!
+}
+

@@ -618,18 +618,33 @@
       "nameRequired": "组织名称不能为空"
     },
     "confirm": {
-      "delete": "确定要删除组织 {{name}} 吗？"
+      "delete": "确定要删除组织 {{name}} 吗？",
+      "lock": "确定要锁定组织 {{name}} 吗？锁定后该组织所有用户将无法登录",
+      "unlock": "确定要解锁组织 {{name}} 吗？解锁后该组织用户可以正常登录",
+      "disable": "确定要禁用组织 {{name}} 吗？"
     },
+    "lock": "锁定",
+    "unlock": "解锁",
+    "enable": "启用",
+    "disable": "禁用",
     "success": {
       "create": "创建成功",
       "update": "更新成功",
-      "delete": "删除成功"
+      "delete": "删除成功",
+      "lock": "组织已锁定",
+      "unlock": "组织已解锁",
+      "enable": "组织已启用",
+      "disable": "组织已禁用"
     },
     "error": {
       "loadFailed": "加载失败",
       "loadDetailFailed": "加载详情失败",
       "saveFailed": "保存失败",
-      "deleteFailed": "删除失败"
+      "deleteFailed": "删除失败",
+      "lockFailed": "锁定失败",
+      "unlockFailed": "解锁失败",
+      "enableFailed": "启用失败",
+      "disableFailed": "禁用失败"
     },
     "pagination": {
       "total": "共 {{total}} 条",

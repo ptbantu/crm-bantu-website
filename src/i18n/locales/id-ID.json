@@ -618,18 +618,33 @@
       "nameRequired": "Nama organisasi tidak boleh kosong"
     },
     "confirm": {
-      "delete": "Apakah Anda yakin ingin menghapus organisasi {{name}}?"
+      "delete": "Apakah Anda yakin ingin menghapus organisasi {{name}}?",
+      "lock": "Apakah Anda yakin ingin mengunci organisasi {{name}}? Setelah dikunci, semua pengguna organisasi ini tidak dapat login",
+      "unlock": "Apakah Anda yakin ingin membuka kunci organisasi {{name}}? Setelah dibuka kunci, pengguna organisasi ini dapat login normal",
+      "disable": "Apakah Anda yakin ingin menonaktifkan organisasi {{name}}?"
     },
+    "lock": "Kunci",
+    "unlock": "Buka Kunci",
+    "enable": "Aktifkan",
+    "disable": "Nonaktifkan",
     "success": {
       "create": "Berhasil dibuat",
       "update": "Berhasil diperbarui",
-      "delete": "Berhasil dihapus"
+      "delete": "Berhasil dihapus",
+      "lock": "Organisasi berhasil dikunci",
+      "unlock": "Organisasi berhasil dibuka kunci",
+      "enable": "Organisasi berhasil diaktifkan",
+      "disable": "Organisasi berhasil dinonaktifkan"
     },
     "error": {
       "loadFailed": "Gagal memuat",
       "loadDetailFailed": "Gagal memuat detail",
       "saveFailed": "Gagal menyimpan",
-      "deleteFailed": "Gagal menghapus"
+      "deleteFailed": "Gagal menghapus",
+      "lockFailed": "Gagal mengunci",
+      "unlockFailed": "Gagal membuka kunci",
+      "enableFailed": "Gagal mengaktifkan",
+      "disableFailed": "Gagal menonaktifkan"
     },
     "pagination": {
       "total": "Total {{total}} item",
