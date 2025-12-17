@@ -100,8 +100,7 @@ const EnterpriseServiceProduct = () => {
     service_subtype: '',
     processing_days: '',
     processing_time_text: '',
-    estimated_cost_idr: '',
-    estimated_cost_cny: '',
+    // 注意：estimated_cost_idr 和 estimated_cost_cny 已删除
     price_direct_idr: '',
     price_direct_cny: '',
     price_channel_idr: '',
@@ -228,8 +227,7 @@ const EnterpriseServiceProduct = () => {
       service_subtype: '',
       processing_days: '',
       processing_time_text: '',
-      estimated_cost_idr: '',
-      estimated_cost_cny: '',
+      // 注意：estimated_cost_idr 和 estimated_cost_cny 已删除
       price_direct_idr: '',
       price_direct_cny: '',
       price_channel_idr: '',
@@ -265,8 +263,7 @@ const EnterpriseServiceProduct = () => {
       service_subtype: product.service_subtype || '',
       processing_days: product.processing_days?.toString() || '',
       processing_time_text: product.processing_time_text || '',
-      estimated_cost_idr: product.estimated_cost_idr?.toString() || '',
-      estimated_cost_cny: product.estimated_cost_cny?.toString() || '',
+      // 注意：estimated_cost_idr 和 estimated_cost_cny 已删除
       price_direct_idr: product.price_direct_idr?.toString() || '',
       price_direct_cny: product.price_direct_cny?.toString() || '',
       price_channel_idr: product.price_channel_idr?.toString() || '',
@@ -290,8 +287,7 @@ const EnterpriseServiceProduct = () => {
       service_subtype: '',
       processing_days: '',
       processing_time_text: '',
-      estimated_cost_idr: '',
-      estimated_cost_cny: '',
+      // 注意：estimated_cost_idr 和 estimated_cost_cny 已删除
       price_direct_idr: '',
       price_direct_cny: '',
       price_channel_idr: '',
@@ -321,8 +317,7 @@ const EnterpriseServiceProduct = () => {
           service_subtype: modalFormData.service_subtype || undefined,
           processing_days: modalFormData.processing_days ? parseInt(modalFormData.processing_days) : undefined,
           processing_time_text: modalFormData.processing_time_text || undefined,
-          estimated_cost_idr: modalFormData.estimated_cost_idr ? parseFloat(modalFormData.estimated_cost_idr) : undefined,
-          estimated_cost_cny: modalFormData.estimated_cost_cny ? parseFloat(modalFormData.estimated_cost_cny) : undefined,
+          // 注意：estimated_cost_idr 和 estimated_cost_cny 已删除
           price_direct_idr: modalFormData.price_direct_idr ? parseFloat(modalFormData.price_direct_idr) : undefined,
           price_direct_cny: modalFormData.price_direct_cny ? parseFloat(modalFormData.price_direct_cny) : undefined,
           price_channel_idr: modalFormData.price_channel_idr ? parseFloat(modalFormData.price_channel_idr) : undefined,
@@ -343,8 +338,7 @@ const EnterpriseServiceProduct = () => {
           service_subtype: modalFormData.service_subtype || undefined,
           processing_days: modalFormData.processing_days ? parseInt(modalFormData.processing_days) : undefined,
           processing_time_text: modalFormData.processing_time_text || undefined,
-          estimated_cost_idr: modalFormData.estimated_cost_idr ? parseFloat(modalFormData.estimated_cost_idr) : undefined,
-          estimated_cost_cny: modalFormData.estimated_cost_cny ? parseFloat(modalFormData.estimated_cost_cny) : undefined,
+          // 注意：estimated_cost_idr 和 estimated_cost_cny 已删除
           price_direct_idr: modalFormData.price_direct_idr ? parseFloat(modalFormData.price_direct_idr) : undefined,
           price_direct_cny: modalFormData.price_direct_cny ? parseFloat(modalFormData.price_direct_cny) : undefined,
           price_channel_idr: modalFormData.price_channel_idr ? parseFloat(modalFormData.price_channel_idr) : undefined,
@@ -1347,34 +1341,7 @@ const EnterpriseServiceProduct = () => {
                       </Box>
                     </Tooltip>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
-                        {t('productManagement.form.estimatedCostIdr')}
-                      </label>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={modalFormData.estimated_cost_idr}
-                        onChange={(e) => setModalFormData({ ...modalFormData, estimated_cost_idr: e.target.value })}
-                        placeholder="0.00"
-                        className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
-                        {t('productManagement.form.estimatedCostCny')}
-                      </label>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={modalFormData.estimated_cost_cny}
-                        onChange={(e) => setModalFormData({ ...modalFormData, estimated_cost_cny: e.target.value })}
-                        placeholder="0.00"
-                        className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                      />
-                    </div>
-                  </div>
+                  {/* 注意：预估成本字段已删除 */}
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>

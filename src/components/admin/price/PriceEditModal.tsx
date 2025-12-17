@@ -1,5 +1,5 @@
 /**
- * 价格编辑模态框组件
+ * 价格编辑模态框组件（列格式：一条记录包含所有价格类型和货币）
  */
 import { useState, useEffect } from 'react'
 import {
@@ -15,7 +15,6 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Select,
   Button,
   Text,
   Radio,
@@ -24,7 +23,8 @@ import {
   useColorModeValue,
   Divider,
   Box,
-  Badge,
+  Grid,
+  GridItem,
 } from '@chakra-ui/react'
 import { useToast } from '@/components/ToastContainer'
 import {
@@ -34,7 +34,6 @@ import {
   CreatePriceStrategyRequest,
 } from '@/api/prices'
 import { formatPrice } from '@/utils/formatPrice'
-import { getPriceTypeLabel } from '@/utils/priceUtils'
 
 interface PriceEditModalProps {
   isOpen: boolean
@@ -49,11 +48,14 @@ export const PriceEditModal = ({ isOpen, onClose, price, onSuccess }: PriceEditM
   const [formData, setFormData] = useState<CreatePriceStrategyRequest>({
     product_id: '',
     organization_id: null,
-    price_type: 'channel',
-    currency: 'CNY',
-    amount: 0,
+    price_channel_idr: null,
+    price_channel_cny: null,
+    price_direct_idr: null,
+    price_direct_cny: null,
+    price_list_idr: null,
+    price_list_cny: null,
     exchange_rate: null,
-    effective_from: new Date().toISOString(),
+    effective_from: null,
     effective_to: null,
     source: 'manual',
     change_reason: '',
@@ -68,10 +70,13 @@ export const PriceEditModal = ({ isOpen, onClose, price, onSuccess }: PriceEditM
       setFormData({
         product_id: price.product_id,
         organization_id: price.organization_id,
-        price_type: price.price_type,
-        currency: price.currency,
-        amount: Number(price.amount),
-        exchange_rate: price.exchange_rate ? Number(price.exchange_rate) : null,
+        price_channel_idr: price.price_channel_idr ?? null,
+        price_channel_cny: price.price_channel_cny ?? null,
+        price_direct_idr: price.price_direct_idr ?? null,
+        price_direct_cny: price.price_direct_cny ?? null,
+        price_list_idr: price.price_list_idr ?? null,
+        price_list_cny: price.price_list_cny ?? null,
+        exchange_rate: price.exchange_rate ?? null,
         effective_from: price.effective_from,
         effective_to: price.effective_to || null,
         source: price.source || 'manual',
@@ -87,11 +92,14 @@ export const PriceEditModal = ({ isOpen, onClose, price, onSuccess }: PriceEditM
       setFormData({
         product_id: '',
         organization_id: null,
-        price_type: 'channel',
-        currency: 'CNY',
-        amount: 0,
+        price_channel_idr: null,
+        price_channel_cny: null,
+        price_direct_idr: null,
+        price_direct_cny: null,
+        price_list_idr: null,
+        price_list_cny: null,
         exchange_rate: null,
-        effective_from: new Date().toISOString(),
+        effective_from: null,
         effective_to: null,
         source: 'manual',
         change_reason: '',
@@ -106,8 +114,17 @@ export const PriceEditModal = ({ isOpen, onClose, price, onSuccess }: PriceEditM
       return
     }
     
-    if (formData.amount <= 0) {
-      showError('价格必须大于0')
+    // 检查至少有一个价格字段
+    const hasAnyPrice = 
+      formData.price_channel_idr !== null ||
+      formData.price_channel_cny !== null ||
+      formData.price_direct_idr !== null ||
+      formData.price_direct_cny !== null ||
+      formData.price_list_idr !== null ||
+      formData.price_list_cny !== null
+    
+    if (!hasAnyPrice) {
+      showError('请至少填写一个价格')
       return
     }
     
@@ -117,13 +134,18 @@ export const PriceEditModal = ({ isOpen, onClose, price, onSuccess }: PriceEditM
         ...formData,
         effective_from: effectiveType === 'immediate' 
           ? new Date().toISOString() 
-          : formData.effective_from,
+          : formData.effective_from || new Date().toISOString(),
       }
       
       if (price) {
         // 更新价格
         await updatePriceStrategy(price.id, {
-          amount: requestData.amount,
+          price_channel_idr: requestData.price_channel_idr,
+          price_channel_cny: requestData.price_channel_cny,
+          price_direct_idr: requestData.price_direct_idr,
+          price_direct_cny: requestData.price_direct_cny,
+          price_list_idr: requestData.price_list_idr,
+          price_list_cny: requestData.price_list_cny,
           exchange_rate: requestData.exchange_rate,
           effective_from: requestData.effective_from,
           effective_to: requestData.effective_to,
@@ -146,7 +168,7 @@ export const PriceEditModal = ({ isOpen, onClose, price, onSuccess }: PriceEditM
   }
   
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl" scrollBehavior="inside">
+    <Modal isOpen={isOpen} onClose={onClose} size="2xl" scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
@@ -178,51 +200,145 @@ export const PriceEditModal = ({ isOpen, onClose, price, onSuccess }: PriceEditM
               </FormControl>
             )}
             
-            {/* 价格类型 */}
-            <FormControl isRequired>
-              <FormLabel>价格类型</FormLabel>
-              <Select
-                value={formData.price_type}
-                onChange={(e) => setFormData(prev => ({ ...prev, price_type: e.target.value as any }))}
-              >
-                <option value="cost">成本价</option>
-                <option value="channel">渠道价</option>
-                <option value="direct">直客价</option>
-                <option value="list">列表价</option>
-              </Select>
-            </FormControl>
+            <Divider />
             
-            {/* 货币 */}
-            <FormControl isRequired>
-              <FormLabel>货币</FormLabel>
-              <Select
-                value={formData.currency}
-                onChange={(e) => setFormData(prev => ({ ...prev, currency: e.target.value }))}
-              >
-                <option value="CNY">CNY (人民币)</option>
-                <option value="IDR">IDR (印尼盾)</option>
-                <option value="USD">USD (美元)</option>
-                <option value="EUR">EUR (欧元)</option>
-              </Select>
-            </FormControl>
+            {/* 价格字段 */}
+            <Text fontSize="md" fontWeight="semibold">价格设置（列格式：一条记录包含所有价格）</Text>
             
-            {/* 价格金额 */}
-            <FormControl isRequired>
-              <FormLabel>价格金额</FormLabel>
+            {/* 渠道价 */}
+            <Box p={3} border="1px" borderColor="gray.200" borderRadius="md">
+              <Text fontSize="sm" fontWeight="medium" mb={2}>渠道价</Text>
+              <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                <GridItem>
+                  <FormControl>
+                    <FormLabel fontSize="sm">渠道价-IDR</FormLabel>
+                    <Input
+                      type="number"
+                      value={formData.price_channel_idr ?? ''}
+                      onChange={(e) => setFormData(prev => ({ 
+                        ...prev, 
+                        price_channel_idr: e.target.value ? Number(e.target.value) : null 
+                      }))}
+                      placeholder="请输入价格"
+                      min={0}
+                      step="0.01"
+                    />
+                  </FormControl>
+                </GridItem>
+                <GridItem>
+                  <FormControl>
+                    <FormLabel fontSize="sm">渠道价-CNY</FormLabel>
+                    <Input
+                      type="number"
+                      value={formData.price_channel_cny ?? ''}
+                      onChange={(e) => setFormData(prev => ({ 
+                        ...prev, 
+                        price_channel_cny: e.target.value ? Number(e.target.value) : null 
+                      }))}
+                      placeholder="请输入价格"
+                      min={0}
+                      step="0.01"
+                    />
+                  </FormControl>
+                </GridItem>
+              </Grid>
+            </Box>
+            
+            {/* 直客价 */}
+            <Box p={3} border="1px" borderColor="gray.200" borderRadius="md">
+              <Text fontSize="sm" fontWeight="medium" mb={2}>直客价</Text>
+              <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                <GridItem>
+                  <FormControl>
+                    <FormLabel fontSize="sm">直客价-IDR</FormLabel>
+                    <Input
+                      type="number"
+                      value={formData.price_direct_idr ?? ''}
+                      onChange={(e) => setFormData(prev => ({ 
+                        ...prev, 
+                        price_direct_idr: e.target.value ? Number(e.target.value) : null 
+                      }))}
+                      placeholder="请输入价格"
+                      min={0}
+                      step="0.01"
+                    />
+                  </FormControl>
+                </GridItem>
+                <GridItem>
+                  <FormControl>
+                    <FormLabel fontSize="sm">直客价-CNY</FormLabel>
+                    <Input
+                      type="number"
+                      value={formData.price_direct_cny ?? ''}
+                      onChange={(e) => setFormData(prev => ({ 
+                        ...prev, 
+                        price_direct_cny: e.target.value ? Number(e.target.value) : null 
+                      }))}
+                      placeholder="请输入价格"
+                      min={0}
+                      step="0.01"
+                    />
+                  </FormControl>
+                </GridItem>
+              </Grid>
+            </Box>
+            
+            {/* 列表价 */}
+            <Box p={3} border="1px" borderColor="gray.200" borderRadius="md">
+              <Text fontSize="sm" fontWeight="medium" mb={2}>列表价</Text>
+              <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                <GridItem>
+                  <FormControl>
+                    <FormLabel fontSize="sm">列表价-IDR</FormLabel>
+                    <Input
+                      type="number"
+                      value={formData.price_list_idr ?? ''}
+                      onChange={(e) => setFormData(prev => ({ 
+                        ...prev, 
+                        price_list_idr: e.target.value ? Number(e.target.value) : null 
+                      }))}
+                      placeholder="请输入价格"
+                      min={0}
+                      step="0.01"
+                    />
+                  </FormControl>
+                </GridItem>
+                <GridItem>
+                  <FormControl>
+                    <FormLabel fontSize="sm">列表价-CNY</FormLabel>
+                    <Input
+                      type="number"
+                      value={formData.price_list_cny ?? ''}
+                      onChange={(e) => setFormData(prev => ({ 
+                        ...prev, 
+                        price_list_cny: e.target.value ? Number(e.target.value) : null 
+                      }))}
+                      placeholder="请输入价格"
+                      min={0}
+                      step="0.01"
+                    />
+                  </FormControl>
+                </GridItem>
+              </Grid>
+            </Box>
+            
+            {/* 汇率 */}
+            <FormControl>
+              <FormLabel>汇率（可选）</FormLabel>
               <Input
                 type="number"
-                value={formData.amount}
-                onChange={(e) => setFormData(prev => ({ ...prev, amount: Number(e.target.value) }))}
-                placeholder="请输入价格"
+                value={formData.exchange_rate ?? ''}
+                onChange={(e) => setFormData(prev => ({ 
+                  ...prev, 
+                  exchange_rate: e.target.value ? Number(e.target.value) : null 
+                }))}
+                placeholder="请输入汇率"
                 min={0}
-                step="0.01"
+                step="0.000001"
               />
-              {formData.amount > 0 && (
-                <Text fontSize="sm" color="gray.500" mt={1}>
-                  预览: {formatPrice(formData.amount, formData.currency)}
-                </Text>
-              )}
             </FormControl>
+            
+            <Divider />
             
             {/* 生效时间 */}
             <FormControl>

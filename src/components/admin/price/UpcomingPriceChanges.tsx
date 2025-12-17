@@ -1,5 +1,5 @@
 /**
- * 即将生效价格变更列表组件
+ * 即将生效价格变更列表组件（列格式：一条记录包含所有价格类型和货币）
  */
 import { useState, useEffect } from 'react'
 import {
@@ -24,7 +24,7 @@ import {
 } from '@chakra-ui/react'
 import { X, Eye } from 'lucide-react'
 import { useToast } from '@/components/ToastContainer'
-import { getUpcomingPriceChanges, PriceStrategy } from '@/api/prices'
+import { getUpcomingPriceChanges, PriceStrategy, deletePriceStrategy } from '@/api/prices'
 import { formatPrice } from '@/utils/formatPrice'
 import { getPriceTypeLabel, getCurrencyIcon } from '@/utils/priceUtils'
 import { PriceEditModal } from './PriceEditModal'
@@ -67,8 +67,13 @@ export const UpcomingPriceChanges = ({ isAdmin, refreshKey }: UpcomingPriceChang
       return
     }
     
-    // TODO: 实现取消未来价格的功能
-    showSuccess('取消功能开发中')
+    try {
+      await deletePriceStrategy(price.id)
+      showSuccess('价格已取消')
+      loadUpcomingPrices()
+    } catch (error: any) {
+      showError(error.message || '取消价格失败')
+    }
   }
   
   const handleView = (price: PriceStrategy) => {
@@ -83,12 +88,38 @@ export const UpcomingPriceChanges = ({ isAdmin, refreshKey }: UpcomingPriceChang
     return hours
   }
   
+  // 获取价格显示（列格式：一条记录包含所有价格）
+  const getPriceDisplay = (price: PriceStrategy) => {
+    const prices: Array<{ type: string; currency: string; value: number | null }> = []
+    
+    if (price.price_channel_idr !== null && price.price_channel_idr !== undefined) {
+      prices.push({ type: 'channel', currency: 'IDR', value: price.price_channel_idr })
+    }
+    if (price.price_channel_cny !== null && price.price_channel_cny !== undefined) {
+      prices.push({ type: 'channel', currency: 'CNY', value: price.price_channel_cny })
+    }
+    if (price.price_direct_idr !== null && price.price_direct_idr !== undefined) {
+      prices.push({ type: 'direct', currency: 'IDR', value: price.price_direct_idr })
+    }
+    if (price.price_direct_cny !== null && price.price_direct_cny !== undefined) {
+      prices.push({ type: 'direct', currency: 'CNY', value: price.price_direct_cny })
+    }
+    if (price.price_list_idr !== null && price.price_list_idr !== undefined) {
+      prices.push({ type: 'list', currency: 'IDR', value: price.price_list_idr })
+    }
+    if (price.price_list_cny !== null && price.price_list_cny !== undefined) {
+      prices.push({ type: 'list', currency: 'CNY', value: price.price_list_cny })
+    }
+    
+    return prices
+  }
+  
   return (
     <Card bg={bgColor} borderColor={borderColor}>
       <CardBody>
         <Flex justify="space-between" align="center" mb={4}>
           <Text fontSize="lg" fontWeight="bold">
-            即将生效的价格变更
+            即将生效的价格变更（列格式：一条记录包含所有价格类型和货币）
           </Text>
           <Button size="sm" variant="ghost" onClick={loadUpcomingPrices}>
             刷新
@@ -109,8 +140,7 @@ export const UpcomingPriceChanges = ({ isAdmin, refreshKey }: UpcomingPriceChang
               <Thead>
                 <Tr>
                   <Th>产品</Th>
-                  <Th>价格类型</Th>
-                  <Th>新价格</Th>
+                  <Th>价格详情（列格式）</Th>
                   <Th>生效时间</Th>
                   <Th>倒计时</Th>
                   <Th>操作</Th>
@@ -120,6 +150,7 @@ export const UpcomingPriceChanges = ({ isAdmin, refreshKey }: UpcomingPriceChang
                 {upcomingPrices.map((price) => {
                   const hoursUntil = getHoursUntil(price.effective_from)
                   const daysUntil = Math.floor(hoursUntil / 24)
+                  const priceDisplay = getPriceDisplay(price)
                   
                   return (
                     <Tr key={price.id}>
@@ -130,14 +161,25 @@ export const UpcomingPriceChanges = ({ isAdmin, refreshKey }: UpcomingPriceChang
                         </VStack>
                       </Td>
                       <Td>
-                        <Badge>
-                          {getPriceTypeLabel(price.price_type)} · {getCurrencyIcon(price.currency)}
-                        </Badge>
-                      </Td>
-                      <Td>
-                        <Text fontWeight="bold" color="orange.500">
-                          {formatPrice(Number(price.amount), price.currency)}
-                        </Text>
+                        <VStack align="start" spacing={1}>
+                          {priceDisplay.length === 0 ? (
+                            <Text fontSize="sm" color="gray.400">暂无价格</Text>
+                          ) : (
+                            priceDisplay.map((p, idx) => (
+                              <HStack key={idx} spacing={2}>
+                                <Badge colorScheme="blue" fontSize="xs">
+                                  {getPriceTypeLabel(p.type)}
+                                </Badge>
+                                <Badge colorScheme="green" fontSize="xs">
+                                  {getCurrencyIcon(p.currency)} {p.currency}
+                                </Badge>
+                                <Text fontSize="sm" fontWeight="bold" color="orange.500">
+                                  {formatPrice(p.value!, p.currency)}
+                                </Text>
+                              </HStack>
+                            ))
+                          )}
+                        </VStack>
                       </Td>
                       <Td>
                         <Text fontSize="sm">

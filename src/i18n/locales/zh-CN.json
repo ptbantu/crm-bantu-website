@@ -1082,7 +1082,7 @@
     "table": {
       "name": "服务名称",
       "code": "服务编码",
-      "productCount":"数量",
+      "productCount":"{{count}} 个服务",
       "detail":"详情",
       "day":"天",
       "enterpriseServiceCode": "企业服务编码",
@@ -1099,6 +1099,7 @@
       "actions": "操作",
       "uncategorized": "未分类",
       "items": "项",
+      "totalProducts": "共 {{total}} 个产品，按分类显示",
       "estimatedProcessingTime": "预估办理时间（天）",
       "estimatedProcessingTimeTitle": "预估办理时间",
       "estimatedProcessingTimeDesc": "预计完成该服务所需的天数",

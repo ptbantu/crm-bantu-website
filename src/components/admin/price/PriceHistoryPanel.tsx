@@ -1,5 +1,5 @@
 /**
- * 价格历史面板组件
+ * 价格历史面板组件（列格式：一条记录包含所有价格类型和货币）
  */
 import { useState, useEffect } from 'react'
 import {
@@ -24,11 +24,13 @@ import {
   useColorModeValue,
   Spinner,
   Flex,
+  Box,
+  Grid,
+  GridItem,
 } from '@chakra-ui/react'
 import { getPriceHistory, PriceHistory } from '@/api/prices'
 import { formatPrice } from '@/utils/formatPrice'
-import { getPriceTypeLabel, getCurrencyIcon, calculatePriceChange } from '@/utils/priceUtils'
-import { TrendingUp, TrendingDown } from 'lucide-react'
+import { getPriceTypeLabel, getCurrencyIcon } from '@/utils/priceUtils'
 
 interface PriceHistoryPanelProps {
   isOpen: boolean
@@ -58,11 +60,37 @@ export const PriceHistoryPanel = ({ isOpen, onClose, productId }: PriceHistoryPa
     }
   }
   
+  // 获取价格显示（列格式：一条记录包含所有价格）
+  const getPriceDisplay = (price: PriceHistory) => {
+    const prices: Array<{ type: string; currency: string; value: number | null }> = []
+    
+    if (price.price_channel_idr !== null && price.price_channel_idr !== undefined) {
+      prices.push({ type: 'channel', currency: 'IDR', value: price.price_channel_idr })
+    }
+    if (price.price_channel_cny !== null && price.price_channel_cny !== undefined) {
+      prices.push({ type: 'channel', currency: 'CNY', value: price.price_channel_cny })
+    }
+    if (price.price_direct_idr !== null && price.price_direct_idr !== undefined) {
+      prices.push({ type: 'direct', currency: 'IDR', value: price.price_direct_idr })
+    }
+    if (price.price_direct_cny !== null && price.price_direct_cny !== undefined) {
+      prices.push({ type: 'direct', currency: 'CNY', value: price.price_direct_cny })
+    }
+    if (price.price_list_idr !== null && price.price_list_idr !== undefined) {
+      prices.push({ type: 'list', currency: 'IDR', value: price.price_list_idr })
+    }
+    if (price.price_list_cny !== null && price.price_list_cny !== undefined) {
+      prices.push({ type: 'list', currency: 'CNY', value: price.price_list_cny })
+    }
+    
+    return prices
+  }
+  
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="4xl" scrollBehavior="inside">
+    <Modal isOpen={isOpen} onClose={onClose} size="6xl" scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>价格历史记录</ModalHeader>
+        <ModalHeader>价格历史记录（列格式：一条记录包含所有价格类型和货币）</ModalHeader>
         <ModalCloseButton />
         
         <ModalBody>
@@ -79,17 +107,14 @@ export const PriceHistoryPanel = ({ isOpen, onClose, productId }: PriceHistoryPa
               <Thead>
                 <Tr>
                   <Th>时间</Th>
-                  <Th>价格类型</Th>
-                  <Th>变更前</Th>
-                  <Th>变更后</Th>
-                  <Th>变动</Th>
+                  <Th>价格详情（列格式）</Th>
                   <Th>生效时间</Th>
                   <Th>变更原因</Th>
                 </Tr>
               </Thead>
               <Tbody>
                 {history.map((item) => {
-                  const change = calculatePriceChange(item.old_price, item.new_price)
+                  const priceDisplay = getPriceDisplay(item)
                   
                   return (
                     <Tr key={item.id}>
@@ -99,47 +124,30 @@ export const PriceHistoryPanel = ({ isOpen, onClose, productId }: PriceHistoryPa
                         </Text>
                       </Td>
                       <Td>
-                        <Badge>
-                          {getPriceTypeLabel(item.price_type)} · {getCurrencyIcon(item.currency)}
-                        </Badge>
-                      </Td>
-                      <Td>
-                        {item.old_price !== null ? (
-                          <Text fontSize="sm">
-                            {formatPrice(item.old_price, item.currency)}
-                          </Text>
-                        ) : (
-                          <Text fontSize="sm" color="gray.400">-</Text>
-                        )}
-                      </Td>
-                      <Td>
-                        {item.new_price !== null ? (
-                          <Text fontSize="sm" fontWeight="medium">
-                            {formatPrice(item.new_price, item.currency)}
-                          </Text>
-                        ) : (
-                          <Text fontSize="sm" color="gray.400">-</Text>
-                        )}
-                      </Td>
-                      <Td>
-                        {change && change.direction !== 'same' ? (
-                          <HStack spacing={1}>
-                            {change.direction === 'up' ? (
-                              <TrendingUp size={14} color="#52C41A" />
-                            ) : (
-                              <TrendingDown size={14} color="#F5222D" />
-                            )}
-                            <Text
-                              fontSize="sm"
-                              color={change.direction === 'up' ? 'green.500' : 'red.500'}
-                            >
-                              {change.direction === 'up' ? '+' : '-'}
-                              {change.percentage.toFixed(2)}%
+                        <VStack align="start" spacing={2}>
+                          {priceDisplay.length === 0 ? (
+                            <Text fontSize="sm" color="gray.400">暂无价格</Text>
+                          ) : (
+                            priceDisplay.map((p, idx) => (
+                              <HStack key={idx} spacing={2}>
+                                <Badge colorScheme="blue" fontSize="xs">
+                                  {getPriceTypeLabel(p.type)}
+                                </Badge>
+                                <Badge colorScheme="green" fontSize="xs">
+                                  {getCurrencyIcon(p.currency)} {p.currency}
+                                </Badge>
+                                <Text fontSize="sm" fontWeight="medium">
+                                  {formatPrice(p.value!, p.currency)}
+                                </Text>
+                              </HStack>
+                            ))
+                          )}
+                          {item.exchange_rate && (
+                            <Text fontSize="xs" color="gray.500">
+                              汇率: {item.exchange_rate}
                             </Text>
-                          </HStack>
-                        ) : (
-                          <Text fontSize="sm" color="gray.400">-</Text>
-                        )}
+                          )}
+                        </VStack>
                       </Td>
                       <Td>
                         <VStack align="start" spacing={0}>

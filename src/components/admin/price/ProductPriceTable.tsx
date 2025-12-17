@@ -1,5 +1,5 @@
 /**
- * 产品价格表格组件
+ * 产品价格表格组件（列格式：一条记录包含所有价格类型和货币）
  */
 import { useState, useEffect, useMemo } from 'react'
 import {
@@ -11,7 +11,6 @@ import {
   Th,
   Td,
   Input,
-  Select,
   HStack,
   VStack,
   Button,
@@ -25,6 +24,8 @@ import {
   Spinner,
   Card,
   CardBody,
+  Grid,
+  GridItem,
 } from '@chakra-ui/react'
 import { Search, Edit, Eye, History, Plus, Filter } from 'lucide-react'
 import { useToast } from '@/components/ToastContainer'
@@ -120,10 +121,30 @@ export const ProductPriceTable = ({ isAdmin, refreshKey }: ProductPriceTableProp
     setShowEditModal(true)
   }
   
-  // 获取未来价格
-  const getUpcomingPrice = (productId: string, priceType: string, currency: string) => {
-    // TODO: 从即将生效价格列表中查找
-    return null
+  // 获取价格显示（列格式：一条记录包含所有价格）
+  const getPriceDisplay = (price: PriceStrategy) => {
+    const prices: Array<{ type: string; currency: string; value: number | null }> = []
+    
+    if (price.price_channel_idr !== null && price.price_channel_idr !== undefined) {
+      prices.push({ type: 'channel', currency: 'IDR', value: price.price_channel_idr })
+    }
+    if (price.price_channel_cny !== null && price.price_channel_cny !== undefined) {
+      prices.push({ type: 'channel', currency: 'CNY', value: price.price_channel_cny })
+    }
+    if (price.price_direct_idr !== null && price.price_direct_idr !== undefined) {
+      prices.push({ type: 'direct', currency: 'IDR', value: price.price_direct_idr })
+    }
+    if (price.price_direct_cny !== null && price.price_direct_cny !== undefined) {
+      prices.push({ type: 'direct', currency: 'CNY', value: price.price_direct_cny })
+    }
+    if (price.price_list_idr !== null && price.price_list_idr !== undefined) {
+      prices.push({ type: 'list', currency: 'IDR', value: price.price_list_idr })
+    }
+    if (price.price_list_cny !== null && price.price_list_cny !== undefined) {
+      prices.push({ type: 'list', currency: 'CNY', value: price.price_list_cny })
+    }
+    
+    return prices
   }
   
   return (
@@ -142,32 +163,6 @@ export const ProductPriceTable = ({ isAdmin, refreshKey }: ProductPriceTableProp
                 onChange={(e) => setSearchKeyword(e.target.value)}
               />
             </InputGroup>
-            
-            <Select
-              placeholder="价格类型"
-              maxW="150px"
-              value={filters.price_type || ''}
-              onChange={(e) => handleFilterChange('price_type', e.target.value || undefined)}
-            >
-              <option value="">全部类型</option>
-              <option value="cost">成本价</option>
-              <option value="channel">渠道价</option>
-              <option value="direct">直客价</option>
-              <option value="list">列表价</option>
-            </Select>
-            
-            <Select
-              placeholder="货币"
-              maxW="120px"
-              value={filters.currency || ''}
-              onChange={(e) => handleFilterChange('currency', e.target.value || undefined)}
-            >
-              <option value="">全部货币</option>
-              <option value="CNY">CNY</option>
-              <option value="IDR">IDR</option>
-              <option value="USD">USD</option>
-              <option value="EUR">EUR</option>
-            </Select>
             
             {isAdmin && (
               <Button
@@ -195,9 +190,7 @@ export const ProductPriceTable = ({ isAdmin, refreshKey }: ProductPriceTableProp
                 <Thead>
                   <Tr>
                     <Th>产品信息</Th>
-                    <Th>价格类型</Th>
-                    <Th>当前价格</Th>
-                    <Th>未来价格</Th>
+                    <Th>价格详情（列格式：一条记录包含所有价格）</Th>
                     <Th>状态</Th>
                     <Th>操作</Th>
                   </Tr>
@@ -205,14 +198,14 @@ export const ProductPriceTable = ({ isAdmin, refreshKey }: ProductPriceTableProp
                 <Tbody>
                   {prices.length === 0 ? (
                     <Tr>
-                      <Td colSpan={6} textAlign="center" py={8}>
+                      <Td colSpan={4} textAlign="center" py={8}>
                         <Text color="gray.500">暂无数据</Text>
                       </Td>
                     </Tr>
                   ) : (
                     prices.map((price) => {
                       const status = getPriceStatus(price.effective_from, price.effective_to)
-                      const upcomingPrice = getUpcomingPrice(price.product_id, price.price_type, price.currency)
+                      const priceDisplay = getPriceDisplay(price)
                       
                       return (
                         <Tr key={price.id} _hover={{ bg: hoverBg }}>
@@ -225,31 +218,30 @@ export const ProductPriceTable = ({ isAdmin, refreshKey }: ProductPriceTableProp
                             </VStack>
                           </Td>
                           <Td>
-                            <VStack align="start" spacing={0}>
-                              <Text>{getPriceTypeLabel(price.price_type)}</Text>
-                              <Badge colorScheme="blue" fontSize="xs">
-                                {getCurrencyIcon(price.currency)} {price.currency}
-                              </Badge>
+                            <VStack align="start" spacing={2}>
+                              {priceDisplay.length === 0 ? (
+                                <Text color="gray.400">暂无价格</Text>
+                              ) : (
+                                priceDisplay.map((p, idx) => (
+                                  <HStack key={idx} spacing={2}>
+                                    <Badge colorScheme="blue" fontSize="xs">
+                                      {getPriceTypeLabel(p.type)}
+                                    </Badge>
+                                    <Badge colorScheme="green" fontSize="xs">
+                                      {getCurrencyIcon(p.currency)} {p.currency}
+                                    </Badge>
+                                    <Text fontWeight="bold" color="blue.500" fontSize="sm">
+                                      {formatPrice(p.value!, p.currency)}
+                                    </Text>
+                                  </HStack>
+                                ))
+                              )}
+                              {price.exchange_rate && (
+                                <Text fontSize="xs" color="gray.500">
+                                  汇率: {price.exchange_rate}
+                                </Text>
+                              )}
                             </VStack>
-                          </Td>
-                          <Td>
-                            <Text fontWeight="bold" color="blue.500">
-                              {formatPrice(Number(price.amount), price.currency)}
-                            </Text>
-                          </Td>
-                          <Td>
-                            {upcomingPrice ? (
-                              <VStack align="start" spacing={0}>
-                                <Text color="gray.500">
-                                  {formatPrice(Number(upcomingPrice.amount), upcomingPrice.currency)}
-                                </Text>
-                                <Text fontSize="xs" color="gray.400">
-                                  {new Date(upcomingPrice.effective_from).toLocaleDateString('zh-CN')}
-                                </Text>
-                              </VStack>
-                            ) : (
-                              <Text color="gray.400">-</Text>
-                            )}
                           </Td>
                           <Td>
                             <Badge colorScheme={status.status === 'active' ? 'green' : status.status === 'upcoming' ? 'orange' : 'red'}>

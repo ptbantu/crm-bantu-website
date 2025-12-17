@@ -5,77 +5,107 @@ import { get, post, put, del } from './client'
 import { API_PATHS } from './config'
 import { PaginatedResponse } from './types'
 
-// 价格策略
+// 价格策略（列格式：一条记录包含所有价格类型和货币）
 export interface PriceStrategy {
   id: string
   product_id: string
   product_name?: string
   organization_id?: string | null
   organization_name?: string | null
-  price_type: string  // cost, channel, direct, list
-  currency: string  // IDR, CNY, USD, EUR
-  amount: number
+  // 渠道价
+  price_channel_idr?: number | null
+  price_channel_cny?: number | null
+  // 直客价
+  price_direct_idr?: number | null
+  price_direct_cny?: number | null
+  // 列表价
+  price_list_idr?: number | null
+  price_list_cny?: number | null
+  // 汇率
   exchange_rate?: number | null
+  // 生效时间
   effective_from: string
   effective_to?: string | null
+  // 其他字段
   source?: string | null
-  is_approved: boolean
-  approved_by?: string | null
-  approved_at?: string | null
   change_reason?: string | null
+  changed_by?: string | null
   created_at: string
   updated_at: string
 }
 
-// 价格历史
+// 价格历史（列格式：一条记录包含所有价格类型和货币）
 export interface PriceHistory {
   id: string
   product_id: string
   organization_id?: string | null
-  price_type: string
-  currency: string
-  old_price?: number | null
-  new_price?: number | null
-  change_reason?: string | null
+  // 价格字段（列格式）
+  price_channel_idr?: number | null
+  price_channel_cny?: number | null
+  price_direct_idr?: number | null
+  price_direct_cny?: number | null
+  price_list_idr?: number | null
+  price_list_cny?: number | null
+  exchange_rate?: number | null
+  // 生效时间
   effective_from: string
   effective_to?: string | null
+  // 其他字段
+  change_reason?: string | null
   changed_by?: string | null
   created_at: string
+  updated_at: string
 }
 
-// 价格列表查询参数
+// 价格列表查询参数（列格式：不再需要 price_type 和 currency）
 export interface PriceListParams {
   page?: number
   size?: number
   product_id?: string
   organization_id?: string
-  price_type?: string
-  currency?: string
-  is_approved?: boolean
 }
 
-// 创建价格策略请求
+// 创建价格策略请求（列格式：一条记录包含所有价格类型和货币）
 export interface CreatePriceStrategyRequest {
   product_id: string
   organization_id?: string | null
-  price_type: string
-  currency: string
-  amount: number
+  // 渠道价
+  price_channel_idr?: number | null
+  price_channel_cny?: number | null
+  // 直客价
+  price_direct_idr?: number | null
+  price_direct_cny?: number | null
+  // 列表价
+  price_list_idr?: number | null
+  price_list_cny?: number | null
+  // 汇率
   exchange_rate?: number | null
-  effective_from: string
+  // 生效时间
+  effective_from?: string | null
   effective_to?: string | null
+  // 其他字段
   source?: string | null
   change_reason?: string | null
 }
 
-// 更新价格策略请求
+// 更新价格策略请求（列格式：一条记录包含所有价格类型和货币）
 export interface UpdatePriceStrategyRequest {
-  amount?: number
+  // 渠道价
+  price_channel_idr?: number | null
+  price_channel_cny?: number | null
+  // 直客价
+  price_direct_idr?: number | null
+  price_direct_cny?: number | null
+  // 列表价
+  price_list_idr?: number | null
+  price_list_cny?: number | null
+  // 汇率
   exchange_rate?: number | null
-  effective_from?: string
+  // 生效时间
+  effective_from?: string | null
   effective_to?: string | null
+  // 其他字段
   change_reason?: string | null
-  is_approved?: boolean
 }
 
 /**
@@ -97,15 +127,6 @@ export async function getPriceList(
   }
   if (params.organization_id) {
     queryParams.append('organization_id', params.organization_id)
-  }
-  if (params.price_type) {
-    queryParams.append('price_type', params.price_type)
-  }
-  if (params.currency) {
-    queryParams.append('currency', params.currency)
-  }
-  if (params.is_approved !== undefined) {
-    queryParams.append('is_approved', params.is_approved.toString())
   }
 
   const queryString = queryParams.toString()
@@ -155,15 +176,14 @@ export async function deletePriceStrategy(id: string): Promise<void> {
 }
 
 /**
- * 获取价格历史
+ * 获取价格历史（列格式：不再需要 price_type 和 currency 参数）
  */
 export async function getPriceHistory(
   productId: string,
-  params?: { price_type?: string; currency?: string; page?: number; size?: number }
+  params?: { organization_id?: string; page?: number; size?: number }
 ): Promise<PaginatedResponse<PriceHistory>> {
   const queryParams = new URLSearchParams()
-  if (params?.price_type) queryParams.append('price_type', params.price_type)
-  if (params?.currency) queryParams.append('currency', params.currency)
+  if (params?.organization_id) queryParams.append('organization_id', params.organization_id)
   if (params?.page) queryParams.append('page', params.page.toString())
   if (params?.size) queryParams.append('size', params.size.toString())
   
