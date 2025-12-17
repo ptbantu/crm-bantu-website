@@ -274,6 +274,70 @@ export interface ProductDetail extends Product {
   tags?: string[]
 }
 
+// 产品详情聚合数据
+export interface PriceInfo {
+  price_type: string
+  currency: string
+  price?: number | null
+  effective_from?: string | null
+  effective_to?: string | null
+  updated_at?: string | null
+  status: string
+}
+
+export interface SupplierInfo {
+  vendor_id: string
+  vendor_name?: string | null
+  is_primary: boolean
+  is_available: boolean
+  priority?: number | null
+  contact_name?: string | null
+  contact_phone?: string | null
+  contact_email?: string | null
+  address?: string | null
+  sla_description?: string | null
+  contract_start?: string | null
+  contract_end?: string | null
+}
+
+export interface ProductStatistics {
+  total_orders: number
+  monthly_orders: number
+  total_revenue?: number | null
+  monthly_revenue?: number | null
+  completion_rate?: number | null
+  customer_rating?: number | null
+  refund_rate?: number | null
+  avg_processing_days?: number | null
+}
+
+export interface ChangeHistoryItem {
+  changed_at: string
+  changed_by?: string | null
+  changed_by_name?: string | null
+  change_type: string
+  field_name?: string | null
+  old_value?: string | null
+  new_value?: string | null
+  description?: string | null
+}
+
+export interface ProductRules {
+  required_documents?: string | null
+  notes?: string | null
+  processing_flow?: string | null
+  faq?: string | null
+}
+
+export interface ProductDetailAggregated {
+  overview: ProductDetail
+  prices: PriceInfo[]
+  suppliers: SupplierInfo[]
+  statistics: ProductStatistics
+  history: ChangeHistoryItem[]
+  rules: ProductRules
+}
+
 // 产品列表查询参数
 export interface ProductListParams {
   page?: number

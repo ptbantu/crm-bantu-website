@@ -130,6 +130,13 @@ export const adminMenuItems: MenuItem[] = [
         path: '/admin/product/category-management',
         role: [Role.OPERATION, Role.ADMIN],
       },
+      {
+        key: 'priceManagement',
+        label: 'menu.priceManagement',
+        icon: DollarSign,
+        path: '/admin/price/management',
+        role: Role.ADMIN,
+      },
     ],
   },
   

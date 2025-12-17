@@ -110,11 +110,17 @@ export async function getPriceList(
 
   const queryString = queryParams.toString()
   const url = queryString
-    ? `${API_PATHS.PRICES?.BASE || '/api/service-management/prices'}?${queryString}`
-    : (API_PATHS.PRICES?.BASE || '/api/service-management/prices')
+    ? `/api/foundation/product-prices?${queryString}`
+    : '/api/foundation/product-prices'
 
-  const result = await get<PaginatedResponse<PriceStrategy>>(url)
-  return result.data!
+  const result = await get<{ items: PriceStrategy[]; total: number; page: number; size: number }>(url)
+  return {
+    records: result.data!.items,
+    total: result.data!.total,
+    size: result.data!.size,
+    current: result.data!.page,
+    pages: Math.ceil(result.data!.total / result.data!.size)
+  }
 }
 
 /**
@@ -123,7 +129,7 @@ export async function getPriceList(
 export async function createPriceStrategy(
   data: CreatePriceStrategyRequest
 ): Promise<PriceStrategy> {
-  const url = API_PATHS.PRICES?.BASE || '/api/service-management/prices'
+  const url = '/api/foundation/product-prices'
   const result = await post<PriceStrategy>(url, data)
   return result.data!
 }
@@ -135,7 +141,7 @@ export async function updatePriceStrategy(
   id: string,
   data: UpdatePriceStrategyRequest
 ): Promise<PriceStrategy> {
-  const url = `${API_PATHS.PRICES?.BASE || '/api/service-management/prices'}/${id}`
+  const url = `/api/foundation/product-prices/${id}`
   const result = await put<PriceStrategy>(url, data)
   return result.data!
 }
@@ -144,7 +150,7 @@ export async function updatePriceStrategy(
  * 删除价格策略
  */
 export async function deletePriceStrategy(id: string): Promise<void> {
-  const url = `${API_PATHS.PRICES?.BASE || '/api/service-management/prices'}/${id}`
+  const url = `/api/foundation/product-prices/${id}`
   await del(url)
 }
 
@@ -152,9 +158,46 @@ export async function deletePriceStrategy(id: string): Promise<void> {
  * 获取价格历史
  */
 export async function getPriceHistory(
-  productId: string
-): Promise<PriceHistory[]> {
-  const url = `${API_PATHS.PRICES?.BASE || '/api/service-management/prices'}/history/${productId}`
-  const result = await get<PriceHistory[]>(url)
+  productId: string,
+  params?: { price_type?: string; currency?: string; page?: number; size?: number }
+): Promise<PaginatedResponse<PriceHistory>> {
+  const queryParams = new URLSearchParams()
+  if (params?.price_type) queryParams.append('price_type', params.price_type)
+  if (params?.currency) queryParams.append('currency', params.currency)
+  if (params?.page) queryParams.append('page', params.page.toString())
+  if (params?.size) queryParams.append('size', params.size.toString())
+  
+  const queryString = queryParams.toString()
+  const url = queryString
+    ? `/api/foundation/product-prices/products/${productId}/history?${queryString}`
+    : `/api/foundation/product-prices/products/${productId}/history`
+  
+  const result = await get<{ items: PriceHistory[]; total: number; page: number; size: number }>(url)
+  return {
+    records: result.data!.items,
+    total: result.data!.total,
+    size: result.data!.size,
+    current: result.data!.page,
+    pages: Math.ceil(result.data!.total / result.data!.size)
+  }
+}
+
+/**
+ * 获取即将生效的价格变更
+ */
+export async function getUpcomingPriceChanges(
+  productId?: string,
+  hoursAhead: number = 24
+): Promise<PriceStrategy[]> {
+  const queryParams = new URLSearchParams()
+  if (productId) queryParams.append('product_id', productId)
+  queryParams.append('hours_ahead', hoursAhead.toString())
+  
+  const queryString = queryParams.toString()
+  const url = queryString
+    ? `/api/foundation/product-prices/upcoming/changes?${queryString}`
+    : '/api/foundation/product-prices/upcoming/changes'
+  
+  const result = await get<PriceStrategy[]>(url)
   return result.data!
 }

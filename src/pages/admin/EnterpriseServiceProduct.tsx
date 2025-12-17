@@ -5,21 +5,21 @@
 import { useState, useEffect, useMemo } from 'react'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { Search, Plus, X, Package, Tag, DollarSign, CheckCircle2, XCircle, Save, Download, ChevronDown, ChevronRight } from 'lucide-react'
+import { Search, Plus, X, Package, Tag, DollarSign, CheckCircle2, XCircle, Save, Download, ChevronDown, ChevronRight, Info } from 'lucide-react'
 import {
   getProductList,
-  getProductDetail,
   createProduct,
   updateProduct,
-  deleteProduct,
   CreateProductRequest,
   UpdateProductRequest,
 } from '@/api/products'
 import { getCategoryList } from '@/api/categories'
-import { ProductListParams, Product, ProductDetail, ProductCategory } from '@/api/types'
+import { ProductListParams, Product, ProductCategory } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
 import { PageHeader } from '@/components/admin/PageHeader'
+import { ProductDetailDrawer } from '@/components/admin/product'
 import { formatPrice } from '@/utils/formatPrice'
+import { useAuth } from '@/hooks/useAuth'
 import {
   Button,
   Table,
@@ -43,11 +43,17 @@ import {
   CardBody,
   useColorModeValue,
   Checkbox,
+  Tooltip,
+  Icon,
 } from '@chakra-ui/react'
 
 const EnterpriseServiceProduct = () => {
   const { t } = useTranslation()
   const { showSuccess, showError } = useToast()
+  const { user } = useAuth()
+  
+  // 检查是否为管理员
+  const isAdmin = user?.roles?.includes('ADMIN') || user?.roles?.includes('admin') || false
   
   // Chakra UI 颜色模式
   const bgColor = useColorModeValue('white', 'gray.800')
@@ -94,8 +100,12 @@ const EnterpriseServiceProduct = () => {
     service_subtype: '',
     processing_days: '',
     processing_time_text: '',
+    estimated_cost_idr: '',
+    estimated_cost_cny: '',
     price_direct_idr: '',
     price_direct_cny: '',
+    price_channel_idr: '',
+    price_channel_cny: '',
     price_list_idr: '',
     price_list_cny: '',
     status: 'active',
@@ -103,11 +113,9 @@ const EnterpriseServiceProduct = () => {
   })
   const [submitting, setSubmitting] = useState(false)
 
-  // 详情弹窗状态
-  const [showDetailModal, setShowDetailModal] = useState(false)
+  // 详情抽屉状态
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null)
-  const [productDetail, setProductDetail] = useState<ProductDetail | null>(null)
-  const [loadingDetail, setLoadingDetail] = useState(false)
+  const [highlightedProductId, setHighlightedProductId] = useState<string | null>(null)
 
   // 加载分类列表
   useEffect(() => {
@@ -220,8 +228,12 @@ const EnterpriseServiceProduct = () => {
       service_subtype: '',
       processing_days: '',
       processing_time_text: '',
+      estimated_cost_idr: '',
+      estimated_cost_cny: '',
       price_direct_idr: '',
       price_direct_cny: '',
+      price_channel_idr: '',
+      price_channel_cny: '',
       price_list_idr: '',
       price_list_cny: '',
       status: 'active',
@@ -231,28 +243,40 @@ const EnterpriseServiceProduct = () => {
   }
 
   // 打开编辑弹窗
-  const handleEdit = async (product: Product) => {
-    setEditingProduct(product)
-    try {
-      const detail = await getProductDetail(product.id)
-      setModalFormData({
-        name: detail.name,
-        code: detail.code || '',
-        category_id: detail.category_id || '',
-        service_subtype: detail.service_subtype || '',
-        processing_days: detail.processing_days?.toString() || '',
-        processing_time_text: detail.processing_time_text || '',
-        price_direct_idr: detail.price_direct_idr?.toString() || '',
-        price_direct_cny: detail.price_direct_cny?.toString() || '',
-        price_list_idr: detail.price_list_idr?.toString() || '',
-        price_list_cny: detail.price_list_cny?.toString() || '',
-        status: detail.status || 'active',
-        is_active: detail.is_active,
-      })
-      setShowModal(true)
-    } catch (error: any) {
-      showError(error.message || t('productManagement.error.loadDetailFailed'))
+  const handleEdit = async (productOrId: Product | string) => {
+    let product: Product
+    if (typeof productOrId === 'string') {
+      // 从列表中找到产品
+      product = products.find(p => p.id === productOrId)!
+      if (!product) {
+        showError('产品不存在')
+        return
+      }
+    } else {
+      product = productOrId
     }
+    
+    setEditingProduct(product)
+    // 直接使用产品列表中的数据填充表单
+    setModalFormData({
+      name: product.name,
+      code: product.code || '',
+      category_id: product.category_id || '',
+      service_subtype: product.service_subtype || '',
+      processing_days: product.processing_days?.toString() || '',
+      processing_time_text: product.processing_time_text || '',
+      estimated_cost_idr: product.estimated_cost_idr?.toString() || '',
+      estimated_cost_cny: product.estimated_cost_cny?.toString() || '',
+      price_direct_idr: product.price_direct_idr?.toString() || '',
+      price_direct_cny: product.price_direct_cny?.toString() || '',
+      price_channel_idr: product.price_channel_idr?.toString() || '',
+      price_channel_cny: product.price_channel_cny?.toString() || '',
+      price_list_idr: product.price_list_idr?.toString() || '',
+      price_list_cny: product.price_list_cny?.toString() || '',
+      status: product.status || 'active',
+      is_active: product.is_active,
+    })
+    setShowModal(true)
   }
 
   // 关闭弹窗
@@ -266,8 +290,12 @@ const EnterpriseServiceProduct = () => {
       service_subtype: '',
       processing_days: '',
       processing_time_text: '',
+      estimated_cost_idr: '',
+      estimated_cost_cny: '',
       price_direct_idr: '',
       price_direct_cny: '',
+      price_channel_idr: '',
+      price_channel_cny: '',
       price_list_idr: '',
       price_list_cny: '',
       status: 'active',
@@ -293,8 +321,12 @@ const EnterpriseServiceProduct = () => {
           service_subtype: modalFormData.service_subtype || undefined,
           processing_days: modalFormData.processing_days ? parseInt(modalFormData.processing_days) : undefined,
           processing_time_text: modalFormData.processing_time_text || undefined,
+          estimated_cost_idr: modalFormData.estimated_cost_idr ? parseFloat(modalFormData.estimated_cost_idr) : undefined,
+          estimated_cost_cny: modalFormData.estimated_cost_cny ? parseFloat(modalFormData.estimated_cost_cny) : undefined,
           price_direct_idr: modalFormData.price_direct_idr ? parseFloat(modalFormData.price_direct_idr) : undefined,
           price_direct_cny: modalFormData.price_direct_cny ? parseFloat(modalFormData.price_direct_cny) : undefined,
+          price_channel_idr: modalFormData.price_channel_idr ? parseFloat(modalFormData.price_channel_idr) : undefined,
+          price_channel_cny: modalFormData.price_channel_cny ? parseFloat(modalFormData.price_channel_cny) : undefined,
           price_list_idr: modalFormData.price_list_idr ? parseFloat(modalFormData.price_list_idr) : undefined,
           price_list_cny: modalFormData.price_list_cny ? parseFloat(modalFormData.price_list_cny) : undefined,
           status: modalFormData.status || undefined,
@@ -311,8 +343,12 @@ const EnterpriseServiceProduct = () => {
           service_subtype: modalFormData.service_subtype || undefined,
           processing_days: modalFormData.processing_days ? parseInt(modalFormData.processing_days) : undefined,
           processing_time_text: modalFormData.processing_time_text || undefined,
+          estimated_cost_idr: modalFormData.estimated_cost_idr ? parseFloat(modalFormData.estimated_cost_idr) : undefined,
+          estimated_cost_cny: modalFormData.estimated_cost_cny ? parseFloat(modalFormData.estimated_cost_cny) : undefined,
           price_direct_idr: modalFormData.price_direct_idr ? parseFloat(modalFormData.price_direct_idr) : undefined,
           price_direct_cny: modalFormData.price_direct_cny ? parseFloat(modalFormData.price_direct_cny) : undefined,
+          price_channel_idr: modalFormData.price_channel_idr ? parseFloat(modalFormData.price_channel_idr) : undefined,
+          price_channel_cny: modalFormData.price_channel_cny ? parseFloat(modalFormData.price_channel_cny) : undefined,
           price_list_idr: modalFormData.price_list_idr ? parseFloat(modalFormData.price_list_idr) : undefined,
           price_list_cny: modalFormData.price_list_cny ? parseFloat(modalFormData.price_list_cny) : undefined,
           status: modalFormData.status || 'active',
@@ -331,43 +367,17 @@ const EnterpriseServiceProduct = () => {
     }
   }
 
-  // 删除产品
-  const handleDelete = async (product: Product) => {
-    if (!window.confirm(t('productManagement.confirm.delete', { name: product.name }))) {
-      return
-    }
 
-    try {
-      await deleteProduct(product.id)
-      showSuccess(t('productManagement.success.delete'))
-      setSelectedIds(selectedIds.filter(id => id !== product.id))
-      loadProducts(queryParams)
-    } catch (error: any) {
-      showError(error.message || t('productManagement.error.deleteFailed'))
-    }
-  }
-
-  // 打开详情弹窗
-  const handleViewDetail = async (productId: string) => {
+  // 打开详情抽屉
+  const handleViewDetail = (productId: string) => {
     setSelectedProductId(productId)
-    setShowDetailModal(true)
-    setLoadingDetail(true)
-    try {
-      const detail = await getProductDetail(productId)
-      setProductDetail(detail)
-    } catch (error: any) {
-      showError(error.message || t('productManagement.error.loadDetailFailed'))
-      setShowDetailModal(false)
-    } finally {
-      setLoadingDetail(false)
-    }
+    setHighlightedProductId(productId)
   }
 
-  // 关闭详情弹窗
+  // 关闭详情抽屉
   const handleCloseDetail = () => {
-    setShowDetailModal(false)
     setSelectedProductId(null)
-    setProductDetail(null)
+    setHighlightedProductId(null)
   }
 
 
@@ -515,14 +525,16 @@ const EnterpriseServiceProduct = () => {
               {t('productManagement.export')}
               {selectedIds.length > 0 && ` (${selectedIds.length})`}
             </Button>
-            <Button
-              colorScheme="primary"
-              leftIcon={<Plus size={16} />}
-              onClick={handleCreate}
-              size="sm"
-            >
-              {t('productManagement.create')}
-            </Button>
+            {isAdmin && (
+              <Button
+                colorScheme="primary"
+                leftIcon={<Plus size={16} />}
+                onClick={handleCreate}
+                size="sm"
+              >
+                {t('productManagement.create')}
+              </Button>
+            )}
           </HStack>
         }
       />
@@ -646,23 +658,320 @@ const EnterpriseServiceProduct = () => {
         </Card>
       ) : (
         <Card bg={bgColor} borderColor={borderColor} overflow="hidden">
-          <Box overflowX="auto">
-            <Table variant="simple" size="sm">
-              <Thead bg="gray.50">
+          <Box 
+            position="relative"
+            overflowX="auto"
+            overflowY="visible"
+            css={{
+              '&::-webkit-scrollbar': {
+                height: '8px',
+              },
+              '&::-webkit-scrollbar-track': {
+                background: '#f1f1f1',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: '#888',
+                borderRadius: '4px',
+              },
+              '&::-webkit-scrollbar-thumb:hover': {
+                background: '#555',
+              },
+            }}
+          >
+            <Table variant="simple" size="sm" minW="1480px">
+              <Thead bg="gray.50" position="sticky" top={0} zIndex={10}>
                 <Tr>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" w="40px">
+                  <Th 
+                    fontSize="xs" 
+                    fontWeight="semibold" 
+                    color="gray.700" 
+                    w="40px" 
+                    position="sticky" 
+                    left={0} 
+                    bg="gray.50" 
+                    zIndex={11}
+                    borderRightWidth="1px"
+                    borderRightColor="gray.200"
+                  >
                     <Checkbox
                       isChecked={selectedIds.length === products.length && products.length > 0}
                       isIndeterminate={selectedIds.length > 0 && selectedIds.length < products.length}
                       onChange={(e) => handleSelectAll(e.target.checked)}
                     />
                   </Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.name')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.code')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.category')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.price')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.status')}</Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.actions')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" minW="200px">{t('productManagement.table.name')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" minW="120px" fontFamily="mono">{t('productManagement.table.code')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" minW="120px">{t('productManagement.table.category')}</Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" minW="100px">
+                    <Tooltip
+                      label={
+                        <Box>
+                          <Text fontWeight="bold" mb={1} color="white">{t('productManagement.table.estimatedProcessingTimeTitle')}</Text>
+                          <Text fontSize="xs" color="gray.100">{t('productManagement.table.estimatedProcessingTimeDesc')}</Text>
+                          <Text fontSize="xs" mt={1} color="gray.100">{t('productManagement.table.estimatedProcessingTimeUsage')}</Text>
+                        </Box>
+                      }
+                      placement="top"
+                      hasArrow
+                      bg="gray.800"
+                      color="white"
+                      fontSize="xs"
+                      px={3}
+                      py={2}
+                      borderRadius="md"
+                    >
+                      <HStack spacing={1} cursor="help">
+                        <Text>{t('productManagement.table.estimatedProcessingTime')}</Text>
+                        <Icon as={Info} boxSize={3} />
+                      </HStack>
+                    </Tooltip>
+                  </Th>
+                  {/* 价格字段组 */}
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" minW="120px" bg="blue.50" colSpan={8}>
+                    <Tooltip
+                      label={
+                        <Box>
+                          <Text fontWeight="bold" mb={1} color="white">{t('productManagement.table.priceInfoTitle')}</Text>
+                          <Text fontSize="xs" mb={1} color="gray.100">{t('productManagement.table.priceInfoCost')}</Text>
+                          <Text fontSize="xs" mb={1} color="gray.100">{t('productManagement.table.priceInfoEstimatedCost')}</Text>
+                          <Text fontSize="xs" mb={1} color="gray.100">{t('productManagement.table.priceInfoDirect')}</Text>
+                          <Text fontSize="xs" mb={1} color="gray.100">{t('productManagement.table.priceInfoChannel')}</Text>
+                          <Text fontSize="xs" color="gray.100">{t('productManagement.table.priceInfoList')}</Text>
+                        </Box>
+                      }
+                      placement="top"
+                      hasArrow
+                      bg="gray.800"
+                      color="white"
+                      fontSize="xs"
+                      px={3}
+                      py={2}
+                      borderRadius="md"
+                    >
+                      <Box textAlign="center" py={1} cursor="help">
+                        <HStack spacing={1} justify="center">
+                          <Text>{t('productManagement.table.priceInfo')}</Text>
+                          <Icon as={Info} boxSize={3} />
+                        </HStack>
+                      </Box>
+                    </Tooltip>
+                  </Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" minW="100px">{t('productManagement.table.status')}</Th>
+                  <Th 
+                    fontSize="xs" 
+                    fontWeight="semibold" 
+                    color="gray.700" 
+                    minW="150px" 
+                    position="sticky" 
+                    right={0} 
+                    bg="gray.50" 
+                    zIndex={11}
+                    borderLeftWidth="1px"
+                    borderLeftColor="gray.200"
+                  >
+                    {t('productManagement.table.actions')}
+                  </Th>
+                </Tr>
+                <Tr>
+                  <Th bg="gray.50" position="sticky" left={0} zIndex={11} borderRightWidth="1px" borderRightColor="gray.200"></Th>
+                  <Th bg="gray.50"></Th>
+                  <Th bg="gray.50"></Th>
+                  <Th bg="gray.50"></Th>
+                  <Th bg="gray.50"></Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" minW="90px" bg="blue.50">
+                    <Tooltip
+                      label={
+                        <Box>
+                          <Text fontWeight="bold" mb={1} color="white">{t('productManagement.table.priceCostIdr')}</Text>
+                          <Text fontSize="xs" color="gray.100">{t('productManagement.table.priceCostIdrDesc')}</Text>
+                          <Text fontSize="xs" mt={1} color="gray.100">{t('productManagement.table.priceCostIdrUsage')}</Text>
+                        </Box>
+                      }
+                      placement="top"
+                      hasArrow
+                      bg="gray.800"
+                      color="white"
+                      fontSize="xs"
+                      px={3}
+                      py={2}
+                      borderRadius="md"
+                    >
+                      <HStack spacing={1} cursor="help">
+                        <Text>{t('productManagement.table.priceCostIdr')}</Text>
+                        <Icon as={Info} boxSize={3} />
+                      </HStack>
+                    </Tooltip>
+                  </Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" minW="90px" bg="blue.50">
+                    <Tooltip
+                      label={
+                        <Box>
+                          <Text fontWeight="bold" mb={1} color="white">{t('productManagement.table.priceCostCny')}</Text>
+                          <Text fontSize="xs" color="gray.100">{t('productManagement.table.priceCostCnyDesc')}</Text>
+                          <Text fontSize="xs" mt={1} color="gray.100">{t('productManagement.table.priceCostCnyUsage')}</Text>
+                        </Box>
+                      }
+                      placement="top"
+                      hasArrow
+                      bg="gray.800"
+                      color="white"
+                      fontSize="xs"
+                      px={3}
+                      py={2}
+                      borderRadius="md"
+                    >
+                      <HStack spacing={1} cursor="help">
+                        <Text>{t('productManagement.table.priceCostCny')}</Text>
+                        <Icon as={Info} boxSize={3} />
+                      </HStack>
+                    </Tooltip>
+                  </Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" minW="90px" bg="blue.50">
+                    <Tooltip
+                      label={
+                        <Box>
+                          <Text fontWeight="bold" mb={1} color="white">{t('productManagement.table.priceDirectIdr')}</Text>
+                          <Text fontSize="xs" color="gray.100">{t('productManagement.table.priceDirectIdrDesc')}</Text>
+                          <Text fontSize="xs" mt={1} color="gray.100">{t('productManagement.table.priceDirectIdrUsage')}</Text>
+                        </Box>
+                      }
+                      placement="top"
+                      hasArrow
+                      bg="gray.800"
+                      color="white"
+                      fontSize="xs"
+                      px={3}
+                      py={2}
+                      borderRadius="md"
+                    >
+                      <HStack spacing={1} cursor="help">
+                        <Text>{t('productManagement.table.priceDirectIdr')}</Text>
+                        <Icon as={Info} boxSize={3} />
+                      </HStack>
+                    </Tooltip>
+                  </Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" minW="90px" bg="blue.50">
+                    <Tooltip
+                      label={
+                        <Box>
+                          <Text fontWeight="bold" mb={1} color="white">{t('productManagement.table.priceDirectCny')}</Text>
+                          <Text fontSize="xs" color="gray.100">{t('productManagement.table.priceDirectCnyDesc')}</Text>
+                          <Text fontSize="xs" mt={1} color="gray.100">{t('productManagement.table.priceDirectCnyUsage')}</Text>
+                        </Box>
+                      }
+                      placement="top"
+                      hasArrow
+                      bg="gray.800"
+                      color="white"
+                      fontSize="xs"
+                      px={3}
+                      py={2}
+                      borderRadius="md"
+                    >
+                      <HStack spacing={1} cursor="help">
+                        <Text>{t('productManagement.table.priceDirectCny')}</Text>
+                        <Icon as={Info} boxSize={3} />
+                      </HStack>
+                    </Tooltip>
+                  </Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" minW="90px" bg="blue.50">
+                    <Tooltip
+                      label={
+                        <Box>
+                          <Text fontWeight="bold" mb={1} color="white">{t('productManagement.table.priceChannelIdr')}</Text>
+                          <Text fontSize="xs" color="gray.100">{t('productManagement.table.priceChannelIdrDesc')}</Text>
+                          <Text fontSize="xs" mt={1} color="gray.100">{t('productManagement.table.priceChannelIdrUsage')}</Text>
+                        </Box>
+                      }
+                      placement="top"
+                      hasArrow
+                      bg="gray.800"
+                      color="white"
+                      fontSize="xs"
+                      px={3}
+                      py={2}
+                      borderRadius="md"
+                    >
+                      <HStack spacing={1} cursor="help">
+                        <Text>{t('productManagement.table.priceChannelIdr')}</Text>
+                        <Icon as={Info} boxSize={3} />
+                      </HStack>
+                    </Tooltip>
+                  </Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" minW="90px" bg="blue.50">
+                    <Tooltip
+                      label={
+                        <Box>
+                          <Text fontWeight="bold" mb={1} color="white">{t('productManagement.table.priceChannelCny')}</Text>
+                          <Text fontSize="xs" color="gray.100">{t('productManagement.table.priceChannelCnyDesc')}</Text>
+                          <Text fontSize="xs" mt={1} color="gray.100">{t('productManagement.table.priceChannelCnyUsage')}</Text>
+                        </Box>
+                      }
+                      placement="top"
+                      hasArrow
+                      bg="gray.800"
+                      color="white"
+                      fontSize="xs"
+                      px={3}
+                      py={2}
+                      borderRadius="md"
+                    >
+                      <HStack spacing={1} cursor="help">
+                        <Text>{t('productManagement.table.priceChannelCny')}</Text>
+                        <Icon as={Info} boxSize={3} />
+                      </HStack>
+                    </Tooltip>
+                  </Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" minW="90px" bg="blue.50">
+                    <Tooltip
+                      label={
+                        <Box>
+                          <Text fontWeight="bold" mb={1} color="white">{t('productManagement.table.priceListIdr')}</Text>
+                          <Text fontSize="xs" color="gray.100">{t('productManagement.table.priceListIdrDesc')}</Text>
+                          <Text fontSize="xs" mt={1} color="gray.100">{t('productManagement.table.priceListIdrUsage')}</Text>
+                        </Box>
+                      }
+                      placement="top"
+                      hasArrow
+                      bg="gray.800"
+                      color="white"
+                      fontSize="xs"
+                      px={3}
+                      py={2}
+                      borderRadius="md"
+                    >
+                      <HStack spacing={1} cursor="help">
+                        <Text>{t('productManagement.table.priceListIdr')}</Text>
+                        <Icon as={Info} boxSize={3} />
+                      </HStack>
+                    </Tooltip>
+                  </Th>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" minW="90px" bg="blue.50">
+                    <Tooltip
+                      label={
+                        <Box>
+                          <Text fontWeight="bold" mb={1} color="white">{t('productManagement.table.priceListCny')}</Text>
+                          <Text fontSize="xs" color="gray.100">{t('productManagement.table.priceListCnyDesc')}</Text>
+                          <Text fontSize="xs" mt={1} color="gray.100">{t('productManagement.table.priceListCnyUsage')}</Text>
+                        </Box>
+                      }
+                      placement="top"
+                      hasArrow
+                      bg="gray.800"
+                      color="white"
+                      fontSize="xs"
+                      px={3}
+                      py={2}
+                      borderRadius="md"
+                    >
+                      <HStack spacing={1} cursor="help">
+                        <Text>{t('productManagement.table.priceListCny')}</Text>
+                        <Icon as={Info} boxSize={3} />
+                      </HStack>
+                    </Tooltip>
+                  </Th>
+                  <Th bg="gray.50"></Th>
+                  <Th bg="gray.50" position="sticky" right={0} zIndex={11} borderLeftWidth="1px" borderLeftColor="gray.200"></Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -681,7 +990,7 @@ const EnterpriseServiceProduct = () => {
                   }
                   
                   return products.map((product, index) => {
-                    const categoryName = product.category_name || '未分类'
+                    const categoryName = product.category_name || t('productManagement.table.uncategorized')
                     const isNewCategory = categoryName !== currentCategory
                     const isExpanded = categoryExpanded[categoryName] ?? true // 默认展开
                     
@@ -691,7 +1000,7 @@ const EnterpriseServiceProduct = () => {
                       categoryProductCount = 1
                       // 计算当前分类的产品数量
                       for (let i = index + 1; i < products.length; i++) {
-                        const nextCategoryName = products[i].category_name || '未分类'
+                        const nextCategoryName = products[i].category_name || t('productManagement.table.uncategorized')
                         if (nextCategoryName === categoryName) {
                           categoryProductCount++
                         } else {
@@ -705,7 +1014,19 @@ const EnterpriseServiceProduct = () => {
                         {/* 分类标题行（仅在新分类开始时显示） */}
                         {isNewCategory && (
                           <Tr bg="blue.50" _hover={{ bg: 'blue.100' }} cursor="pointer" onClick={(e) => toggleCategory(categoryName, e)}>
-                            <Td colSpan={7} fontSize="sm" fontWeight="bold" color="blue.700" py={3}>
+                            <Td 
+                              colSpan={15} 
+                              fontSize="sm" 
+                              fontWeight="bold" 
+                              color="blue.700" 
+                              py={3} 
+                              position="sticky" 
+                              left={0} 
+                              bg="blue.50" 
+                              zIndex={9}
+                              borderRightWidth="1px"
+                              borderRightColor="gray.200"
+                            >
                               <HStack spacing={2}>
                                 {isExpanded ? (
                                   <ChevronDown size={16} />
@@ -715,7 +1036,7 @@ const EnterpriseServiceProduct = () => {
                                 <Tag size={16} />
                                 <Text>{categoryName}</Text>
                                 <Text fontSize="xs" color="gray.500" fontWeight="normal">
-                                  ({categoryProductCount} 个产品)
+                                  ({t('productManagement.table.productCount', { count: categoryProductCount })})
                                 </Text>
                               </HStack>
                             </Td>
@@ -723,36 +1044,113 @@ const EnterpriseServiceProduct = () => {
                         )}
                         {/* 产品行（仅在分类展开时显示） */}
                         {isExpanded && (
-                          <Tr _hover={{ bg: hoverBg }} transition="background-color 0.2s">
-                            <Td fontSize="sm">
+                          <Tr 
+                            _hover={{ bg: hoverBg }} 
+                            transition="background-color 0.2s"
+                            bg={highlightedProductId === product.id ? 'blue.50' : undefined}
+                          >
+                            <Td 
+                              fontSize="sm" 
+                              position="sticky" 
+                              left={0} 
+                              bg={highlightedProductId === product.id ? 'blue.50' : bgColor} 
+                              zIndex={9}
+                              borderRightWidth="1px"
+                              borderRightColor="gray.200"
+                            >
                               <Checkbox
                                 isChecked={selectedIds.includes(product.id)}
                                 onChange={(e) => handleSelect(product.id, e.target.checked)}
                               />
                             </Td>
-                            <Td fontSize="sm" color="gray.900" fontWeight="medium">{product.name}</Td>
-                            <Td fontSize="sm" color="gray.600" fontFamily="mono">{product.code || '-'}</Td>
-                            <Td fontSize="sm" color="gray.600">{product.category_name || '-'}</Td>
-                            <Td fontSize="sm" color="gray.600">
-                              <VStack spacing={0.5} align="flex-start">
-                                {product.price_direct_idr && (
-                                  <HStack spacing={1}>
-                                    <DollarSign size={14} />
-                                    <Text fontSize="xs">{formatPrice(product.price_direct_idr, 'IDR')}</Text>
-                                  </HStack>
-                                )}
-                                {product.price_direct_cny && (
-                                  <HStack spacing={1}>
-                                    <DollarSign size={14} />
-                                    <Text fontSize="xs">{formatPrice(product.price_direct_cny, 'CNY')}</Text>
-                                  </HStack>
-                                )}
-                                {!product.price_direct_idr && !product.price_direct_cny && (
-                                  <Text>-</Text>
-                                )}
-                              </VStack>
+                            <Td fontSize="sm" color="gray.900" fontWeight="medium" minW="200px">{product.name}</Td>
+                            <Td fontSize="sm" color="gray.600" fontFamily="mono" minW="120px">{product.code || '-'}</Td>
+                            <Td fontSize="sm" color="gray.600" minW="120px">{product.category_name || '-'}</Td>
+                            <Td fontSize="sm" color="gray.600" minW="100px" textAlign="center">
+                              {product.processing_days ? `${product.processing_days} ${t('productManagement.table.day')}` : '-'}
                             </Td>
-                            <Td fontSize="sm">
+                            {/* 价格字段组 */}
+                            <Td 
+                              fontSize="sm" 
+                              color="gray.600" 
+                              minW="90px" 
+                              bg={highlightedProductId === product.id ? 'blue.100' : 'blue.50'} 
+                              textAlign="left"
+                              fontFamily="mono"
+                            >
+                              {product.price_cost_idr ? formatPrice(product.price_cost_idr, 'IDR') : '-'}
+                            </Td>
+                            <Td 
+                              fontSize="sm" 
+                              color="gray.600" 
+                              minW="90px" 
+                              bg={highlightedProductId === product.id ? 'blue.100' : 'blue.50'} 
+                              textAlign="left"
+                              fontFamily="mono"
+                            >
+                              {product.price_cost_cny ? formatPrice(product.price_cost_cny, 'CNY') : '-'}
+                            </Td>
+                            <Td 
+                              fontSize="sm" 
+                              color="gray.600" 
+                              minW="90px" 
+                              bg={highlightedProductId === product.id ? 'blue.100' : 'blue.50'} 
+                              textAlign="left"
+                              fontFamily="mono"
+                            >
+                              {product.price_direct_idr ? formatPrice(product.price_direct_idr, 'IDR') : '-'}
+                            </Td>
+                            <Td 
+                              fontSize="sm" 
+                              color="gray.600" 
+                              minW="90px" 
+                              bg={highlightedProductId === product.id ? 'blue.100' : 'blue.50'} 
+                              textAlign="left"
+                              fontFamily="mono"
+                            >
+                              {product.price_direct_cny ? formatPrice(product.price_direct_cny, 'CNY') : '-'}
+                            </Td>
+                            <Td 
+                              fontSize="sm" 
+                              color="gray.600" 
+                              minW="90px" 
+                              bg={highlightedProductId === product.id ? 'blue.100' : 'blue.50'} 
+                              textAlign="left"
+                              fontFamily="mono"
+                            >
+                              {product.price_channel_idr ? formatPrice(product.price_channel_idr, 'IDR') : '-'}
+                            </Td>
+                            <Td 
+                              fontSize="sm" 
+                              color="gray.600" 
+                              minW="90px" 
+                              bg={highlightedProductId === product.id ? 'blue.100' : 'blue.50'} 
+                              textAlign="left"
+                              fontFamily="mono"
+                            >
+                              {product.price_channel_cny ? formatPrice(product.price_channel_cny, 'CNY') : '-'}
+                            </Td>
+                            <Td 
+                              fontSize="sm" 
+                              color="gray.600" 
+                              minW="90px" 
+                              bg={highlightedProductId === product.id ? 'blue.100' : 'blue.50'} 
+                              textAlign="left"
+                              fontFamily="mono"
+                            >
+                              {product.price_list_idr ? formatPrice(product.price_list_idr, 'IDR') : '-'}
+                            </Td>
+                            <Td 
+                              fontSize="sm" 
+                              color="gray.600" 
+                              minW="90px" 
+                              bg={highlightedProductId === product.id ? 'blue.100' : 'blue.50'} 
+                              textAlign="left"
+                              fontFamily="mono"
+                            >
+                              {product.price_list_cny ? formatPrice(product.price_list_cny, 'CNY') : '-'}
+                            </Td>
+                            <Td fontSize="sm" minW="100px">
                               {product.is_active ? (
                                 <Badge colorScheme="green" fontSize="xs">
                                   {t('productManagement.table.active')}
@@ -763,7 +1161,16 @@ const EnterpriseServiceProduct = () => {
                                 </Badge>
                               )}
                             </Td>
-                            <Td fontSize="sm">
+                            <Td 
+                              fontSize="sm" 
+                              minW="150px" 
+                              position="sticky" 
+                              right={0} 
+                              bg={highlightedProductId === product.id ? 'blue.50' : bgColor} 
+                              zIndex={9}
+                              borderLeftWidth="1px"
+                              borderLeftColor="gray.200"
+                            >
                               <HStack spacing={2}>
                                 <Button
                                   size="xs"
@@ -771,24 +1178,18 @@ const EnterpriseServiceProduct = () => {
                                   colorScheme="blue"
                                   onClick={() => handleViewDetail(product.id)}
                                 >
-                                  {t('productManagement.viewDetail')}
+                                  {t('productManagement.table.detail')}
                                 </Button>
-                                <Button
-                                  size="xs"
-                                  variant="ghost"
-                                  colorScheme="blue"
-                                  onClick={() => handleEdit(product)}
-                                >
-                                  {t('productManagement.edit')}
-                                </Button>
-                                <Button
-                                  size="xs"
-                                  variant="ghost"
-                                  colorScheme="red"
-                                  onClick={() => handleDelete(product)}
-                                >
-                                  {t('productManagement.delete')}
-                                </Button>
+                                {isAdmin && (
+                                  <Button
+                                    size="xs"
+                                    variant="ghost"
+                                    colorScheme="blue"
+                                    onClick={() => handleEdit(product)}
+                                  >
+                                    {t('productManagement.edit')}
+                                  </Button>
+                                )}
                               </HStack>
                             </Td>
                           </Tr>
@@ -809,7 +1210,7 @@ const EnterpriseServiceProduct = () => {
           <CardBody py={2}>
             <Flex justify="space-between" align="center">
               <Text fontSize="xs" color="gray.600">
-                共 {total} 个产品，已按分类分组展示
+                {t('productManagement.table.totalProducts', { total })}
               </Text>
             </Flex>
           </CardBody>
@@ -919,6 +1320,62 @@ const EnterpriseServiceProduct = () => {
                     />
                   </div>
                 </div>
+                {/* 预估成本字段 */}
+                <div className="border-t border-gray-200 pt-3">
+                  <div className="flex items-center gap-2 mb-3">
+                    <h3 className="text-sm font-semibold text-gray-700">{t('productManagement.form.estimatedCostTitle')}</h3>
+                    <Tooltip
+                      label={
+                        <Box>
+                          <Text fontWeight="bold" mb={1} color="white">{t('productManagement.form.estimatedCostDesc')}</Text>
+                          <Text fontSize="xs" mb={1} color="gray.100">{t('productManagement.form.estimatedCostDesc1')}</Text>
+                          <Text fontSize="xs" mb={1} color="gray.100">{t('productManagement.form.estimatedCostDesc2')}</Text>
+                          <Text fontSize="xs" color="gray.100">{t('productManagement.form.estimatedCostDesc3')}</Text>
+                        </Box>
+                      }
+                      placement="top"
+                      hasArrow
+                      bg="gray.800"
+                      color="white"
+                      fontSize="xs"
+                      px={3}
+                      py={2}
+                      borderRadius="md"
+                    >
+                      <Box as="span" cursor="help" display="inline-flex" alignItems="center">
+                        <Info className="h-4 w-4 text-gray-400" />
+                      </Box>
+                    </Tooltip>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                        {t('productManagement.form.estimatedCostIdr')}
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={modalFormData.estimated_cost_idr}
+                        onChange={(e) => setModalFormData({ ...modalFormData, estimated_cost_idr: e.target.value })}
+                        placeholder="0.00"
+                        className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                        {t('productManagement.form.estimatedCostCny')}
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={modalFormData.estimated_cost_cny}
+                        onChange={(e) => setModalFormData({ ...modalFormData, estimated_cost_cny: e.target.value })}
+                        placeholder="0.00"
+                        className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                      />
+                    </div>
+                  </div>
+                </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
@@ -1020,187 +1477,14 @@ const EnterpriseServiceProduct = () => {
         </div>
       )}
 
-      {/* 详情弹窗 */}
-      {showDetailModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={handleCloseDetail}>
-          <div
-            className="bg-white rounded-xl shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* 弹窗头部 */}
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-2.5 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900 tracking-tight">
-                {t('productManagement.detail.title')}
-              </h2>
-              <button
-                onClick={handleCloseDetail}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            {/* 弹窗内容 */}
-            {loadingDetail ? (
-              <div className="p-6 text-center">
-                <div className="text-sm text-gray-500">{t('productManagement.loading')}</div>
-              </div>
-            ) : productDetail ? (
-              <div className="p-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* 基本信息 */}
-                  <div className="space-y-2.5">
-                    <h3 className="text-sm font-semibold text-gray-900 border-b border-gray-200 pb-1.5">
-                      {t('productManagement.detail.basicInfo')}
-                    </h3>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                        {t('productManagement.table.name')}
-                      </label>
-                      <div className="text-sm text-gray-900 font-medium">{productDetail.name}</div>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                        {t('productManagement.table.code')}
-                      </label>
-                      <div className="text-sm text-gray-900">{productDetail.code || '-'}</div>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                        {t('productManagement.table.category')}
-                      </label>
-                      <div className="text-sm text-gray-900">{productDetail.category_name || '-'}</div>
-                    </div>
-                    {productDetail.service_subtype && (
-                      <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                          {t('productManagement.form.serviceSubtype')}
-                        </label>
-                        <div className="text-sm text-gray-900">
-                          {productDetail.service_subtype}
-                        </div>
-                      </div>
-                    )}
-                    {productDetail.processing_days && (
-                      <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                          {t('productManagement.form.processingDays')}
-                        </label>
-                        <div className="text-sm text-gray-900">
-                          {productDetail.processing_days} {t('productManagement.detail.days')}
-                          {productDetail.processing_time_text && ` (${productDetail.processing_time_text})`}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* 价格信息 */}
-                  <div className="space-y-2.5">
-                    <h3 className="text-sm font-semibold text-gray-900 border-b border-gray-200 pb-1.5">
-                      {t('productManagement.detail.priceInfo')}
-                    </h3>
-                    {productDetail.price_cost_idr && (
-                      <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                          {t('productManagement.detail.costPrice')} (IDR)
-                        </label>
-                        <div className="text-sm text-gray-900">{formatPrice(productDetail.price_cost_idr, 'IDR')}</div>
-                      </div>
-                    )}
-                    {productDetail.price_channel_idr && (
-                      <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                          {t('productManagement.detail.channelPrice')} (IDR)
-                        </label>
-                        <div className="text-sm text-gray-900">{formatPrice(productDetail.price_channel_idr, 'IDR')}</div>
-                      </div>
-                    )}
-                    {productDetail.price_direct_idr && (
-                      <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                          {t('productManagement.detail.directPrice')} (IDR)
-                        </label>
-                        <div className="text-sm text-gray-900">{formatPrice(productDetail.price_direct_idr, 'IDR')}</div>
-                      </div>
-                    )}
-                    {productDetail.price_list_idr && (
-                      <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                          {t('productManagement.detail.listPrice')} (IDR)
-                        </label>
-                        <div className="text-sm text-gray-900">{formatPrice(productDetail.price_list_idr, 'IDR')}</div>
-                      </div>
-                    )}
-                    {productDetail.price_direct_cny && (
-                      <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                          {t('productManagement.detail.directPrice')} (CNY)
-                        </label>
-                        <div className="text-sm text-gray-900">{formatPrice(productDetail.price_direct_cny, 'CNY')}</div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* 状态信息 */}
-                  <div className="space-y-2.5">
-                    <h3 className="text-sm font-semibold text-gray-900 border-b border-gray-200 pb-1.5">
-                      {t('productManagement.detail.statusInfo')}
-                    </h3>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                        {t('productManagement.table.status')}
-                      </label>
-                      <div className="flex flex-wrap gap-1.5">
-                        {productDetail.is_active ? (
-                          <span className="inline-flex items-center space-x-1 text-xs text-green-600">
-                            <CheckCircle2 className="h-3.5 w-3.5" />
-                            <span>{t('productManagement.table.active')}</span>
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center space-x-1 text-xs text-red-600">
-                            <XCircle className="h-3.5 w-3.5" />
-                            <span>{t('productManagement.table.inactive')}</span>
-                          </span>
-                        )}
-                        {productDetail.status && (
-                          <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded bg-blue-50 text-blue-600">
-                            {productDetail.status}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 其他信息 */}
-                  {(productDetail.required_documents || productDetail.notes) && (
-                    <div className="space-y-2.5">
-                      <h3 className="text-sm font-semibold text-gray-900 border-b border-gray-200 pb-1.5">
-                        {t('productManagement.detail.otherInfo')}
-                      </h3>
-                      {productDetail.required_documents && (
-                        <div>
-                          <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                            {t('productManagement.detail.requiredDocuments')}
-                          </label>
-                          <div className="text-sm text-gray-900 whitespace-pre-wrap">{productDetail.required_documents}</div>
-                        </div>
-                      )}
-                      {productDetail.notes && (
-                        <div>
-                          <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                            {t('productManagement.detail.notes')}
-                          </label>
-                          <div className="text-sm text-gray-900 whitespace-pre-wrap">{productDetail.notes}</div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : null}
-          </div>
-        </div>
-      )}
+      {/* 产品详情抽屉 */}
+      <ProductDetailDrawer
+        productId={selectedProductId}
+        isOpen={selectedProductId !== null}
+        onClose={handleCloseDetail}
+        onEdit={handleEdit}
+        isAdmin={isAdmin}
+      />
     </div>
   )
 }

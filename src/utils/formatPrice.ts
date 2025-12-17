@@ -59,7 +59,7 @@ export const formatPrice = (
  * @param showSymbol 是否显示货币符号
  * @param minimumFractionDigits 最小小数位数
  * @param maximumFractionDigits 最大小数位数
- * @returns 格式化后的字符串，例如：1jt、0.5jt、500rb、Rp 1jt
+ * @returns 格式化后的字符串，例如：1jt、0.5jt、500rb
  */
 const formatIDR = (
   amount: number,
@@ -74,22 +74,19 @@ const formatIDR = (
   if (absAmount >= 100000) {
     const juta = absAmount / 1000000
     const formatted = juta.toFixed(maximumFractionDigits).replace(/\.?0+$/, '') // 移除末尾的0
-    const symbol = showSymbol ? 'Rp ' : ''
-    return `${sign}${symbol}${formatted}jt`
+    return `${sign}${formatted}jt`
   }
 
   // 1000及以上使用 rb（ribu）单位
   if (absAmount >= 1000) {
     const ribu = absAmount / 1000
     const formatted = ribu.toFixed(maximumFractionDigits).replace(/\.?0+$/, '')
-    const symbol = showSymbol ? 'Rp ' : ''
-    return `${sign}${symbol}${formatted}rb`
+    return `${sign}${formatted}rb`
   }
 
   // 小于1000显示完整数字
   const formatted = absAmount.toFixed(minimumFractionDigits).replace(/\.?0+$/, '')
-  const symbol = showSymbol ? 'Rp ' : ''
-  return `${sign}${symbol}${formatted}`
+  return `${sign}${formatted}`
 }
 
 /**

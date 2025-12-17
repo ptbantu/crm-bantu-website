@@ -35,6 +35,7 @@ import LeadList from './pages/admin/LeadList'
 import LeadDetail from './pages/admin/LeadDetail'
 import OpportunityList from './pages/admin/OpportunityList'
 import OpportunityDetail from './pages/admin/OpportunityDetail'
+import PriceManagement from './pages/admin/PriceManagement'
 
 const AppContent = () => {
   const location = useLocation()
@@ -207,6 +208,17 @@ const AppContent = () => {
           />
           
           {/* 价格管理（仅 ADMIN） */}
+          <Route
+            path="/admin/price/management"
+            element={
+              <AdminLayout>
+                <PermissionGuard role="ADMIN">
+                  <PriceManagement />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          
           {/* 客户管理模块（SALES, ADMIN） */}
           <Route
             path="/admin/customer/list"

@@ -7,6 +7,7 @@ import {
   ProductListParams,
   Product,
   ProductDetail,
+  ProductDetailAggregated,
   PaginatedResponse,
 } from './types'
 
@@ -149,5 +150,18 @@ export async function updateProduct(
  */
 export async function deleteProduct(id: string): Promise<void> {
   await del(API_PATHS.PRODUCTS.BY_ID(id))
+}
+
+/**
+ * 获取产品详情聚合数据
+ */
+export async function getProductDetailAggregated(id: string): Promise<ProductDetailAggregated> {
+  try {
+    const result = await get<ProductDetailAggregated>(`${API_PATHS.PRODUCTS.BY_ID(id)}/detail`)
+    return result.data!
+  } catch (error: any) {
+    console.error('获取产品详情聚合数据失败:', error)
+    throw error
+  }
 }
 
