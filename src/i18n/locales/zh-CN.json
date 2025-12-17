@@ -29,7 +29,8 @@
     "yes": "是",
     "no": "否",
     "reset": "重置",
-    "actions": "操作"
+    "actions": "操作",
+    "add": "添加"
   },
   "header": {
     "title": "班兔企服",
@@ -694,13 +695,13 @@
     "enterpriseServiceProduct": "企服产品",
     "enterpriseServiceSupplier": "企服供应商",
     "supplier-list": "企服供应商",
-    "priceManagement": "价格管理",
+    "priceManagement": "企服定价",
     "productService": "产品服务",
     "productManagement": "服务管理",
     "serviceCatalog": "服务目录",
     "vendorManagement": "供应商管理",
     "vendorProductList": "供应商服务列表",
-    "categoryManagement": "服务分类管理"
+    "categoryManagement": "企服分类"
   },
   "admin": {
     "title": "班兔 CRM 后台管理",
@@ -1020,7 +1021,7 @@
     "modifiedCount": "已修改 {{count}} 个"
   },
   "priceManagement": {
-    "title": "价格管理",
+    "title": "企服定价",
     "subtitle": "管理企业服务产品的价格策略",
     "create": "新增价格策略",
     "batchImport": "批量导入",
@@ -1042,15 +1043,61 @@
       "select": "勾选",
       "strategyId": "价格策略ID",
       "product": "关联产品",
+      "productName": "产品名称",
+      "category": "分类",
+      "serviceCode": "服务编号",
+      "priceCostIdr": "成本价-IDR",
+      "priceCostCny": "成本价-CNY",
+      "priceDirectIdr": "直客价-IDR",
+      "priceDirectCny": "直客价-CNY",
+      "priceChannelIdr": "渠道价-IDR",
+      "priceChannelCny": "渠道价-CNY",
+      "priceListIdr": "列表价-IDR",
+      "priceListCny": "列表价-CNY",
+      "effectiveFrom": "生效时间",
+      "effectiveTo": "失效时间",
       "supplier": "关联供应商",
       "priceType": "价格类型",
       "tierPrice": "阶梯价格",
       "effectiveTime": "生效时间",
       "status": "状态",
-      "actions": "操作"
+      "statusActive": "生效中",
+      "statusUpcoming": "未来生效 ({{hours}}小时后)",
+      "statusExpired": "已过期",
+      "actions": "操作",
+      "edit": "编辑",
+      "view": "查看",
+      "history": "历史",
+      "noPrice": "暂无价格"
+    },
+    "error": {
+      "loadFailed": "加载价格列表失败",
+      "adminRequired": "需要管理员权限"
+    },
+    "pagination": {
+      "total": "共",
+      "records": "条记录",
+      "previous": "上一页",
+      "next": "下一页",
+      "page": "第",
+      "pageUnit": "页"
     },
     "loading": "加载中...",
-    "noData": "暂无数据"
+    "noData": "暂无数据",
+    "addPrice": "新增价格",
+    "searchPlaceholder": "搜索产品名称或编码",
+    "admin": "管理员",
+    "viewer": "查看者",
+    "lastUpdate": "最后更新",
+    "refresh": "刷新数据",
+    "export": "导出价格表",
+    "logs": "操作日志",
+    "tabs": {
+      "productPrices": "产品价格管理",
+      "exchangeRates": "汇率管理",
+      "upcomingChanges": "即将生效变更",
+      "logs": "操作日志"
+    }
   },
   "productManagement": {
     "title": "企服产品",
@@ -1175,6 +1222,81 @@
     "validation": {
       "nameRequired": "服务名称不能为空"
     },
+    "createWizard": {
+      "next": "下一步",
+      "back": "上一步",
+      "submit": "提交",
+      "basicInfo": {
+        "title": "产品基本信息",
+        "section1": "基本信息",
+        "section2": "服务配置",
+        "section3": "供应商设置",
+        "section4": "标签与分类",
+        "serviceType": "服务类型",
+        "selectServiceType": "请选择服务类型",
+        "serviceTypes": {
+          "visa": "签证",
+          "company_registration": "公司注册",
+          "tax": "税务",
+          "hr": "人事",
+          "certification": "认证",
+          "ip": "知识产权"
+        },
+        "codePlaceholder": "自动生成或手动输入",
+        "initialStatus": "初始状态",
+        "description": "产品描述",
+        "descriptionPlaceholder": "请输入产品描述",
+        "urgentAvailable": "是否支持加急",
+        "applicableRegions": "适用地区",
+        "targetCustomers": "目标客户",
+        "targetCustomersOptions": {
+          "individual": "个人",
+          "enterprise": "企业",
+          "both": "两者"
+        },
+        "requiredDocuments": "所需材料",
+        "documents": {
+          "passport": "护照",
+          "visa_application": "签证申请表",
+          "company_documents": "公司文件",
+          "tax_certificate": "税务证明",
+          "other": "其他"
+        },
+        "primarySupplier": "主要供应商",
+        "primarySupplierPlaceholder": "搜索并选择供应商",
+        "serviceLevel": "服务等级",
+        "serviceLevels": {
+          "standard": "标准",
+          "premium": "高级",
+          "vip": "VIP"
+        },
+        "tags": "产品标签",
+        "tagsPlaceholder": "输入标签后按回车添加",
+        "cardColor": "卡片颜色"
+      },
+      "priceConfig": {
+        "title": "价格配置",
+        "productInfo": "产品信息",
+        "section1": "基础设置",
+        "section2": "汇率设置",
+        "section3": "价格设置",
+        "defaultCurrency": "默认货币",
+        "effectiveFrom": "价格生效时间",
+        "effectiveTo": "价格有效期",
+        "exchangeRate": "汇率",
+        "exchangeRateHint": "1 CNY = X IDR",
+        "priceLinkage": "价格联动",
+        "linkageNone": "不联动",
+        "linkageCny": "CNY为主，自动计算IDR",
+        "linkageIdr": "IDR为主，自动计算CNY",
+        "priceType": "价格类型",
+        "validation": {
+          "effectiveFromRequired": "价格生效时间不能为空",
+          "effectiveToRequired": "价格有效期不能为空",
+          "exchangeRateInvalid": "汇率必须大于0"
+        }
+      }
+    },
     "confirm": {
       "delete": "确定要删除服务 {{name}} 吗？"
     },
@@ -1284,7 +1406,7 @@
     "noData": "暂无数据"
   },
   "categoryManagement": {
-    "title": "服务分类管理",
+    "title": "企服分类",
     "subtitle": "管理系统服务分类，支持多级分类结构",
     "create": "新增分类",
     "edit": "编辑",

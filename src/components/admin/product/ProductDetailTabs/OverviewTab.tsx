@@ -1,6 +1,7 @@
 /**
  * 产品概览Tab
  */
+import { useTranslation } from 'react-i18next'
 import { Tag, CheckCircle2, XCircle, Clock } from 'lucide-react'
 import {
   Box,
@@ -23,6 +24,7 @@ interface OverviewTabProps {
 }
 
 const OverviewTab = ({ data }: OverviewTabProps) => {
+  const { t } = useTranslation()
   const { overview, statistics } = data
 
   return (
@@ -41,12 +43,12 @@ const OverviewTab = ({ data }: OverviewTabProps) => {
           {overview.is_active ? (
             <Badge colorScheme="green" fontSize="xs">
               <CheckCircle2 size={12} style={{ display: 'inline', marginRight: 4 }} />
-              已上架
+              {t('productManagement.detail.status.active', '已上架')}
             </Badge>
           ) : (
             <Badge colorScheme="red" fontSize="xs">
               <XCircle size={12} style={{ display: 'inline', marginRight: 4 }} />
-              未上架
+              {t('productManagement.detail.status.inactive', '未上架')}
             </Badge>
           )}
         </HStack>
@@ -61,11 +63,11 @@ const OverviewTab = ({ data }: OverviewTabProps) => {
           {overview.processing_days && (
             <HStack spacing={1}>
               <Clock size={14} />
-              <Text>{overview.processing_days} 天</Text>
+              <Text>{overview.processing_days} {t('productManagement.table.day', '天')}</Text>
             </HStack>
           )}
           {overview.updated_at && (
-            <Text>更新: {new Date(overview.updated_at).toLocaleDateString('zh-CN')}</Text>
+            <Text>{t('productManagement.detail.updated', '更新')}: {new Date(overview.updated_at).toLocaleDateString()}</Text>
           )}
         </HStack>
       </Box>
@@ -75,9 +77,9 @@ const OverviewTab = ({ data }: OverviewTabProps) => {
       {/* 关键指标 */}
       <SimpleGrid columns={{ base: 2, md: 3 }} spacing={4}>
         <Stat>
-          <StatLabel>处理时长</StatLabel>
+          <StatLabel>{t('productManagement.detail.processingDays', '处理时长')}</StatLabel>
           <StatNumber fontSize="lg">
-            {overview.processing_days ? `${overview.processing_days} 天` : '-'}
+            {overview.processing_days ? `${overview.processing_days} ${t('productManagement.table.day', '天')}` : '-'}
           </StatNumber>
           {overview.processing_time_text && (
             <StatHelpText>{overview.processing_time_text}</StatHelpText>
@@ -85,33 +87,33 @@ const OverviewTab = ({ data }: OverviewTabProps) => {
         </Stat>
 
         <Stat>
-          <StatLabel>所需材料</StatLabel>
+          <StatLabel>{t('productManagement.detail.requiredDocuments', '所需材料')}</StatLabel>
           <StatNumber fontSize="lg">
-            {overview.required_documents ? '已配置' : '未配置'}
+            {overview.required_documents ? t('productManagement.detail.configured', '已配置') : t('productManagement.detail.notConfigured', '未配置')}
           </StatNumber>
         </Stat>
 
         <Stat>
-          <StatLabel>本月订单</StatLabel>
+          <StatLabel>{t('productManagement.detail.monthlyOrders', '本月订单')}</StatLabel>
           <StatNumber fontSize="lg">{statistics.monthly_orders}</StatNumber>
-          <StatHelpText>累计: {statistics.total_orders} 单</StatHelpText>
+          <StatHelpText>{t('productManagement.detail.total', '累计')}: {statistics.total_orders} {t('productManagement.detail.orders', '单')}</StatHelpText>
         </Stat>
 
         <Stat>
-          <StatLabel>完成率</StatLabel>
+          <StatLabel>{t('productManagement.detail.completionRate', '完成率')}</StatLabel>
           <StatNumber fontSize="lg" color={statistics.completion_rate && statistics.completion_rate >= 95 ? 'green.500' : 'gray.500'}>
             {statistics.completion_rate ? `${statistics.completion_rate.toFixed(1)}%` : '-'}
           </StatNumber>
         </Stat>
 
         <Stat>
-          <StatLabel>累计订单</StatLabel>
+          <StatLabel>{t('productManagement.detail.totalOrders', '累计订单')}</StatLabel>
           <StatNumber fontSize="lg">{statistics.total_orders}</StatNumber>
         </Stat>
 
         {statistics.customer_rating && (
           <Stat>
-            <StatLabel>客户评分</StatLabel>
+            <StatLabel>{t('productManagement.detail.customerRating', '客户评分')}</StatLabel>
             <StatNumber fontSize="lg">{statistics.customer_rating.toFixed(1)}</StatNumber>
             <StatHelpText>⭐⭐⭐⭐⭐</StatHelpText>
           </Stat>

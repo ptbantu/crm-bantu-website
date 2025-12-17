@@ -73,8 +73,8 @@ const PriceManagement = () => {
   return (
     <Box>
       <PageHeader
-        title="价格与汇率管理"
-        description="管理产品价格和汇率，支持未来生效价格设置"
+        title={t('priceManagement.title')}
+        description={t('priceManagement.subtitle')}
       />
       
       {/* 顶部操作栏 */}
@@ -83,10 +83,10 @@ const PriceManagement = () => {
           <Flex justify="space-between" align="center" wrap="wrap" gap={4}>
             <HStack spacing={4}>
               <Badge colorScheme={isAdmin ? 'blue' : 'gray'}>
-                {isAdmin ? '管理员' : '查看者'}
+                {isAdmin ? t('priceManagement.admin', '管理员') : t('priceManagement.viewer', '查看者')}
               </Badge>
               <Text fontSize="sm" color="gray.500">
-                最后更新: {lastUpdateTime.toLocaleString('zh-CN')}
+                {t('priceManagement.lastUpdate', '最后更新')}: {lastUpdateTime.toLocaleString('zh-CN')}
               </Text>
             </HStack>
             
@@ -98,7 +98,7 @@ const PriceManagement = () => {
                 isLoading={loading}
                 variant="outline"
               >
-                刷新数据
+                {t('priceManagement.refresh', '刷新数据')}
               </Button>
               {isAdmin && (
                 <>
@@ -108,7 +108,7 @@ const PriceManagement = () => {
                     onClick={handleExport}
                     variant="outline"
                   >
-                    导出价格表
+                    {t('priceManagement.export', '导出价格表')}
                   </Button>
                   <Button
                     size="sm"
@@ -116,7 +116,7 @@ const PriceManagement = () => {
                     onClick={handleViewLogs}
                     variant="outline"
                   >
-                    操作日志
+                    {t('priceManagement.logs', '操作日志')}
                   </Button>
                 </>
               )}
@@ -128,10 +128,10 @@ const PriceManagement = () => {
       {/* 主内容区域 */}
       <Tabs index={activeTab} onChange={setActiveTab} colorScheme="blue">
         <TabList>
-          <Tab>产品价格管理</Tab>
-          <Tab>汇率管理</Tab>
-          <Tab>即将生效变更</Tab>
-          {isAdmin && <Tab>操作日志</Tab>}
+          <Tab>{t('priceManagement.tabs.productPrices', '产品价格管理')}</Tab>
+          <Tab>{t('priceManagement.tabs.exchangeRates', '汇率管理')}</Tab>
+          <Tab>{t('priceManagement.tabs.upcomingChanges', '即将生效变更')}</Tab>
+          {isAdmin && <Tab>{t('priceManagement.tabs.logs', '操作日志')}</Tab>}
         </TabList>
         
         <TabPanels>

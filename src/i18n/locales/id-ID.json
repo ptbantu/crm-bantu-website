@@ -1038,15 +1038,61 @@
       "select": "Pilih",
       "strategyId": "ID Strategi Harga",
       "product": "Produk Terkait",
+      "productName": "Nama Produk",
+      "category": "Kategori",
+      "serviceCode": "Kode Layanan",
+      "priceCostIdr": "Harga Biaya-IDR",
+      "priceCostCny": "Harga Biaya-CNY",
+      "priceDirectIdr": "Harga Langsung-IDR",
+      "priceDirectCny": "Harga Langsung-CNY",
+      "priceChannelIdr": "Harga Saluran-IDR",
+      "priceChannelCny": "Harga Saluran-CNY",
+      "priceListIdr": "Harga Daftar-IDR",
+      "priceListCny": "Harga Daftar-CNY",
+      "effectiveFrom": "Waktu Efektif",
+      "effectiveTo": "Waktu Kedaluwarsa",
       "supplier": "Pemasok Terkait",
       "priceType": "Jenis Harga",
       "tierPrice": "Harga Bertingkat",
       "effectiveTime": "Waktu Efektif",
       "status": "Status",
-      "actions": "Aksi"
+      "statusActive": "Aktif",
+      "statusUpcoming": "Akan Datang ({{hours}} jam)",
+      "statusExpired": "Kedaluwarsa",
+      "actions": "Aksi",
+      "edit": "Edit",
+      "view": "Lihat",
+      "history": "Riwayat",
+      "noPrice": "Tidak ada harga"
+    },
+    "error": {
+      "loadFailed": "Gagal memuat daftar harga",
+      "adminRequired": "Diperlukan izin administrator"
+    },
+    "pagination": {
+      "total": "Total",
+      "records": "catatan",
+      "previous": "Sebelumnya",
+      "next": "Selanjutnya",
+      "page": "Halaman",
+      "pageUnit": ""
     },
     "loading": "Memuat...",
-    "noData": "Tidak ada data"
+    "noData": "Tidak ada data",
+    "addPrice": "Tambah Harga",
+    "searchPlaceholder": "Cari nama produk atau kode",
+    "admin": "Administrator",
+    "viewer": "Penonton",
+    "lastUpdate": "Pembaruan Terakhir",
+    "refresh": "Muat Ulang Data",
+    "export": "Ekspor Tabel Harga",
+    "logs": "Log Operasi",
+    "tabs": {
+      "productPrices": "Manajemen Harga Produk",
+      "exchangeRates": "Manajemen Nilai Tukar",
+      "upcomingChanges": "Perubahan yang Akan Datang",
+      "logs": "Log Operasi"
+    }
   },
   "productManagement": {
     "title": "Produk Layanan Perusahaan",

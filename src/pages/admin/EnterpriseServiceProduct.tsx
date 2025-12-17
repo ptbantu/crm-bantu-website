@@ -17,7 +17,13 @@ import { getCategoryList } from '@/api/categories'
 import { ProductListParams, Product, ProductCategory } from '@/api/types'
 import { useToast } from '@/components/ToastContainer'
 import { PageHeader } from '@/components/admin/PageHeader'
-import { ProductDetailDrawer } from '@/components/admin/product'
+import {
+  ProductDetailDrawer,
+  ProductBasicInfoSidebar,
+  ProductPriceConfigSidebar,
+  ProductBasicInfo,
+  ProductPriceConfig,
+} from '@/components/admin/product'
 import { formatPrice } from '@/utils/formatPrice'
 import { useAuth } from '@/hooks/useAuth'
 import {
@@ -90,9 +96,15 @@ const EnterpriseServiceProduct = () => {
     is_active: '' as '' | 'true' | 'false',
   })
 
-  // 弹窗状态
+  // 弹窗状态（用于编辑）
   const [showModal, setShowModal] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+  
+  // 侧边栏状态（用于创建和编辑）
+  const [showBasicInfoSidebar, setShowBasicInfoSidebar] = useState(false)
+  const [showPriceConfigSidebar, setShowPriceConfigSidebar] = useState(false)
+  const [basicInfoData, setBasicInfoData] = useState<ProductBasicInfo | null>(null)
+  const [editingProductId, setEditingProductId] = useState<string | null>(null)
   const [modalFormData, setModalFormData] = useState({
     name: '',
     code: '',
@@ -217,30 +229,14 @@ const EnterpriseServiceProduct = () => {
   //   loadProducts(params)
   // }
 
-  // 打开创建弹窗
+  // 打开创建弹窗（用于编辑）
   const handleCreate = () => {
-    setEditingProduct(null)
-    setModalFormData({
-      name: '',
-      code: '',
-      category_id: '',
-      service_subtype: '',
-      processing_days: '',
-      processing_time_text: '',
-      // 注意：estimated_cost_idr 和 estimated_cost_cny 已删除
-      price_direct_idr: '',
-      price_direct_cny: '',
-      price_channel_idr: '',
-      price_channel_cny: '',
-      price_list_idr: '',
-      price_list_cny: '',
-      status: 'active',
-      is_active: true,
-    })
-    setShowModal(true)
+    // 使用侧边栏流程创建新产品
+    setShowBasicInfoSidebar(true)
+    setBasicInfoData(null)
   }
 
-  // 打开编辑弹窗
+  // 打开编辑侧边栏
   const handleEdit = async (productOrId: Product | string) => {
     let product: Product
     if (typeof productOrId === 'string') {
@@ -254,26 +250,32 @@ const EnterpriseServiceProduct = () => {
       product = productOrId
     }
     
-    setEditingProduct(product)
-    // 直接使用产品列表中的数据填充表单
-    setModalFormData({
+    // 将 Product 转换为 ProductBasicInfo 格式
+    const basicInfo: ProductBasicInfo = {
       name: product.name,
-      code: product.code || '',
+      service_type: product.service_type || '',
       category_id: product.category_id || '',
-      service_subtype: product.service_subtype || '',
+      code: product.code || '',
+      status: (product.status as 'active' | 'suspended') || 'active',
+      description: product.processing_time_text || '',
       processing_days: product.processing_days?.toString() || '',
-      processing_time_text: product.processing_time_text || '',
-      // 注意：estimated_cost_idr 和 estimated_cost_cny 已删除
-      price_direct_idr: product.price_direct_idr?.toString() || '',
-      price_direct_cny: product.price_direct_cny?.toString() || '',
-      price_channel_idr: product.price_channel_idr?.toString() || '',
-      price_channel_cny: product.price_channel_cny?.toString() || '',
-      price_list_idr: product.price_list_idr?.toString() || '',
-      price_list_cny: product.price_list_cny?.toString() || '',
-      status: product.status || 'active',
-      is_active: product.is_active,
-    })
-    setShowModal(true)
+      is_urgent_available: false, // 从 ProductDetail 获取，这里先设为 false
+      applicable_regions: [], // 需要从 tags 中解析 region:xxx
+      required_documents: [], // 需要从 required_documents 字符串解析
+      service_level: '', // 需要从 ProductDetail 获取
+      tags: product.tags || [],
+    }
+    
+    // 解析适用地区（从 tags 中提取 region:xxx）
+    if (product.tags) {
+      basicInfo.applicable_regions = product.tags
+        .filter(tag => tag.startsWith('region:'))
+        .map(tag => tag.replace('region:', ''))
+    }
+    
+    setEditingProductId(product.id)
+    setBasicInfoData(basicInfo)
+    setShowBasicInfoSidebar(true)
   }
 
   // 关闭弹窗
@@ -299,7 +301,135 @@ const EnterpriseServiceProduct = () => {
     })
   }
 
-  // 提交表单
+  // 处理基本信息侧边栏的下一步
+  const handleBasicInfoNext = (data: ProductBasicInfo) => {
+    setBasicInfoData(data)
+    setShowBasicInfoSidebar(false)
+    setShowPriceConfigSidebar(true)
+  }
+
+  // 处理价格配置侧边栏的提交
+  const handlePriceConfigSubmit = async (basicInfo: ProductBasicInfo, priceConfig: ProductPriceConfig) => {
+    if (!basicInfo) return
+
+    setSubmitting(true)
+    try {
+      // 构建创建产品的数据
+      const createData: CreateProductRequest = {
+        name: basicInfo.name.trim(),
+        code: basicInfo.code || undefined,
+        category_id: basicInfo.category_id || undefined,
+        service_type: basicInfo.service_type || undefined,
+        service_subtype: basicInfo.service_type || undefined,
+        processing_days: basicInfo.processing_days ? parseInt(basicInfo.processing_days) : undefined,
+        processing_time_text: basicInfo.description || undefined,
+        is_urgent_available: basicInfo.is_urgent_available,
+        status: basicInfo.status || 'active',
+        is_active: basicInfo.status === 'active',
+        service_level: basicInfo.service_level || undefined,
+        required_documents: basicInfo.required_documents.length > 0 ? basicInfo.required_documents.join(',') : undefined,
+        tags: basicInfo.tags.length > 0 ? basicInfo.tags : undefined,
+        // 前端新增字段
+        applicable_regions: basicInfo.applicable_regions.length > 0 ? basicInfo.applicable_regions : undefined,
+        // 价格信息
+        price_cost_idr: priceConfig.price_cost_idr > 0 ? priceConfig.price_cost_idr : undefined,
+        price_cost_cny: priceConfig.price_cost_cny > 0 ? priceConfig.price_cost_cny : undefined,
+        price_channel_idr: priceConfig.price_channel_idr > 0 ? priceConfig.price_channel_idr : undefined,
+        price_channel_cny: priceConfig.price_channel_cny > 0 ? priceConfig.price_channel_cny : undefined,
+        price_direct_idr: priceConfig.price_direct_idr > 0 ? priceConfig.price_direct_idr : undefined,
+        price_direct_cny: priceConfig.price_direct_cny > 0 ? priceConfig.price_direct_cny : undefined,
+        price_list_idr: priceConfig.price_list_idr > 0 ? priceConfig.price_list_idr : undefined,
+        price_list_cny: priceConfig.price_list_cny > 0 ? priceConfig.price_list_cny : undefined,
+        default_currency: priceConfig.default_currency,
+        exchange_rate: priceConfig.exchange_rate > 0 ? priceConfig.exchange_rate : undefined,
+        // 价格时间字段
+        price_effective_from: priceConfig.effective_from ? new Date(priceConfig.effective_from) : undefined,
+        price_effective_to: priceConfig.effective_to ? new Date(priceConfig.effective_to) : undefined,
+      }
+
+      await createProduct(createData)
+      showSuccess(t('productManagement.success.create'))
+      
+      // 关闭侧边栏
+      setShowPriceConfigSidebar(false)
+      setShowBasicInfoSidebar(false)
+      setBasicInfoData(null)
+      setSelectedIds([])
+      loadProducts(queryParams)
+    } catch (error: any) {
+      showError(error.message || t('productManagement.error.saveFailed'))
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  // 处理价格配置侧边栏的返回
+  const handlePriceConfigBack = () => {
+    setShowPriceConfigSidebar(false)
+    setShowBasicInfoSidebar(true)
+  }
+
+  // 处理编辑提交
+  const handleEditSubmit = async (data: ProductBasicInfo) => {
+    if (!editingProductId) return
+    
+    setSubmitting(true)
+    try {
+      // 构建 tags，包含原有标签和适用地区
+      const tags: string[] = [...(data.tags || [])]
+      // 移除旧的地区标签
+      const filteredTags = tags.filter(tag => !tag.startsWith('region:'))
+      // 添加新的地区标签
+      if (data.applicable_regions && data.applicable_regions.length > 0) {
+        filteredTags.push(...data.applicable_regions.map(region => `region:${region}`))
+      }
+      
+      const updateData: UpdateProductRequest = {
+        // 注意：编辑时不发送 name, code, category_id（这些字段在编辑模式下被禁用）
+        // 注意：编辑时不发送任何价格字段（价格通过独立的价格管理API管理，products表中已无价格字段）
+        service_type: data.service_type || undefined,
+        service_subtype: data.service_type || undefined,
+        processing_days: data.processing_days ? parseInt(data.processing_days) : undefined,
+        processing_time_text: data.description || undefined,
+        is_urgent_available: data.is_urgent_available,
+        status: data.status || undefined,
+        is_active: data.status === 'active',
+        service_level: data.service_level || undefined,
+        required_documents: data.required_documents.length > 0 ? data.required_documents.join(',') : undefined,
+        tags: filteredTags.length > 0 ? filteredTags : undefined,
+        // 适用地区通过 tags 存储，不需要单独发送
+      }
+      
+      await updateProduct(editingProductId, updateData)
+      showSuccess(t('productManagement.success.update'))
+      
+      // 关闭侧边栏
+      setShowBasicInfoSidebar(false)
+      setBasicInfoData(null)
+      setEditingProductId(null)
+      setSelectedIds([])
+      loadProducts(queryParams)
+    } catch (error: any) {
+      showError(error.message || t('productManagement.error.saveFailed'))
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  // 关闭基本信息侧边栏
+  const handleCloseBasicInfoSidebar = () => {
+    setShowBasicInfoSidebar(false)
+    setBasicInfoData(null)
+    setEditingProductId(null)
+  }
+
+  // 关闭价格配置侧边栏
+  const handleClosePriceConfigSidebar = () => {
+    setShowPriceConfigSidebar(false)
+    setBasicInfoData(null)
+  }
+
+  // 提交表单（用于编辑）
   const handleSubmit = async () => {
     if (!modalFormData.name.trim()) {
       showError(t('productManagement.validation.nameRequired'))
@@ -1451,6 +1581,26 @@ const EnterpriseServiceProduct = () => {
         onClose={handleCloseDetail}
         onEdit={handleEdit}
         isAdmin={isAdmin}
+      />
+
+      {/* 产品基本信息侧边栏 */}
+      <ProductBasicInfoSidebar
+        isOpen={showBasicInfoSidebar}
+        onClose={handleCloseBasicInfoSidebar}
+        onNext={handleBasicInfoNext}
+        initialData={basicInfoData || undefined}
+        isEditMode={!!editingProductId}
+        productId={editingProductId || undefined}
+        onSubmit={handleEditSubmit}
+      />
+
+      {/* 产品价格配置侧边栏 */}
+      <ProductPriceConfigSidebar
+        isOpen={showPriceConfigSidebar}
+        onClose={handleClosePriceConfigSidebar}
+        onBack={handlePriceConfigBack}
+        onSubmit={handlePriceConfigSubmit}
+        basicInfo={basicInfoData}
       />
     </div>
   )

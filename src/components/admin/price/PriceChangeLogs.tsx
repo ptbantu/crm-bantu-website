@@ -2,6 +2,7 @@
  * 价格变更日志组件
  */
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Box,
   Card,
@@ -23,6 +24,7 @@ import {
   Flex,
   Spinner,
   Badge,
+  Button,
 } from '@chakra-ui/react'
 import { Search } from 'lucide-react'
 import { useToast } from '@/components/ToastContainer'
@@ -36,6 +38,7 @@ interface PriceChangeLogsProps {
 }
 
 export const PriceChangeLogs = ({ refreshKey }: PriceChangeLogsProps) => {
+  const { t } = useTranslation()
   const { showError } = useToast()
   
   const bgColor = useColorModeValue('white', 'gray.800')
@@ -64,7 +67,7 @@ export const PriceChangeLogs = ({ refreshKey }: PriceChangeLogsProps) => {
       setLogs(result.records)
       setTotal(result.total)
     } catch (error: any) {
-      showError(error.message || '加载日志失败')
+      showError(error.message || t('priceManagement.error.loadLogsFailed', '加载日志失败'))
     } finally {
       setLoading(false)
     }
@@ -81,11 +84,11 @@ export const PriceChangeLogs = ({ refreshKey }: PriceChangeLogsProps) => {
   
   const getChangeTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
-      create: '创建',
-      update: '更新',
-      delete: '删除',
-      activate: '激活',
-      deactivate: '停用',
+      create: t('priceManagement.changeType.create', '创建'),
+      update: t('priceManagement.changeType.update', '更新'),
+      delete: t('priceManagement.changeType.delete', '删除'),
+      activate: t('priceManagement.changeType.activate', '激活'),
+      deactivate: t('priceManagement.changeType.deactivate', '停用'),
     }
     return labels[type] || type
   }
@@ -96,37 +99,37 @@ export const PriceChangeLogs = ({ refreshKey }: PriceChangeLogsProps) => {
         {/* 筛选栏 */}
         <Flex gap={4} mb={4} wrap="wrap">
           <Select
-            placeholder="变更类型"
+            placeholder={t('priceManagement.filter.changeType', '变更类型')}
             maxW="150px"
             value={filters.change_type || ''}
             onChange={(e) => handleFilterChange('change_type', e.target.value || undefined)}
           >
-            <option value="">全部类型</option>
-            <option value="create">创建</option>
-            <option value="update">更新</option>
-            <option value="delete">删除</option>
+            <option value="">{t('priceManagement.filter.allTypes', '全部类型')}</option>
+            <option value="create">{t('priceManagement.changeType.create', '创建')}</option>
+            <option value="update">{t('priceManagement.changeType.update', '更新')}</option>
+            <option value="delete">{t('priceManagement.changeType.delete', '删除')}</option>
           </Select>
           
           <Select
-            placeholder="价格类型"
+            placeholder={t('priceManagement.filter.priceType', '价格类型')}
             maxW="150px"
             value={filters.price_type || ''}
             onChange={(e) => handleFilterChange('price_type', e.target.value || undefined)}
           >
-            <option value="">全部类型</option>
-            <option value="cost">成本价</option>
-            <option value="channel">渠道价</option>
-            <option value="direct">直客价</option>
-            <option value="list">列表价</option>
+            <option value="">{t('priceManagement.filter.allTypes', '全部类型')}</option>
+            <option value="cost">{t('productManagement.detail.priceTypes.cost', '成本价')}</option>
+            <option value="channel">{t('productManagement.detail.priceTypes.channel', '渠道价')}</option>
+            <option value="direct">{t('productManagement.detail.priceTypes.direct', '直客价')}</option>
+            <option value="list">{t('productManagement.detail.priceTypes.list', '列表价')}</option>
           </Select>
           
           <Select
-            placeholder="货币"
+            placeholder={t('priceManagement.filter.currency', '货币')}
             maxW="120px"
             value={filters.currency || ''}
             onChange={(e) => handleFilterChange('currency', e.target.value || undefined)}
           >
-            <option value="">全部货币</option>
+            <option value="">{t('priceManagement.filter.allCurrencies', '全部货币')}</option>
             <option value="CNY">CNY</option>
             <option value="IDR">IDR</option>
           </Select>
@@ -139,21 +142,21 @@ export const PriceChangeLogs = ({ refreshKey }: PriceChangeLogsProps) => {
           </Flex>
         ) : logs.length === 0 ? (
           <Text textAlign="center" color="gray.500" py={8}>
-            暂无日志记录
+            {t('priceManagement.noLogs', '暂无日志记录')}
           </Text>
         ) : (
           <Box overflowX="auto">
             <Table variant="simple" size="sm">
               <Thead>
                 <Tr>
-                  <Th>时间</Th>
-                  <Th>产品</Th>
-                  <Th>变更类型</Th>
-                  <Th>价格类型</Th>
-                  <Th>变更前</Th>
-                  <Th>变更后</Th>
-                  <Th>变动</Th>
-                  <Th>操作人</Th>
+                  <Th>{t('priceManagement.table.time', '时间')}</Th>
+                  <Th>{t('priceManagement.table.product', '产品')}</Th>
+                  <Th>{t('priceManagement.table.changeType', '变更类型')}</Th>
+                  <Th>{t('priceManagement.table.priceType', '价格类型')}</Th>
+                  <Th>{t('priceManagement.table.before', '变更前')}</Th>
+                  <Th>{t('priceManagement.table.after', '变更后')}</Th>
+                  <Th>{t('priceManagement.table.change', '变动')}</Th>
+                  <Th>{t('priceManagement.table.operator', '操作人')}</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -235,7 +238,7 @@ export const PriceChangeLogs = ({ refreshKey }: PriceChangeLogsProps) => {
         {total > pageSize && (
           <Flex justify="space-between" align="center" mt={4} pt={4} borderTop="1px" borderColor={borderColor}>
             <Text fontSize="sm" color="gray.500">
-              共 {total} 条记录
+              {t('priceManagement.pagination.total', '共')} {total} {t('priceManagement.pagination.records', '条记录')}
             </Text>
             <HStack spacing={2}>
               <Button
@@ -243,17 +246,17 @@ export const PriceChangeLogs = ({ refreshKey }: PriceChangeLogsProps) => {
                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 isDisabled={currentPage === 1}
               >
-                上一页
+                {t('priceManagement.pagination.previous', '上一页')}
               </Button>
               <Text fontSize="sm">
-                第 {currentPage} / {Math.ceil(total / pageSize)} 页
+                {t('priceManagement.pagination.page', '第')} {currentPage} / {Math.ceil(total / pageSize)} {t('priceManagement.pagination.pageUnit', '页')}
               </Text>
               <Button
                 size="sm"
                 onClick={() => setCurrentPage(prev => prev + 1)}
                 isDisabled={currentPage >= Math.ceil(total / pageSize)}
               >
-                下一页
+                {t('priceManagement.pagination.next', '下一页')}
               </Button>
             </HStack>
           </Flex>

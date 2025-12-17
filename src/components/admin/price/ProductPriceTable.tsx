@@ -1,7 +1,8 @@
 /**
  * 产品价格表格组件（列格式：一条记录包含所有价格类型和货币）
  */
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Box,
   Table,
@@ -12,11 +13,9 @@ import {
   Td,
   Input,
   HStack,
-  VStack,
   Button,
   Badge,
   Text,
-  IconButton,
   useColorModeValue,
   InputGroup,
   InputLeftElement,
@@ -24,14 +23,12 @@ import {
   Spinner,
   Card,
   CardBody,
-  Grid,
-  GridItem,
 } from '@chakra-ui/react'
-import { Search, Edit, Eye, History, Plus, Filter } from 'lucide-react'
+import { Search, Plus } from 'lucide-react'
 import { useToast } from '@/components/ToastContainer'
 import { getPriceList, PriceStrategy, PriceListParams } from '@/api/prices'
 import { formatPrice } from '@/utils/formatPrice'
-import { getPriceStatus, getPriceTypeLabel, getCurrencyIcon } from '@/utils/priceUtils'
+import { getPriceStatus } from '@/utils/priceUtils'
 import { PriceEditModal } from './PriceEditModal'
 import { PriceHistoryPanel } from './PriceHistoryPanel'
 
@@ -41,11 +38,13 @@ interface ProductPriceTableProps {
 }
 
 export const ProductPriceTable = ({ isAdmin, refreshKey }: ProductPriceTableProps) => {
+  const { t } = useTranslation()
   const { showError } = useToast()
   
   const bgColor = useColorModeValue('white', 'gray.800')
   const borderColor = useColorModeValue('gray.200', 'gray.700')
   const hoverBg = useColorModeValue('gray.50', 'gray.700')
+  const priceBg = useColorModeValue('blue.50', 'blue.900')
   
   const [prices, setPrices] = useState<PriceStrategy[]>([])
   const [loading, setLoading] = useState(false)
@@ -79,7 +78,7 @@ export const ProductPriceTable = ({ isAdmin, refreshKey }: ProductPriceTableProp
       setPrices(result.records)
       setTotal(result.total)
     } catch (error: any) {
-      showError(error.message || '加载价格列表失败')
+      showError(error.message || t('priceManagement.error.loadFailed'))
     } finally {
       setLoading(false)
     }
@@ -98,7 +97,7 @@ export const ProductPriceTable = ({ isAdmin, refreshKey }: ProductPriceTableProp
   // 处理编辑
   const handleEdit = (price: PriceStrategy) => {
     if (!isAdmin) {
-      showError('需要管理员权限')
+      showError(t('priceManagement.error.adminRequired'))
       return
     }
     setSelectedPrice(price)
@@ -114,37 +113,28 @@ export const ProductPriceTable = ({ isAdmin, refreshKey }: ProductPriceTableProp
   // 处理新增价格
   const handleAddPrice = () => {
     if (!isAdmin) {
-      showError('需要管理员权限')
+      showError(t('priceManagement.error.adminRequired'))
       return
     }
     setSelectedPrice(null)
     setShowEditModal(true)
   }
   
-  // 获取价格显示（列格式：一条记录包含所有价格）
-  const getPriceDisplay = (price: PriceStrategy) => {
-    const prices: Array<{ type: string; currency: string; value: number | null }> = []
-    
-    if (price.price_channel_idr !== null && price.price_channel_idr !== undefined) {
-      prices.push({ type: 'channel', currency: 'IDR', value: price.price_channel_idr })
+  // 格式化日期时间
+  const formatDateTime = (dateStr: string | null | undefined) => {
+    if (!dateStr) return '-'
+    try {
+      const date = new Date(dateStr)
+      return date.toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    } catch {
+      return dateStr
     }
-    if (price.price_channel_cny !== null && price.price_channel_cny !== undefined) {
-      prices.push({ type: 'channel', currency: 'CNY', value: price.price_channel_cny })
-    }
-    if (price.price_direct_idr !== null && price.price_direct_idr !== undefined) {
-      prices.push({ type: 'direct', currency: 'IDR', value: price.price_direct_idr })
-    }
-    if (price.price_direct_cny !== null && price.price_direct_cny !== undefined) {
-      prices.push({ type: 'direct', currency: 'CNY', value: price.price_direct_cny })
-    }
-    if (price.price_list_idr !== null && price.price_list_idr !== undefined) {
-      prices.push({ type: 'list', currency: 'IDR', value: price.price_list_idr })
-    }
-    if (price.price_list_cny !== null && price.price_list_cny !== undefined) {
-      prices.push({ type: 'list', currency: 'CNY', value: price.price_list_cny })
-    }
-    
-    return prices
   }
   
   return (
@@ -158,7 +148,7 @@ export const ProductPriceTable = ({ isAdmin, refreshKey }: ProductPriceTableProp
                 <Search size={16} />
               </InputLeftElement>
               <Input
-                placeholder="搜索产品名称或编码"
+                placeholder={t('priceManagement.searchPlaceholder')}
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
               />
@@ -170,7 +160,7 @@ export const ProductPriceTable = ({ isAdmin, refreshKey }: ProductPriceTableProp
                 colorScheme="blue"
                 onClick={handleAddPrice}
               >
-                新增价格
+                {t('priceManagement.addPrice')}
               </Button>
             )}
           </Flex>
@@ -186,94 +176,167 @@ export const ProductPriceTable = ({ isAdmin, refreshKey }: ProductPriceTableProp
             </Flex>
           ) : (
             <Box overflowX="auto">
-              <Table variant="simple">
+              <Table variant="simple" size="sm">
                 <Thead>
                   <Tr>
-                    <Th>产品信息</Th>
-                    <Th>价格详情（列格式：一条记录包含所有价格）</Th>
-                    <Th>状态</Th>
-                    <Th>操作</Th>
+                    <Th 
+                      position="sticky" 
+                      left={0} 
+                      zIndex={10} 
+                      bg={bgColor} 
+                      borderRight="1px" 
+                      borderColor={borderColor}
+                      whiteSpace="nowrap"
+                      minW="120px"
+                    >
+                      {t('priceManagement.table.productName')}
+                    </Th>
+                    <Th whiteSpace="nowrap" minW="100px">{t('priceManagement.table.category')}</Th>
+                    <Th whiteSpace="nowrap" minW="100px">{t('priceManagement.table.serviceCode')}</Th>
+                    <Th bg={priceBg} whiteSpace="nowrap" minW="110px">{t('priceManagement.table.priceCostIdr')}</Th>
+                    <Th bg={priceBg} whiteSpace="nowrap" minW="110px">{t('priceManagement.table.priceCostCny')}</Th>
+                    <Th bg={priceBg} whiteSpace="nowrap" minW="110px">{t('priceManagement.table.priceDirectIdr')}</Th>
+                    <Th bg={priceBg} whiteSpace="nowrap" minW="110px">{t('priceManagement.table.priceDirectCny')}</Th>
+                    <Th bg={priceBg} whiteSpace="nowrap" minW="110px">{t('priceManagement.table.priceChannelIdr')}</Th>
+                    <Th bg={priceBg} whiteSpace="nowrap" minW="110px">{t('priceManagement.table.priceChannelCny')}</Th>
+                    <Th bg={priceBg} whiteSpace="nowrap" minW="110px">{t('priceManagement.table.priceListIdr')}</Th>
+                    <Th bg={priceBg} whiteSpace="nowrap" minW="110px">{t('priceManagement.table.priceListCny')}</Th>
+                    <Th whiteSpace="nowrap" minW="140px">{t('priceManagement.table.effectiveFrom')}</Th>
+                    <Th whiteSpace="nowrap" minW="140px">{t('priceManagement.table.effectiveTo')}</Th>
+                    <Th whiteSpace="nowrap" minW="100px">{t('priceManagement.table.status')}</Th>
+                    <Th 
+                      position="sticky" 
+                      right={0} 
+                      zIndex={10} 
+                      bg={bgColor} 
+                      borderLeft="1px" 
+                      borderColor={borderColor}
+                      whiteSpace="nowrap"
+                      minW="150px"
+                    >
+                      {t('priceManagement.table.actions')}
+                    </Th>
                   </Tr>
                 </Thead>
                 <Tbody>
                   {prices.length === 0 ? (
                     <Tr>
-                      <Td colSpan={4} textAlign="center" py={8}>
-                        <Text color="gray.500">暂无数据</Text>
+                      <Td colSpan={15} textAlign="center" py={8}>
+                        <Text color="gray.500">{t('priceManagement.noData')}</Text>
                       </Td>
                     </Tr>
                   ) : (
                     prices.map((price) => {
                       const status = getPriceStatus(price.effective_from, price.effective_to)
-                      const priceDisplay = getPriceDisplay(price)
                       
                       return (
                         <Tr key={price.id} _hover={{ bg: hoverBg }}>
-                          <Td>
-                            <VStack align="start" spacing={0}>
-                              <Text fontWeight="medium">{price.product_name || '未知产品'}</Text>
-                              <Text fontSize="sm" color="gray.500">
-                                {price.product_id}
-                              </Text>
-                            </VStack>
+                          <Td 
+                            position="sticky" 
+                            left={0} 
+                            zIndex={5} 
+                            bg={bgColor}
+                            borderRight="1px" 
+                            borderColor={borderColor}
+                            fontWeight="medium"
+                          >
+                            {price.product_name || '-'}
                           </Td>
-                          <Td>
-                            <VStack align="start" spacing={2}>
-                              {priceDisplay.length === 0 ? (
-                                <Text color="gray.400">暂无价格</Text>
-                              ) : (
-                                priceDisplay.map((p, idx) => (
-                                  <HStack key={idx} spacing={2}>
-                                    <Badge colorScheme="blue" fontSize="xs">
-                                      {getPriceTypeLabel(p.type)}
-                                    </Badge>
-                                    <Badge colorScheme="green" fontSize="xs">
-                                      {getCurrencyIcon(p.currency)} {p.currency}
-                                    </Badge>
-                                    <Text fontWeight="bold" color="blue.500" fontSize="sm">
-                                      {formatPrice(p.value!, p.currency)}
-                                    </Text>
-                                  </HStack>
-                                ))
-                              )}
-                              {price.exchange_rate && (
-                                <Text fontSize="xs" color="gray.500">
-                                  汇率: {price.exchange_rate}
-                                </Text>
-                              )}
-                            </VStack>
+                          <Td>{price.category_name || '-'}</Td>
+                          <Td>{price.product_code || '-'}</Td>
+                          <Td bg={priceBg} fontFamily="mono" fontSize="xs">
+                            {price.price_cost_idr !== null && price.price_cost_idr !== undefined 
+                              ? formatPrice(price.price_cost_idr, 'IDR') 
+                              : '-'}
                           </Td>
+                          <Td bg={priceBg} fontFamily="mono" fontSize="xs">
+                            {price.price_cost_cny !== null && price.price_cost_cny !== undefined 
+                              ? formatPrice(price.price_cost_cny, 'CNY') 
+                              : '-'}
+                          </Td>
+                          <Td bg={priceBg} fontFamily="mono" fontSize="xs">
+                            {price.price_direct_idr !== null && price.price_direct_idr !== undefined 
+                              ? formatPrice(price.price_direct_idr, 'IDR') 
+                              : '-'}
+                          </Td>
+                          <Td bg={priceBg} fontFamily="mono" fontSize="xs">
+                            {price.price_direct_cny !== null && price.price_direct_cny !== undefined 
+                              ? formatPrice(price.price_direct_cny, 'CNY') 
+                              : '-'}
+                          </Td>
+                          <Td bg={priceBg} fontFamily="mono" fontSize="xs">
+                            {price.price_channel_idr !== null && price.price_channel_idr !== undefined 
+                              ? formatPrice(price.price_channel_idr, 'IDR') 
+                              : '-'}
+                          </Td>
+                          <Td bg={priceBg} fontFamily="mono" fontSize="xs">
+                            {price.price_channel_cny !== null && price.price_channel_cny !== undefined 
+                              ? formatPrice(price.price_channel_cny, 'CNY') 
+                              : '-'}
+                          </Td>
+                          <Td bg={priceBg} fontFamily="mono" fontSize="xs">
+                            {price.price_list_idr !== null && price.price_list_idr !== undefined 
+                              ? formatPrice(price.price_list_idr, 'IDR') 
+                              : '-'}
+                          </Td>
+                          <Td bg={priceBg} fontFamily="mono" fontSize="xs">
+                            {price.price_list_cny !== null && price.price_list_cny !== undefined 
+                              ? formatPrice(price.price_list_cny, 'CNY') 
+                              : '-'}
+                          </Td>
+                          <Td fontSize="xs">{formatDateTime(price.effective_from)}</Td>
+                          <Td fontSize="xs">{formatDateTime(price.effective_to)}</Td>
                           <Td>
-                            <Badge colorScheme={status.status === 'active' ? 'green' : status.status === 'upcoming' ? 'orange' : 'red'}>
-                              {status.label}
+                            <Badge 
+                              colorScheme={
+                                status.status === 'active' ? 'green' : 
+                                status.status === 'upcoming' ? 'orange' : 
+                                'red'
+                              }
+                            >
+                              {status.status === 'active' 
+                                ? t('priceManagement.table.statusActive', '生效中')
+                                : status.status === 'upcoming'
+                                ? t('priceManagement.table.statusUpcoming', '未来生效', { hours: status.hoursUntil || 0 })
+                                : t('priceManagement.table.statusExpired', '已过期')}
                             </Badge>
                           </Td>
-                          <Td>
-                            <HStack spacing={2}>
+                          <Td 
+                            position="sticky" 
+                            right={0} 
+                            zIndex={5} 
+                            bg={bgColor}
+                            borderLeft="1px" 
+                            borderColor={borderColor}
+                          >
+                            <HStack spacing={2} flexWrap="wrap">
                               {isAdmin ? (
-                                <IconButton
-                                  aria-label="编辑"
-                                  icon={<Edit size={16} />}
-                                  size="sm"
+                                <Button
+                                  size="xs"
                                   variant="ghost"
+                                  colorScheme="blue"
                                   onClick={() => handleEdit(price)}
-                                />
+                                >
+                                  {t('priceManagement.table.edit')}
+                                </Button>
                               ) : (
-                                <IconButton
-                                  aria-label="查看"
-                                  icon={<Eye size={16} />}
-                                  size="sm"
+                                <Button
+                                  size="xs"
                                   variant="ghost"
+                                  colorScheme="blue"
                                   onClick={() => handleEdit(price)}
-                                />
+                                >
+                                  {t('priceManagement.table.view')}
+                                </Button>
                               )}
-                              <IconButton
-                                aria-label="历史"
-                                icon={<History size={16} />}
-                                size="sm"
+                              <Button
+                                size="xs"
                                 variant="ghost"
+                                colorScheme="gray"
                                 onClick={() => handleViewHistory(price.product_id)}
-                              />
+                              >
+                                {t('priceManagement.table.history')}
+                              </Button>
                             </HStack>
                           </Td>
                         </Tr>
@@ -289,7 +352,7 @@ export const ProductPriceTable = ({ isAdmin, refreshKey }: ProductPriceTableProp
           {total > pageSize && (
             <Flex justify="space-between" align="center" p={4} borderTop="1px" borderColor={borderColor}>
               <Text fontSize="sm" color="gray.500">
-                共 {total} 条记录
+                {t('priceManagement.pagination.total')} {total} {t('priceManagement.pagination.records')}
               </Text>
               <HStack spacing={2}>
                 <Button
@@ -297,17 +360,17 @@ export const ProductPriceTable = ({ isAdmin, refreshKey }: ProductPriceTableProp
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                   isDisabled={currentPage === 1}
                 >
-                  上一页
+                  {t('priceManagement.pagination.previous')}
                 </Button>
                 <Text fontSize="sm">
-                  第 {currentPage} / {Math.ceil(total / pageSize)} 页
+                  {t('priceManagement.pagination.page')} {currentPage} / {Math.ceil(total / pageSize)} {t('priceManagement.pagination.pageUnit')}
                 </Text>
                 <Button
                   size="sm"
                   onClick={() => setCurrentPage(prev => prev + 1)}
                   isDisabled={currentPage >= Math.ceil(total / pageSize)}
                 >
-                  下一页
+                  {t('priceManagement.pagination.next')}
                 </Button>
               </HStack>
             </Flex>

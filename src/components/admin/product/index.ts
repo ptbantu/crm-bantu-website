@@ -1,1 +1,5 @@
 export { default as ProductDetailDrawer } from './ProductDetailDrawer'
+export { default as ProductBasicInfoSidebar } from './ProductBasicInfoSidebar'
+export { default as ProductPriceConfigSidebar } from './ProductPriceConfigSidebar'
+export type { ProductBasicInfo } from './ProductBasicInfoSidebar'
+export type { ProductPriceConfig } from './ProductPriceConfigSidebar'

@@ -73,7 +73,7 @@ const ProductDetailDrawer = ({ productId, isOpen, onClose, onEdit, isAdmin = fal
       const result = await getProductDetailAggregated(productId)
       setData(result)
     } catch (err: any) {
-      const errorMessage = err.message || '加载产品详情失败'
+      const errorMessage = err.message || t('productManagement.detail.error.loadFailed', '加载产品详情失败')
       setError(errorMessage)
       showError(errorMessage)
     } finally {
@@ -102,7 +102,7 @@ const ProductDetailDrawer = ({ productId, isOpen, onClose, onEdit, isAdmin = fal
         <DrawerHeader borderBottomWidth="1px" pb={4}>
           {data ? (
             <>
-              产品详情 - {data.overview.name}
+              {t('productManagement.detail.title', '产品详情')} - {data.overview.name}
               {data.overview.code && (
                 <Box as="span" fontSize="sm" color="gray.500" fontWeight="normal" ml={2}>
                   ({data.overview.code})
@@ -110,7 +110,7 @@ const ProductDetailDrawer = ({ productId, isOpen, onClose, onEdit, isAdmin = fal
               )}
             </>
           ) : (
-            '产品详情'
+            t('productManagement.detail.title', '产品详情')
           )}
         </DrawerHeader>
 
@@ -127,13 +127,13 @@ const ProductDetailDrawer = ({ productId, isOpen, onClose, onEdit, isAdmin = fal
           ) : data ? (
             <Tabs index={activeTab} onChange={handleTabChange} colorScheme="blue">
               <TabList px={4} borderBottomWidth="1px" position="sticky" top={0} bg={bgColor} zIndex={1}>
-                <Tab>概览</Tab>
-                <Tab>价格</Tab>
-                <Tab>供应商</Tab>
-                <Tab>统计</Tab>
-                <Tab>历史</Tab>
-                <Tab>规则</Tab>
-                <Tab>操作</Tab>
+                <Tab>{t('productManagement.detail.tabs.overview', '概览')}</Tab>
+                <Tab>{t('productManagement.detail.tabs.price', '价格')}</Tab>
+                <Tab>{t('productManagement.detail.tabs.supplier', '供应商')}</Tab>
+                <Tab>{t('productManagement.detail.tabs.statistics', '统计')}</Tab>
+                <Tab>{t('productManagement.detail.tabs.history', '历史')}</Tab>
+                <Tab>{t('productManagement.detail.tabs.rules', '规则')}</Tab>
+                <Tab>{t('productManagement.detail.tabs.operations', '操作')}</Tab>
               </TabList>
 
               <TabPanels>

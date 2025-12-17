@@ -9,9 +9,15 @@ import { PaginatedResponse } from './types'
 export interface PriceStrategy {
   id: string
   product_id: string
-  product_name?: string
+  product_name?: string | null
+  product_code?: string | null
+  category_id?: string | null
+  category_name?: string | null
   organization_id?: string | null
   organization_name?: string | null
+  // 成本价
+  price_cost_idr?: number | null
+  price_cost_cny?: number | null
   // 渠道价
   price_channel_idr?: number | null
   price_channel_cny?: number | null

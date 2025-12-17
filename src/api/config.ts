@@ -110,6 +110,7 @@ export const API_PATHS = {
     BASE: '/api/service-management/products',
     BY_ID: (id: string) => `/api/service-management/products/${id}`,
     BY_VENDOR: (vendorId: string) => `/api/service-management/products/vendors/${vendorId}`,
+    CHECK_CODE: (code: string) => `/api/service-management/products/check-code/${code}`,
   },
   // 服务管理 - 企服供应商
   SUPPLIERS: {

@@ -1,6 +1,7 @@
 /**
  * 规则与文档Tab
  */
+import { useTranslation } from 'react-i18next'
 import {
   Box,
   VStack,
@@ -17,6 +18,7 @@ interface RulesTabProps {
 }
 
 const RulesTab = ({ data }: RulesTabProps) => {
+  const { t } = useTranslation()
   const { rules, overview } = data
 
   return (
@@ -24,7 +26,7 @@ const RulesTab = ({ data }: RulesTabProps) => {
       {/* 注意事项 */}
       {rules.notes && (
         <Box>
-          <Heading size="md" mb={3}>注意事项</Heading>
+          <Heading size="md" mb={3}>{t('productManagement.detail.notes', '注意事项')}</Heading>
           <Text whiteSpace="pre-wrap" fontSize="sm">{rules.notes}</Text>
         </Box>
       )}
@@ -33,7 +35,7 @@ const RulesTab = ({ data }: RulesTabProps) => {
       {rules.required_documents && (
         <Box>
           {rules.notes && <Divider my={4} />}
-          <Heading size="md" mb={3}>所需材料</Heading>
+          <Heading size="md" mb={3}>{t('productManagement.detail.requiredDocuments', '所需材料')}</Heading>
           <Text whiteSpace="pre-wrap" fontSize="sm">{rules.required_documents}</Text>
         </Box>
       )}
@@ -42,7 +44,7 @@ const RulesTab = ({ data }: RulesTabProps) => {
       {rules.processing_flow && (
         <Box>
           {(rules.notes || rules.required_documents) && <Divider my={4} />}
-          <Heading size="md" mb={3}>处理流程</Heading>
+          <Heading size="md" mb={3}>{t('productManagement.detail.processingFlow', '处理流程')}</Heading>
           <Text whiteSpace="pre-wrap" fontSize="sm">{rules.processing_flow}</Text>
         </Box>
       )}
@@ -51,7 +53,7 @@ const RulesTab = ({ data }: RulesTabProps) => {
       {rules.faq && (
         <Box>
           {(rules.notes || rules.required_documents || rules.processing_flow) && <Divider my={4} />}
-          <Heading size="md" mb={3}>常见问题</Heading>
+          <Heading size="md" mb={3}>{t('productManagement.detail.faq', '常见问题')}</Heading>
           <Text whiteSpace="pre-wrap" fontSize="sm">{rules.faq}</Text>
         </Box>
       )}
@@ -59,7 +61,7 @@ const RulesTab = ({ data }: RulesTabProps) => {
       {/* 如果没有规则信息 */}
       {!rules.notes && !rules.required_documents && !rules.processing_flow && !rules.faq && (
         <Box>
-          <Text color="gray.500">暂无规则与文档信息</Text>
+          <Text color="gray.500">{t('productManagement.detail.noRulesInfo', '暂无规则与文档信息')}</Text>
         </Box>
       )}
     </VStack>

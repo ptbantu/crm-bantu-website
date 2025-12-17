@@ -1,6 +1,7 @@
 /**
  * 供应商信息Tab
  */
+import { useTranslation } from 'react-i18next'
 import { Building2, Phone, Mail, MapPin, CheckCircle2, XCircle } from 'lucide-react'
 import {
   Box,
@@ -24,12 +25,13 @@ interface SupplierTabProps {
 }
 
 const SupplierTab = ({ data }: SupplierTabProps) => {
+  const { t } = useTranslation()
   const { suppliers } = data
 
   if (suppliers.length === 0) {
     return (
       <Box>
-        <Text color="gray.500">暂无供应商信息</Text>
+        <Text color="gray.500">{t('productManagement.detail.noSupplierInfo', '暂无供应商信息')}</Text>
       </Box>
     )
   }
@@ -44,29 +46,29 @@ const SupplierTab = ({ data }: SupplierTabProps) => {
       {primarySuppliers.length > 0 && (
         <Box>
           <Heading size="md" mb={4}>
-            主要供应商
+            {t('productManagement.detail.primarySuppliers', '主要供应商')}
           </Heading>
           {primarySuppliers.map((supplier, index) => (
             <Box key={index} p={4} borderWidth="1px" borderRadius="md" mb={4}>
               <VStack align="stretch" spacing={2}>
                 <HStack>
-                  <Text fontWeight="bold">{supplier.vendor_name || '未知供应商'}</Text>
-                  <Badge colorScheme="yellow">黄金级供应商</Badge>
+                  <Text fontWeight="bold">{supplier.vendor_name || t('productManagement.detail.unknownSupplier', '未知供应商')}</Text>
+                  <Badge colorScheme="yellow">{t('productManagement.detail.goldSupplier', '黄金级供应商')}</Badge>
                   {supplier.is_available ? (
                     <Badge colorScheme="green">
                       <CheckCircle2 size={12} style={{ display: 'inline', marginRight: 4 }} />
-                      合作中
+                      {t('productManagement.detail.cooperating', '合作中')}
                     </Badge>
                   ) : (
                     <Badge colorScheme="red">
                       <XCircle size={12} style={{ display: 'inline', marginRight: 4 }} />
-                      暂停
+                      {t('productManagement.detail.suspended', '暂停')}
                     </Badge>
                   )}
                 </HStack>
                 {supplier.contact_name && (
                   <HStack fontSize="sm" color="gray.600">
-                    <Text>联系人：{supplier.contact_name}</Text>
+                    <Text>{t('productManagement.detail.contact', '联系人')}：{supplier.contact_name}</Text>
                   </HStack>
                 )}
                 {supplier.contact_phone && (
@@ -94,7 +96,7 @@ const SupplierTab = ({ data }: SupplierTabProps) => {
                 )}
                 {supplier.contract_start && supplier.contract_end && (
                   <Text fontSize="sm" color="gray.600">
-                    合同：{new Date(supplier.contract_start).toLocaleDateString('zh-CN')} ~ {new Date(supplier.contract_end).toLocaleDateString('zh-CN')}
+                    {t('productManagement.detail.contract', '合同')}：{new Date(supplier.contract_start).toLocaleDateString()} ~ {new Date(supplier.contract_end).toLocaleDateString()}
                   </Text>
                 )}
               </VStack>
@@ -108,32 +110,32 @@ const SupplierTab = ({ data }: SupplierTabProps) => {
         <Box>
           {primarySuppliers.length > 0 && <Divider my={4} />}
           <Heading size="md" mb={4}>
-            备选供应商 ({alternativeSuppliers.length}家)
+            {t('productManagement.detail.alternativeSuppliers', '备选供应商')} ({alternativeSuppliers.length}{t('productManagement.detail.count', '家')})
           </Heading>
           <Table variant="simple" size="sm">
             <Thead>
               <Tr>
-                <Th>名称</Th>
-                <Th>等级</Th>
-                <Th>联系人</Th>
-                <Th>电话</Th>
-                <Th>状态</Th>
+                <Th>{t('productManagement.detail.name', '名称')}</Th>
+                <Th>{t('productManagement.detail.level', '等级')}</Th>
+                <Th>{t('productManagement.detail.contact', '联系人')}</Th>
+                <Th>{t('productManagement.detail.phone', '电话')}</Th>
+                <Th>{t('productManagement.detail.status', '状态')}</Th>
               </Tr>
             </Thead>
             <Tbody>
               {alternativeSuppliers.map((supplier, index) => (
                 <Tr key={index}>
-                  <Td>{supplier.vendor_name || '未知供应商'}</Td>
+                  <Td>{supplier.vendor_name || t('productManagement.detail.unknownSupplier', '未知供应商')}</Td>
                   <Td>
-                    <Badge colorScheme="gray">白银级</Badge>
+                    <Badge colorScheme="gray">{t('productManagement.detail.silverSupplier', '白银级')}</Badge>
                   </Td>
                   <Td>{supplier.contact_name || '-'}</Td>
                   <Td>{supplier.contact_phone || '-'}</Td>
                   <Td>
                     {supplier.is_available ? (
-                      <Badge colorScheme="green">备用</Badge>
+                      <Badge colorScheme="green">{t('productManagement.detail.backup', '备用')}</Badge>
                     ) : (
-                      <Badge colorScheme="red">暂停</Badge>
+                      <Badge colorScheme="red">{t('productManagement.detail.suspended', '暂停')}</Badge>
                     )}
                   </Td>
                 </Tr>

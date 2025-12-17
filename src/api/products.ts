@@ -126,14 +126,41 @@ export interface UpdateProductRequest {
   code?: string
   category_id?: string
   service_type?: string
+  service_type_id?: string
   service_subtype?: string
+  validity_period?: number
   processing_days?: number
   processing_time_text?: string
+  is_urgent_available?: boolean
+  urgent_processing_days?: number
+  urgent_price_surcharge?: number
+  std_duration_days?: number
+  allow_multi_vendor?: boolean
+  default_supplier_id?: string
+  price_cost_idr?: number
+  price_cost_cny?: number
+  price_channel_idr?: number
+  price_channel_cny?: number
   price_direct_idr?: number
   price_direct_cny?: number
   price_list_idr?: number
   price_list_cny?: number
+  exchange_rate?: number
+  price_effective_from?: Date
+  commission_rate?: number
+  commission_amount?: number
+  equivalent_cny?: number
+  monthly_orders?: number
+  total_amount?: number
+  sla_description?: string
+  service_level?: string
   status?: string
+  suspended_reason?: string
+  discontinued_at?: Date
+  required_documents?: string
+  notes?: string
+  tags?: string[]
+  applicable_regions?: string[]
   is_active?: boolean
 }
 
@@ -163,5 +190,24 @@ export async function getProductDetailAggregated(id: string): Promise<ProductDet
     console.error('获取产品详情聚合数据失败:', error)
     throw error
   }
+}
+
+/**
+ * 检查产品编码是否已存在
+ */
+export async function checkProductCode(
+  code: string,
+  excludeProductId?: string
+): Promise<{ exists: boolean; code: string }> {
+  const queryParams = new URLSearchParams()
+  if (excludeProductId) {
+    queryParams.append('exclude_product_id', excludeProductId)
+  }
+  const queryString = queryParams.toString()
+  const url = queryString
+    ? `${API_PATHS.PRODUCTS.CHECK_CODE(code)}?${queryString}`
+    : API_PATHS.PRODUCTS.CHECK_CODE(code)
+  const result = await get<{ exists: boolean; code: string }>(url)
+  return result.data!
 }
 
