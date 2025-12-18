@@ -673,6 +673,7 @@
     "systemLogs": "Log Sistem",
     "auditLogs": "Audit Sistem",
     "systemMonitoring": "Pemantauan Sistem",
+    "systemConfig": "Konfigurasi Sistem",
     "vendors": "Manajemen Vendor",
     "customer": "Manajemen Pelanggan",
     "customerSales": "Pelanggan & Penjualan",
@@ -2363,6 +2364,75 @@
       "contentRequired": "Konten tidak boleh kosong",
       "followUpCreateFailed": "Gagal membuat catatan tindak lanjut",
       "noteCreateFailed": "Gagal membuat catatan"
+    }
+  },
+  "systemConfig": {
+    "title": "Konfigurasi Sistem",
+    "subtitle": "Kelola konfigurasi berbagai layanan sistem",
+    "loadError": "Gagal memuat konfigurasi",
+    "saveSuccess": "Konfigurasi berhasil disimpan",
+    "saveError": "Gagal menyimpan konfigurasi",
+    "enabled": "Diaktifkan",
+    "tabs": {
+      "oss": "Konfigurasi OSS",
+      "ai": "Layanan AI",
+      "sms": "Layanan SMS",
+      "email": "Layanan Email",
+      "status": "Status Sistem"
+    },
+    "oss": {
+      "title": "Konfigurasi Penyimpanan Objek OSS",
+      "endpoint": "Endpoint OSS",
+      "accessKeyId": "AccessKey ID",
+      "accessKeySecret": "AccessKey Secret",
+      "bucketName": "Nama Bucket",
+      "region": "Wilayah"
+    },
+    "ai": {
+      "title": "Konfigurasi Layanan AI",
+      "provider": "Penyedia Layanan",
+      "apiKey": "Kunci API",
+      "apiBase": "URL Dasar API",
+      "model": "Nama Model",
+      "temperature": "Parameter Suhu",
+      "maxTokens": "Token Maksimum"
+    },
+    "sms": {
+      "title": "Konfigurasi Layanan SMS",
+      "provider": "Penyedia Layanan",
+      "accessKeyId": "AccessKey ID",
+      "accessKeySecret": "AccessKey Secret",
+      "signName": "Tanda Tangan SMS",
+      "templateCode": "Kode Template",
+      "region": "Wilayah"
+    },
+    "email": {
+      "title": "Konfigurasi Layanan Email",
+      "smtpHost": "Server SMTP",
+      "smtpPort": "Port SMTP",
+      "smtpUser": "Nama Pengguna SMTP",
+      "smtpPassword": "Kata Sandi SMTP",
+      "useTls": "Gunakan TLS",
+      "fromEmail": "Email Pengirim",
+      "fromName": "Nama Pengirim"
+    },
+    "status": {
+      "title": "Status Sistem",
+      "version": "Versi Sistem",
+      "uptime": "Waktu Aktif",
+      "database": "Basis Data",
+      "cpuUsage": "Penggunaan CPU",
+      "memoryUsage": "Penggunaan Memori",
+      "diskUsage": "Penggunaan Disk",
+      "activeUsers": "Pengguna Aktif",
+      "totalRequests": "Total Permintaan"
+    },
+    "test": {
+      "test": "Uji Koneksi",
+      "testing": "Menguji...",
+      "success": "Uji koneksi berhasil",
+      "failed": "Uji koneksi gagal",
+      "error": "Kesalahan pengujian"
     }
   }
 }
