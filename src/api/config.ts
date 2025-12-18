@@ -196,5 +196,7 @@ export const API_PATHS = {
     CUSTOMER_LEVELS: '/api/order-workflow/customer-levels',
     FOLLOW_UP_STATUSES: '/api/order-workflow/follow-up-statuses',
   },
+  // Foundation Service 基础路径
+  FOUNDATION: '/api/foundation',
 } as const
 

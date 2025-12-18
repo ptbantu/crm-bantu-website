@@ -32,6 +32,7 @@ export const Breadcrumb = () => {
     'system-status': 'menu.systemStatus',
     'system-logs': 'menu.systemLogs',
     'system-monitoring': 'menu.systemMonitoring',
+    'system-config': 'menu.systemConfig',
     'customer': 'menu.customer',
     'customer-sales': 'menu.customerSales',
     'customers': 'menu.customers',

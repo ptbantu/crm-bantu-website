@@ -233,6 +233,13 @@ export const adminMenuItems: MenuItem[] = [
         path: '/admin/system-management/audit-logs',
         role: Role.ADMIN,
       },
+      {
+        key: 'systemConfig',
+        label: 'menu.systemConfig',
+        icon: Settings,
+        path: '/admin/system-management/system-config',
+        role: Role.ADMIN,
+      },
     ],
   },
 ]

@@ -36,6 +36,7 @@ import LeadDetail from './pages/admin/LeadDetail'
 import OpportunityList from './pages/admin/OpportunityList'
 import OpportunityDetail from './pages/admin/OpportunityDetail'
 import PriceManagement from './pages/admin/PriceManagement'
+import SystemConfig from './pages/admin/SystemConfig'
 
 const AppContent = () => {
   const location = useLocation()
@@ -154,6 +155,16 @@ const AppContent = () => {
               <AdminLayout>
                 <PermissionGuard role="ADMIN">
                   <AuditLogs />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/system-management/system-config"
+            element={
+              <AdminLayout>
+                <PermissionGuard role="ADMIN">
+                  <SystemConfig />
                 </PermissionGuard>
               </AdminLayout>
             }
