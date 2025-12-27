@@ -27,6 +27,7 @@ import {
   FileText as InvoiceIcon,
   Globe,
   ShieldCheck,
+  Search,
 } from 'lucide-react'
 import { ComponentType } from 'react'
 
@@ -51,7 +52,16 @@ export const adminMenuItems: MenuItem[] = [
     // 所有登录用户都可以访问
   },
   
-  // 2. 客户与销售 - 销售、管理员
+  // 2. 检索工具 - 所有角色
+  {
+    key: 'queryTool',
+    label: 'menu.queryTool',
+    icon: Search,
+    path: '/admin/query-tool',
+    // 所有登录用户都可以访问
+  },
+  
+  // 3. 客户与销售 - 销售、管理员
   {
     key: 'customer-sales',
     label: 'menu.customerSales',
