@@ -119,9 +119,7 @@ export const PriceEditModal = ({ isOpen, onClose, price, onSuccess }: PriceEditM
       formData.price_channel_idr !== null ||
       formData.price_channel_cny !== null ||
       formData.price_direct_idr !== null ||
-      formData.price_direct_cny !== null ||
-      formData.price_list_idr !== null ||
-      formData.price_list_cny !== null
+      formData.price_direct_cny !== null
     
     if (!hasAnyPrice) {
       showError('请至少填写一个价格')
@@ -273,45 +271,6 @@ export const PriceEditModal = ({ isOpen, onClose, price, onSuccess }: PriceEditM
                       onChange={(e) => setFormData(prev => ({ 
                         ...prev, 
                         price_direct_cny: e.target.value ? Number(e.target.value) : null 
-                      }))}
-                      placeholder="请输入价格"
-                      min={0}
-                      step="0.01"
-                    />
-                  </FormControl>
-                </GridItem>
-              </Grid>
-            </Box>
-            
-            {/* 列表价 */}
-            <Box p={3} border="1px" borderColor="gray.200" borderRadius="md">
-              <Text fontSize="sm" fontWeight="medium" mb={2}>列表价</Text>
-              <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                <GridItem>
-                  <FormControl>
-                    <FormLabel fontSize="sm">列表价-IDR</FormLabel>
-                    <Input
-                      type="number"
-                      value={formData.price_list_idr ?? ''}
-                      onChange={(e) => setFormData(prev => ({ 
-                        ...prev, 
-                        price_list_idr: e.target.value ? Number(e.target.value) : null 
-                      }))}
-                      placeholder="请输入价格"
-                      min={0}
-                      step="0.01"
-                    />
-                  </FormControl>
-                </GridItem>
-                <GridItem>
-                  <FormControl>
-                    <FormLabel fontSize="sm">列表价-CNY</FormLabel>
-                    <Input
-                      type="number"
-                      value={formData.price_list_cny ?? ''}
-                      onChange={(e) => setFormData(prev => ({ 
-                        ...prev, 
-                        price_list_cny: e.target.value ? Number(e.target.value) : null 
                       }))}
                       placeholder="请输入价格"
                       min={0}

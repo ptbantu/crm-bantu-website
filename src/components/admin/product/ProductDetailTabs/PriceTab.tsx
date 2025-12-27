@@ -60,8 +60,6 @@ const PriceTab = ({ data }: PriceTabProps) => {
       price_direct_cny: priceMap.direct?.cny,
       price_channel_idr: priceMap.channel?.idr,
       price_channel_cny: priceMap.channel?.cny,
-      price_list_idr: priceMap.list?.idr,
-      price_list_cny: priceMap.list?.cny,
     }
   }
 
@@ -117,15 +115,6 @@ const PriceTab = ({ data }: PriceTabProps) => {
                       </Td>
                       <Td bg={priceBgColor} fontFamily="mono" textAlign="left">
                         {currentPriceRow.price_channel_idr ? formatPrice(currentPriceRow.price_channel_idr, 'IDR') : '-'}
-                      </Td>
-                    </Tr>
-                    <Tr>
-                      <Td fontWeight="medium">{t('productManagement.detail.priceTypes.list', '列表价')}</Td>
-                      <Td bg={priceBgColor} fontFamily="mono" textAlign="left">
-                        {currentPriceRow.price_list_cny ? formatPrice(currentPriceRow.price_list_cny, 'CNY') : '-'}
-                      </Td>
-                      <Td bg={priceBgColor} fontFamily="mono" textAlign="left">
-                        {currentPriceRow.price_list_idr ? formatPrice(currentPriceRow.price_list_idr, 'IDR') : '-'}
                       </Td>
                     </Tr>
                   </Tbody>
@@ -217,22 +206,12 @@ const PriceTab = ({ data }: PriceTabProps) => {
                     {overview.price_channel_idr ? formatPrice(overview.price_channel_idr, 'IDR') : '-'}
                   </Td>
                 </Tr>
-                <Tr>
-                  <Td fontWeight="medium">{t('productManagement.detail.priceTypes.list', '列表价')}</Td>
-                  <Td bg={priceBgColor} fontFamily="mono" textAlign="left">
-                    {overview.price_list_cny ? formatPrice(overview.price_list_cny, 'CNY') : '-'}
-                  </Td>
-                  <Td bg={priceBgColor} fontFamily="mono" textAlign="left">
-                    {overview.price_list_idr ? formatPrice(overview.price_list_idr, 'IDR') : '-'}
-                  </Td>
-                </Tr>
               </Tbody>
             </Table>
           </Box>
           {!overview.price_cost_idr && !overview.price_cost_cny && 
            !overview.price_direct_idr && !overview.price_direct_cny && 
-           !overview.price_channel_idr && !overview.price_channel_cny && 
-           !overview.price_list_idr && !overview.price_list_cny && (
+           !overview.price_channel_idr && !overview.price_channel_cny && (
             <Text color="gray.500" mt={4}>
               {t('productManagement.detail.noPriceInfo', '暂无价格信息')}
             </Text>

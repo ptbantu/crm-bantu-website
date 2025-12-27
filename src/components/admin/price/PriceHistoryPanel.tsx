@@ -76,12 +76,6 @@ export const PriceHistoryPanel = ({ isOpen, onClose, productId }: PriceHistoryPa
     if (price.price_direct_cny !== null && price.price_direct_cny !== undefined) {
       prices.push({ type: 'direct', currency: 'CNY', value: price.price_direct_cny })
     }
-    if (price.price_list_idr !== null && price.price_list_idr !== undefined) {
-      prices.push({ type: 'list', currency: 'IDR', value: price.price_list_idr })
-    }
-    if (price.price_list_cny !== null && price.price_list_cny !== undefined) {
-      prices.push({ type: 'list', currency: 'CNY', value: price.price_list_cny })
-    }
     
     return prices
   }

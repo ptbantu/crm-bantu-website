@@ -199,8 +199,6 @@ export const ProductPriceTable = ({ isAdmin, refreshKey }: ProductPriceTableProp
                     <Th bg={priceBg} whiteSpace="nowrap" minW="110px">{t('priceManagement.table.priceDirectCny')}</Th>
                     <Th bg={priceBg} whiteSpace="nowrap" minW="110px">{t('priceManagement.table.priceChannelIdr')}</Th>
                     <Th bg={priceBg} whiteSpace="nowrap" minW="110px">{t('priceManagement.table.priceChannelCny')}</Th>
-                    <Th bg={priceBg} whiteSpace="nowrap" minW="110px">{t('priceManagement.table.priceListIdr')}</Th>
-                    <Th bg={priceBg} whiteSpace="nowrap" minW="110px">{t('priceManagement.table.priceListCny')}</Th>
                     <Th whiteSpace="nowrap" minW="140px">{t('priceManagement.table.effectiveFrom')}</Th>
                     <Th whiteSpace="nowrap" minW="140px">{t('priceManagement.table.effectiveTo')}</Th>
                     <Th whiteSpace="nowrap" minW="100px">{t('priceManagement.table.status')}</Th>
@@ -221,7 +219,7 @@ export const ProductPriceTable = ({ isAdmin, refreshKey }: ProductPriceTableProp
                 <Tbody>
                   {prices.length === 0 ? (
                     <Tr>
-                      <Td colSpan={15} textAlign="center" py={8}>
+                      <Td colSpan={13} textAlign="center" py={8}>
                         <Text color="gray.500">{t('priceManagement.noData')}</Text>
                       </Td>
                     </Tr>
@@ -272,16 +270,6 @@ export const ProductPriceTable = ({ isAdmin, refreshKey }: ProductPriceTableProp
                           <Td bg={priceBg} fontFamily="mono" fontSize="xs">
                             {price.price_channel_cny !== null && price.price_channel_cny !== undefined 
                               ? formatPrice(price.price_channel_cny, 'CNY') 
-                              : '-'}
-                          </Td>
-                          <Td bg={priceBg} fontFamily="mono" fontSize="xs">
-                            {price.price_list_idr !== null && price.price_list_idr !== undefined 
-                              ? formatPrice(price.price_list_idr, 'IDR') 
-                              : '-'}
-                          </Td>
-                          <Td bg={priceBg} fontFamily="mono" fontSize="xs">
-                            {price.price_list_cny !== null && price.price_list_cny !== undefined 
-                              ? formatPrice(price.price_list_cny, 'CNY') 
                               : '-'}
                           </Td>
                           <Td fontSize="xs">{formatDateTime(price.effective_from)}</Td>

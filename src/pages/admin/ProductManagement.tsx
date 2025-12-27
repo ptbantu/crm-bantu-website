@@ -93,8 +93,6 @@ const ProductManagement = () => {
     processing_time_text: '',
     price_direct_idr: '',
     price_direct_cny: '',
-    price_list_idr: '',
-    price_list_cny: '',
     status: 'active',
     is_active: true,
   })
@@ -225,8 +223,6 @@ const ProductManagement = () => {
         processing_time_text: detail.processing_time_text || '',
         price_direct_idr: detail.price_direct_idr?.toString() || '',
         price_direct_cny: detail.price_direct_cny?.toString() || '',
-        price_list_idr: detail.price_list_idr?.toString() || '',
-        price_list_cny: detail.price_list_cny?.toString() || '',
         status: detail.status || 'active',
         is_active: detail.is_active,
       })
@@ -249,8 +245,6 @@ const ProductManagement = () => {
       processing_time_text: '',
       price_direct_idr: '',
       price_direct_cny: '',
-      price_list_idr: '',
-      price_list_cny: '',
       status: 'active',
       is_active: true,
     })
@@ -276,8 +270,6 @@ const ProductManagement = () => {
           processing_time_text: modalFormData.processing_time_text || undefined,
           price_direct_idr: modalFormData.price_direct_idr ? parseFloat(modalFormData.price_direct_idr) : undefined,
           price_direct_cny: modalFormData.price_direct_cny ? parseFloat(modalFormData.price_direct_cny) : undefined,
-          price_list_idr: modalFormData.price_list_idr ? parseFloat(modalFormData.price_list_idr) : undefined,
-          price_list_cny: modalFormData.price_list_cny ? parseFloat(modalFormData.price_list_cny) : undefined,
           status: modalFormData.status || undefined,
           is_active: modalFormData.is_active,
         }
@@ -294,8 +286,6 @@ const ProductManagement = () => {
           processing_time_text: modalFormData.processing_time_text || undefined,
           price_direct_idr: modalFormData.price_direct_idr ? parseFloat(modalFormData.price_direct_idr) : undefined,
           price_direct_cny: modalFormData.price_direct_cny ? parseFloat(modalFormData.price_direct_cny) : undefined,
-          price_list_idr: modalFormData.price_list_idr ? parseFloat(modalFormData.price_list_idr) : undefined,
-          price_list_cny: modalFormData.price_list_cny ? parseFloat(modalFormData.price_list_cny) : undefined,
           status: modalFormData.status || 'active',
           is_active: modalFormData.is_active,
         }
@@ -545,7 +535,6 @@ const ProductManagement = () => {
                           <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.priceCost')}</Th>
                           <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.priceChannel')}</Th>
                           <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.priceDirect')}</Th>
-                          <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.priceList')}</Th>
                           <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.status')}</Th>
                           <Th fontSize="xs" fontWeight="semibold" color="gray.700">{t('productManagement.table.actions')}</Th>
                         </Tr>
@@ -592,20 +581,6 @@ const ProductManagement = () => {
                                 )}
                                 {product.price_direct_cny ? (
                                   <Text fontSize="xs">{formatPrice(product.price_direct_cny, 'CNY')}</Text>
-                                ) : (
-                                  <Text fontSize="xs" color="gray.400">-</Text>
-                                )}
-                              </VStack>
-                            </Td>
-                            <Td fontSize="sm" color="gray.600">
-                              <VStack spacing={0.5} align="flex-start">
-                                {product.price_list_idr ? (
-                                  <Text fontSize="xs">{formatPrice(product.price_list_idr, 'IDR')}</Text>
-                                ) : (
-                                  <Text fontSize="xs" color="gray.400">-</Text>
-                                )}
-                                {product.price_list_cny ? (
-                                  <Text fontSize="xs">{formatPrice(product.price_list_cny, 'CNY')}</Text>
                                 ) : (
                                   <Text fontSize="xs" color="gray.400">-</Text>
                                 )}
@@ -844,30 +819,6 @@ const ProductManagement = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
-                      {t('productManagement.form.priceListIdr')}
-                    </label>
-                    <input
-                      type="number"
-                      value={modalFormData.price_list_idr}
-                      onChange={(e) => setModalFormData({ ...modalFormData, price_list_idr: e.target.value })}
-                      className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      {t('productManagement.form.priceListCny')}
-                    </label>
-                    <input
-                      type="number"
-                      value={modalFormData.price_list_cny}
-                      onChange={(e) => setModalFormData({ ...modalFormData, price_list_cny: e.target.value })}
-                      className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
                       {t('productManagement.form.status')}
                     </label>
                     <select
@@ -1017,14 +968,6 @@ const ProductManagement = () => {
                           {t('productManagement.detail.directPrice')} (IDR)
                         </label>
                         <div className="text-sm text-gray-900">{formatPrice(productDetail.price_direct_idr, 'IDR')}</div>
-                      </div>
-                    )}
-                    {productDetail.price_list_idr && (
-                      <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-0.5">
-                          {t('productManagement.detail.listPrice')} (IDR)
-                        </label>
-                        <div className="text-sm text-gray-900">{formatPrice(productDetail.price_list_idr, 'IDR')}</div>
                       </div>
                     )}
                     {productDetail.price_direct_cny && (

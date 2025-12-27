@@ -546,42 +546,6 @@ const ProductPriceConfigSidebar = ({
                         />
                       </Td>
                     </Tr>
-                    {/* 列表价 */}
-                    <Tr>
-                      <Td fontSize="xs" color="gray.700">
-                        {t('productManagement.table.priceList', '列表价')}
-                      </Td>
-                      <Td>
-                        <Input
-                          type="number"
-                          value={formData.price_list_cny || ''}
-                          onChange={(e) =>
-                            handlePriceChange(
-                              'price_list_cny',
-                              parseFloat(e.target.value) || 0,
-                              'CNY'
-                            )
-                          }
-                          size="sm"
-                          placeholder="0"
-                        />
-                      </Td>
-                      <Td>
-                        <Input
-                          type="number"
-                          value={formData.price_list_idr || ''}
-                          onChange={(e) =>
-                            handlePriceChange(
-                              'price_list_idr',
-                              parseFloat(e.target.value) || 0,
-                              'IDR'
-                            )
-                          }
-                          size="sm"
-                          placeholder="0"
-                        />
-                      </Td>
-                    </Tr>
                   </Tbody>
                 </Table>
               </Box>

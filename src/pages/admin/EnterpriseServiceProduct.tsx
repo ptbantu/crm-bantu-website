@@ -117,8 +117,6 @@ const EnterpriseServiceProduct = () => {
     price_direct_cny: '',
     price_channel_idr: '',
     price_channel_cny: '',
-    price_list_idr: '',
-    price_list_cny: '',
     status: 'active',
     is_active: true,
   })
@@ -294,8 +292,6 @@ const EnterpriseServiceProduct = () => {
       price_direct_cny: '',
       price_channel_idr: '',
       price_channel_cny: '',
-      price_list_idr: '',
-      price_list_cny: '',
       status: 'active',
       is_active: true,
     })
@@ -338,8 +334,6 @@ const EnterpriseServiceProduct = () => {
         price_channel_cny: priceConfig.price_channel_cny > 0 ? priceConfig.price_channel_cny : undefined,
         price_direct_idr: priceConfig.price_direct_idr > 0 ? priceConfig.price_direct_idr : undefined,
         price_direct_cny: priceConfig.price_direct_cny > 0 ? priceConfig.price_direct_cny : undefined,
-        price_list_idr: priceConfig.price_list_idr > 0 ? priceConfig.price_list_idr : undefined,
-        price_list_cny: priceConfig.price_list_cny > 0 ? priceConfig.price_list_cny : undefined,
         default_currency: priceConfig.default_currency,
         exchange_rate: priceConfig.exchange_rate > 0 ? priceConfig.exchange_rate : undefined,
         // 价格时间字段
@@ -452,8 +446,6 @@ const EnterpriseServiceProduct = () => {
           price_direct_cny: modalFormData.price_direct_cny ? parseFloat(modalFormData.price_direct_cny) : undefined,
           price_channel_idr: modalFormData.price_channel_idr ? parseFloat(modalFormData.price_channel_idr) : undefined,
           price_channel_cny: modalFormData.price_channel_cny ? parseFloat(modalFormData.price_channel_cny) : undefined,
-          price_list_idr: modalFormData.price_list_idr ? parseFloat(modalFormData.price_list_idr) : undefined,
-          price_list_cny: modalFormData.price_list_cny ? parseFloat(modalFormData.price_list_cny) : undefined,
           status: modalFormData.status || undefined,
           is_active: modalFormData.is_active,
         }
@@ -473,8 +465,6 @@ const EnterpriseServiceProduct = () => {
           price_direct_cny: modalFormData.price_direct_cny ? parseFloat(modalFormData.price_direct_cny) : undefined,
           price_channel_idr: modalFormData.price_channel_idr ? parseFloat(modalFormData.price_channel_idr) : undefined,
           price_channel_cny: modalFormData.price_channel_cny ? parseFloat(modalFormData.price_channel_cny) : undefined,
-          price_list_idr: modalFormData.price_list_idr ? parseFloat(modalFormData.price_list_idr) : undefined,
-          price_list_cny: modalFormData.price_list_cny ? parseFloat(modalFormData.price_list_cny) : undefined,
           status: modalFormData.status || 'active',
           is_active: modalFormData.is_active,
         }
@@ -542,8 +532,6 @@ const EnterpriseServiceProduct = () => {
       t('productManagement.form.processingDays'),
       t('productManagement.form.priceDirectIdr'),
       t('productManagement.form.priceDirectCny'),
-      t('productManagement.form.priceListIdr'),
-      t('productManagement.form.priceListCny'),
       t('productManagement.table.status'),
       t('productManagement.form.isActive'),
     ]
@@ -556,8 +544,6 @@ const EnterpriseServiceProduct = () => {
       product.processing_days?.toString() || '',
       product.price_direct_idr?.toString() || '',
       product.price_direct_cny?.toString() || '',
-      product.price_list_idr?.toString() || '',
-      product.price_list_cny?.toString() || '',
       product.status || '',
       product.is_active ? t('productManagement.table.active') : t('productManagement.table.inactive'),
     ])
@@ -851,7 +837,7 @@ const EnterpriseServiceProduct = () => {
                     </Tooltip>
                   </Th>
                   {/* 价格字段组 */}
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" minW="120px" bg="blue.50" colSpan={8}>
+                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" minW="120px" bg="blue.50" colSpan={6}>
                     <Tooltip
                       label={
                         <Box>
@@ -1046,54 +1032,6 @@ const EnterpriseServiceProduct = () => {
                       </HStack>
                     </Tooltip>
                   </Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" minW="90px" bg="blue.50">
-                    <Tooltip
-                      label={
-                        <Box>
-                          <Text fontWeight="bold" mb={1} color="white">{t('productManagement.table.priceListIdr')}</Text>
-                          <Text fontSize="xs" color="gray.100">{t('productManagement.table.priceListIdrDesc')}</Text>
-                          <Text fontSize="xs" mt={1} color="gray.100">{t('productManagement.table.priceListIdrUsage')}</Text>
-                        </Box>
-                      }
-                      placement="top"
-                      hasArrow
-                      bg="gray.800"
-                      color="white"
-                      fontSize="xs"
-                      px={3}
-                      py={2}
-                      borderRadius="md"
-                    >
-                      <HStack spacing={1} cursor="help">
-                        <Text>{t('productManagement.table.priceListIdr')}</Text>
-                        <Icon as={Info} boxSize={3} />
-                      </HStack>
-                    </Tooltip>
-                  </Th>
-                  <Th fontSize="xs" fontWeight="semibold" color="gray.700" minW="90px" bg="blue.50">
-                    <Tooltip
-                      label={
-                        <Box>
-                          <Text fontWeight="bold" mb={1} color="white">{t('productManagement.table.priceListCny')}</Text>
-                          <Text fontSize="xs" color="gray.100">{t('productManagement.table.priceListCnyDesc')}</Text>
-                          <Text fontSize="xs" mt={1} color="gray.100">{t('productManagement.table.priceListCnyUsage')}</Text>
-                        </Box>
-                      }
-                      placement="top"
-                      hasArrow
-                      bg="gray.800"
-                      color="white"
-                      fontSize="xs"
-                      px={3}
-                      py={2}
-                      borderRadius="md"
-                    >
-                      <HStack spacing={1} cursor="help">
-                        <Text>{t('productManagement.table.priceListCny')}</Text>
-                        <Icon as={Info} boxSize={3} />
-                      </HStack>
-                    </Tooltip>
-                  </Th>
                   <Th bg="gray.50"></Th>
                   <Th bg="gray.50" position="sticky" right={0} zIndex={11} borderLeftWidth="1px" borderLeftColor="gray.200"></Th>
                 </Tr>
@@ -1139,7 +1077,7 @@ const EnterpriseServiceProduct = () => {
                         {isNewCategory && (
                           <Tr bg="blue.50" _hover={{ bg: 'blue.100' }} cursor="pointer" onClick={(e) => toggleCategory(categoryName, e)}>
                             <Td 
-                              colSpan={15} 
+                              colSpan={13} 
                               fontSize="sm" 
                               fontWeight="bold" 
                               color="blue.700" 
@@ -1253,26 +1191,6 @@ const EnterpriseServiceProduct = () => {
                               fontFamily="mono"
                             >
                               {product.price_channel_cny ? formatPrice(product.price_channel_cny, 'CNY') : '-'}
-                            </Td>
-                            <Td 
-                              fontSize="sm" 
-                              color="gray.600" 
-                              minW="90px" 
-                              bg={highlightedProductId === product.id ? 'blue.100' : 'blue.50'} 
-                              textAlign="left"
-                              fontFamily="mono"
-                            >
-                              {product.price_list_idr ? formatPrice(product.price_list_idr, 'IDR') : '-'}
-                            </Td>
-                            <Td 
-                              fontSize="sm" 
-                              color="gray.600" 
-                              minW="90px" 
-                              bg={highlightedProductId === product.id ? 'blue.100' : 'blue.50'} 
-                              textAlign="left"
-                              fontFamily="mono"
-                            >
-                              {product.price_list_cny ? formatPrice(product.price_list_cny, 'CNY') : '-'}
                             </Td>
                             <Td fontSize="sm" minW="100px">
                               {product.is_active ? (
@@ -1493,30 +1411,6 @@ const EnterpriseServiceProduct = () => {
                       type="number"
                       value={modalFormData.price_direct_cny}
                       onChange={(e) => setModalFormData({ ...modalFormData, price_direct_cny: e.target.value })}
-                      className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      {t('productManagement.form.priceListIdr')}
-                    </label>
-                    <input
-                      type="number"
-                      value={modalFormData.price_list_idr}
-                      onChange={(e) => setModalFormData({ ...modalFormData, price_list_idr: e.target.value })}
-                      className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      {t('productManagement.form.priceListCny')}
-                    </label>
-                    <input
-                      type="number"
-                      value={modalFormData.price_list_cny}
-                      onChange={(e) => setModalFormData({ ...modalFormData, price_list_cny: e.target.value })}
                       className="w-full px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
                     />
                   </div>

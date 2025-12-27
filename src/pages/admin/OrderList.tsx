@@ -934,7 +934,7 @@ const OrderList = () => {
                     setItemFormData({
                       ...itemFormData,
                       product_id: e.target.value || null,
-                      unit_price: product?.price_list_idr || itemFormData.unit_price || 0,
+                      unit_price: product?.price_direct_idr || itemFormData.unit_price || 0,
                     })
                   }}
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
