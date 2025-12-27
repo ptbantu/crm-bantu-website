@@ -57,6 +57,7 @@ export const Breadcrumb = () => {
     'finance-reports': 'menu.financeReports',
     'agent': 'menu.agent',
     'dashboard': 'menu.dashboard',
+    'query-tool': 'menu.queryTool',
   }
 
   const breadcrumbItems = paths.map((path, index) => {
