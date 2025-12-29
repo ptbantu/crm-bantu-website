@@ -374,112 +374,67 @@ const ProductManagement = () => {
         icon={Package}
         title={t('productManagement.title')}
         subtitle={t('productManagement.subtitle')}
-        actions={
-          <Button
-            colorScheme="primary"
-            leftIcon={<Plus size={16} />}
-            onClick={handleCreate}
-            size="sm"
-          >
-            {t('productManagement.create')}
-          </Button>
-        }
       />
 
       {/* 查询表单 */}
       <Card mb={4} bg={bgColor} borderColor={borderColor}>
         <CardBody>
-          <HStack spacing={3} align="flex-end" flexWrap="wrap">
-            {/* 产品名称 */}
-            <Box flex={1} minW="150px">
-              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
-                {t('productManagement.search.name')}
-              </Text>
-              <InputGroup size="sm">
-                <InputLeftElement pointerEvents="none">
-                  <Package size={14} color="gray" />
-                </InputLeftElement>
-                <Input
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder={t('productManagement.search.namePlaceholder')}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                />
-              </InputGroup>
-            </Box>
+          <HStack spacing={4} flexWrap="wrap">
+            <InputGroup maxW="200px">
+              <InputLeftElement pointerEvents="none">
+                <Search size={16} />
+              </InputLeftElement>
+              <Input
+                placeholder={t('productManagement.search.namePlaceholder')}
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+              />
+            </InputGroup>
+            <InputGroup maxW="200px">
+              <InputLeftElement pointerEvents="none">
+                <Tag size={16} />
+              </InputLeftElement>
+              <Input
+                placeholder={t('productManagement.search.codePlaceholder')}
+                value={formData.code}
+                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+              />
+            </InputGroup>
+            <Select
+              placeholder={t('productManagement.search.category')}
+              maxW="200px"
+              value={formData.category_id}
+              onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+            >
+              <option value="">{t('productManagement.search.allCategories')}</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </Select>
+            <Select
+              placeholder={t('productManagement.search.status')}
+              maxW="150px"
+              value={formData.is_active}
+              onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
+            >
+              <option value="">{t('productManagement.search.allStatus')}</option>
+              <option value="true">{t('productManagement.search.active')}</option>
+              <option value="false">{t('productManagement.search.inactive')}</option>
+            </Select>
 
-            {/* 产品编码 */}
-            <Box flex={1} minW="150px">
-              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
-                {t('productManagement.search.code')}
-              </Text>
-              <InputGroup size="sm">
-                <InputLeftElement pointerEvents="none">
-                  <Tag size={14} color="gray" />
-                </InputLeftElement>
-                <Input
-                  value={formData.code}
-                  onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                  placeholder={t('productManagement.search.codePlaceholder')}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                />
-              </InputGroup>
-            </Box>
-
-            {/* 分类 */}
-            <Box flex={1} minW="120px">
-              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
-                {t('productManagement.search.category')}
-              </Text>
-              <Select
-                size="sm"
-                value={formData.category_id}
-                onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-              >
-                <option value="">{t('productManagement.search.allCategories')}</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </Select>
-            </Box>
-
-            {/* 状态 */}
-            <Box flex={1} minW="120px">
-              <Text fontSize="xs" fontWeight="medium" mb={1} color="gray.700">
-                {t('productManagement.search.status')}
-              </Text>
-              <Select
-                size="sm"
-                value={formData.is_active}
-                onChange={(e) => setFormData({ ...formData, is_active: e.target.value as '' | 'true' | 'false' })}
-              >
-                <option value="">{t('productManagement.search.allStatus')}</option>
-                <option value="true">{t('productManagement.search.active')}</option>
-                <option value="false">{t('productManagement.search.inactive')}</option>
-              </Select>
-            </Box>
-
-            {/* 操作按钮 */}
-            <HStack spacing={2}>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleReset}
-              >
-                {t('productManagement.search.reset')}
-              </Button>
-              <Button
-                size="sm"
-                colorScheme="blue"
-                leftIcon={<Search size={14} />}
-                onClick={handleSearch}
-                isLoading={loading}
-              >
-                {t('productManagement.search.search')}
-              </Button>
-            </HStack>
+            <Button onClick={handleSearch} isLoading={loading}>
+              {t('productManagement.search.search')}
+            </Button>
+            <Button variant="outline" onClick={handleReset}>
+              {t('productManagement.search.reset')}
+            </Button>
+            <Button colorScheme="blue" onClick={handleCreate}>
+              {t('productManagement.create')}
+            </Button>
           </HStack>
         </CardBody>
       </Card>

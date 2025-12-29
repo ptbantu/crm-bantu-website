@@ -662,75 +662,6 @@ const OpportunityList = () => {
         }
       />
 
-      {/* 统计卡片 - 阿里云ECS风格 */}
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={3} mb={4}>
-        <Card variant="elevated">
-          <CardBody p={4}>
-            <Stat>
-              <StatLabel fontSize="12px" fontWeight="500" color="var(--ali-text-secondary)">
-                {t('opportunityList.statistics.total')}
-              </StatLabel>
-              <StatNumber fontSize="20px" fontWeight="600" color="var(--ali-text-primary)">
-                {loading ? <Spinner size="sm" /> : statistics.total}
-              </StatNumber>
-            </Stat>
-          </CardBody>
-        </Card>
-
-        <Card variant="elevated">
-          <CardBody p={4}>
-            <Stat>
-              <StatLabel fontSize="12px" fontWeight="500" color="var(--ali-text-secondary)">
-                {t('opportunityList.statistics.won')}
-              </StatLabel>
-              <StatNumber fontSize="20px" fontWeight="600" color="var(--ali-success)">
-                {loading ? <Spinner size="sm" /> : statistics.wonCount}
-              </StatNumber>
-            </Stat>
-          </CardBody>
-        </Card>
-
-        <Card variant="elevated">
-          <CardBody p={4}>
-            <Stat>
-              <StatLabel fontSize="12px" fontWeight="500" color="var(--ali-text-secondary)">
-                {t('opportunityList.statistics.lost')}
-              </StatLabel>
-              <StatNumber fontSize="20px" fontWeight="600" color="var(--ali-error)">
-                {loading ? <Spinner size="sm" /> : statistics.lostCount}
-              </StatNumber>
-            </Stat>
-          </CardBody>
-        </Card>
-
-        <Card variant="elevated">
-          <CardBody p={4}>
-            <Stat>
-              <StatLabel fontSize="12px" fontWeight="500" color="var(--ali-text-secondary)">
-                {t('opportunityList.statistics.totalAmount')}
-              </StatLabel>
-              <StatNumber fontSize="20px" fontWeight="600" color="var(--ali-text-primary)">
-                {loading ? <Spinner size="sm" /> : formatAmount(statistics.totalAmount)}
-              </StatNumber>
-            </Stat>
-          </CardBody>
-        </Card>
-
-        <Card variant="elevated">
-          <CardBody p={4}>
-            <Stat>
-              <StatLabel fontSize="12px" fontWeight="500" color="var(--ali-text-secondary)">
-                {t('opportunityList.statistics.conversionRate')}
-              </StatLabel>
-              <StatNumber fontSize="20px" fontWeight="600" color="var(--ali-text-primary)">
-                {loading ? <Spinner size="sm" /> : statistics.total > 0 
-                  ? `${((statistics.wonCount / statistics.total) * 100).toFixed(1)}%`
-                  : '0%'}
-              </StatNumber>
-            </Stat>
-          </CardBody>
-        </Card>
-      </SimpleGrid>
 
       {/* 搜索栏 - 阿里云ECS风格 */}
       <Card mb={4} variant="elevated">
@@ -1070,31 +1001,6 @@ const OpportunityList = () => {
                           </Badge>
                         </HStack>
                       </Flex>
-                      
-                      {/* 统计信息 */}
-                      {(() => {
-                        const stats = getStageStats(stageConfig.value)
-                        return (
-                          <VStack align="stretch" spacing={1} fontSize="xs">
-                            <HStack justify="space-between">
-                              <Text color="var(--ali-text-secondary)" fontSize="12px">
-                                {t('opportunityList.board.stats.amount')}:
-                              </Text>
-                              <Text fontWeight="semibold" color="var(--ali-text-primary)" fontSize="12px">
-                                {formatAmount(stats.totalAmount)}
-                              </Text>
-                            </HStack>
-                            <HStack justify="space-between">
-                              <Text color="var(--ali-text-secondary)" fontSize="12px">
-                                {t('opportunityList.board.stats.weightedAmount')}:
-                              </Text>
-                              <Text fontWeight="bold" color="var(--ali-success)" fontSize="12px">
-                                {formatAmount(stats.weightedAmount)}
-                              </Text>
-                            </HStack>
-                          </VStack>
-                        )
-                      })()}
                     </VStack>
                   </Box>
 

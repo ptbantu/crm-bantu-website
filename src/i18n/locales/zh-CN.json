@@ -30,7 +30,12 @@
     "no": "否",
     "reset": "重置",
     "actions": "操作",
-    "add": "添加"
+    "add": "添加",
+    "enabled": "启用",
+    "disabled": "禁用",
+    "previous": "上一页",
+    "next": "下一页",
+    "pageInfo": "第 {{current}} / {{total}} 页"
   },
   "header": {
     "title": "班兔企服",
@@ -555,6 +560,74 @@
       "loadDetailFailed": "加载详情失败"
     }
   },
+  "contractEntity": {
+    "title": "财税主体管理",
+    "description": "管理财税主体信息，包括主体代码、名称、税务信息、银行信息等",
+    "add": "新增财税主体",
+    "create": "创建财税主体",
+    "edit": "编辑财税主体",
+    "noData": "暂无财税主体数据",
+    "search": {
+      "entityCode": "主体代码",
+      "entityName": "主体名称",
+      "shortName": "简称",
+      "currency": "货币",
+      "status": "状态"
+    },
+    "table": {
+      "entityCode": "主体代码",
+      "entityName": "主体名称",
+      "shortName": "简称",
+      "legalRepresentative": "法定代表人",
+      "taxRate": "税点",
+      "taxId": "税号",
+      "currency": "货币",
+      "status": "状态"
+    },
+    "form": {
+      "entityCode": "主体代码",
+      "entityCodePlaceholder": "请输入主体代码（如：BJ_BANTU）",
+      "entityName": "主体名称",
+      "entityNamePlaceholder": "请输入主体名称",
+      "shortName": "简称",
+      "shortNamePlaceholder": "请输入简称",
+      "legalRepresentative": "法定代表人",
+      "legalRepresentativePlaceholder": "请输入法定代表人",
+      "taxRate": "税点",
+      "taxId": "税号",
+      "taxIdPlaceholder": "请输入税号",
+      "bankName": "开户行",
+      "bankNamePlaceholder": "请输入开户行",
+      "bankAccountNo": "收款账户",
+      "bankAccountNoPlaceholder": "请输入收款账户",
+      "bankAccountName": "账户名称",
+      "bankAccountNamePlaceholder": "请输入账户名称",
+      "currency": "货币",
+      "address": "公司地址",
+      "addressPlaceholder": "请输入公司地址",
+      "contactPhone": "联系电话",
+      "contactPhonePlaceholder": "请输入联系电话",
+      "status": "启用状态"
+    },
+    "error": {
+      "loadFailed": "加载财税主体列表失败",
+      "loadDetailFailed": "加载财税主体详情失败",
+      "submitFailed": "提交失败",
+      "deleteFailed": "删除失败",
+      "entityCodeRequired": "请输入主体代码",
+      "entityNameRequired": "请输入主体名称",
+      "shortNameRequired": "请输入简称"
+    },
+    "success": {
+      "createSuccess": "财税主体创建成功",
+      "updateSuccess": "财税主体更新成功",
+      "deleteSuccess": "财税主体删除成功"
+    },
+    "deleteConfirm": {
+      "title": "确认删除",
+      "message": "确定要删除财税主体「{{name}}」吗？删除后将无法恢复。"
+    }
+  },
   "organizations": {
     "title": "组织管理",
     "subtitle": "管理系统组织，支持内部组织、供应商、渠道代理三种类型",
@@ -704,7 +777,12 @@
     "serviceCatalog": "服务目录",
     "vendorManagement": "供应商管理",
     "vendorProductList": "供应商服务列表",
-    "categoryManagement": "企服分类"
+    "categoryManagement": "企服分类",
+    "finance": "财务管理",
+    "contractEntities": "财税主体管理",
+    "receivables": "应收管理",
+    "invoicing": "发票管理",
+    "financeReports": "财务报表"
   },
   "admin": {
     "title": "班兔 CRM 后台管理",

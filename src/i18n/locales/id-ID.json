@@ -29,7 +29,12 @@
     "yes": "Ya",
     "no": "Tidak",
     "reset": "Reset",
-    "actions": "Aksi"
+    "actions": "Aksi",
+    "enabled": "Diaktifkan",
+    "disabled": "Dinonaktifkan",
+    "previous": "Sebelumnya",
+    "next": "Selanjutnya",
+    "pageInfo": "Halaman {{current}} / {{total}}"
   },
   "header": {
     "title": "Bantu Enterprise Services",
@@ -554,6 +559,74 @@
       "loadDetailFailed": "Gagal memuat detail"
     }
   },
+  "contractEntity": {
+    "title": "Manajemen Entitas Keuangan & Pajak",
+    "description": "Kelola informasi entitas keuangan dan pajak, termasuk kode entitas, nama, informasi pajak, informasi bank, dll",
+    "add": "Tambah Entitas Keuangan & Pajak",
+    "create": "Buat Entitas Keuangan & Pajak",
+    "edit": "Edit Entitas Keuangan & Pajak",
+    "noData": "Tidak ada data entitas keuangan & pajak",
+    "search": {
+      "entityCode": "Kode Entitas",
+      "entityName": "Nama Entitas",
+      "shortName": "Nama Singkat",
+      "currency": "Mata Uang",
+      "status": "Status"
+    },
+    "table": {
+      "entityCode": "Kode Entitas",
+      "entityName": "Nama Entitas",
+      "shortName": "Nama Singkat",
+      "legalRepresentative": "Perwakilan Hukum",
+      "taxRate": "Tarif Pajak",
+      "taxId": "NPWP",
+      "currency": "Mata Uang",
+      "status": "Status"
+    },
+    "form": {
+      "entityCode": "Kode Entitas",
+      "entityCodePlaceholder": "Masukkan kode entitas (contoh: BJ_BANTU)",
+      "entityName": "Nama Entitas",
+      "entityNamePlaceholder": "Masukkan nama entitas",
+      "shortName": "Nama Singkat",
+      "shortNamePlaceholder": "Masukkan nama singkat",
+      "legalRepresentative": "Perwakilan Hukum",
+      "legalRepresentativePlaceholder": "Masukkan perwakilan hukum",
+      "taxRate": "Tarif Pajak",
+      "taxId": "NPWP",
+      "taxIdPlaceholder": "Masukkan NPWP",
+      "bankName": "Nama Bank",
+      "bankNamePlaceholder": "Masukkan nama bank",
+      "bankAccountNo": "Nomor Rekening",
+      "bankAccountNoPlaceholder": "Masukkan nomor rekening",
+      "bankAccountName": "Nama Rekening",
+      "bankAccountNamePlaceholder": "Masukkan nama rekening",
+      "currency": "Mata Uang",
+      "address": "Alamat Perusahaan",
+      "addressPlaceholder": "Masukkan alamat perusahaan",
+      "contactPhone": "Nomor Telepon",
+      "contactPhonePlaceholder": "Masukkan nomor telepon",
+      "status": "Status Aktif"
+    },
+    "error": {
+      "loadFailed": "Gagal memuat daftar entitas keuangan & pajak",
+      "loadDetailFailed": "Gagal memuat detail entitas keuangan & pajak",
+      "submitFailed": "Gagal mengirim",
+      "deleteFailed": "Gagal menghapus",
+      "entityCodeRequired": "Masukkan kode entitas",
+      "entityNameRequired": "Masukkan nama entitas",
+      "shortNameRequired": "Masukkan nama singkat"
+    },
+    "success": {
+      "createSuccess": "Entitas keuangan & pajak berhasil dibuat",
+      "updateSuccess": "Entitas keuangan & pajak berhasil diperbarui",
+      "deleteSuccess": "Entitas keuangan & pajak berhasil dihapus"
+    },
+    "deleteConfirm": {
+      "title": "Konfirmasi Hapus",
+      "message": "Apakah Anda yakin ingin menghapus entitas keuangan & pajak \"{{name}}\"? Setelah dihapus, tidak dapat dipulihkan."
+    }
+  },
   "organizations": {
     "title": "Manajemen Organisasi",
     "subtitle": "Kelola organisasi sistem, mendukung tiga jenis: internal, vendor, dan agent",
@@ -706,6 +779,7 @@
     "vendorProductList": "Daftar Layanan Vendor",
     "categoryManagement": "Manajemen Kategori Layanan",
     "finance": "Manajemen Keuangan",
+    "contractEntities": "Manajemen Entitas Keuangan & Pajak",
     "receivables": "Manajemen Piutang",
     "invoicing": "Manajemen Faktur",
     "financeReports": "Laporan Keuangan",

@@ -22,7 +22,7 @@ import {
   TableContainer,
   Badge,
 } from '@chakra-ui/react'
-import { Download, Print, Save, Plus, Trash2, Edit2 } from 'lucide-react'
+import { Download, Printer, Save, Plus, Trash2, Edit2 } from 'lucide-react'
 import { Opportunity, OpportunityExtended } from '@/api/types'
 import { StatusBadge } from '../common/StatusBadge'
 
@@ -140,7 +140,7 @@ export const Stage3Quotation: React.FC<Stage3QuotationProps> = ({
               导出
             </Button>
             <Button
-              leftIcon={<Print size={14} />}
+              leftIcon={<Printer size={14} />}
               size="sm"
               variant="outline"
               fontSize="11px"

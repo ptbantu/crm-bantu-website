@@ -157,8 +157,14 @@ export const adminMenuItems: MenuItem[] = [
     icon: DollarSign,
     path: '/admin/finance',
     role: [Role.FINANCE, Role.SALES, Role.ADMIN],
-    permission: Permission.FINANCE_READ,
     children: [
+      {
+        key: 'contractEntities',
+        label: 'menu.contractEntities',
+        icon: Building2,
+        path: '/admin/finance/contract-entities',
+        role: [Role.FINANCE, Role.ADMIN],
+      },
       {
         key: 'receivables',
         label: 'menu.receivables',

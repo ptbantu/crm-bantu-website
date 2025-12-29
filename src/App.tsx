@@ -39,6 +39,7 @@ import OpportunityPipeline from './pages/admin/OpportunityPipeline'
 import PriceManagement from './pages/admin/PriceManagement'
 import SystemConfig from './pages/admin/SystemConfig'
 import QueryTool from './pages/admin/QueryTool'
+import ContractEntityList from './pages/admin/ContractEntityList'
 
 const AppContent = () => {
   const location = useLocation()
@@ -335,6 +336,18 @@ const AppContent = () => {
               <AdminLayout>
                 <PermissionGuard role={['SALES', 'ADMIN']}>
                   <OpportunityPipeline />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          
+          {/* 财务管理模块 - 财税主体管理（FINANCE, ADMIN） */}
+          <Route
+            path="/admin/finance/contract-entities"
+            element={
+              <AdminLayout>
+                <PermissionGuard role={['FINANCE', 'ADMIN']}>
+                  <ContractEntityList />
                 </PermissionGuard>
               </AdminLayout>
             }

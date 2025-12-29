@@ -196,6 +196,11 @@ export const API_PATHS = {
     CUSTOMER_LEVELS: '/api/order-workflow/customer-levels',
     FOLLOW_UP_STATUSES: '/api/order-workflow/follow-up-statuses',
   },
+  // 订单与工作流 - 财税主体管理
+  CONTRACT_ENTITIES: {
+    BASE: '/api/order-workflow/contract-entities',
+    BY_ID: (id: string) => `/api/order-workflow/contract-entities/${id}`,
+  },
   // Foundation Service 基础路径
   FOUNDATION: '/api/foundation',
 } as const
