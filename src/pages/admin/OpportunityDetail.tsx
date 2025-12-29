@@ -5,7 +5,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ArrowLeft, Plus, Edit, TrendingUp, User } from 'lucide-react'
+import { ArrowLeft, Plus, Edit, TrendingUp, User, Workflow } from 'lucide-react'
 import {
   getOpportunityDetail,
   updateOpportunity,
@@ -376,6 +376,14 @@ const OpportunityDetail = () => {
           {t('opportunityDetail.title')}
         </Text>
         <HStack spacing={2} ml="auto">
+          <Button
+            leftIcon={<Workflow size={16} />}
+            onClick={() => navigate(`/admin/opportunities/pipeline/${id}`)}
+            size="sm"
+            colorScheme="blue"
+          >
+            Pipeline管理
+          </Button>
           <Button
             leftIcon={<Edit size={16} />}
             onClick={onEditOpen}

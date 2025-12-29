@@ -1041,3 +1041,49 @@ export interface OpportunityNoteCreateRequest {
   is_important?: boolean
 }
 
+// 商机阶段模板
+export interface OpportunityStageTemplate {
+  id: string
+  code: string
+  name_zh: string
+  name_id: string
+  description_zh?: string
+  description_id?: string
+  stage_order: number
+  requires_approval: boolean
+  approval_roles_json?: string[]
+  conditions_json?: any
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+// 商机阶段历史
+export interface OpportunityStageHistory {
+  id: string
+  opportunity_id: string
+  stage_id: string
+  stage_name_zh?: string
+  entered_at: string
+  exited_at?: string
+  duration_days?: number
+  conditions_met_json?: any
+  requires_approval: boolean
+  approval_status?: 'pending' | 'approved' | 'rejected'
+  approved_by?: string
+  approval_at?: string
+  approval_notes?: string
+  created_at: string
+}
+
+// 扩展Opportunity类型，添加新字段
+export interface OpportunityExtended extends Opportunity {
+  current_stage_id?: string | null
+  workflow_status?: 'active' | 'paused' | 'completed' | 'cancelled'
+  service_type?: 'one_time' | 'long_term' | 'mixed'
+  is_split_required?: boolean
+  last_followup_at?: string | null
+  is_stale?: boolean
+  developed_by?: string | null
+}
+

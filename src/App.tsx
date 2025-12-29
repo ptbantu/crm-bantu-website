@@ -35,6 +35,7 @@ import LeadList from './pages/admin/LeadList'
 import LeadDetail from './pages/admin/LeadDetail'
 import OpportunityList from './pages/admin/OpportunityList'
 import OpportunityDetail from './pages/admin/OpportunityDetail'
+import OpportunityPipeline from './pages/admin/OpportunityPipeline'
 import PriceManagement from './pages/admin/PriceManagement'
 import SystemConfig from './pages/admin/SystemConfig'
 import QueryTool from './pages/admin/QueryTool'
@@ -324,6 +325,16 @@ const AppContent = () => {
               <AdminLayout>
                 <PermissionGuard role={['SALES', 'ADMIN']}>
                   <OpportunityDetail />
+                </PermissionGuard>
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/opportunities/pipeline/:id"
+            element={
+              <AdminLayout>
+                <PermissionGuard role={['SALES', 'ADMIN']}>
+                  <OpportunityPipeline />
                 </PermissionGuard>
               </AdminLayout>
             }

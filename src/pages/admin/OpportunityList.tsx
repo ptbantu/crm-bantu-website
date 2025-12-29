@@ -5,7 +5,7 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { Search, Plus, TrendingUp, DollarSign, User, GripVertical, ChevronDown, LayoutGrid, List } from 'lucide-react'
+import { Search, Plus, TrendingUp, DollarSign, User, GripVertical, ChevronDown, LayoutGrid, List, Workflow } from 'lucide-react'
 import {
   getOpportunityList,
   createOpportunity,
@@ -935,6 +935,18 @@ const OpportunityList = () => {
                               <Button
                                 size="xs"
                                 variant="link"
+                                color="var(--ali-success)"
+                                onClick={() => navigate(`/admin/opportunities/pipeline/${opportunity.id}`)}
+                                fontSize="12px"
+                                px={2}
+                                py={1}
+                                leftIcon={<Workflow size={12} />}
+                              >
+                                流水线
+                              </Button>
+                              <Button
+                                size="xs"
+                                variant="link"
                                 color="var(--ali-primary)"
                                 onClick={() => handleEdit(opportunity)}
                                 fontSize="12px"
@@ -1137,6 +1149,18 @@ const OpportunityList = () => {
                                     py={1}
                                   >
                                     {t('common.view')}
+                                  </Button>
+                                  <Button
+                                    size="xs"
+                                    variant="link"
+                                    color="var(--ali-success)"
+                                    onClick={() => navigate(`/admin/opportunities/pipeline/${opportunity.id}`)}
+                                    fontSize="12px"
+                                    px={2}
+                                    py={1}
+                                    leftIcon={<Workflow size={12} />}
+                                  >
+                                    流水线
                                   </Button>
                                   <Button
                                     size="xs"

@@ -43,6 +43,7 @@ export const Breadcrumb = () => {
     'myLeads': 'menu.myLeads',
     'publicLeads': 'menu.publicLeads',
     'opportunities': 'menu.opportunities',
+    'pipeline': 'menu.pipeline',
     'detail': 'leadDetail.title',
     'product': 'menu.product',
     'product-service': 'menu.productService',
@@ -64,12 +65,15 @@ export const Breadcrumb = () => {
     const isLast = index === paths.length - 1
     const pathTo = '/' + paths.slice(0, index + 1).join('/')
     
-    // 检查是否是详情页面的 ID（UUID 格式）
+    // 检查是否是详情页面的 ID（UUID 格式或商机ID格式如OPP2025122900004）
     // UUID 格式：8-4-4-4-12 个十六进制字符
     const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(path)
+    // 商机ID格式：OPP开头后跟日期和序号（如OPP2025122900004）
+    const isOpportunityId = /^OPP\d+$/i.test(path)
     const isLeadDetailPath = index >= 2 && paths[index - 1] === 'detail' && paths[index - 2] === 'leads'
     const isCustomerDetailPath = index >= 2 && paths[index - 1] === 'detail' && paths[index - 2] === 'customer'
     const isOpportunityDetailPath = index >= 2 && paths[index - 1] === 'detail' && paths[index - 2] === 'opportunities'
+    const isOpportunityPipelinePath = index >= 2 && paths[index - 1] === 'pipeline' && paths[index - 2] === 'opportunities'
     
     let label: string
     if (isUUID && isLeadDetailPath) {
@@ -105,12 +109,25 @@ export const Breadcrumb = () => {
         // 否则使用默认的"商机详情"
         label = defaultTitle
       }
+    } else if ((isUUID || isOpportunityId) && isOpportunityPipelinePath) {
+      // 如果是Pipeline页面的商机ID（UUID或OPP格式），尝试从标签页获取标题
+      const currentTab = tabs.find(tab => tab.key === location.pathname)
+      if (currentTab && currentTab.title && !currentTab.title.startsWith('menu.')) {
+        // 如果标签页标题已更新（不是翻译 key），使用标签页标题
+        label = currentTab.title
+      } else {
+        // 否则显示商机ID
+        label = path
+      }
     } else if (isCustomerDetailPath && path === 'detail') {
       // 如果是客户详情路径（detail），显示"客户详情"
       label = t('customerDetail.title')
     } else if (isOpportunityDetailPath && path === 'detail') {
       // 如果是商机详情路径（detail），显示"商机详情"
       label = t('opportunityDetail.title')
+    } else if (isOpportunityPipelinePath && path === 'pipeline') {
+      // 如果是Pipeline路径（pipeline），显示"Pipeline管理"
+      label = t('menu.pipeline')
     } else {
       const translationKey = pathToKeyMap[path] || `menu.${path}`
       label = t(translationKey) || path
