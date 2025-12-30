@@ -1,12 +1,12 @@
 /**
- * 财税主体管理相关 API
+ * 经营主体管理相关 API
  */
 import { get, post, put, del } from './client'
 import { API_PATHS } from './config'
 import { PaginatedResponse } from './types'
 
 /**
- * 财税主体
+ * 经营主体
  */
 export interface ContractEntity {
   id: string
@@ -19,6 +19,7 @@ export interface ContractEntity {
   bank_name?: string | null
   bank_account_no?: string | null
   bank_account_name?: string | null
+  swift_code?: string | null
   currency: string
   address?: string | null
   contact_phone?: string | null
@@ -30,7 +31,7 @@ export interface ContractEntity {
 }
 
 /**
- * 财税主体列表查询参数
+ * 经营主体列表查询参数
  */
 export interface ContractEntityListParams {
   page?: number
@@ -43,7 +44,7 @@ export interface ContractEntityListParams {
 }
 
 /**
- * 创建财税主体请求
+ * 创建经营主体请求
  */
 export interface CreateContractEntityRequest {
   entity_code: string
@@ -55,6 +56,7 @@ export interface CreateContractEntityRequest {
   bank_name?: string
   bank_account_no?: string
   bank_account_name?: string
+  swift_code?: string
   currency: string
   address?: string
   contact_phone?: string
@@ -62,7 +64,7 @@ export interface CreateContractEntityRequest {
 }
 
 /**
- * 更新财税主体请求
+ * 更新经营主体请求
  */
 export interface UpdateContractEntityRequest {
   entity_code?: string
@@ -74,6 +76,7 @@ export interface UpdateContractEntityRequest {
   bank_name?: string
   bank_account_no?: string
   bank_account_name?: string
+  swift_code?: string
   currency?: string
   address?: string
   contact_phone?: string
@@ -81,7 +84,7 @@ export interface UpdateContractEntityRequest {
 }
 
 /**
- * 获取财税主体列表
+ * 获取经营主体列表
  */
 export async function getContractEntityList(
   params: ContractEntityListParams = {}
@@ -120,7 +123,7 @@ export async function getContractEntityList(
 }
 
 /**
- * 获取财税主体详情
+ * 获取经营主体详情
  */
 export async function getContractEntityDetail(id: string): Promise<ContractEntity> {
   const result = await get<ContractEntity>(API_PATHS.CONTRACT_ENTITIES.BY_ID(id))
@@ -128,7 +131,7 @@ export async function getContractEntityDetail(id: string): Promise<ContractEntit
 }
 
 /**
- * 创建财税主体
+ * 创建经营主体
  */
 export async function createContractEntity(
   data: CreateContractEntityRequest
@@ -138,7 +141,7 @@ export async function createContractEntity(
 }
 
 /**
- * 更新财税主体
+ * 更新经营主体
  */
 export async function updateContractEntity(
   id: string,
@@ -149,7 +152,7 @@ export async function updateContractEntity(
 }
 
 /**
- * 删除财税主体（软删除）
+ * 删除经营主体（软删除）
  */
 export async function deleteContractEntity(id: string): Promise<void> {
   await del(API_PATHS.CONTRACT_ENTITIES.BY_ID(id))

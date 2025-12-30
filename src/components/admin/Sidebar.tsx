@@ -46,17 +46,17 @@ export const Sidebar = () => {
   const [searchValue, setSearchValue] = useState('')
   const { isOpen, onOpen, onClose } = useDisclosure()
   
-  // 阿里云ECS风格颜色配置
-  const darkBg = '#001529' // 深色背景
-  const darkHover = '#112240' // 悬停背景
+  // 白色风格颜色配置
+  const darkBg = 'white' // 白色背景
+  const darkHover = 'gray.100' // 悬停背景（浅灰色）
   const activeBg = '#1890FF' // 选中背景（深蓝色）
-  const activeColor = '#FFFFFF' // 选中文字颜色
-  const textColor = 'rgba(255, 255, 255, 0.85)' // 默认文字颜色
-  const textColorSecondary = 'rgba(255, 255, 255, 0.65)' // 次要文字颜色
+  const activeColor = '#FFFFFF' // 选中文字颜色（白色，用于蓝色背景上）
+  const textColor = '#000000' // 默认文字颜色（黑色）
+  const textColorSecondary = '#666666' // 次要文字颜色（深灰色）
   const childHoverBg = '#E6F7FF' // 子菜单悬停背景（淡蓝色）
   const childActiveBg = '#1890FF' // 子菜单选中背景
-  const childActiveColor = '#FFFFFF' // 子菜单选中文字
-  const borderColor = 'rgba(255, 255, 255, 0.1)' // 边框颜色
+  const childActiveColor = '#FFFFFF' // 子菜单选中文字（白色，用于蓝色背景上）
+  const borderColor = 'gray.200' // 边框颜色（浅灰色）
 
   // 辅助函数：检查路径是否匹配（忽略查询参数）
   const isPathMatch = (path1: string, path2: string): boolean => {
@@ -159,9 +159,9 @@ export const Sidebar = () => {
       // 父项是否直接激活（有路径且匹配，忽略查询参数）
       const isParentDirectlyActive = item.path && isPathMatch(location.pathname, item.path)
       
-      // 父菜单项的样式处理逻辑 - 阿里云ECS风格（确保文字为白色）
+      // 父菜单项的样式处理逻辑 - 白色风格（文字为黑色）
       const parentBg = isParentDirectlyActive ? activeBg : hasActiveChild ? darkHover : 'transparent'
-      const parentColor = isParentDirectlyActive ? activeColor : hasActiveChild ? activeColor : textColor
+      const parentColor = isParentDirectlyActive ? activeColor : hasActiveChild ? textColor : textColor
       const parentHoverBg = isParentDirectlyActive ? activeBg : hasActiveChild ? darkHover : darkHover
 
       // 处理父菜单点击：如果折叠，先展开侧边栏再处理子菜单展开
@@ -184,7 +184,7 @@ export const Sidebar = () => {
             placement="right" 
             hasArrow 
             isDisabled={!isCollapsed}
-            bg="gray.900"
+            bg="gray.800"
             color="white"
             fontSize="xs"
           >
@@ -269,7 +269,7 @@ export const Sidebar = () => {
     const isActive = isPathMatch(location.pathname, itemPath)
     const tooltipTitle = isCollapsed ? t(item.label) : undefined
 
-    // 阿里云ECS风格样式 - 子项和一级菜单项（确保文字为白色）
+    // 白色风格样式 - 子项和一级菜单项（文字为黑色）
     const itemBg = isChild 
       ? (isActive ? childActiveBg : 'transparent')
       : (isActive ? activeBg : 'transparent')
@@ -280,7 +280,7 @@ export const Sidebar = () => {
     const iconSize = isChild ? 14 : 16
     const fontSize = '14px'
     const itemHeight = isChild ? '40px' : '50px'
-    // 图标颜色：激活时使用activeColor（白色），非激活时使用textColor（白色）
+    // 图标颜色：激活时使用activeColor（白色，用于蓝色背景），非激活时使用textColor（黑色）
     const iconColor = isActive ? activeColor : textColor
 
     // 处理路径和查询参数
@@ -381,7 +381,7 @@ export const Sidebar = () => {
             label={tooltipTitle}
             placement="right"
             hasArrow
-            bg="gray.900"
+            bg="gray.800"
             color="white"
             fontSize="xs"
             openDelay={300}
@@ -462,14 +462,14 @@ export const Sidebar = () => {
         ) : (
           <InputGroup size="sm">
             <InputLeftElement pointerEvents="none">
-              <Search size={16} color={textColorSecondary} />
+              <Search size={16} color={textColorSecondary} style={{ color: textColorSecondary }} />
             </InputLeftElement>
             <Input
               placeholder={t('common.search')}
               value={searchValue}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchValue(e.target.value)}
-              bg="rgba(255, 255, 255, 0.1)"
-              borderColor="rgba(255, 255, 255, 0.2)"
+              bg="gray.50"
+              borderColor="gray.300"
               color={textColor}
               _placeholder={{ color: textColorSecondary }}
               _focus={{

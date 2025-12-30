@@ -341,7 +341,7 @@ const AppContent = () => {
             }
           />
           
-          {/* 财务管理模块 - 财税主体管理（FINANCE, ADMIN） */}
+          {/* 财务管理模块 - 经营主体管理（FINANCE, ADMIN） */}
           <Route
             path="/admin/finance/contract-entities"
             element={

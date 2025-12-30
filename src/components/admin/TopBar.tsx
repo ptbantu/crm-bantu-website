@@ -73,6 +73,8 @@ export const TopBar = () => {
           variant="ghost"
           size={{ base: 'sm', md: 'md' }}
           flexShrink={0}
+          color="black"
+          _hover={{ bg: 'gray.100', color: 'black' }}
         />
         
         {/* Logo */}
@@ -97,9 +99,11 @@ export const TopBar = () => {
             variant="ghost"
             size={{ base: 'sm', md: 'md' }}
             aria-label={t('common.language')}
+            color="black"
+            _hover={{ bg: 'gray.100', color: 'black' }}
           >
             <Hide below="sm">
-              {currentLang === 'zh-CN' ? '中文' : 'ID'}
+              <Text color="black">{currentLang === 'zh-CN' ? '中文' : 'ID'}</Text>
             </Hide>
           </MenuButton>
           <MenuList>
@@ -124,7 +128,10 @@ export const TopBar = () => {
 
         {/* 用户菜单 */}
         <Menu>
-          <MenuButton>
+          <MenuButton
+            color="black"
+            _hover={{ bg: 'gray.100' }}
+          >
             <HStack spacing={{ base: 1.5, md: 3 }} minW={0}>
               <Avatar
                 size={{ base: 'xs', md: 'sm' }}
@@ -139,6 +146,7 @@ export const TopBar = () => {
                   fontWeight="medium"
                   noOfLines={1}
                   maxW={{ base: '80px', md: '120px' }}
+                  color="black"
                 >
                   {user?.display_name || user?.username || 'User'}
                 </Text>

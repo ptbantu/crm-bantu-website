@@ -1,5 +1,5 @@
 /**
- * 财税主体管理页面
+ * 经营主体管理页面
  */
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -101,6 +101,7 @@ const ContractEntityList = () => {
     bank_name: '',
     bank_account_no: '',
     bank_account_name: '',
+    swift_code: '',
     currency: 'CNY',
     address: '',
     contact_phone: '',
@@ -117,7 +118,7 @@ const ContractEntityList = () => {
     entity: null,
   })
 
-  // 加载财税主体列表
+  // 加载经营主体列表
   const loadEntities = async (params: ContractEntityListParams) => {
     setLoading(true)
     try {
@@ -202,6 +203,7 @@ const ContractEntityList = () => {
       bank_name: '',
       bank_account_no: '',
       bank_account_name: '',
+      swift_code: '',
       currency: 'CNY',
       address: '',
       contact_phone: '',
@@ -225,6 +227,7 @@ const ContractEntityList = () => {
         bank_name: detail.bank_name || '',
         bank_account_no: detail.bank_account_no || '',
         bank_account_name: detail.bank_account_name || '',
+        swift_code: detail.swift_code || '',
         currency: detail.currency,
         address: detail.address || '',
         contact_phone: detail.contact_phone || '',
@@ -250,6 +253,7 @@ const ContractEntityList = () => {
       bank_name: '',
       bank_account_no: '',
       bank_account_name: '',
+      swift_code: '',
       currency: 'CNY',
       address: '',
       contact_phone: '',
@@ -286,6 +290,7 @@ const ContractEntityList = () => {
           bank_name: modalFormData.bank_name?.trim() || undefined,
           bank_account_no: modalFormData.bank_account_no?.trim() || undefined,
           bank_account_name: modalFormData.bank_account_name?.trim() || undefined,
+          swift_code: modalFormData.swift_code?.trim() || undefined,
           currency: modalFormData.currency,
           address: modalFormData.address?.trim() || undefined,
           contact_phone: modalFormData.contact_phone?.trim() || undefined,
@@ -305,6 +310,7 @@ const ContractEntityList = () => {
           bank_name: modalFormData.bank_name?.trim() || undefined,
           bank_account_no: modalFormData.bank_account_no?.trim() || undefined,
           bank_account_name: modalFormData.bank_account_name?.trim() || undefined,
+          swift_code: modalFormData.swift_code?.trim() || undefined,
           currency: modalFormData.currency,
           address: modalFormData.address?.trim() || undefined,
           contact_phone: modalFormData.contact_phone?.trim() || undefined,
@@ -428,6 +434,7 @@ const ContractEntityList = () => {
                       <Th whiteSpace="nowrap" minW="150px">{t('contractEntity.table.bankName')}</Th>
                       <Th whiteSpace="nowrap" minW="150px">{t('contractEntity.table.bankAccountNo')}</Th>
                       <Th whiteSpace="nowrap" minW="150px">{t('contractEntity.table.bankAccountName')}</Th>
+                      <Th whiteSpace="nowrap" minW="120px">{t('contractEntity.table.swiftCode')}</Th>
                       <Th whiteSpace="nowrap" minW="100px">{t('contractEntity.table.currency')}</Th>
                       <Th whiteSpace="nowrap" minW="100px">{t('contractEntity.table.status')}</Th>
                       <Th 
@@ -447,7 +454,7 @@ const ContractEntityList = () => {
                   <Tbody>
                     {entities.length === 0 ? (
                       <Tr>
-                        <Td colSpan={14} textAlign="center" py={8}>
+                        <Td colSpan={15} textAlign="center" py={8}>
                           <Text color="gray.500">{t('contractEntity.noData')}</Text>
                         </Td>
                       </Tr>
@@ -467,6 +474,7 @@ const ContractEntityList = () => {
                           <Td>{entity.bank_name || '-'}</Td>
                           <Td>{entity.bank_account_no || '-'}</Td>
                           <Td>{entity.bank_account_name || '-'}</Td>
+                          <Td>{entity.swift_code || '-'}</Td>
                           <Td>{entity.currency}</Td>
                           <Td>
                             <Badge colorScheme={entity.is_active ? 'green' : 'red'}>
@@ -696,6 +704,14 @@ const ContractEntityList = () => {
               />
             </Box>
           </HStack>
+          <Box>
+            <Text mb={2} fontWeight="medium">{t('contractEntity.form.swiftCode')}</Text>
+            <Input
+              value={modalFormData.swift_code}
+              onChange={(e) => setModalFormData({ ...modalFormData, swift_code: e.target.value })}
+              placeholder={t('contractEntity.form.swiftCodePlaceholder')}
+            />
+          </Box>
           
           <Divider />
           

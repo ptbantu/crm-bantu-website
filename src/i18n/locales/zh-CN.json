@@ -561,12 +561,12 @@
     }
   },
   "contractEntity": {
-    "title": "财税主体管理",
-    "description": "管理财税主体信息，包括主体代码、名称、税务信息、银行信息等",
-    "add": "新增财税主体",
-    "create": "创建财税主体",
-    "edit": "编辑财税主体",
-    "noData": "暂无财税主体数据",
+    "title": "经营主体管理",
+    "description": "管理经营主体信息，包括主体代码、名称、税务信息、银行信息等",
+    "add": "新增经营主体",
+    "create": "创建经营主体",
+    "edit": "编辑经营主体",
+    "noData": "暂无经营主体数据",
     "search": {
       "entityCode": "主体代码",
       "entityName": "主体名称",
@@ -586,6 +586,7 @@
       "bankName": "开户行",
       "bankAccountNo": "账户",
       "bankAccountName": "户头",
+      "swiftCode": "SWIFT代码",
       "currency": "货币",
       "status": "状态"
     },
@@ -607,6 +608,8 @@
       "bankAccountNoPlaceholder": "请输入收款账户",
       "bankAccountName": "账户名称",
       "bankAccountNamePlaceholder": "请输入账户名称",
+      "swiftCode": "SWIFT代码",
+      "swiftCodePlaceholder": "请输入SWIFT代码",
       "currency": "货币",
       "address": "公司地址",
       "addressPlaceholder": "请输入公司地址",
@@ -615,8 +618,8 @@
       "status": "启用状态"
     },
     "error": {
-      "loadFailed": "加载财税主体列表失败",
-      "loadDetailFailed": "加载财税主体详情失败",
+      "loadFailed": "加载经营主体列表失败",
+      "loadDetailFailed": "加载经营主体详情失败",
       "submitFailed": "提交失败",
       "deleteFailed": "删除失败",
       "entityCodeRequired": "请输入主体代码",
@@ -624,13 +627,13 @@
       "shortNameRequired": "请输入简称"
     },
     "success": {
-      "createSuccess": "财税主体创建成功",
-      "updateSuccess": "财税主体更新成功",
-      "deleteSuccess": "财税主体删除成功"
+      "createSuccess": "经营主体创建成功",
+      "updateSuccess": "经营主体更新成功",
+      "deleteSuccess": "经营主体删除成功"
     },
     "deleteConfirm": {
       "title": "确认删除",
-      "message": "确定要删除财税主体「{{name}}」吗？删除后将无法恢复。"
+      "message": "确定要删除经营主体「{{name}}」吗？删除后将无法恢复。"
     }
   },
   "organizations": {
@@ -784,7 +787,7 @@
     "vendorProductList": "供应商服务列表",
     "categoryManagement": "企服分类",
     "finance": "财务管理",
-    "contractEntities": "财税主体管理",
+    "contractEntities": "经营主体管理",
     "receivables": "应收管理",
     "invoicing": "发票管理",
     "financeReports": "财务报表"
