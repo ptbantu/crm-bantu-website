@@ -581,6 +581,11 @@
       "legalRepresentative": "法定代表人",
       "taxRate": "税点",
       "taxId": "税号",
+      "address": "主体地址",
+      "contactPhone": "联系电话",
+      "bankName": "开户行",
+      "bankAccountNo": "账户",
+      "bankAccountName": "户头",
       "currency": "货币",
       "status": "状态"
     },

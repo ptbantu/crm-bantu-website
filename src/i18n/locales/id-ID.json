@@ -580,6 +580,11 @@
       "legalRepresentative": "Perwakilan Hukum",
       "taxRate": "Tarif Pajak",
       "taxId": "NPWP",
+      "address": "Alamat Entitas",
+      "contactPhone": "Nomor Telepon",
+      "bankName": "Nama Bank",
+      "bankAccountNo": "Nomor Rekening",
+      "bankAccountName": "Nama Rekening",
       "currency": "Mata Uang",
       "status": "Status"
     },
